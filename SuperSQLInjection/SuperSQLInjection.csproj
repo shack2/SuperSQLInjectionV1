@@ -1,0 +1,234 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{6C2AE3DB-3349-4A1F-9287-9278629CD0D6}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SuperSQLInjection</RootNamespace>
+    <AssemblyName>SuperSQLInjection</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishUrl>发布\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>1</ApplicationRevision>
+    <ApplicationVersion>2016.01.18.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests>false</SignManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestCertificateThumbprint>0661C2B7EEEC92022E280547613647A17F8A3715</ManifestCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestKeyFile>SuperSQLInjection_TemporaryKey.pfx</ManifestKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>true</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <TargetZone>LocalIntranet</TargetZone>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="About.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="About.Designer.cs">
+      <DependentUpon>About.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AddNode.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AddNode.Designer.cs">
+      <DependentUpon>AddNode.cs</DependentUpon>
+    </Compile>
+    <Compile Include="bypass\StringReplace.cs" />
+    <Compile Include="FindString.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FindString.Designer.cs">
+      <DependentUpon>FindString.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Main.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Main.Designer.cs">
+      <DependentUpon>Main.cs</DependentUpon>
+    </Compile>
+    <Compile Include="model\DataBase.cs" />
+    <Compile Include="model\KeyType.cs" />
+    <Compile Include="model\DBType.cs" />
+    <Compile Include="model\GetDataPam.cs" />
+    <Compile Include="model\Config.cs" />
+    <Compile Include="model\InjectType.cs" />
+    <Compile Include="model\ErrorMessage.cs" />
+    <Compile Include="model\SerializableDictionary.cs" />
+    <Compile Include="model\SelectNode.cs" />
+    <Compile Include="model\ServerInfo.cs" />
+    <Compile Include="model\URL.cs" />
+    <Compile Include="payload\Access.cs" />
+    <Compile Include="payload\Comm.cs" />
+    <Compile Include="model\Injection.cs" />
+    <Compile Include="payload\MySQL5.cs" />
+    <Compile Include="payload\MSSQL.cs" />
+    <Compile Include="payload\Oracle.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="ProgressBar.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ProgressBar.Designer.cs">
+      <DependentUpon>ProgressBar.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="scan\Spider.cs" />
+    <Compile Include="Seting.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Seting.Designer.cs">
+      <DependentUpon>Seting.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ShowResponse.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ShowResponse.Designer.cs">
+      <DependentUpon>ShowResponse.cs</DependentUpon>
+    </Compile>
+    <Compile Include="tools\file\FileTool.cs" />
+    <Compile Include="tools\http\HTTP.cs" />
+    <Compile Include="tools\http\HTTPRequest.cs" />
+    <Compile Include="tools\http\HttpTools.cs" />
+    <Compile Include="tools\http\TimeOutSocket.cs" />
+    <Compile Include="tools\InjectionTools.cs" />
+    <Compile Include="tools\LikeMath.cs" />
+    <Compile Include="tools\ListViewColumnSorter.cs" />
+    <Compile Include="tools\MyCopare.cs" />
+    <Compile Include="tools\StringLengthComparer.cs" />
+    <Compile Include="tools\thread\MyThreadPool.cs" />
+    <Compile Include="tools\OnlineMD5.cs" />
+    <Compile Include="tools\Tools.cs" />
+    <Compile Include="tools\encode\URLTools.cs" />
+    <Compile Include="tools\encode\URLEncode.cs" />
+    <Compile Include="tools\XML.cs" />
+    <Compile Include="Waring.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Waring.Designer.cs">
+      <DependentUpon>Waring.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="about.resx">
+      <DependentUpon>About.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AddNode.resx">
+      <DependentUpon>AddNode.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FindString.resx">
+      <DependentUpon>FindString.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Main.resx">
+      <DependentUpon>Main.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ProgressBar.resx">
+      <DependentUpon>ProgressBar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <EmbeddedResource Include="Seting.resx">
+      <DependentUpon>Seting.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ShowResponse.resx">
+      <DependentUpon>ShowResponse.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Waring.resx">
+      <DependentUpon>Waring.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="app.config" />
+    <None Include="Properties\app.manifest" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <None Include="SuperSQLInjection_TemporaryKey.pfx" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
