@@ -24,7 +24,7 @@ namespace SuperSQLInjection.payload
         }
 
 
-        public static String unionColumnCountTest(int maxColumn,int fill)
+        public static String unionColumnCountTest(int maxColumn,String fill)
         {
             StringBuilder sb = new StringBuilder(" and 1=2 union all select ");
             for (int i = 1; i <= maxColumn;i++ )

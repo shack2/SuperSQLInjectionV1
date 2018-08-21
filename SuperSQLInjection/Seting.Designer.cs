@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.chk_redirectDoGet = new System.Windows.Forms.CheckBox();
             this.lbl_maxColumnsCount = new System.Windows.Forms.Label();
             this.cob_maxClolumnsCount = new System.Windows.Forms.ComboBox();
             this.chk_isAutoSaveConfig = new System.Windows.Forms.CheckBox();
@@ -41,7 +42,8 @@
             this.cob_oneDomainMaxScanCount = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.chk_redirectDoGet = new System.Windows.Forms.CheckBox();
+            this.cmb_unionFill = new System.Windows.Forms.ComboBox();
+            this.label3 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -49,6 +51,8 @@
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.chk_redirectDoGet);
+            this.groupBox1.Controls.Add(this.label3);
+            this.groupBox1.Controls.Add(this.cmb_unionFill);
             this.groupBox1.Controls.Add(this.lbl_maxColumnsCount);
             this.groupBox1.Controls.Add(this.cob_maxClolumnsCount);
             this.groupBox1.Controls.Add(this.chk_isAutoSaveConfig);
@@ -62,6 +66,17 @@
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "系统配置";
+            // 
+            // chk_redirectDoGet
+            // 
+            this.chk_redirectDoGet.AutoSize = true;
+            this.chk_redirectDoGet.Location = new System.Drawing.Point(19, 131);
+            this.chk_redirectDoGet.Name = "chk_redirectDoGet";
+            this.chk_redirectDoGet.Size = new System.Drawing.Size(126, 16);
+            this.chk_redirectDoGet.TabIndex = 7;
+            this.chk_redirectDoGet.Text = "重定向使用GET请求";
+            this.chk_redirectDoGet.UseVisualStyleBackColor = true;
+            this.chk_redirectDoGet.CheckedChanged += new System.EventHandler(this.chk_redirectDoGet_CheckedChanged);
             // 
             // lbl_maxColumnsCount
             // 
@@ -215,16 +230,26 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "批量注入设置";
             // 
-            // chk_redirectDoGet
+            // cmb_unionFill
             // 
-            this.chk_redirectDoGet.AutoSize = true;
-            this.chk_redirectDoGet.Location = new System.Drawing.Point(19, 131);
-            this.chk_redirectDoGet.Name = "chk_redirectDoGet";
-            this.chk_redirectDoGet.Size = new System.Drawing.Size(126, 16);
-            this.chk_redirectDoGet.TabIndex = 7;
-            this.chk_redirectDoGet.Text = "重定向使用GET请求";
-            this.chk_redirectDoGet.UseVisualStyleBackColor = true;
-            this.chk_redirectDoGet.CheckedChanged += new System.EventHandler(this.chk_redirectDoGet_CheckedChanged);
+            this.cmb_unionFill.FormattingEnabled = true;
+            this.cmb_unionFill.Items.AddRange(new object[] {
+            "1",
+            "null"});
+            this.cmb_unionFill.Location = new System.Drawing.Point(351, 129);
+            this.cmb_unionFill.Name = "cmb_unionFill";
+            this.cmb_unionFill.Size = new System.Drawing.Size(70, 20);
+            this.cmb_unionFill.TabIndex = 5;
+            this.cmb_unionFill.SelectedValueChanged += new System.EventHandler(this.cmb_unionFill_SelectedValueChanged);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(274, 132);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(71, 12);
+            this.label3.TabIndex = 6;
+            this.label3.Text = "Union填充：";
             // 
             // Seting
             // 
@@ -261,5 +286,7 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.CheckBox chk_redirectDoGet;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.ComboBox cmb_unionFill;
     }
 }

@@ -176,6 +176,42 @@ namespace tools
             Encoding chs = Encoding.GetEncoding(charset);
             return chs.GetString(bytes);
         }
+
+        public static string StringToHexString(string s, Encoding encode)
+        {
+            byte[] b = encode.GetBytes(s);//按照指定编码将string编程字节数组
+            string result = string.Empty;
+            for (int i = 0; i < b.Length; i++)//逐字节变为16进制字符
+            {
+                result += Convert.ToString(b[i], 16);
+            }
+            return result;
+        }
+
+
+        public static String HexStringToString(String hs, String encodeStr)
+        {
+            try
+            {
+                Encoding encode = Encoding.GetEncoding(encodeStr);
+                string strTemp = "";
+                byte[] b = new byte[hs.Length / 2];
+                for (int i = 0; i < hs.Length / 2; i++)
+                {
+                    strTemp = hs.Substring(i * 2, 2);
+                    b[i] = Convert.ToByte(strTemp, 16);
+                }
+                return encode.GetString(b);
+            }
+            catch (Exception e)
+            {
+             
+                SysLog("HexStringToString解码错误!"+e.GetBaseException());
+            }
+            return "";
+            
+        }
+
         /// <summary>
         /// 将数组转换成字符串
         /// </summary>
@@ -719,5 +755,62 @@ namespace tools
             return datapack;
 
         }
+
+        public static String substr(String str,String startStr, String endStr) {
+            try
+            {
+                if (!String.IsNullOrEmpty(str))
+                {
+                    int start = str.IndexOf(startStr);
+                    if (start != -1)
+                    {
+                        int end = str.IndexOf(endStr, start+ startStr.Length);
+                        if (end != -1)
+                        {
+                            String token = str.Substring(start + startStr.Length, end - start - startStr.Length);
+                            return token;
+                        }
+                    }
+
+                }
+            }
+            catch (Exception e)
+            {
+                SysLog("截取字符发生异常！Tools.substr");
+            }
+            return "";
+
+        }
+
+        private object ExecuteScript(string funcName, string argument, string jsPath)
+        {
+            string js = System.IO.File.ReadAllText(jsPath);
+            object o = ExecuteScript(string.Format("{0}('{1}')", funcName, argument), js);
+            return o;
+        }
+
+        /// <summary>
+        /// 执行JS
+        /// </summary>
+        /// <param name="sExpression">参数体</param>
+        /// <param name="sCode">JavaScript代码的字符串</param>
+        /// <returns></returns>
+        private object ExecuteScript(string sExpression, string sCode)
+        {
+            MSScriptControl.ScriptControl scriptControl = new MSScriptControl.ScriptControl();
+            scriptControl.UseSafeSubset = true;
+            scriptControl.Language = "javascript";
+            scriptControl.AddCode(sCode);
+            try
+            {
+                return scriptControl.Eval(sExpression);
+            }
+            catch (Exception ex)
+            {
+                SysLog("js执行异常！"+ex.GetBaseException());
+            }
+            return null;
+        }
+
     }
 }

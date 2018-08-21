@@ -142,12 +142,23 @@
             this.myicon_list = new System.Windows.Forms.ImageList(this.components);
             this.tab_injectCenter = new System.Windows.Forms.TabPage();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tab_datapack = new System.Windows.Forms.TabPage();
             this.txt_inject_request = new System.Windows.Forms.TextBox();
             this.cms_dataPacks = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.tsmi_createGetTemplate = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmi_createPOSTTemplate = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmi_changeRequestMethod = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmi_createPackByURL = new System.Windows.Forms.ToolStripMenuItem();
+            this.tab_tokenset = new System.Windows.Forms.TabPage();
+            this.groupBox17 = new System.Windows.Forms.GroupBox();
+            this.token_txt_http_request = new System.Windows.Forms.TextBox();
+            this.groupBox19 = new System.Windows.Forms.GroupBox();
+            this.label36 = new System.Windows.Forms.Label();
+            this.label37 = new System.Windows.Forms.Label();
+            this.token_txt_endStr = new System.Windows.Forms.TextBox();
+            this.token_txt_startStr = new System.Windows.Forms.TextBox();
+            this.token_btn_testGetToken = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.groupBox16 = new System.Windows.Forms.GroupBox();
             this.label4 = new System.Windows.Forms.Label();
@@ -156,6 +167,7 @@
             this.txt_inject_unionColumnsCount = new System.Windows.Forms.TextBox();
             this.groupBox15 = new System.Windows.Forms.GroupBox();
             this.cbox_inject_type = new System.Windows.Forms.ComboBox();
+            this.label29 = new System.Windows.Forms.Label();
             this.label27 = new System.Windows.Forms.Label();
             this.inject_btn_autoFindKey = new System.Windows.Forms.Button();
             this.injectConfig_btn_checkKey = new System.Windows.Forms.Button();
@@ -165,6 +177,7 @@
             this.btn_inject_setEncodingRange = new System.Windows.Forms.Button();
             this.label13 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
+            this.btn_inject_setTokenLocation = new System.Windows.Forms.Button();
             this.btn_inject_clearRequest = new System.Windows.Forms.Button();
             this.btn_inject_sendData = new System.Windows.Forms.Button();
             this.chk_inject_foward_302 = new System.Windows.Forms.CheckBox();
@@ -179,10 +192,11 @@
             this.label15 = new System.Windows.Forms.Label();
             this.tab_bypass = new System.Windows.Forms.TabPage();
             this.groupBox9 = new System.Windows.Forms.GroupBox();
-            this.cbox_base64Count = new System.Windows.Forms.ComboBox();
+            this.groupBox18 = new System.Windows.Forms.GroupBox();
             this.bypass_btn_saveTemplate = new System.Windows.Forms.Button();
             this.bypass_cbox_loadTemplate = new System.Windows.Forms.ComboBox();
-            this.label28 = new System.Windows.Forms.Label();
+            this.cbox_bypass_urlencode_count = new System.Windows.Forms.ComboBox();
+            this.cbox_base64Count = new System.Windows.Forms.ComboBox();
             this.chk_reaplaceBeforURLEncode = new System.Windows.Forms.CheckBox();
             this.cob_keyRepalce = new System.Windows.Forms.ComboBox();
             this.label10 = new System.Windows.Forms.Label();
@@ -191,6 +205,7 @@
             this.label18 = new System.Windows.Forms.Label();
             this.label17 = new System.Windows.Forms.Label();
             this.bypass_cbox_sendHTTPSleepTime = new System.Windows.Forms.ComboBox();
+            this.bypass_chk_usebetween = new System.Windows.Forms.CheckBox();
             this.bypass_chk_inculdeStr = new System.Windows.Forms.CheckBox();
             this.label16 = new System.Windows.Forms.Label();
             this.bypass_txt_replaceTo = new System.Windows.Forms.TextBox();
@@ -272,7 +287,7 @@
             this.lbl_packsCount = new System.Windows.Forms.ToolStripStatusLabel();
             this.timer_status = new System.Windows.Forms.Timer(this.components);
             this.timer_scanInjection = new System.Windows.Forms.Timer(this.components);
-            this.cbox_bypass_urlencode_count = new System.Windows.Forms.ComboBox();
+            this.btn_inject_randStr = new System.Windows.Forms.Button();
             this.gb_basic.SuspendLayout();
             this.menuStrip_main.SuspendLayout();
             this.gb_logo.SuspendLayout();
@@ -307,7 +322,12 @@
             this.cms_data_dbs_lvw_data.SuspendLayout();
             this.tab_injectCenter.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            this.tabControl1.SuspendLayout();
+            this.tab_datapack.SuspendLayout();
             this.cms_dataPacks.SuspendLayout();
+            this.tab_tokenset.SuspendLayout();
+            this.groupBox17.SuspendLayout();
+            this.groupBox19.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox16.SuspendLayout();
             this.groupBox15.SuspendLayout();
@@ -316,6 +336,7 @@
             this.groupBox8.SuspendLayout();
             this.tab_bypass.SuspendLayout();
             this.groupBox9.SuspendLayout();
+            this.groupBox18.SuspendLayout();
             this.bypass_lvw_replaceString_cms.SuspendLayout();
             this.tab_encoding.SuspendLayout();
             this.groupBox13.SuspendLayout();
@@ -358,7 +379,7 @@
             this.gb_basic.Controls.Add(this.label1);
             this.gb_basic.Location = new System.Drawing.Point(11, 30);
             this.gb_basic.Name = "gb_basic";
-            this.gb_basic.Size = new System.Drawing.Size(810, 76);
+            this.gb_basic.Size = new System.Drawing.Size(810, 84);
             this.gb_basic.TabIndex = 0;
             this.gb_basic.TabStop = false;
             this.gb_basic.Text = "基础信息";
@@ -366,7 +387,7 @@
             // chk_useSSL
             // 
             this.chk_useSSL.AutoSize = true;
-            this.chk_useSSL.Location = new System.Drawing.Point(188, 49);
+            this.chk_useSSL.Location = new System.Drawing.Point(189, 55);
             this.chk_useSSL.Name = "chk_useSSL";
             this.chk_useSSL.Size = new System.Drawing.Size(42, 16);
             this.chk_useSSL.TabIndex = 12;
@@ -376,7 +397,7 @@
             // 
             // btn_exportConfig
             // 
-            this.btn_exportConfig.Location = new System.Drawing.Point(708, 48);
+            this.btn_exportConfig.Location = new System.Drawing.Point(720, 51);
             this.btn_exportConfig.Name = "btn_exportConfig";
             this.btn_exportConfig.Size = new System.Drawing.Size(75, 23);
             this.btn_exportConfig.TabIndex = 11;
@@ -405,9 +426,9 @@
             "50",
             "70",
             "100"});
-            this.cbox_basic_threadSize.Location = new System.Drawing.Point(641, 17);
+            this.cbox_basic_threadSize.Location = new System.Drawing.Point(643, 19);
             this.cbox_basic_threadSize.Name = "cbox_basic_threadSize";
-            this.cbox_basic_threadSize.Size = new System.Drawing.Size(50, 20);
+            this.cbox_basic_threadSize.Size = new System.Drawing.Size(60, 20);
             this.cbox_basic_threadSize.TabIndex = 10;
             this.cbox_basic_threadSize.TextChanged += new System.EventHandler(this.cbox_basic_threadSize_TextChanged);
             // 
@@ -419,9 +440,9 @@
             "1",
             "2",
             "3"});
-            this.cbox_basic_reTryCount.Location = new System.Drawing.Point(641, 47);
+            this.cbox_basic_reTryCount.Location = new System.Drawing.Point(643, 50);
             this.cbox_basic_reTryCount.Name = "cbox_basic_reTryCount";
-            this.cbox_basic_reTryCount.Size = new System.Drawing.Size(50, 20);
+            this.cbox_basic_reTryCount.Size = new System.Drawing.Size(60, 20);
             this.cbox_basic_reTryCount.TabIndex = 9;
             this.cbox_basic_reTryCount.TextChanged += new System.EventHandler(this.cbox_basic_reTryCount_TextChanged);
             // 
@@ -434,7 +455,7 @@
             "GB2312",
             "GBK",
             "ISO-8859-1"});
-            this.cbox_basic_encoding.Location = new System.Drawing.Point(334, 49);
+            this.cbox_basic_encoding.Location = new System.Drawing.Point(332, 52);
             this.cbox_basic_encoding.Name = "cbox_basic_encoding";
             this.cbox_basic_encoding.Size = new System.Drawing.Size(78, 20);
             this.cbox_basic_encoding.TabIndex = 8;
@@ -453,7 +474,7 @@
             "40",
             "50",
             "60"});
-            this.cbox_basic_timeOut.Location = new System.Drawing.Point(334, 18);
+            this.cbox_basic_timeOut.Location = new System.Drawing.Point(332, 20);
             this.cbox_basic_timeOut.Name = "cbox_basic_timeOut";
             this.cbox_basic_timeOut.Size = new System.Drawing.Size(78, 20);
             this.cbox_basic_timeOut.TabIndex = 7;
@@ -462,7 +483,7 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(263, 52);
+            this.label9.Location = new System.Drawing.Point(261, 56);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(65, 12);
             this.label9.TabIndex = 2;
@@ -471,7 +492,7 @@
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(592, 51);
+            this.label11.Location = new System.Drawing.Point(593, 54);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(47, 12);
             this.label11.TabIndex = 2;
@@ -480,7 +501,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(592, 21);
+            this.label5.Location = new System.Drawing.Point(593, 23);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(47, 12);
             this.label5.TabIndex = 2;
@@ -489,7 +510,7 @@
             // btn_autoInject
             // 
             this.btn_autoInject.ImageKey = "(无)";
-            this.btn_autoInject.Location = new System.Drawing.Point(708, 16);
+            this.btn_autoInject.Location = new System.Drawing.Point(720, 18);
             this.btn_autoInject.Name = "btn_autoInject";
             this.btn_autoInject.Size = new System.Drawing.Size(75, 23);
             this.btn_autoInject.TabIndex = 5;
@@ -507,7 +528,7 @@
             "MySQL5",
             "SQLServer",
             "Oracle"});
-            this.cbox_basic_dbType.Location = new System.Drawing.Point(495, 47);
+            this.cbox_basic_dbType.Location = new System.Drawing.Point(495, 50);
             this.cbox_basic_dbType.Name = "cbox_basic_dbType";
             this.cbox_basic_dbType.Size = new System.Drawing.Size(80, 20);
             this.cbox_basic_dbType.TabIndex = 3;
@@ -516,7 +537,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(427, 50);
+            this.label6.Location = new System.Drawing.Point(426, 53);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(65, 12);
             this.label6.TabIndex = 4;
@@ -531,7 +552,7 @@
             "盲 注",
             "显错注入",
             "Union注入"});
-            this.cbox_basic_injectType.Location = new System.Drawing.Point(495, 17);
+            this.cbox_basic_injectType.Location = new System.Drawing.Point(495, 19);
             this.cbox_basic_injectType.Name = "cbox_basic_injectType";
             this.cbox_basic_injectType.Size = new System.Drawing.Size(81, 20);
             this.cbox_basic_injectType.TabIndex = 5;
@@ -539,7 +560,7 @@
             // 
             // txt_basic_port
             // 
-            this.txt_basic_port.Location = new System.Drawing.Point(88, 46);
+            this.txt_basic_port.Location = new System.Drawing.Point(88, 51);
             this.txt_basic_port.Name = "txt_basic_port";
             this.txt_basic_port.Size = new System.Drawing.Size(80, 21);
             this.txt_basic_port.TabIndex = 4;
@@ -549,7 +570,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(19, 51);
+            this.label2.Location = new System.Drawing.Point(19, 56);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(65, 12);
             this.label2.TabIndex = 3;
@@ -557,7 +578,7 @@
             // 
             // txt_basic_host
             // 
-            this.txt_basic_host.Location = new System.Drawing.Point(88, 17);
+            this.txt_basic_host.Location = new System.Drawing.Point(88, 19);
             this.txt_basic_host.Name = "txt_basic_host";
             this.txt_basic_host.Size = new System.Drawing.Size(160, 21);
             this.txt_basic_host.TabIndex = 2;
@@ -567,7 +588,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(263, 21);
+            this.label3.Location = new System.Drawing.Point(262, 23);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(65, 12);
             this.label3.TabIndex = 2;
@@ -576,7 +597,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(427, 20);
+            this.label7.Location = new System.Drawing.Point(426, 22);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(65, 12);
             this.label7.TabIndex = 1;
@@ -585,7 +606,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(19, 21);
+            this.label1.Location = new System.Drawing.Point(19, 23);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(65, 12);
             this.label1.TabIndex = 1;
@@ -716,7 +737,7 @@
             this.gb_logo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.gb_logo.Controls.Add(this.txt_log);
-            this.gb_logo.Location = new System.Drawing.Point(8, 569);
+            this.gb_logo.Location = new System.Drawing.Point(8, 591);
             this.gb_logo.Name = "gb_logo";
             this.gb_logo.Size = new System.Drawing.Size(813, 87);
             this.gb_logo.TabIndex = 3;
@@ -739,7 +760,7 @@
             this.tab_logCenter.ImageKey = "log.png";
             this.tab_logCenter.Location = new System.Drawing.Point(4, 23);
             this.tab_logCenter.Name = "tab_logCenter";
-            this.tab_logCenter.Size = new System.Drawing.Size(802, 424);
+            this.tab_logCenter.Size = new System.Drawing.Size(806, 440);
             this.tab_logCenter.TabIndex = 3;
             this.tab_logCenter.Text = "日志中心";
             this.tab_logCenter.UseVisualStyleBackColor = true;
@@ -758,8 +779,8 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.groupBox6);
-            this.splitContainer1.Size = new System.Drawing.Size(802, 424);
-            this.splitContainer1.SplitterDistance = 214;
+            this.splitContainer1.Size = new System.Drawing.Size(806, 440);
+            this.splitContainer1.SplitterDistance = 221;
             this.splitContainer1.TabIndex = 2;
             // 
             // groupBox5
@@ -768,7 +789,7 @@
             this.groupBox5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox5.Location = new System.Drawing.Point(0, 0);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(802, 214);
+            this.groupBox5.Size = new System.Drawing.Size(806, 221);
             this.groupBox5.TabIndex = 0;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "数据包历史记录";
@@ -787,7 +808,7 @@
             this.log_lvw_httpLog.FullRowSelect = true;
             this.log_lvw_httpLog.Location = new System.Drawing.Point(3, 17);
             this.log_lvw_httpLog.Name = "log_lvw_httpLog";
-            this.log_lvw_httpLog.Size = new System.Drawing.Size(796, 194);
+            this.log_lvw_httpLog.Size = new System.Drawing.Size(800, 201);
             this.log_lvw_httpLog.TabIndex = 1;
             this.log_lvw_httpLog.UseCompatibleStateImageBehavior = false;
             this.log_lvw_httpLog.View = System.Windows.Forms.View.Details;
@@ -845,7 +866,7 @@
             this.groupBox6.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox6.Location = new System.Drawing.Point(0, 0);
             this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(802, 206);
+            this.groupBox6.Size = new System.Drawing.Size(806, 215);
             this.groupBox6.TabIndex = 1;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "数据包详情";
@@ -859,7 +880,7 @@
             this.tabControl2.Location = new System.Drawing.Point(3, 17);
             this.tabControl2.Name = "tabControl2";
             this.tabControl2.SelectedIndex = 0;
-            this.tabControl2.Size = new System.Drawing.Size(796, 186);
+            this.tabControl2.Size = new System.Drawing.Size(800, 195);
             this.tabControl2.TabIndex = 0;
             // 
             // tabPage3
@@ -868,7 +889,7 @@
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(788, 160);
+            this.tabPage3.Size = new System.Drawing.Size(792, 169);
             this.tabPage3.TabIndex = 0;
             this.tabPage3.Text = "请 求";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -880,7 +901,7 @@
             this.log_txt_request.Multiline = true;
             this.log_txt_request.Name = "log_txt_request";
             this.log_txt_request.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.log_txt_request.Size = new System.Drawing.Size(782, 154);
+            this.log_txt_request.Size = new System.Drawing.Size(786, 163);
             this.log_txt_request.TabIndex = 0;
             // 
             // tabPage4
@@ -889,7 +910,7 @@
             this.tabPage4.Location = new System.Drawing.Point(4, 22);
             this.tabPage4.Name = "tabPage4";
             this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage4.Size = new System.Drawing.Size(788, 160);
+            this.tabPage4.Size = new System.Drawing.Size(792, 169);
             this.tabPage4.TabIndex = 1;
             this.tabPage4.Text = "响 应";
             this.tabPage4.UseVisualStyleBackColor = true;
@@ -901,7 +922,7 @@
             this.log_txt_response.Multiline = true;
             this.log_txt_response.Name = "log_txt_response";
             this.log_txt_response.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.log_txt_response.Size = new System.Drawing.Size(782, 154);
+            this.log_txt_response.Size = new System.Drawing.Size(786, 163);
             this.log_txt_response.TabIndex = 1;
             this.log_txt_response.KeyDown += new System.Windows.Forms.KeyEventHandler(this.log_txt_response_KeyDown);
             // 
@@ -910,7 +931,7 @@
             this.tabPage1.Controls.Add(this.webBro_log);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Size = new System.Drawing.Size(788, 160);
+            this.tabPage1.Size = new System.Drawing.Size(792, 169);
             this.tabPage1.TabIndex = 2;
             this.tabPage1.Text = "在浏览器中显示";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -921,7 +942,7 @@
             this.webBro_log.Location = new System.Drawing.Point(0, 0);
             this.webBro_log.MinimumSize = new System.Drawing.Size(20, 20);
             this.webBro_log.Name = "webBro_log";
-            this.webBro_log.Size = new System.Drawing.Size(788, 160);
+            this.webBro_log.Size = new System.Drawing.Size(792, 169);
             this.webBro_log.TabIndex = 1;
             // 
             // tab_file
@@ -931,7 +952,7 @@
             this.tab_file.ImageKey = "editFile.png";
             this.tab_file.Location = new System.Drawing.Point(4, 23);
             this.tab_file.Name = "tab_file";
-            this.tab_file.Size = new System.Drawing.Size(802, 424);
+            this.tab_file.Size = new System.Drawing.Size(806, 440);
             this.tab_file.TabIndex = 4;
             this.tab_file.Text = "文件操作";
             this.tab_file.UseVisualStyleBackColor = true;
@@ -939,12 +960,12 @@
             // file_txt_result
             // 
             this.file_txt_result.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.file_txt_result.Location = new System.Drawing.Point(0, 76);
+            this.file_txt_result.Location = new System.Drawing.Point(0, 67);
             this.file_txt_result.MaxLength = 3276700;
             this.file_txt_result.Multiline = true;
             this.file_txt_result.Name = "file_txt_result";
             this.file_txt_result.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.file_txt_result.Size = new System.Drawing.Size(802, 348);
+            this.file_txt_result.Size = new System.Drawing.Size(806, 373);
             this.file_txt_result.TabIndex = 0;
             this.file_txt_result.TextChanged += new System.EventHandler(this.file_txt_result_TextChanged);
             this.file_txt_result.KeyDown += new System.Windows.Forms.KeyEventHandler(this.file_txt_result_KeyDown);
@@ -960,7 +981,7 @@
             this.groupBox7.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox7.Location = new System.Drawing.Point(0, 0);
             this.groupBox7.Name = "groupBox7";
-            this.groupBox7.Size = new System.Drawing.Size(802, 76);
+            this.groupBox7.Size = new System.Drawing.Size(806, 67);
             this.groupBox7.TabIndex = 0;
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "文件操作";
@@ -1039,7 +1060,7 @@
             this.tab_dataCenter.Location = new System.Drawing.Point(4, 23);
             this.tab_dataCenter.Name = "tab_dataCenter";
             this.tab_dataCenter.Padding = new System.Windows.Forms.Padding(3);
-            this.tab_dataCenter.Size = new System.Drawing.Size(802, 424);
+            this.tab_dataCenter.Size = new System.Drawing.Size(806, 440);
             this.tab_dataCenter.TabIndex = 1;
             this.tab_dataCenter.Text = "数据中心";
             this.tab_dataCenter.UseVisualStyleBackColor = true;
@@ -1053,7 +1074,7 @@
             this.tabC_dataCenter.Location = new System.Drawing.Point(3, 3);
             this.tabC_dataCenter.Name = "tabC_dataCenter";
             this.tabC_dataCenter.SelectedIndex = 0;
-            this.tabC_dataCenter.Size = new System.Drawing.Size(796, 418);
+            this.tabC_dataCenter.Size = new System.Drawing.Size(800, 434);
             this.tabC_dataCenter.TabIndex = 2;
             // 
             // tab_vers
@@ -1062,7 +1083,7 @@
             this.tab_vers.Location = new System.Drawing.Point(4, 23);
             this.tab_vers.Name = "tab_vers";
             this.tab_vers.Padding = new System.Windows.Forms.Padding(3);
-            this.tab_vers.Size = new System.Drawing.Size(788, 391);
+            this.tab_vers.Size = new System.Drawing.Size(792, 407);
             this.tab_vers.TabIndex = 0;
             this.tab_vers.Text = "环境变量";
             this.tab_vers.UseVisualStyleBackColor = true;
@@ -1077,7 +1098,7 @@
             this.data_lvw_ver.FullRowSelect = true;
             this.data_lvw_ver.Location = new System.Drawing.Point(3, 3);
             this.data_lvw_ver.Name = "data_lvw_ver";
-            this.data_lvw_ver.Size = new System.Drawing.Size(782, 385);
+            this.data_lvw_ver.Size = new System.Drawing.Size(786, 401);
             this.data_lvw_ver.TabIndex = 0;
             this.data_lvw_ver.UseCompatibleStateImageBehavior = false;
             this.data_lvw_ver.View = System.Windows.Forms.View.Details;
@@ -1128,7 +1149,7 @@
             this.tab_dbs.Location = new System.Drawing.Point(4, 23);
             this.tab_dbs.Name = "tab_dbs";
             this.tab_dbs.Padding = new System.Windows.Forms.Padding(3);
-            this.tab_dbs.Size = new System.Drawing.Size(788, 391);
+            this.tab_dbs.Size = new System.Drawing.Size(792, 407);
             this.tab_dbs.TabIndex = 1;
             this.tab_dbs.Text = "数据库信息";
             this.tab_dbs.UseVisualStyleBackColor = true;
@@ -1148,8 +1169,8 @@
             // 
             this.spc_dbs.Panel2.Controls.Add(this.toolStrip1);
             this.spc_dbs.Panel2.Controls.Add(this.groupBox4);
-            this.spc_dbs.Size = new System.Drawing.Size(782, 385);
-            this.spc_dbs.SplitterDistance = 225;
+            this.spc_dbs.Size = new System.Drawing.Size(786, 401);
+            this.spc_dbs.SplitterDistance = 226;
             this.spc_dbs.TabIndex = 5;
             // 
             // data_dbs_ts
@@ -1159,11 +1180,11 @@
             this.data_dbs_tsl_getDBS,
             this.data_dbs_tsl_getTables,
             this.data_dbs_tsl_getColumns});
-            this.data_dbs_ts.Location = new System.Drawing.Point(0, 360);
+            this.data_dbs_ts.Location = new System.Drawing.Point(0, 376);
             this.data_dbs_ts.Name = "data_dbs_ts";
             this.data_dbs_ts.Padding = new System.Windows.Forms.Padding(5, 0, 0, 0);
             this.data_dbs_ts.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.data_dbs_ts.Size = new System.Drawing.Size(225, 25);
+            this.data_dbs_ts.Size = new System.Drawing.Size(226, 25);
             this.data_dbs_ts.TabIndex = 4;
             this.data_dbs_ts.Text = "toolStrip1";
             // 
@@ -1205,7 +1226,7 @@
             this.groupBox2.Controls.Add(this.data_tvw_dbs);
             this.groupBox2.Location = new System.Drawing.Point(5, 5);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(220, 352);
+            this.groupBox2.Size = new System.Drawing.Size(221, 368);
             this.groupBox2.TabIndex = 0;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "数据库信息";
@@ -1222,7 +1243,7 @@
             this.data_tvw_dbs.Location = new System.Drawing.Point(3, 17);
             this.data_tvw_dbs.Name = "data_tvw_dbs";
             this.data_tvw_dbs.SelectedImageIndex = 6;
-            this.data_tvw_dbs.Size = new System.Drawing.Size(214, 332);
+            this.data_tvw_dbs.Size = new System.Drawing.Size(215, 348);
             this.data_tvw_dbs.TabIndex = 0;
             this.data_tvw_dbs.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.data_tvw_dbs_AfterCheck);
             this.data_tvw_dbs.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.data_tvw_dbs_AfterSelect);
@@ -1321,10 +1342,10 @@
             this.data_dbs_tsl_exportDatas,
             this.toolStripLabel2,
             this.data_dbs_cob_db_encoding});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 360);
+            this.toolStrip1.Location = new System.Drawing.Point(0, 376);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip1.Size = new System.Drawing.Size(553, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(556, 25);
             this.toolStrip1.TabIndex = 5;
             this.toolStrip1.Text = "toolStrip1";
             this.toolStrip1.TextChanged += new System.EventHandler(this.toolStrip1_TextChanged);
@@ -1402,7 +1423,7 @@
             this.groupBox4.Controls.Add(this.data_dbs_lvw_data);
             this.groupBox4.Location = new System.Drawing.Point(3, 5);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(547, 352);
+            this.groupBox4.Size = new System.Drawing.Size(550, 368);
             this.groupBox4.TabIndex = 1;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "获取数据";
@@ -1416,7 +1437,7 @@
             this.data_dbs_lvw_data.GridLines = true;
             this.data_dbs_lvw_data.Location = new System.Drawing.Point(3, 17);
             this.data_dbs_lvw_data.Name = "data_dbs_lvw_data";
-            this.data_dbs_lvw_data.Size = new System.Drawing.Size(541, 332);
+            this.data_dbs_lvw_data.Size = new System.Drawing.Size(544, 348);
             this.data_dbs_lvw_data.TabIndex = 1;
             this.data_dbs_lvw_data.UseCompatibleStateImageBehavior = false;
             this.data_dbs_lvw_data.View = System.Windows.Forms.View.Details;
@@ -1474,35 +1495,56 @@
             this.tab_injectCenter.Location = new System.Drawing.Point(4, 23);
             this.tab_injectCenter.Name = "tab_injectCenter";
             this.tab_injectCenter.Padding = new System.Windows.Forms.Padding(3);
-            this.tab_injectCenter.Size = new System.Drawing.Size(802, 424);
+            this.tab_injectCenter.Size = new System.Drawing.Size(806, 440);
             this.tab_injectCenter.TabIndex = 0;
             this.tab_injectCenter.Text = "注入中心";
             this.tab_injectCenter.UseVisualStyleBackColor = true;
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.txt_inject_request);
+            this.groupBox1.Controls.Add(this.tabControl1);
             this.groupBox1.Controls.Add(this.groupBox3);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox1.Location = new System.Drawing.Point(3, 3);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(796, 418);
+            this.groupBox1.Size = new System.Drawing.Size(800, 434);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "数据包";
+            // 
+            // tabControl1
+            // 
+            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabControl1.Controls.Add(this.tab_datapack);
+            this.tabControl1.Controls.Add(this.tab_tokenset);
+            this.tabControl1.Location = new System.Drawing.Point(6, 13);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(564, 415);
+            this.tabControl1.TabIndex = 14;
+            // 
+            // tab_datapack
+            // 
+            this.tab_datapack.Controls.Add(this.txt_inject_request);
+            this.tab_datapack.Location = new System.Drawing.Point(4, 22);
+            this.tab_datapack.Name = "tab_datapack";
+            this.tab_datapack.Padding = new System.Windows.Forms.Padding(3);
+            this.tab_datapack.Size = new System.Drawing.Size(556, 389);
+            this.tab_datapack.TabIndex = 0;
+            this.tab_datapack.Text = "HTTP请求数据包";
+            this.tab_datapack.UseVisualStyleBackColor = true;
             // 
             // txt_inject_request
             // 
-            this.txt_inject_request.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.txt_inject_request.ContextMenuStrip = this.cms_dataPacks;
-            this.txt_inject_request.Location = new System.Drawing.Point(15, 20);
+            this.txt_inject_request.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txt_inject_request.Location = new System.Drawing.Point(3, 3);
             this.txt_inject_request.MaxLength = 1024000;
             this.txt_inject_request.Multiline = true;
             this.txt_inject_request.Name = "txt_inject_request";
             this.txt_inject_request.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txt_inject_request.Size = new System.Drawing.Size(548, 392);
+            this.txt_inject_request.Size = new System.Drawing.Size(550, 383);
             this.txt_inject_request.TabIndex = 13;
             this.txt_inject_request.Text = resources.GetString("txt_inject_request.Text");
             this.txt_inject_request.TextChanged += new System.EventHandler(this.txt_inject_request_TextChanged);
@@ -1547,23 +1589,124 @@
             this.tsmi_createPackByURL.Text = "根据URL生成数据包";
             this.tsmi_createPackByURL.Click += new System.EventHandler(this.tsmi_createPackByURL_Click);
             // 
+            // tab_tokenset
+            // 
+            this.tab_tokenset.Controls.Add(this.groupBox17);
+            this.tab_tokenset.Controls.Add(this.groupBox19);
+            this.tab_tokenset.Location = new System.Drawing.Point(4, 22);
+            this.tab_tokenset.Name = "tab_tokenset";
+            this.tab_tokenset.Padding = new System.Windows.Forms.Padding(3);
+            this.tab_tokenset.Size = new System.Drawing.Size(556, 389);
+            this.tab_tokenset.TabIndex = 1;
+            this.tab_tokenset.Text = "Token/随机值/验证码处理";
+            this.tab_tokenset.UseVisualStyleBackColor = true;
+            // 
+            // groupBox17
+            // 
+            this.groupBox17.Controls.Add(this.token_txt_http_request);
+            this.groupBox17.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBox17.Location = new System.Drawing.Point(3, 3);
+            this.groupBox17.Name = "groupBox17";
+            this.groupBox17.Size = new System.Drawing.Size(550, 250);
+            this.groupBox17.TabIndex = 25;
+            this.groupBox17.TabStop = false;
+            this.groupBox17.Text = "获取Token的HTTP请求包";
+            // 
+            // token_txt_http_request
+            // 
+            this.token_txt_http_request.AcceptsReturn = true;
+            this.token_txt_http_request.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.token_txt_http_request.Location = new System.Drawing.Point(3, 17);
+            this.token_txt_http_request.MaxLength = 65535;
+            this.token_txt_http_request.Multiline = true;
+            this.token_txt_http_request.Name = "token_txt_http_request";
+            this.token_txt_http_request.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.token_txt_http_request.Size = new System.Drawing.Size(544, 230);
+            this.token_txt_http_request.TabIndex = 8;
+            this.token_txt_http_request.TextChanged += new System.EventHandler(this.token_txt_http_request_TextChanged);
+            // 
+            // groupBox19
+            // 
+            this.groupBox19.Controls.Add(this.label36);
+            this.groupBox19.Controls.Add(this.label37);
+            this.groupBox19.Controls.Add(this.token_txt_endStr);
+            this.groupBox19.Controls.Add(this.token_txt_startStr);
+            this.groupBox19.Controls.Add(this.token_btn_testGetToken);
+            this.groupBox19.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.groupBox19.Location = new System.Drawing.Point(3, 253);
+            this.groupBox19.Name = "groupBox19";
+            this.groupBox19.Size = new System.Drawing.Size(550, 133);
+            this.groupBox19.TabIndex = 25;
+            this.groupBox19.TabStop = false;
+            this.groupBox19.Text = "随机Token抓取规则";
+            // 
+            // label36
+            // 
+            this.label36.AutoSize = true;
+            this.label36.Location = new System.Drawing.Point(226, 26);
+            this.label36.Name = "label36";
+            this.label36.Size = new System.Drawing.Size(65, 12);
+            this.label36.TabIndex = 16;
+            this.label36.Text = "结束字符：";
+            // 
+            // label37
+            // 
+            this.label37.AutoSize = true;
+            this.label37.Location = new System.Drawing.Point(32, 26);
+            this.label37.Name = "label37";
+            this.label37.Size = new System.Drawing.Size(65, 12);
+            this.label37.TabIndex = 16;
+            this.label37.Text = "开始字符：";
+            // 
+            // token_txt_endStr
+            // 
+            this.token_txt_endStr.AcceptsReturn = true;
+            this.token_txt_endStr.Location = new System.Drawing.Point(297, 23);
+            this.token_txt_endStr.MaxLength = 100;
+            this.token_txt_endStr.Name = "token_txt_endStr";
+            this.token_txt_endStr.Size = new System.Drawing.Size(84, 21);
+            this.token_txt_endStr.TabIndex = 8;
+            this.token_txt_endStr.TextChanged += new System.EventHandler(this.token_txt_endStr_TextChanged);
+            // 
+            // token_txt_startStr
+            // 
+            this.token_txt_startStr.AcceptsReturn = true;
+            this.token_txt_startStr.Location = new System.Drawing.Point(103, 23);
+            this.token_txt_startStr.MaxLength = 100;
+            this.token_txt_startStr.Name = "token_txt_startStr";
+            this.token_txt_startStr.Size = new System.Drawing.Size(84, 21);
+            this.token_txt_startStr.TabIndex = 8;
+            this.token_txt_startStr.TextChanged += new System.EventHandler(this.token_txt_startStr_TextChanged);
+            // 
+            // token_btn_testGetToken
+            // 
+            this.token_btn_testGetToken.Location = new System.Drawing.Point(429, 23);
+            this.token_btn_testGetToken.Name = "token_btn_testGetToken";
+            this.token_btn_testGetToken.Size = new System.Drawing.Size(115, 23);
+            this.token_btn_testGetToken.TabIndex = 6;
+            this.token_btn_testGetToken.Text = "测试抓取Token";
+            this.token_btn_testGetToken.UseVisualStyleBackColor = true;
+            this.token_btn_testGetToken.Click += new System.EventHandler(this.token_btn_testGetToken_Click);
+            // 
             // groupBox3
             // 
             this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox3.Controls.Add(this.groupBox16);
+            this.groupBox3.Controls.Add(this.btn_inject_sendData);
+            this.groupBox3.Controls.Add(this.btn_inject_clearRequest);
             this.groupBox3.Controls.Add(this.groupBox15);
             this.groupBox3.Controls.Add(this.chk_openURLEncoding);
             this.groupBox3.Controls.Add(this.btn_inject_setEncodingRange);
             this.groupBox3.Controls.Add(this.label13);
             this.groupBox3.Controls.Add(this.label12);
-            this.groupBox3.Controls.Add(this.btn_inject_clearRequest);
-            this.groupBox3.Controls.Add(this.btn_inject_sendData);
+            this.groupBox3.Controls.Add(this.btn_inject_randStr);
+            this.groupBox3.Controls.Add(this.btn_inject_setTokenLocation);
             this.groupBox3.Controls.Add(this.chk_inject_foward_302);
             this.groupBox3.Controls.Add(this.btn_inject_setInject);
-            this.groupBox3.Location = new System.Drawing.Point(569, 13);
+            this.groupBox3.Location = new System.Drawing.Point(573, 13);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(225, 399);
+            this.groupBox3.Size = new System.Drawing.Size(225, 415);
             this.groupBox3.TabIndex = 12;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "注入设置";
@@ -1576,9 +1719,9 @@
             this.groupBox16.Controls.Add(this.txt_inject_showColumn);
             this.groupBox16.Controls.Add(this.label8);
             this.groupBox16.Controls.Add(this.txt_inject_unionColumnsCount);
-            this.groupBox16.Location = new System.Drawing.Point(0, 127);
+            this.groupBox16.Location = new System.Drawing.Point(1, 157);
             this.groupBox16.Name = "groupBox16";
-            this.groupBox16.Size = new System.Drawing.Size(225, 92);
+            this.groupBox16.Size = new System.Drawing.Size(228, 94);
             this.groupBox16.TabIndex = 14;
             this.groupBox16.TabStop = false;
             this.groupBox16.Text = "Union注入取数据配置";
@@ -1627,14 +1770,15 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox15.Controls.Add(this.cbox_inject_type);
+            this.groupBox15.Controls.Add(this.label29);
             this.groupBox15.Controls.Add(this.label27);
             this.groupBox15.Controls.Add(this.inject_btn_autoFindKey);
             this.groupBox15.Controls.Add(this.injectConfig_btn_checkKey);
             this.groupBox15.Controls.Add(this.txt_inject_key);
             this.groupBox15.Controls.Add(this.chk_inject_reverseKey);
-            this.groupBox15.Location = new System.Drawing.Point(0, 233);
+            this.groupBox15.Location = new System.Drawing.Point(0, 257);
             this.groupBox15.Name = "groupBox15";
-            this.groupBox15.Size = new System.Drawing.Size(227, 166);
+            this.groupBox15.Size = new System.Drawing.Size(227, 158);
             this.groupBox15.TabIndex = 14;
             this.groupBox15.TabStop = false;
             this.groupBox15.Text = "Bool盲注取数据配置";
@@ -1654,6 +1798,15 @@
             this.cbox_inject_type.TabIndex = 27;
             this.cbox_inject_type.SelectedIndexChanged += new System.EventHandler(this.cbox_inject_type_SelectedIndexChanged);
             // 
+            // label29
+            // 
+            this.label29.AutoSize = true;
+            this.label29.Location = new System.Drawing.Point(15, 93);
+            this.label29.Name = "label29";
+            this.label29.Size = new System.Drawing.Size(65, 12);
+            this.label29.TabIndex = 26;
+            this.label29.Text = "关 键 字：";
+            // 
             // label27
             // 
             this.label27.AutoSize = true;
@@ -1665,7 +1818,7 @@
             // 
             // inject_btn_autoFindKey
             // 
-            this.inject_btn_autoFindKey.Location = new System.Drawing.Point(17, 92);
+            this.inject_btn_autoFindKey.Location = new System.Drawing.Point(17, 125);
             this.inject_btn_autoFindKey.Name = "inject_btn_autoFindKey";
             this.inject_btn_autoFindKey.Size = new System.Drawing.Size(75, 23);
             this.inject_btn_autoFindKey.TabIndex = 24;
@@ -1675,7 +1828,7 @@
             // 
             // injectConfig_btn_checkKey
             // 
-            this.injectConfig_btn_checkKey.Location = new System.Drawing.Point(133, 92);
+            this.injectConfig_btn_checkKey.Location = new System.Drawing.Point(133, 125);
             this.injectConfig_btn_checkKey.Name = "injectConfig_btn_checkKey";
             this.injectConfig_btn_checkKey.Size = new System.Drawing.Size(75, 23);
             this.injectConfig_btn_checkKey.TabIndex = 23;
@@ -1685,10 +1838,10 @@
             // 
             // txt_inject_key
             // 
-            this.txt_inject_key.Location = new System.Drawing.Point(115, 59);
+            this.txt_inject_key.Location = new System.Drawing.Point(83, 90);
             this.txt_inject_key.MaxLength = 20;
             this.txt_inject_key.Name = "txt_inject_key";
-            this.txt_inject_key.Size = new System.Drawing.Size(93, 21);
+            this.txt_inject_key.Size = new System.Drawing.Size(123, 21);
             this.txt_inject_key.TabIndex = 7;
             this.txt_inject_key.Text = "个";
             this.txt_inject_key.TextChanged += new System.EventHandler(this.txt_inject_key_TextChanged);
@@ -1698,9 +1851,9 @@
             this.chk_inject_reverseKey.AutoSize = true;
             this.chk_inject_reverseKey.Location = new System.Drawing.Point(17, 61);
             this.chk_inject_reverseKey.Name = "chk_inject_reverseKey";
-            this.chk_inject_reverseKey.Size = new System.Drawing.Size(84, 16);
+            this.chk_inject_reverseKey.Size = new System.Drawing.Size(192, 16);
             this.chk_inject_reverseKey.TabIndex = 22;
-            this.chk_inject_reverseKey.Text = "反取判断值";
+            this.chk_inject_reverseKey.Text = "是否反取判断值[盲注逻辑反转]";
             this.chk_inject_reverseKey.UseVisualStyleBackColor = true;
             this.chk_inject_reverseKey.CheckedChanged += new System.EventHandler(this.chk_inject_reverseKey_CheckedChanged);
             // 
@@ -1743,9 +1896,19 @@
             this.label12.Size = new System.Drawing.Size(0, 12);
             this.label12.TabIndex = 17;
             // 
+            // btn_inject_setTokenLocation
+            // 
+            this.btn_inject_setTokenLocation.Location = new System.Drawing.Point(17, 87);
+            this.btn_inject_setTokenLocation.Name = "btn_inject_setTokenLocation";
+            this.btn_inject_setTokenLocation.Size = new System.Drawing.Size(75, 23);
+            this.btn_inject_setTokenLocation.TabIndex = 10;
+            this.btn_inject_setTokenLocation.Text = "标记Token";
+            this.btn_inject_setTokenLocation.UseVisualStyleBackColor = true;
+            this.btn_inject_setTokenLocation.Click += new System.EventHandler(this.btn_inject_setTokenLocation_Click);
+            // 
             // btn_inject_clearRequest
             // 
-            this.btn_inject_clearRequest.Location = new System.Drawing.Point(131, 89);
+            this.btn_inject_clearRequest.Location = new System.Drawing.Point(131, 124);
             this.btn_inject_clearRequest.Name = "btn_inject_clearRequest";
             this.btn_inject_clearRequest.Size = new System.Drawing.Size(75, 23);
             this.btn_inject_clearRequest.TabIndex = 10;
@@ -1755,7 +1918,7 @@
             // 
             // btn_inject_sendData
             // 
-            this.btn_inject_sendData.Location = new System.Drawing.Point(17, 89);
+            this.btn_inject_sendData.Location = new System.Drawing.Point(17, 124);
             this.btn_inject_sendData.Name = "btn_inject_sendData";
             this.btn_inject_sendData.Size = new System.Drawing.Size(75, 23);
             this.btn_inject_sendData.TabIndex = 14;
@@ -1798,10 +1961,10 @@
             this.mytab.Controls.Add(this.tab_scanInjection);
             this.mytab.Controls.Add(this.tab_logCenter);
             this.mytab.ImageList = this.myicon_list;
-            this.mytab.Location = new System.Drawing.Point(12, 112);
+            this.mytab.Location = new System.Drawing.Point(9, 120);
             this.mytab.Name = "mytab";
             this.mytab.SelectedIndex = 0;
-            this.mytab.Size = new System.Drawing.Size(810, 451);
+            this.mytab.Size = new System.Drawing.Size(814, 467);
             this.mytab.TabIndex = 1;
             // 
             // tab_cmd
@@ -1811,7 +1974,7 @@
             this.tab_cmd.ImageKey = "cmd.png";
             this.tab_cmd.Location = new System.Drawing.Point(4, 23);
             this.tab_cmd.Name = "tab_cmd";
-            this.tab_cmd.Size = new System.Drawing.Size(802, 424);
+            this.tab_cmd.Size = new System.Drawing.Size(806, 440);
             this.tab_cmd.TabIndex = 6;
             this.tab_cmd.Text = "命令执行";
             this.tab_cmd.UseVisualStyleBackColor = true;
@@ -1824,7 +1987,7 @@
             this.cmd_txt_result.Multiline = true;
             this.cmd_txt_result.Name = "cmd_txt_result";
             this.cmd_txt_result.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.cmd_txt_result.Size = new System.Drawing.Size(802, 348);
+            this.cmd_txt_result.Size = new System.Drawing.Size(806, 364);
             this.cmd_txt_result.TabIndex = 2;
             this.cmd_txt_result.TextChanged += new System.EventHandler(this.cmd_txt_result_TextChanged);
             this.cmd_txt_result.KeyDown += new System.Windows.Forms.KeyEventHandler(this.cmd_txt_result_KeyDown);
@@ -1838,7 +2001,7 @@
             this.groupBox8.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox8.Location = new System.Drawing.Point(0, 0);
             this.groupBox8.Name = "groupBox8";
-            this.groupBox8.Size = new System.Drawing.Size(802, 76);
+            this.groupBox8.Size = new System.Drawing.Size(806, 76);
             this.groupBox8.TabIndex = 1;
             this.groupBox8.TabStop = false;
             this.groupBox8.Text = "命令执行";
@@ -1889,18 +2052,16 @@
             this.tab_bypass.ImageKey = "codeChange.png";
             this.tab_bypass.Location = new System.Drawing.Point(4, 23);
             this.tab_bypass.Name = "tab_bypass";
-            this.tab_bypass.Size = new System.Drawing.Size(802, 424);
+            this.tab_bypass.Size = new System.Drawing.Size(806, 440);
             this.tab_bypass.TabIndex = 7;
             this.tab_bypass.Text = "注入绕过";
             this.tab_bypass.UseVisualStyleBackColor = true;
             // 
             // groupBox9
             // 
+            this.groupBox9.Controls.Add(this.groupBox18);
             this.groupBox9.Controls.Add(this.cbox_bypass_urlencode_count);
             this.groupBox9.Controls.Add(this.cbox_base64Count);
-            this.groupBox9.Controls.Add(this.bypass_btn_saveTemplate);
-            this.groupBox9.Controls.Add(this.bypass_cbox_loadTemplate);
-            this.groupBox9.Controls.Add(this.label28);
             this.groupBox9.Controls.Add(this.chk_reaplaceBeforURLEncode);
             this.groupBox9.Controls.Add(this.cob_keyRepalce);
             this.groupBox9.Controls.Add(this.label10);
@@ -1909,6 +2070,7 @@
             this.groupBox9.Controls.Add(this.label18);
             this.groupBox9.Controls.Add(this.label17);
             this.groupBox9.Controls.Add(this.bypass_cbox_sendHTTPSleepTime);
+            this.groupBox9.Controls.Add(this.bypass_chk_usebetween);
             this.groupBox9.Controls.Add(this.bypass_chk_inculdeStr);
             this.groupBox9.Controls.Add(this.label16);
             this.groupBox9.Controls.Add(this.bypass_txt_replaceTo);
@@ -1919,10 +2081,55 @@
             this.groupBox9.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox9.Location = new System.Drawing.Point(0, 0);
             this.groupBox9.Name = "groupBox9";
-            this.groupBox9.Size = new System.Drawing.Size(802, 424);
+            this.groupBox9.Size = new System.Drawing.Size(806, 440);
             this.groupBox9.TabIndex = 1;
             this.groupBox9.TabStop = false;
             this.groupBox9.Text = "字符替换进行注入绕过";
+            // 
+            // groupBox18
+            // 
+            this.groupBox18.Controls.Add(this.bypass_btn_saveTemplate);
+            this.groupBox18.Controls.Add(this.bypass_cbox_loadTemplate);
+            this.groupBox18.Location = new System.Drawing.Point(422, 128);
+            this.groupBox18.Name = "groupBox18";
+            this.groupBox18.Size = new System.Drawing.Size(371, 55);
+            this.groupBox18.TabIndex = 25;
+            this.groupBox18.TabStop = false;
+            this.groupBox18.Text = "选择绕过模板";
+            // 
+            // bypass_btn_saveTemplate
+            // 
+            this.bypass_btn_saveTemplate.Location = new System.Drawing.Point(249, 20);
+            this.bypass_btn_saveTemplate.Name = "bypass_btn_saveTemplate";
+            this.bypass_btn_saveTemplate.Size = new System.Drawing.Size(115, 23);
+            this.bypass_btn_saveTemplate.TabIndex = 21;
+            this.bypass_btn_saveTemplate.Text = "保存当前绕过模板";
+            this.bypass_btn_saveTemplate.UseVisualStyleBackColor = true;
+            this.bypass_btn_saveTemplate.Click += new System.EventHandler(this.bypass_btn_saveTemplate_Click);
+            // 
+            // bypass_cbox_loadTemplate
+            // 
+            this.bypass_cbox_loadTemplate.FormattingEnabled = true;
+            this.bypass_cbox_loadTemplate.Items.AddRange(new object[] {
+            "我要自己选择"});
+            this.bypass_cbox_loadTemplate.Location = new System.Drawing.Point(9, 22);
+            this.bypass_cbox_loadTemplate.Name = "bypass_cbox_loadTemplate";
+            this.bypass_cbox_loadTemplate.Size = new System.Drawing.Size(225, 20);
+            this.bypass_cbox_loadTemplate.TabIndex = 20;
+            this.bypass_cbox_loadTemplate.TextChanged += new System.EventHandler(this.bypass_cbox_loadTemplate_TextChanged);
+            // 
+            // cbox_bypass_urlencode_count
+            // 
+            this.cbox_bypass_urlencode_count.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbox_bypass_urlencode_count.FormattingEnabled = true;
+            this.cbox_bypass_urlencode_count.Items.AddRange(new object[] {
+            "一次",
+            "二次"});
+            this.cbox_bypass_urlencode_count.Location = new System.Drawing.Point(329, 23);
+            this.cbox_bypass_urlencode_count.Name = "cbox_bypass_urlencode_count";
+            this.cbox_bypass_urlencode_count.Size = new System.Drawing.Size(78, 20);
+            this.cbox_bypass_urlencode_count.TabIndex = 23;
+            this.cbox_bypass_urlencode_count.TextChanged += new System.EventHandler(this.cbox_bypass_urlencode_count_TextChanged);
             // 
             // cbox_base64Count
             // 
@@ -1932,41 +2139,11 @@
             "一次",
             "二次",
             "三次"});
-            this.cbox_base64Count.Location = new System.Drawing.Point(703, 24);
+            this.cbox_base64Count.Location = new System.Drawing.Point(718, 23);
             this.cbox_base64Count.Name = "cbox_base64Count";
             this.cbox_base64Count.Size = new System.Drawing.Size(75, 20);
             this.cbox_base64Count.TabIndex = 22;
             this.cbox_base64Count.TextChanged += new System.EventHandler(this.cbox_base64Count_TextChanged);
-            // 
-            // bypass_btn_saveTemplate
-            // 
-            this.bypass_btn_saveTemplate.Location = new System.Drawing.Point(421, 190);
-            this.bypass_btn_saveTemplate.Name = "bypass_btn_saveTemplate";
-            this.bypass_btn_saveTemplate.Size = new System.Drawing.Size(150, 23);
-            this.bypass_btn_saveTemplate.TabIndex = 21;
-            this.bypass_btn_saveTemplate.Text = "保存当前绕过配置成模板";
-            this.bypass_btn_saveTemplate.UseVisualStyleBackColor = true;
-            this.bypass_btn_saveTemplate.Click += new System.EventHandler(this.bypass_btn_saveTemplate_Click);
-            // 
-            // bypass_cbox_loadTemplate
-            // 
-            this.bypass_cbox_loadTemplate.FormattingEnabled = true;
-            this.bypass_cbox_loadTemplate.Items.AddRange(new object[] {
-            "我要自己选择"});
-            this.bypass_cbox_loadTemplate.Location = new System.Drawing.Point(541, 151);
-            this.bypass_cbox_loadTemplate.Name = "bypass_cbox_loadTemplate";
-            this.bypass_cbox_loadTemplate.Size = new System.Drawing.Size(237, 20);
-            this.bypass_cbox_loadTemplate.TabIndex = 20;
-            this.bypass_cbox_loadTemplate.TextChanged += new System.EventHandler(this.bypass_cbox_loadTemplate_TextChanged);
-            // 
-            // label28
-            // 
-            this.label28.AutoSize = true;
-            this.label28.Location = new System.Drawing.Point(422, 154);
-            this.label28.Name = "label28";
-            this.label28.Size = new System.Drawing.Size(113, 12);
-            this.label28.TabIndex = 19;
-            this.label28.Text = "加载注入绕过模板：";
             // 
             // chk_reaplaceBeforURLEncode
             // 
@@ -1988,16 +2165,16 @@
             "随机大小写",
             "关键字大写",
             "关键字小写"});
-            this.cob_keyRepalce.Location = new System.Drawing.Point(658, 64);
+            this.cob_keyRepalce.Location = new System.Drawing.Point(662, 58);
             this.cob_keyRepalce.Name = "cob_keyRepalce";
-            this.cob_keyRepalce.Size = new System.Drawing.Size(120, 20);
+            this.cob_keyRepalce.Size = new System.Drawing.Size(131, 20);
             this.cob_keyRepalce.TabIndex = 17;
             this.cob_keyRepalce.SelectedIndexChanged += new System.EventHandler(this.cob_keyRepalce_SelectedIndexChanged);
             // 
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(587, 67);
+            this.label10.Location = new System.Drawing.Point(591, 61);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(65, 12);
             this.label10.TabIndex = 16;
@@ -2006,7 +2183,7 @@
             // bypass_chk_base64
             // 
             this.bypass_chk_base64.AutoSize = true;
-            this.bypass_chk_base64.Location = new System.Drawing.Point(589, 27);
+            this.bypass_chk_base64.Location = new System.Drawing.Point(592, 25);
             this.bypass_chk_base64.Name = "bypass_chk_base64";
             this.bypass_chk_base64.Size = new System.Drawing.Size(108, 16);
             this.bypass_chk_base64.TabIndex = 15;
@@ -2022,16 +2199,16 @@
             "X-Forwarded-For",
             "Remote-Addr",
             "Client_Ip"});
-            this.bypass_cbox_randIPToHeader.Location = new System.Drawing.Point(489, 108);
+            this.bypass_cbox_randIPToHeader.Location = new System.Drawing.Point(662, 93);
             this.bypass_cbox_randIPToHeader.Name = "bypass_cbox_randIPToHeader";
-            this.bypass_cbox_randIPToHeader.Size = new System.Drawing.Size(289, 20);
+            this.bypass_cbox_randIPToHeader.Size = new System.Drawing.Size(131, 20);
             this.bypass_cbox_randIPToHeader.TabIndex = 14;
             this.bypass_cbox_randIPToHeader.TextChanged += new System.EventHandler(this.bypass_cbox_randIPToHeader_TextChanged);
             // 
             // label18
             // 
             this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(422, 111);
+            this.label18.Location = new System.Drawing.Point(590, 96);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(65, 12);
             this.label18.TabIndex = 13;
@@ -2040,7 +2217,7 @@
             // label17
             // 
             this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(422, 66);
+            this.label17.Location = new System.Drawing.Point(424, 61);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(65, 12);
             this.label17.TabIndex = 12;
@@ -2070,16 +2247,27 @@
             "8000",
             "9000",
             "10000"});
-            this.bypass_cbox_sendHTTPSleepTime.Location = new System.Drawing.Point(492, 63);
+            this.bypass_cbox_sendHTTPSleepTime.Location = new System.Drawing.Point(494, 58);
             this.bypass_cbox_sendHTTPSleepTime.Name = "bypass_cbox_sendHTTPSleepTime";
             this.bypass_cbox_sendHTTPSleepTime.Size = new System.Drawing.Size(56, 20);
             this.bypass_cbox_sendHTTPSleepTime.TabIndex = 11;
             this.bypass_cbox_sendHTTPSleepTime.TextChanged += new System.EventHandler(this.bypass_cbox_sendHTTPSleepTime_TextChanged);
             // 
+            // bypass_chk_usebetween
+            // 
+            this.bypass_chk_usebetween.AutoSize = true;
+            this.bypass_chk_usebetween.Location = new System.Drawing.Point(422, 96);
+            this.bypass_chk_usebetween.Name = "bypass_chk_usebetween";
+            this.bypass_chk_usebetween.Size = new System.Drawing.Size(138, 16);
+            this.bypass_chk_usebetween.TabIndex = 3;
+            this.bypass_chk_usebetween.Text = "between绕过大于等于";
+            this.bypass_chk_usebetween.UseVisualStyleBackColor = true;
+            this.bypass_chk_usebetween.CheckedChanged += new System.EventHandler(this.bypass_chk_usebetween_CheckedChanged);
+            // 
             // bypass_chk_inculdeStr
             // 
             this.bypass_chk_inculdeStr.AutoSize = true;
-            this.bypass_chk_inculdeStr.Location = new System.Drawing.Point(421, 27);
+            this.bypass_chk_inculdeStr.Location = new System.Drawing.Point(426, 26);
             this.bypass_chk_inculdeStr.Name = "bypass_chk_inculdeStr";
             this.bypass_chk_inculdeStr.Size = new System.Drawing.Size(126, 16);
             this.bypass_chk_inculdeStr.TabIndex = 3;
@@ -2122,9 +2310,9 @@
             this.col_replaceTo});
             this.bypass_lvw_replaceString.ContextMenuStrip = this.bypass_lvw_replaceString_cms;
             this.bypass_lvw_replaceString.FullRowSelect = true;
-            this.bypass_lvw_replaceString.Location = new System.Drawing.Point(20, 95);
+            this.bypass_lvw_replaceString.Location = new System.Drawing.Point(20, 96);
             this.bypass_lvw_replaceString.Name = "bypass_lvw_replaceString";
-            this.bypass_lvw_replaceString.Size = new System.Drawing.Size(387, 317);
+            this.bypass_lvw_replaceString.Size = new System.Drawing.Size(387, 332);
             this.bypass_lvw_replaceString.TabIndex = 7;
             this.bypass_lvw_replaceString.UseCompatibleStateImageBehavior = false;
             this.bypass_lvw_replaceString.View = System.Windows.Forms.View.Details;
@@ -2180,7 +2368,7 @@
             this.tab_encoding.ImageKey = "convert.png";
             this.tab_encoding.Location = new System.Drawing.Point(4, 23);
             this.tab_encoding.Name = "tab_encoding";
-            this.tab_encoding.Size = new System.Drawing.Size(802, 424);
+            this.tab_encoding.Size = new System.Drawing.Size(806, 440);
             this.tab_encoding.TabIndex = 5;
             this.tab_encoding.Text = "编码转换";
             this.tab_encoding.UseVisualStyleBackColor = true;
@@ -2192,9 +2380,9 @@
             this.groupBox13.Controls.Add(this.encode_cbox_encode);
             this.groupBox13.Controls.Add(this.encode_cbox_decode);
             this.groupBox13.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.groupBox13.Location = new System.Drawing.Point(0, 361);
+            this.groupBox13.Location = new System.Drawing.Point(0, 377);
             this.groupBox13.Name = "groupBox13";
-            this.groupBox13.Size = new System.Drawing.Size(802, 63);
+            this.groupBox13.Size = new System.Drawing.Size(806, 63);
             this.groupBox13.TabIndex = 8;
             this.groupBox13.TabStop = false;
             this.groupBox13.Text = "操作：";
@@ -2290,7 +2478,7 @@
             this.groupBox10.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox10.Location = new System.Drawing.Point(0, 0);
             this.groupBox10.Name = "groupBox10";
-            this.groupBox10.Size = new System.Drawing.Size(802, 97);
+            this.groupBox10.Size = new System.Drawing.Size(806, 97);
             this.groupBox10.TabIndex = 6;
             this.groupBox10.TabStop = false;
             this.groupBox10.Text = "输入：";
@@ -2303,7 +2491,7 @@
             this.encode_txt_input.Multiline = true;
             this.encode_txt_input.Name = "encode_txt_input";
             this.encode_txt_input.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.encode_txt_input.Size = new System.Drawing.Size(796, 77);
+            this.encode_txt_input.Size = new System.Drawing.Size(800, 77);
             this.encode_txt_input.TabIndex = 1;
             this.encode_txt_input.TextChanged += new System.EventHandler(this.encode_txt_encode_TextChanged);
             this.encode_txt_input.KeyDown += new System.Windows.Forms.KeyEventHandler(this.encode_txt_input_KeyDown);
@@ -2315,7 +2503,7 @@
             this.tab_scanInjection.ImageKey = "scan.png";
             this.tab_scanInjection.Location = new System.Drawing.Point(4, 23);
             this.tab_scanInjection.Name = "tab_scanInjection";
-            this.tab_scanInjection.Size = new System.Drawing.Size(802, 424);
+            this.tab_scanInjection.Size = new System.Drawing.Size(806, 440);
             this.tab_scanInjection.TabIndex = 8;
             this.tab_scanInjection.Text = "注入扫描";
             this.tab_scanInjection.UseVisualStyleBackColor = true;
@@ -2326,7 +2514,7 @@
             this.groupBox14.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox14.Location = new System.Drawing.Point(0, 95);
             this.groupBox14.Name = "groupBox14";
-            this.groupBox14.Size = new System.Drawing.Size(802, 329);
+            this.groupBox14.Size = new System.Drawing.Size(806, 345);
             this.groupBox14.TabIndex = 21;
             this.groupBox14.TabStop = false;
             // 
@@ -2343,8 +2531,8 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.scanInjection_lvw_result);
-            this.splitContainer2.Size = new System.Drawing.Size(796, 309);
-            this.splitContainer2.SplitterDistance = 237;
+            this.splitContainer2.Size = new System.Drawing.Size(800, 325);
+            this.splitContainer2.SplitterDistance = 238;
             this.splitContainer2.TabIndex = 18;
             // 
             // scanInject_lsb_links
@@ -2356,7 +2544,7 @@
             this.scanInject_lsb_links.Location = new System.Drawing.Point(0, 0);
             this.scanInject_lsb_links.Name = "scanInject_lsb_links";
             this.scanInject_lsb_links.ScrollAlwaysVisible = true;
-            this.scanInject_lsb_links.Size = new System.Drawing.Size(237, 309);
+            this.scanInject_lsb_links.Size = new System.Drawing.Size(238, 325);
             this.scanInject_lsb_links.TabIndex = 0;
             // 
             // scanInjectionURL_cms
@@ -2397,7 +2585,7 @@
             this.scanInjection_lvw_result.GridLines = true;
             this.scanInjection_lvw_result.Location = new System.Drawing.Point(0, 0);
             this.scanInjection_lvw_result.Name = "scanInjection_lvw_result";
-            this.scanInjection_lvw_result.Size = new System.Drawing.Size(555, 309);
+            this.scanInjection_lvw_result.Size = new System.Drawing.Size(558, 325);
             this.scanInjection_lvw_result.TabIndex = 5;
             this.scanInjection_lvw_result.UseCompatibleStateImageBehavior = false;
             this.scanInjection_lvw_result.View = System.Windows.Forms.View.Details;
@@ -2527,7 +2715,7 @@
             this.groupBox12.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox12.Location = new System.Drawing.Point(0, 0);
             this.groupBox12.Name = "groupBox12";
-            this.groupBox12.Size = new System.Drawing.Size(802, 95);
+            this.groupBox12.Size = new System.Drawing.Size(806, 95);
             this.groupBox12.TabIndex = 21;
             this.groupBox12.TabStop = false;
             this.groupBox12.Text = " ";
@@ -2692,7 +2880,7 @@
             this.status_lbl_all_status,
             this.toolStripStatusLabel11,
             this.lbl_packsCount});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 659);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 681);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(834, 22);
             this.statusStrip1.TabIndex = 4;
@@ -2811,24 +2999,21 @@
             this.timer_scanInjection.Interval = 1000;
             this.timer_scanInjection.Tick += new System.EventHandler(this.timer_scanInjection_Tick);
             // 
-            // cbox_bypass_urlencode_count
+            // btn_inject_randStr
             // 
-            this.cbox_bypass_urlencode_count.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbox_bypass_urlencode_count.FormattingEnabled = true;
-            this.cbox_bypass_urlencode_count.Items.AddRange(new object[] {
-            "一次",
-            "二次"});
-            this.cbox_bypass_urlencode_count.Location = new System.Drawing.Point(329, 23);
-            this.cbox_bypass_urlencode_count.Name = "cbox_bypass_urlencode_count";
-            this.cbox_bypass_urlencode_count.Size = new System.Drawing.Size(78, 20);
-            this.cbox_bypass_urlencode_count.TabIndex = 23;
-            this.cbox_bypass_urlencode_count.TextChanged += new System.EventHandler(this.cbox_bypass_urlencode_count_TextChanged);
+            this.btn_inject_randStr.Location = new System.Drawing.Point(131, 87);
+            this.btn_inject_randStr.Name = "btn_inject_randStr";
+            this.btn_inject_randStr.Size = new System.Drawing.Size(75, 23);
+            this.btn_inject_randStr.TabIndex = 10;
+            this.btn_inject_randStr.Text = "Rand随机值";
+            this.btn_inject_randStr.UseVisualStyleBackColor = true;
+            this.btn_inject_randStr.Click += new System.EventHandler(this.btn_inject_randStr_Click);
             // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(834, 681);
+            this.ClientSize = new System.Drawing.Size(834, 703);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.gb_logo);
             this.Controls.Add(this.mytab);
@@ -2837,7 +3022,7 @@
             this.MainMenuStrip = this.menuStrip_main;
             this.Name = "Main";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "超级SQL注入工具 v1.0 正式版 20160525";
+            this.Text = "超级SQL注入工具 v1.0 正式版";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Main_FormClosing);
             this.Shown += new System.EventHandler(this.Main_Shown);
             this.gb_basic.ResumeLayout(false);
@@ -2885,8 +3070,15 @@
             this.cms_data_dbs_lvw_data.ResumeLayout(false);
             this.tab_injectCenter.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            this.tabControl1.ResumeLayout(false);
+            this.tab_datapack.ResumeLayout(false);
+            this.tab_datapack.PerformLayout();
             this.cms_dataPacks.ResumeLayout(false);
+            this.tab_tokenset.ResumeLayout(false);
+            this.groupBox17.ResumeLayout(false);
+            this.groupBox17.PerformLayout();
+            this.groupBox19.ResumeLayout(false);
+            this.groupBox19.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             this.groupBox16.ResumeLayout(false);
@@ -2901,6 +3093,7 @@
             this.tab_bypass.ResumeLayout(false);
             this.groupBox9.ResumeLayout(false);
             this.groupBox9.PerformLayout();
+            this.groupBox18.ResumeLayout(false);
             this.bypass_lvw_replaceString_cms.ResumeLayout(false);
             this.tab_encoding.ResumeLayout(false);
             this.groupBox13.ResumeLayout(false);
@@ -3165,12 +3358,27 @@
         private System.Windows.Forms.ToolStripMenuItem tsmi_openURL;
         private System.Windows.Forms.ToolStripMenuItem tsmi_tsmi_opentestURL;
         private System.Windows.Forms.ComboBox bypass_cbox_loadTemplate;
-        private System.Windows.Forms.Label label28;
         private System.Windows.Forms.Button bypass_btn_saveTemplate;
         private System.Windows.Forms.ComboBox cbox_base64Count;
         private System.Windows.Forms.ToolStripMenuItem tsmi_tsmi_exortOldURL;
         private System.Windows.Forms.ToolStripMenuItem tsmi_tsmi_exortTestURL;
         private System.Windows.Forms.ComboBox cbox_bypass_urlencode_count;
+        private System.Windows.Forms.CheckBox bypass_chk_usebetween;
+        private System.Windows.Forms.GroupBox groupBox18;
+        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabPage tab_datapack;
+        private System.Windows.Forms.TabPage tab_tokenset;
+        private System.Windows.Forms.GroupBox groupBox19;
+        private System.Windows.Forms.Label label36;
+        private System.Windows.Forms.Label label37;
+        private System.Windows.Forms.TextBox token_txt_endStr;
+        private System.Windows.Forms.TextBox token_txt_startStr;
+        private System.Windows.Forms.Button token_btn_testGetToken;
+        private System.Windows.Forms.Label label29;
+        private System.Windows.Forms.GroupBox groupBox17;
+        private System.Windows.Forms.TextBox token_txt_http_request;
+        private System.Windows.Forms.Button btn_inject_setTokenLocation;
+        private System.Windows.Forms.Button btn_inject_randStr;
     }
 }
 

@@ -13,9 +13,10 @@ namespace SuperSQLInjection.bypass
     {
         public static String strReplaceCenter(Config config, String request, Hashtable replaceList)
         {
-            
+            //修改随机值
+            request = Regex.Replace(request, "(\\<Rand\\>[.\\s\\S]*?\\<\\/Rand\\>)", System.Guid.NewGuid().ToString("N"));
             //找到需要处理的字符
-            MatchCollection mc = Regex.Matches(request, "(?<=(\\<sEncode\\>))[.\\s\\S]*?(?=(\\<eEncode\\>))");
+            MatchCollection mc = Regex.Matches(request, "(?<=(\\<Encode\\>))[.\\s\\S]*?(?=(\\<\\/Encode\\>))");
             String str="";
             foreach (Match m in mc)
             {
@@ -33,7 +34,7 @@ namespace SuperSQLInjection.bypass
                         if (!"".Equals(val)) {
                             split = val;
                         }
-                        str = ReplaceString(str, split);
+                        str = IncludeString(str);
                     }
                     if (config.isOpenURLEncoding)
                     {
@@ -46,7 +47,7 @@ namespace SuperSQLInjection.bypass
                    if (config.inculdeStr)
                     {
                         ///*!包含*/
-                        str = ReplaceString(str, "%20");
+                        str = IncludeString(str);
                     }
                    if (config.isOpenURLEncoding)
                    {
@@ -71,7 +72,7 @@ namespace SuperSQLInjection.bypass
                     str = base64Encoding(str,config.base64Count);
                 }
                 //替换request
-                request = request.Replace("<sEncode>" + m.Value + "<eEncode>", str);
+                request = request.Replace("<Encode>" + m.Value + "</Encode>", str);
             }
             return request;
         }
@@ -105,7 +106,7 @@ namespace SuperSQLInjection.bypass
                     {
                         String key = ite.Key.ToString();
                         if (!String.IsNullOrEmpty(key)) {
-                            str = str.Replace(key, ite.Value + "");
+                            str = str.ToLower().Replace(key, ite.Value + "");
                         }
                         
                     }
@@ -120,23 +121,30 @@ namespace SuperSQLInjection.bypass
 
         }
 
-        public static String ReplaceString(String oldStr,String splitStr)
+        public static String IncludeString(String str)
         {
-            StringBuilder sb = new StringBuilder();
             try
             {
-
-                String[] strs = Regex.Split(oldStr, splitStr.Replace("/**/","/\\*\\*/"));
-                for (int i = 0; i < strs.Length; i++) {
-                    sb.Append("/*!" + strs[i] + "*/");
-                    sb.Append(splitStr);
+                MatchCollection mc = Regex.Matches(str, "[a-zA-Z_\\.\\(\\@]{2,50}");
+                int sum = 0;
+                StringBuilder sb = new StringBuilder();
+                foreach (Match m in mc)
+                {
+                    if (m.Value.IndexOf("@") != -1)
+                    {
+                        continue;
+                    }
+                    str =str.Insert(m.Index+(sum), "/*!");
+                    sum += 3;
+                    str=str.Insert(m.Index+(sum) +m.Length, "*/");
+                    sum += 2;
                 }
             }
             catch (Exception e)
             {
                 Tools.SysLog("使用/*!*/包含关键字发生错误！----" + e.Message);
             }
-            return sb.ToString().Remove(sb.Length-splitStr.Length,splitStr.Length);
+            return str;
 
         }
 
@@ -186,12 +194,12 @@ namespace SuperSQLInjection.bypass
             StringBuilder sb = new StringBuilder();
             try
             {
-                MatchCollection mc = Regex.Matches(oldStr, "([a-zA-Z_\\.]+"+split+ "|[a-zA-Z_\\.]+\\()");
+                MatchCollection mc = Regex.Matches(oldStr, "([a-zA-Z_\\.]+|\\@+[a-zA-Z_]+|[a-zA-Z_]\\(\\)+)");
                 foreach (Match m in mc) {
 
                     String keyStr =m.Groups[0].Value;
-                    //库名.表不处理防止部分情况出现错误
-                    if (keyStr.IndexOf(".") != -1) {
+                    //库名.表,全局变量,环境变量不处理防止部分情况出现错误
+                    if (keyStr.IndexOf(".") != -1||keyStr.IndexOf("@") != -1 || keyStr.IndexOf("()") != -1) {
                         continue;
                     }
                     if (changeType == 1) {

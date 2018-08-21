@@ -56,6 +56,7 @@ namespace SuperSQLInjection
             this.cob_oneDomainMaxSpiderCount.Text = main.config.maxSpiderCount.ToString();
             this.cob_oneDomainMaxScanCount.Text = main.config.maxScanCount.ToString();
             this.chk_redirectDoGet.Checked=main.config.redirectDoGet;
+            this.cmb_unionFill.Text = main.config.unionFill;
 
         }
 
@@ -77,6 +78,11 @@ namespace SuperSQLInjection
         private void chk_redirectDoGet_CheckedChanged(object sender, EventArgs e)
         {
             main.config.redirectDoGet = this.chk_redirectDoGet.Checked;
+        }
+
+        private void cmb_unionFill_SelectedValueChanged(object sender, EventArgs e)
+        {
+            main.config.unionFill = this.cmb_unionFill.Text;
         }
     }
 }

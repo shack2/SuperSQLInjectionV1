@@ -151,8 +151,32 @@
     <Compile Include="tools\LikeMath.cs" />
     <Compile Include="tools\ListViewColumnSorter.cs" />
     <Compile Include="tools\MyCopare.cs" />
+    <Compile Include="tools\smartthread\CallerThreadContext.cs" />
+    <Compile Include="tools\smartthread\CanceledWorkItemsGroup.cs" />
+    <Compile Include="tools\smartthread\EventWaitHandle.cs" />
+    <Compile Include="tools\smartthread\EventWaitHandleFactory.cs" />
+    <Compile Include="tools\smartthread\Exceptions.cs" />
+    <Compile Include="tools\smartthread\Interfaces.cs" />
+    <Compile Include="tools\smartthread\InternalInterfaces.cs" />
+    <Compile Include="tools\smartthread\PriorityQueue.cs" />
+    <Compile Include="tools\smartthread\SLExt.cs" />
+    <Compile Include="tools\smartthread\SmartThreadPool.cs" />
+    <Compile Include="tools\smartthread\SmartThreadPool.ThreadEntry.cs" />
+    <Compile Include="tools\smartthread\Stopwatch.cs" />
+    <Compile Include="tools\smartthread\STPEventWaitHandle.cs" />
+    <Compile Include="tools\smartthread\STPPerformanceCounter.cs" />
+    <Compile Include="tools\smartthread\STPStartInfo.cs" />
+    <Compile Include="tools\smartthread\SynchronizedDictionary.cs" />
+    <Compile Include="tools\smartthread\WIGStartInfo.cs" />
+    <Compile Include="tools\smartthread\WorkItem.cs" />
+    <Compile Include="tools\smartthread\WorkItem.WorkItemResult.cs" />
+    <Compile Include="tools\smartthread\WorkItemFactory.cs" />
+    <Compile Include="tools\smartthread\WorkItemInfo.cs" />
+    <Compile Include="tools\smartthread\WorkItemResultTWrapper.cs" />
+    <Compile Include="tools\smartthread\WorkItemsGroup.cs" />
+    <Compile Include="tools\smartthread\WorkItemsGroupBase.cs" />
+    <Compile Include="tools\smartthread\WorkItemsQueue.cs" />
     <Compile Include="tools\StringLengthComparer.cs" />
-    <Compile Include="tools\thread\MyThreadPool.cs" />
     <Compile Include="tools\OnlineMD5.cs" />
     <Compile Include="tools\Tools.cs" />
     <Compile Include="tools\encode\URLTools.cs" />
@@ -224,7 +248,18 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="update.txt" />
+    <Folder Include="tools\thread\" />
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="MSScriptControl">
+      <Guid>{0E59F1D2-1FBE-11D0-8FF2-00A0D10038BC}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

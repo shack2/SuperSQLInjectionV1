@@ -39,6 +39,12 @@ namespace SuperSQLInjection.model
         public Boolean redirectDoGet = false;//重定向使用的请求方法
         public int maxClolumns = 50;
         public int urlencodeCount = 1;//url编码次数
+        public String unionFill = "1";//union查询填充列
+        //token
+        public String token_request = "";//获取token的request
+        public String token_startStr = "";//获取token的开始字符
+        public String token_endStr = "";//获取token的结束字符
+
 
         //file
         public String readFileEncoding = "GBK";
@@ -56,6 +62,8 @@ namespace SuperSQLInjection.model
         public String replaceStrs="";//字符替换
         public Boolean base64 = false;//base64
         public int base64Count = 0;
+        public Boolean useBetweenByPass = false;//between绕过
+
         //scan
         public int level = 0;
         public int linkCount = 1;

