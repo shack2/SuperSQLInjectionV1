@@ -330,11 +330,13 @@ namespace tools
         public static Boolean isTrue(ServerInfo server,String key,Boolean reverKey,KeyType keyType)
         {
             switch (keyType) {
+               
                 case KeyType.Key:
 
                     //用关键字判断
-                    if (server.body.Length > 0 && server.body.IndexOf(key) != -1)
+                    if (server.body.Length > 0 && server.body.IndexOf(key)==-1)
                     {
+                        ;
                         if (reverKey)
                         {
                             return false;
@@ -350,6 +352,26 @@ namespace tools
                         return false;
                     }
 
+                case KeyType.Reg:
+
+                    //用正则判断
+                    if (server.body.Length > 0 && Regex.IsMatch(server.body, key))
+                    {
+                        ;
+                        if (reverKey)
+                        {
+                            return false;
+                        }
+                        return true;
+                    }
+                    else
+                    {
+                        if (reverKey)
+                        {
+                            return true;
+                        }
+                        return false;
+                    }
                 case KeyType.Code:
                     //用状态码判断
                     if (server.code > 0 && key.Equals(server.code + ""))
@@ -368,7 +390,28 @@ namespace tools
                         }
                         return false;
                     }
-                case KeyType.Length:
+                
+
+                case KeyType.Time:
+                    int time = Tools.convertToInt(key);
+                    if (server.runTime > time*1000)
+                    {
+                        if (reverKey)
+                        {
+                            return false;
+                        }
+                        return true;
+                    }
+                    else
+                    {
+                        if (reverKey)
+                        {
+                            return true;
+                        }
+                        return false;
+                    }
+
+                case KeyType.EQLen:
                     //用长度判断
                     if (key.Equals(server.length.ToString()))
                     {
@@ -387,9 +430,27 @@ namespace tools
                         return false;
                     }
 
-                case KeyType.Time:
-                    int time = Tools.convertToInt(key);
-                    if (server.runTime > time*1000)
+                case KeyType.MaxLen:
+                    //用长度判断
+                    if (server.length>Tools.convertToInt(key))
+                    {
+                        if (reverKey)
+                        {
+                            return false;
+                        }
+                        return true;
+                    }
+                    else
+                    {
+                        if (reverKey)
+                        {
+                            return true;
+                        }
+                        return false;
+                    }
+                case KeyType.MinLen:
+                    //用长度判断
+                    if (server.length < Tools.convertToInt(key))
                     {
                         if (reverKey)
                         {

@@ -21,10 +21,13 @@ namespace SuperSQLInjection.model
         public int reTry = 2;
         public String encoding = "UTF-8";
         public String request = "";
+        public String sencondRequest = "";
         public String key = "";
         public String db_encoding = "";
         public Boolean useCode = false;
         public int columnsCount = 0;
+
+        public Boolean sencondInject = false;//二次注入
         public int showColumn = 0;
         public Boolean reverseKey = false;//反取关键字
         public KeyType keyType = KeyType.Key;//判断类型，可以盲注以关键字或时间判断
@@ -60,9 +63,9 @@ namespace SuperSQLInjection.model
         public String randIPToHeader = "";
         public int sendHTTPSleepTime = 0;
         public String replaceStrs="";//字符替换
-        public Boolean base64 = false;//base64
         public int base64Count = 0;
         public Boolean useBetweenByPass = false;//between绕过
+        public Boolean usehex = false;//hex绕过
 
         //scan
         public int level = 0;

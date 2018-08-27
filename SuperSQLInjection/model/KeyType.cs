@@ -8,8 +8,11 @@ namespace SuperSQLInjection.model
     public enum KeyType
     {
         Key=0,
-        Code=1,
-        Length=2,
-        Time = 3
+        Reg = 1,
+        Code =2,
+        Time = 3,
+        EQLen = 4,
+        MaxLen =5,
+        MinLen =6
     }
 }

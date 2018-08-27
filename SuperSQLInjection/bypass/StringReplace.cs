@@ -68,9 +68,16 @@ namespace SuperSQLInjection.bypass
                     str = toLowerOrUpperCase(str, splitstr, config.keyReplace);
                 }
                 //base64处理
-                if (config.base64) {
+                if (config.base64Count>0) {
                     str = base64Encoding(str,config.base64Count);
                 }
+
+                //hex处理
+                if (config.usehex)
+                {
+                    str = Tools.strToHex(str,"UTF-8");
+                }
+
                 //替换request
                 request = request.Replace("<Encode>" + m.Value + "</Encode>", str);
             }

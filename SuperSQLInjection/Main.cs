@@ -97,7 +97,6 @@ namespace SuperSQLInjection
 
         private void btn_inject_sendData_Click(object sender, EventArgs e)
         {
-          
             if (checkSendDataConfig())
             {
                 Thread t = new Thread(sendRequestAndShowResponseInvoke);
@@ -117,6 +116,7 @@ namespace SuperSQLInjection
             this.file_cbox_readWrite.SelectedIndex = 0;
             this.bypass_cbox_sendHTTPSleepTime.SelectedIndex = 0;
             this.cbox_bypass_urlencode_count.SelectedIndex = 0;
+            this.cbox_base64Count.SelectedIndex = 0;
 
             HTTP.main = this;
             //清空日志
@@ -169,7 +169,7 @@ namespace SuperSQLInjection
             responseStream.Close();
         }
 
-        public static int version = 20180809;
+        public static int version = 20180827;
         public static String versionURL = "http://www.shack2.org/soft/SSuperSQLInjection/version.txt";
         //检查更新
         public void checkUpdate()
@@ -4567,6 +4567,8 @@ namespace SuperSQLInjection
                         MessageBox.Show("自动识别网页编码为：“"+oserver.encoding+"”");
                     }
                 }
+                //判断是否有编码设置
+
 
 
                 //拆分参数
@@ -5374,7 +5376,7 @@ namespace SuperSQLInjection
             this.txt_basic_port.Text = config.port + "";
             this.cbox_basic_timeOut.Text = config.timeOut + "";
             this.cbox_basic_encoding.Text = config.encoding;
-
+            this.chk_sencondInject.Checked=config.sencondInject;
             switch (config.injectType)
             {
 
@@ -5428,16 +5430,26 @@ namespace SuperSQLInjection
                 case KeyType.Key:
                     this.cbox_inject_type.SelectedIndex = 0;
                     break;
-                case KeyType.Code:
+                case KeyType.Reg:
                     this.cbox_inject_type.SelectedIndex = 1;
                     break;
-                case KeyType.Length:
+                case KeyType.Code:
                     this.cbox_inject_type.SelectedIndex = 2;
                     break;
                 case KeyType.Time:
                     this.cbox_inject_type.SelectedIndex = 3;
                     config.maxTime = Tools.convertToInt(config.key);
                     break;
+                case KeyType.EQLen:
+                    this.cbox_inject_type.SelectedIndex = 4;
+                    break;
+                case KeyType.MinLen:
+                    this.cbox_inject_type.SelectedIndex = 5;
+                    break;
+                case KeyType.MaxLen:
+                    this.cbox_inject_type.SelectedIndex = 6;
+                    break;
+              
             }
 
             this.chk_openURLEncoding.Checked = config.isOpenURLEncoding;
@@ -5452,7 +5464,10 @@ namespace SuperSQLInjection
        
             this.token_txt_startStr.Text =  config.token_startStr;
             this.token_txt_endStr.Text = config.token_endStr;
-           
+
+            //二次注入
+            this.txt_sencond_request.Text = config.sencondRequest;
+
 
             //file
 
@@ -5463,10 +5478,10 @@ namespace SuperSQLInjection
             //bypass
             this.bypass_chk_inculdeStr.Checked = config.inculdeStr;
             this.cob_keyRepalce.SelectedIndex = config.keyReplace;
-            this.bypass_chk_base64.Checked = config.base64;
-            this.cbox_base64Count.SelectedIndex = config.base64Count-1;
+            this.cbox_base64Count.SelectedIndex = config.base64Count;
             this.cbox_bypass_urlencode_count.SelectedIndex = config.urlencodeCount - 1;
             this.bypass_chk_usebetween.Checked = config.useBetweenByPass;
+            this.bypass_hex.Checked = config.usehex;
 
             //替换字符
             this.chk_reaplaceBeforURLEncode.Checked = config.reaplaceBeforURLEncode;
@@ -5521,14 +5536,17 @@ namespace SuperSQLInjection
                 ((TextBox)sender).SelectAll();
             }
         }
+        public void selectAll(object sender, KeyEventArgs e) {
 
-        private void txt_inject_request_KeyDown(object sender, KeyEventArgs e)
-        {
-            showFindString(sender, e, this.txt_inject_request);
             if (e.Modifiers == Keys.Control && e.KeyCode == Keys.A)
             {
                 ((TextBox)sender).SelectAll();
             }
+        }
+        private void txt_inject_request_KeyDown(object sender, KeyEventArgs e)
+        {
+            showFindString(sender, e, this.txt_inject_request);
+            selectAll(sender,e);
         }
 
         private void data_dbs_lvw_tsmi_copyLineData_Click(object sender, EventArgs e)
@@ -6267,7 +6285,22 @@ namespace SuperSQLInjection
 
                     bool truep = findKeyInBody(Comm.truePayload);
                     bool falsep = findKeyInBody(Comm.falsePayload);
-                    if (truep == true && falsep == false)
+
+                    bool isok = false;
+
+                    if (!config.reverseKey) {
+                        if (truep && !falsep)
+                        {
+                            isok = true;
+                        }
+                    }
+                    else {
+                        if ((!truep) && falsep) {
+                            isok = true;
+                        }
+                    }
+
+                    if (isok)
                     {
                         MessageBox.Show("关键字设置正确！");
                     }
@@ -7007,11 +7040,6 @@ namespace SuperSQLInjection
             }
         }
 
-        private void bypass_chk_base64_CheckedChanged(object sender, EventArgs e)
-        {
-            config.base64 = this.bypass_chk_base64.Checked;
-        }
-
         private void data_dbs_tsmi_addDBS_Click(object sender, EventArgs e)
         {
             addNode(1);
@@ -7328,13 +7356,23 @@ namespace SuperSQLInjection
                     config.keyType = KeyType.Key;
                     break;
                 case 1:
-                    config.keyType = KeyType.Code;
+                    config.keyType = KeyType.Reg;
                     break;
+                   
                 case 2:
-                    config.keyType = KeyType.Length;
+                    config.keyType = KeyType.Code;
                     break;
                 case 3:
                     config.keyType = KeyType.Time;
+                    break;
+                case 4:
+                    config.keyType = KeyType.EQLen;
+                    break;
+                case 5:
+                    config.keyType = KeyType.MaxLen;
+                    break;
+                case 6:
+                    config.keyType = KeyType.MinLen;
                     break;
 
             }
@@ -7426,8 +7464,8 @@ namespace SuperSQLInjection
 
                 //bypass
                 this.bypass_chk_inculdeStr.Checked = template.inculdeStr;
+                this.bypass_hex.Checked = config.usehex;
                 this.cob_keyRepalce.SelectedIndex = template.keyReplace;
-                this.bypass_chk_base64.Checked = template.base64;
                 this.cbox_base64Count.SelectedIndex = config.base64Count;
                 this.bypass_chk_usebetween.Checked = config.useBetweenByPass;
                 //替换字符
@@ -7551,6 +7589,36 @@ namespace SuperSQLInjection
         private void btn_inject_randStr_Click(object sender, EventArgs e)
         {
             this.txt_inject_request.SelectedText = "<Rand>" + this.txt_inject_request.SelectedText + "</Rand>";
+        }
+
+        private void txt_sencond_request_TextChanged(object sender, EventArgs e)
+        {
+            config.sencondRequest = this.txt_sencond_request.Text;
+        }
+
+        private void bypass_hex_CheckedChanged(object sender, EventArgs e)
+        {
+            config.usehex = this.bypass_hex.Checked;
+        }
+
+        private void cbox_base64Count_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            config.base64Count = this.cbox_base64Count.SelectedIndex;
+        }
+
+        private void token_txt_http_request_KeyDown(object sender, KeyEventArgs e)
+        {
+            selectAll(sender, e);
+        }
+
+        private void txt_sencond_request_KeyDown(object sender, KeyEventArgs e)
+        {
+            selectAll(sender, e);
+        }
+
+        private void chk_sencondInject_CheckedChanged(object sender, EventArgs e)
+        {
+            config.sencondInject = this.chk_sencondInject.Checked;
         }
     }
 }

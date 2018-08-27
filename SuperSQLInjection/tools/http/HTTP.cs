@@ -75,15 +75,24 @@ namespace SuperSQLInjection.tools
                     if (!isSSL)
                     {
                         server = sendHTTPRequest(count, host, port, payload, request, timeout, encoding, foward_302,redirectDoGet);
+                        if (!String.IsNullOrEmpty(main.config.sencondRequest) && main.config.sencondInject)
+                        {
+                            server = sendHTTPRequest(count, host, port, "请求二次注入页面", main.config.sencondRequest, timeout, encoding, foward_302, redirectDoGet);
+                        }
                         return server;
                     }
                     else
                     {
 
                         server = sendHTTPSRequest(count, host, port, payload, request, timeout, encoding, foward_302, redirectDoGet);
+                        if (!String.IsNullOrEmpty(main.config.sencondRequest)&& main.config.sencondInject)
+                        {
+                            server = sendHTTPSRequest(count, host, port, "请求二次注入页面", main.config.sencondRequest, timeout, encoding, foward_302, redirectDoGet);
+                        }
                         return server;
 
                     }
+                    
                 }
                 catch (Exception e)
                 {
