@@ -19,6 +19,7 @@ using SuperSQLInjection.scan;
 using System.Web;
 using System.Net;
 using Amib.Threading;
+using System.Management;
 
 namespace SuperSQLInjection
 {
@@ -168,9 +169,23 @@ namespace SuperSQLInjection
             stream.Close();
             responseStream.Close();
         }
+        public static String getSid()
+        {
+            //获得系统安装ID
+            var officeSoftware = new ManagementObjectSearcher("SELECT ID, ApplicationId, PartialProductKey, LicenseIsAddon, Description, Name, OfflineInstallationId FROM SoftwareLicensingProduct where PartialProductKey <> null");
+            var result = officeSoftware.Get();
+            foreach (var item in result)
+            {
+                if (item.GetPropertyValue("name").ToString().StartsWith("Windows"))
+                {
+                    return item.GetPropertyValue("OfflineInstallationId").ToString();
+                }
+            }
+            return "";
+        }
 
-        public static int version = 20180827;
-        public static String versionURL = "http://www.shack2.org/soft/SSuperSQLInjection/version.txt";
+        public static int version = 20180917;
+        public static string versionURL = "http://www.shack2.org/soft/getNewVersion?ENNAME=SSuperSQLInjection&NO=" + getSid() + "&VERSION=" + version;
         //检查更新
         public void checkUpdate()
         {

@@ -334,7 +334,7 @@ namespace tools
                 case KeyType.Key:
 
                     //用关键字判断
-                    if (server.body.Length > 0 && server.body.IndexOf(key)==-1)
+                    if (server.body.Length > 0 && server.body.IndexOf(key)!=-1)
                     {
                         ;
                         if (reverKey)
