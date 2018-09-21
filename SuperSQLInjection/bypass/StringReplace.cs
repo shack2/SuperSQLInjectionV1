@@ -36,11 +36,20 @@ namespace SuperSQLInjection.bypass
                         }
                         str = IncludeString(str);
                     }
-                    if (config.isOpenURLEncoding)
+                    if (config.useUnicode)
                     {
-                        //URL编码
-                        str = urlEncoding(str, config.urlencodeCount);
+                        //unicode
+                        str = Tools.String2Unicode(str);
                     }
+                    else
+                    {
+                        if (config.isOpenURLEncoding)
+                        {
+                            //URL编码
+                            str = urlEncoding(str, config.urlencodeCount);
+                        }
+                    }
+                    
                 }
                 else {
 
@@ -49,12 +58,21 @@ namespace SuperSQLInjection.bypass
                         ///*!包含*/
                         str = IncludeString(str);
                     }
-                   if (config.isOpenURLEncoding)
-                   {
-                       //URL编码
-                       str = urlEncoding(str,config.urlencodeCount);
-                       
+
+                    if (config.useUnicode)
+                    {
+                        str = Tools.String2Unicode(str);
                     }
+                    else
+                    {
+                        //unicode
+                        if (config.isOpenURLEncoding)
+                        {
+                            //URL编码
+                            str = urlEncoding(str, config.urlencodeCount);
+                        }
+                    }
+                   
                     //替换字符
                     str = ReplaceString(replaceList, str);
                 }

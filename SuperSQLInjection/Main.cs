@@ -184,7 +184,7 @@ namespace SuperSQLInjection
             return "";
         }
 
-        public static int version = 20180917;
+        public static int version = 20180921;
         public static string versionURL = "http://www.shack2.org/soft/getNewVersion?ENNAME=SSuperSQLInjection&NO=" + getSid() + "&VERSION=" + version;
         //检查更新
         public void checkUpdate()
@@ -5490,6 +5490,7 @@ namespace SuperSQLInjection
 
             //cmd
             this.cmd_chk_showCmdResult.Checked = config.showCmdResult;
+            
             //bypass
             this.bypass_chk_inculdeStr.Checked = config.inculdeStr;
             this.cob_keyRepalce.SelectedIndex = config.keyReplace;
@@ -5497,6 +5498,7 @@ namespace SuperSQLInjection
             this.cbox_bypass_urlencode_count.SelectedIndex = config.urlencodeCount - 1;
             this.bypass_chk_usebetween.Checked = config.useBetweenByPass;
             this.bypass_hex.Checked = config.usehex;
+            this.bypass_chk_use_unicode.Checked = config.useUnicode;
 
             //替换字符
             this.chk_reaplaceBeforURLEncode.Checked = config.reaplaceBeforURLEncode;
@@ -7480,9 +7482,12 @@ namespace SuperSQLInjection
                 //bypass
                 this.bypass_chk_inculdeStr.Checked = template.inculdeStr;
                 this.bypass_hex.Checked = config.usehex;
+                this.cbox_bypass_urlencode_count.SelectedIndex = config.urlencodeCount - 1;
                 this.cob_keyRepalce.SelectedIndex = template.keyReplace;
                 this.cbox_base64Count.SelectedIndex = config.base64Count;
                 this.bypass_chk_usebetween.Checked = config.useBetweenByPass;
+                this.bypass_chk_use_unicode.Checked = config.useUnicode;
+
                 //替换字符
                 this.chk_reaplaceBeforURLEncode.Checked = template.reaplaceBeforURLEncode;
                 String[] replaceStrs = Regex.Split(template.replaceStrs, "\\n");
@@ -7505,6 +7510,11 @@ namespace SuperSQLInjection
                         }
                     }
                 }
+
+
+                this.bypass_cbox_sendHTTPSleepTime.Text = config.sendHTTPSleepTime + "";
+                this.bypass_cbox_randIPToHeader.Text = config.randIPToHeader;
+
                 MessageBox.Show("加载模板完成！");
 
             }
@@ -7634,6 +7644,11 @@ namespace SuperSQLInjection
         private void chk_sencondInject_CheckedChanged(object sender, EventArgs e)
         {
             config.sencondInject = this.chk_sencondInject.Checked;
+        }
+
+        private void bypass_chk_use_unicode_CheckedChanged(object sender, EventArgs e)
+        {
+            config.useUnicode=this.bypass_chk_use_unicode.Checked;
         }
     }
 }

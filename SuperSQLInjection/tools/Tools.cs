@@ -558,7 +558,19 @@ namespace tools
             }
             return "";
         }
-
+        /**
+         字符转unicode
+         */
+        public static string String2Unicode(string source)
+        {
+            var bytes = Encoding.Unicode.GetBytes(source);
+            var stringBuilder = new StringBuilder();
+            for (var i = 0; i < bytes.Length; i += 2)
+            {
+                stringBuilder.AppendFormat("%u{0}{1}", bytes[i + 1].ToString("x").PadLeft(2, '0'), bytes[i].ToString("x").PadLeft(2, '0'));
+            }
+            return stringBuilder.ToString();
+        }
         public static decimal getLike(String body1, String body2)
         {
 

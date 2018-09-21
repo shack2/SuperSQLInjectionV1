@@ -66,6 +66,8 @@ namespace SuperSQLInjection.model
         public int base64Count = 0;
         public Boolean useBetweenByPass = false;//between绕过
         public Boolean usehex = false;//hex绕过
+        public Boolean useUnicode = false;//uniocde绕过
+
 
         //scan
         public int level = 0;
