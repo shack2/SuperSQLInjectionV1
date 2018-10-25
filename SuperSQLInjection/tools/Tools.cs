@@ -855,35 +855,5 @@ namespace tools
 
         }
 
-        private object ExecuteScript(string funcName, string argument, string jsPath)
-        {
-            string js = System.IO.File.ReadAllText(jsPath);
-            object o = ExecuteScript(string.Format("{0}('{1}')", funcName, argument), js);
-            return o;
-        }
-
-        /// <summary>
-        /// 执行JS
-        /// </summary>
-        /// <param name="sExpression">参数体</param>
-        /// <param name="sCode">JavaScript代码的字符串</param>
-        /// <returns></returns>
-        private object ExecuteScript(string sExpression, string sCode)
-        {
-            MSScriptControl.ScriptControl scriptControl = new MSScriptControl.ScriptControl();
-            scriptControl.UseSafeSubset = true;
-            scriptControl.Language = "javascript";
-            scriptControl.AddCode(sCode);
-            try
-            {
-                return scriptControl.Eval(sExpression);
-            }
-            catch (Exception ex)
-            {
-                SysLog("js执行异常！"+ex.GetBaseException());
-            }
-            return null;
-        }
-
     }
 }

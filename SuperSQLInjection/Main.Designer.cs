@@ -207,6 +207,7 @@
             this.cob_keyRepalce = new System.Windows.Forms.ComboBox();
             this.label10 = new System.Windows.Forms.Label();
             this.bypass_cbox_randIPToHeader = new System.Windows.Forms.ComboBox();
+            this.label32 = new System.Windows.Forms.Label();
             this.label31 = new System.Windows.Forms.Label();
             this.label18 = new System.Windows.Forms.Label();
             this.label17 = new System.Windows.Forms.Label();
@@ -295,7 +296,6 @@
             this.lbl_packsCount = new System.Windows.Forms.ToolStripStatusLabel();
             this.timer_status = new System.Windows.Forms.Timer(this.components);
             this.timer_scanInjection = new System.Windows.Forms.Timer(this.components);
-            this.label32 = new System.Windows.Forms.Label();
             this.gb_basic.SuspendLayout();
             this.menuStrip_main.SuspendLayout();
             this.gb_logo.SuspendLayout();
@@ -2286,6 +2286,15 @@
             this.bypass_cbox_randIPToHeader.TabIndex = 14;
             this.bypass_cbox_randIPToHeader.TextChanged += new System.EventHandler(this.bypass_cbox_randIPToHeader_TextChanged);
             // 
+            // label32
+            // 
+            this.label32.AutoSize = true;
+            this.label32.Location = new System.Drawing.Point(259, 27);
+            this.label32.Name = "label32";
+            this.label32.Size = new System.Drawing.Size(59, 12);
+            this.label32.TabIndex = 13;
+            this.label32.Text = "URL编码：";
+            // 
             // label31
             // 
             this.label31.AutoSize = true;
@@ -3110,15 +3119,6 @@
             this.timer_scanInjection.Enabled = true;
             this.timer_scanInjection.Interval = 1000;
             this.timer_scanInjection.Tick += new System.EventHandler(this.timer_scanInjection_Tick);
-            // 
-            // label32
-            // 
-            this.label32.AutoSize = true;
-            this.label32.Location = new System.Drawing.Point(259, 27);
-            this.label32.Name = "label32";
-            this.label32.Size = new System.Drawing.Size(59, 12);
-            this.label32.TabIndex = 13;
-            this.label32.Text = "URL编码：";
             // 
             // Main
             // 
