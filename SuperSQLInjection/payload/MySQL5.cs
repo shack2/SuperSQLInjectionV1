@@ -52,6 +52,10 @@ namespace SuperSQLInjection.payload
 
         //bool方式字符长度判断
         public static String ver_length = " and "+ bool_length + ">{len}";
+
+        //bool方式字符长度判断
+        public static String char_len= "char_length({data})";
+
         //bool方式获取值
         public static String ver_value = " and "+ bool_value + ">{len}";
 
