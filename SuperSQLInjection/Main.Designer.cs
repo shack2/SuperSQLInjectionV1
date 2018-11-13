@@ -1891,7 +1891,7 @@
             this.label29.Name = "label29";
             this.label29.Size = new System.Drawing.Size(65, 12);
             this.label29.TabIndex = 26;
-            this.label29.Text = "判 断 值：";
+            this.label29.Text = "关 键 字：";
             // 
             // label27
             // 
@@ -1908,7 +1908,7 @@
             this.inject_btn_autoFindKey.Name = "inject_btn_autoFindKey";
             this.inject_btn_autoFindKey.Size = new System.Drawing.Size(100, 23);
             this.inject_btn_autoFindKey.TabIndex = 24;
-            this.inject_btn_autoFindKey.Text = "查找判断值";
+            this.inject_btn_autoFindKey.Text = "查找关键字";
             this.inject_btn_autoFindKey.UseVisualStyleBackColor = true;
             this.inject_btn_autoFindKey.Click += new System.EventHandler(this.inject_btn_autoFindKey_Click);
             // 
@@ -1918,7 +1918,7 @@
             this.injectConfig_btn_checkKey.Name = "injectConfig_btn_checkKey";
             this.injectConfig_btn_checkKey.Size = new System.Drawing.Size(100, 23);
             this.injectConfig_btn_checkKey.TabIndex = 23;
-            this.injectConfig_btn_checkKey.Text = "验证判断值";
+            this.injectConfig_btn_checkKey.Text = "验证关键字是否设置正确";
             this.injectConfig_btn_checkKey.UseVisualStyleBackColor = true;
             this.injectConfig_btn_checkKey.Click += new System.EventHandler(this.injectConfig_btn_checkKey_Click);
             // 

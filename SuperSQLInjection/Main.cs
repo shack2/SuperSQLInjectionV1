@@ -17,7 +17,6 @@ using System.Net;
 using Amib.Threading;
 using System.Management;
 using System.Runtime.InteropServices;
-using Microsoft.Win32;
 
 namespace SuperSQLInjection
 {
@@ -170,23 +169,14 @@ namespace SuperSQLInjection
        
         public static String getSid()
         {
-
-            String sid = "";
+            //获得系统唯一号，系统安装id和mac组合
+            String sid = Environment.OSVersion + "_";
             try
             {
-                //获得系统名称
-                RegistryKey rk = Registry.LocalMachine.OpenSubKey("Software\\Microsoft\\Windows NT\\CurrentVersion");
-                sid = rk.GetValue("ProductName").ToString();
-                rk.Close();
-                //获得系统唯一号，系统安装id和mac组合
-                sid += "_";
-
                 var officeSoftware = new ManagementObjectSearcher("SELECT ID, ApplicationId, PartialProductKey, LicenseIsAddon, Description, Name, OfflineInstallationId FROM SoftwareLicensingProduct where PartialProductKey <> null");
                 var result = officeSoftware.Get();
                 foreach (var item in result)
                 {
-                    String c = item.GetPropertyValue("name").ToString();
-                    
                     if (item.GetPropertyValue("name").ToString().StartsWith("Windows"))
                     {
                         
@@ -220,7 +210,7 @@ namespace SuperSQLInjection
             return sid;
         }
 
-        public static int version = 20181113;
+        public static int version = 20180923;
         public static string versionURL = "http://www.shack2.org/soft/getNewVersion?ENNAME=SSuperSQLInjection&NO=" + URLEncode.UrlEncode(getSid()) + "&VERSION=" + version;
         //检查更新
         public void checkUpdate()
