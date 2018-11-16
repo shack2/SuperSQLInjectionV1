@@ -85,9 +85,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
-  <PropertyGroup>
-    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
-  </PropertyGroup>
+  <PropertyGroup />
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -131,6 +129,7 @@
     <Compile Include="model\Config.cs" />
     <Compile Include="model\InjectType.cs" />
     <Compile Include="model\ErrorMessage.cs" />
+    <Compile Include="model\LogLevel.cs" />
     <Compile Include="model\SerializableDictionary.cs" />
     <Compile Include="model\SelectNode.cs" />
     <Compile Include="model\ServerInfo.cs" />
@@ -242,7 +241,6 @@
     <EmbeddedResource Include="Waring.resx">
       <DependentUpon>Waring.cs</DependentUpon>
     </EmbeddedResource>
-    <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

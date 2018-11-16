@@ -834,15 +834,33 @@ namespace tools
             {
                 if (!String.IsNullOrEmpty(str))
                 {
-                    int start = str.IndexOf(startStr);
+                    if (String.IsNullOrEmpty(startStr) && String.IsNullOrEmpty(endStr)) {
+                        return str;
+                    }
+                    int start = -1;
+                    if (String.IsNullOrEmpty(startStr))
+                    {
+                        start = 0;
+                    }
+                    else {
+                        start = str.IndexOf(startStr);
+                    }
                     if (start != -1)
                     {
-                        int end = str.IndexOf(endStr, start+ startStr.Length);
-                        if (end != -1)
+                        if (String.IsNullOrEmpty(endStr))
                         {
-                            String token = str.Substring(start + startStr.Length, end - start - startStr.Length);
+                            String token = str.Substring(start + startStr.Length);
                             return token;
                         }
+                        else {
+                            int end = str.IndexOf(endStr, start + startStr.Length);
+                            if (end != -1)
+                            {
+                                String token = str.Substring(start + startStr.Length, end - start - startStr.Length);
+                                return token;
+                            }
+                        }
+                        
                     }
 
                 }

@@ -57,6 +57,9 @@
             this.tsmi_tools = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmi_seting = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmi_lang = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmi_zh_cn = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmi_en_us = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmi_help = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmi_readme = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmi_about = new System.Windows.Forms.ToolStripMenuItem();
@@ -65,7 +68,6 @@
             this.版本ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmi_bugReport = new System.Windows.Forms.ToolStripMenuItem();
             this.gb_logo = new System.Windows.Forms.GroupBox();
-            this.txt_log = new System.Windows.Forms.TextBox();
             this.tab_logCenter = new System.Windows.Forms.TabPage();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
@@ -296,6 +298,9 @@
             this.lbl_packsCount = new System.Windows.Forms.ToolStripStatusLabel();
             this.timer_status = new System.Windows.Forms.Timer(this.components);
             this.timer_scanInjection = new System.Windows.Forms.Timer(this.components);
+            this.data_dbs_tsmi_selectAllSubNode = new System.Windows.Forms.ToolStripMenuItem();
+            this.data_dbs_tsmi_selectReversSubNode = new System.Windows.Forms.ToolStripMenuItem();
+            this.txt_log = new System.Windows.Forms.RichTextBox();
             this.gb_basic.SuspendLayout();
             this.menuStrip_main.SuspendLayout();
             this.gb_logo.SuspendLayout();
@@ -668,7 +673,8 @@
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tsmi_seting});
+            this.tsmi_seting,
+            this.tsmi_lang});
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
             this.toolStripMenuItem1.Size = new System.Drawing.Size(68, 21);
             this.toolStripMenuItem1.Text = "系统设置";
@@ -679,6 +685,29 @@
             this.tsmi_seting.Size = new System.Drawing.Size(124, 22);
             this.tsmi_seting.Text = "系统设置";
             this.tsmi_seting.Click += new System.EventHandler(this.tsmi_seting_Click);
+            // 
+            // tsmi_lang
+            // 
+            this.tsmi_lang.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsmi_zh_cn,
+            this.tsmi_en_us});
+            this.tsmi_lang.Name = "tsmi_lang";
+            this.tsmi_lang.Size = new System.Drawing.Size(124, 22);
+            this.tsmi_lang.Text = "语 言";
+            // 
+            // tsmi_zh_cn
+            // 
+            this.tsmi_zh_cn.Checked = true;
+            this.tsmi_zh_cn.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.tsmi_zh_cn.Name = "tsmi_zh_cn";
+            this.tsmi_zh_cn.Size = new System.Drawing.Size(117, 22);
+            this.tsmi_zh_cn.Text = "中文";
+            // 
+            // tsmi_en_us
+            // 
+            this.tsmi_en_us.Name = "tsmi_en_us";
+            this.tsmi_en_us.Size = new System.Drawing.Size(117, 22);
+            this.tsmi_en_us.Text = "English";
             // 
             // tsmi_help
             // 
@@ -740,22 +769,12 @@
             this.gb_logo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.gb_logo.Controls.Add(this.txt_log);
-            this.gb_logo.Location = new System.Drawing.Point(8, 591);
+            this.gb_logo.Location = new System.Drawing.Point(8, 604);
             this.gb_logo.Name = "gb_logo";
-            this.gb_logo.Size = new System.Drawing.Size(839, 87);
+            this.gb_logo.Size = new System.Drawing.Size(839, 122);
             this.gb_logo.TabIndex = 3;
             this.gb_logo.TabStop = false;
             this.gb_logo.Text = "日志";
-            // 
-            // txt_log
-            // 
-            this.txt_log.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txt_log.Location = new System.Drawing.Point(3, 17);
-            this.txt_log.Multiline = true;
-            this.txt_log.Name = "txt_log";
-            this.txt_log.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txt_log.Size = new System.Drawing.Size(833, 67);
-            this.txt_log.TabIndex = 3;
             // 
             // tab_logCenter
             // 
@@ -1261,9 +1280,11 @@
             this.data_dbs_tsmi_stopGetInfos,
             this.data_dbs_tsmi_saveDTCStruct,
             this.data_dbs_tsmi_loadDTCStruct,
-            this.data_dbs_tsmi_clearDTCStruct});
+            this.data_dbs_tsmi_clearDTCStruct,
+            this.data_dbs_tsmi_selectAllSubNode,
+            this.data_dbs_tsmi_selectReversSubNode});
             this.data_cms_dbs.Name = "data_cms_getVariable";
-            this.data_cms_dbs.Size = new System.Drawing.Size(161, 180);
+            this.data_cms_dbs.Size = new System.Drawing.Size(161, 224);
             // 
             // data_dbs_tsmi_addDBS
             // 
@@ -1498,7 +1519,7 @@
             this.tab_injectCenter.Location = new System.Drawing.Point(4, 23);
             this.tab_injectCenter.Name = "tab_injectCenter";
             this.tab_injectCenter.Padding = new System.Windows.Forms.Padding(3);
-            this.tab_injectCenter.Size = new System.Drawing.Size(832, 440);
+            this.tab_injectCenter.Size = new System.Drawing.Size(832, 451);
             this.tab_injectCenter.TabIndex = 0;
             this.tab_injectCenter.Text = "注入中心";
             this.tab_injectCenter.UseVisualStyleBackColor = true;
@@ -1510,7 +1531,7 @@
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox1.Location = new System.Drawing.Point(3, 3);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(826, 434);
+            this.groupBox1.Size = new System.Drawing.Size(826, 445);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             // 
@@ -1525,7 +1546,7 @@
             this.tabControl1.Location = new System.Drawing.Point(6, 13);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(565, 415);
+            this.tabControl1.Size = new System.Drawing.Size(565, 426);
             this.tabControl1.TabIndex = 14;
             // 
             // tab_datapack
@@ -1534,7 +1555,7 @@
             this.tab_datapack.Location = new System.Drawing.Point(4, 22);
             this.tab_datapack.Name = "tab_datapack";
             this.tab_datapack.Padding = new System.Windows.Forms.Padding(3);
-            this.tab_datapack.Size = new System.Drawing.Size(557, 389);
+            this.tab_datapack.Size = new System.Drawing.Size(557, 400);
             this.tab_datapack.TabIndex = 0;
             this.tab_datapack.Text = "HTTP请求数据包";
             this.tab_datapack.UseVisualStyleBackColor = true;
@@ -1548,7 +1569,7 @@
             this.txt_inject_request.Multiline = true;
             this.txt_inject_request.Name = "txt_inject_request";
             this.txt_inject_request.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txt_inject_request.Size = new System.Drawing.Size(551, 383);
+            this.txt_inject_request.Size = new System.Drawing.Size(551, 394);
             this.txt_inject_request.TabIndex = 13;
             this.txt_inject_request.Text = resources.GetString("txt_inject_request.Text");
             this.txt_inject_request.TextChanged += new System.EventHandler(this.txt_inject_request_TextChanged);
@@ -1648,7 +1669,7 @@
             // label36
             // 
             this.label36.AutoSize = true;
-            this.label36.Location = new System.Drawing.Point(226, 26);
+            this.label36.Location = new System.Drawing.Point(231, 43);
             this.label36.Name = "label36";
             this.label36.Size = new System.Drawing.Size(65, 12);
             this.label36.TabIndex = 16;
@@ -1657,7 +1678,7 @@
             // label37
             // 
             this.label37.AutoSize = true;
-            this.label37.Location = new System.Drawing.Point(32, 26);
+            this.label37.Location = new System.Drawing.Point(20, 43);
             this.label37.Name = "label37";
             this.label37.Size = new System.Drawing.Size(65, 12);
             this.label37.TabIndex = 16;
@@ -1666,28 +1687,28 @@
             // token_txt_endStr
             // 
             this.token_txt_endStr.AcceptsReturn = true;
-            this.token_txt_endStr.Location = new System.Drawing.Point(297, 23);
+            this.token_txt_endStr.Location = new System.Drawing.Point(302, 40);
             this.token_txt_endStr.MaxLength = 100;
             this.token_txt_endStr.Name = "token_txt_endStr";
-            this.token_txt_endStr.Size = new System.Drawing.Size(84, 21);
+            this.token_txt_endStr.Size = new System.Drawing.Size(122, 21);
             this.token_txt_endStr.TabIndex = 8;
             this.token_txt_endStr.TextChanged += new System.EventHandler(this.token_txt_endStr_TextChanged);
             // 
             // token_txt_startStr
             // 
             this.token_txt_startStr.AcceptsReturn = true;
-            this.token_txt_startStr.Location = new System.Drawing.Point(103, 23);
+            this.token_txt_startStr.Location = new System.Drawing.Point(91, 40);
             this.token_txt_startStr.MaxLength = 100;
             this.token_txt_startStr.Name = "token_txt_startStr";
-            this.token_txt_startStr.Size = new System.Drawing.Size(84, 21);
+            this.token_txt_startStr.Size = new System.Drawing.Size(122, 21);
             this.token_txt_startStr.TabIndex = 8;
             this.token_txt_startStr.TextChanged += new System.EventHandler(this.token_txt_startStr_TextChanged);
             // 
             // token_btn_testGetToken
             // 
-            this.token_btn_testGetToken.Location = new System.Drawing.Point(429, 23);
+            this.token_btn_testGetToken.Location = new System.Drawing.Point(441, 38);
             this.token_btn_testGetToken.Name = "token_btn_testGetToken";
-            this.token_btn_testGetToken.Size = new System.Drawing.Size(115, 23);
+            this.token_btn_testGetToken.Size = new System.Drawing.Size(92, 23);
             this.token_btn_testGetToken.TabIndex = 6;
             this.token_btn_testGetToken.Text = "测试抓取Token";
             this.token_btn_testGetToken.UseVisualStyleBackColor = true;
@@ -1719,6 +1740,8 @@
             // 
             // groupBox21
             // 
+            this.groupBox21.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox21.Controls.Add(this.label28);
             this.groupBox21.Location = new System.Drawing.Point(6, 306);
             this.groupBox21.Name = "groupBox21";
@@ -1734,12 +1757,14 @@
             this.label28.Name = "label28";
             this.label28.Size = new System.Drawing.Size(425, 12);
             this.label28.TabIndex = 9;
-            this.label28.Text = "此处可以放二次注入时第二次请求获取注入结果的页面，用与对付一些二次注入";
+            this.label28.Text = "此处可以放二次注入时第二次请求获取注入结果的页面，用于对付一些二次注入";
             // 
             // txt_sencond_request
             // 
             this.txt_sencond_request.AcceptsReturn = true;
-            this.txt_sencond_request.Dock = System.Windows.Forms.DockStyle.Top;
+            this.txt_sencond_request.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txt_sencond_request.Location = new System.Drawing.Point(3, 17);
             this.txt_sencond_request.MaxLength = 65535;
             this.txt_sencond_request.Multiline = true;
@@ -1769,7 +1794,7 @@
             this.groupBox3.Controls.Add(this.btn_inject_setInject);
             this.groupBox3.Location = new System.Drawing.Point(577, 13);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(247, 415);
+            this.groupBox3.Size = new System.Drawing.Size(247, 426);
             this.groupBox3.TabIndex = 12;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "注入设置";
@@ -1861,7 +1886,7 @@
             this.groupBox15.Controls.Add(this.chk_inject_reverseKey);
             this.groupBox15.Location = new System.Drawing.Point(0, 257);
             this.groupBox15.Name = "groupBox15";
-            this.groupBox15.Size = new System.Drawing.Size(249, 158);
+            this.groupBox15.Size = new System.Drawing.Size(249, 165);
             this.groupBox15.TabIndex = 14;
             this.groupBox15.TabStop = false;
             this.groupBox15.Text = "Bool盲注取数据配置";
@@ -2051,7 +2076,7 @@
             this.mytab.Location = new System.Drawing.Point(9, 120);
             this.mytab.Name = "mytab";
             this.mytab.SelectedIndex = 0;
-            this.mytab.Size = new System.Drawing.Size(840, 467);
+            this.mytab.Size = new System.Drawing.Size(840, 478);
             this.mytab.TabIndex = 1;
             // 
             // tab_cmd
@@ -3001,7 +3026,7 @@
             this.status_lbl_all_status,
             this.toolStripStatusLabel11,
             this.lbl_packsCount});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 681);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 729);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(860, 22);
             this.statusStrip1.TabIndex = 4;
@@ -3120,11 +3145,36 @@
             this.timer_scanInjection.Interval = 1000;
             this.timer_scanInjection.Tick += new System.EventHandler(this.timer_scanInjection_Tick);
             // 
+            // data_dbs_tsmi_selectAllSubNode
+            // 
+            this.data_dbs_tsmi_selectAllSubNode.Name = "data_dbs_tsmi_selectAllSubNode";
+            this.data_dbs_tsmi_selectAllSubNode.Size = new System.Drawing.Size(160, 22);
+            this.data_dbs_tsmi_selectAllSubNode.Text = "全选子节点";
+            this.data_dbs_tsmi_selectAllSubNode.Click += new System.EventHandler(this.data_dbs_tsmi_selectAllSubNode_Click);
+            // 
+            // data_dbs_tsmi_selectReversSubNode
+            // 
+            this.data_dbs_tsmi_selectReversSubNode.Name = "data_dbs_tsmi_selectReversSubNode";
+            this.data_dbs_tsmi_selectReversSubNode.Size = new System.Drawing.Size(160, 22);
+            this.data_dbs_tsmi_selectReversSubNode.Text = "反选子节点";
+            this.data_dbs_tsmi_selectReversSubNode.Click += new System.EventHandler(this.data_dbs_tsmi_selectReversSubNode_Click);
+            // 
+            // txt_log
+            // 
+            this.txt_log.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txt_log.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txt_log.Location = new System.Drawing.Point(3, 17);
+            this.txt_log.Name = "txt_log";
+            this.txt_log.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedVertical;
+            this.txt_log.Size = new System.Drawing.Size(833, 102);
+            this.txt_log.TabIndex = 0;
+            this.txt_log.Text = "";
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(860, 703);
+            this.ClientSize = new System.Drawing.Size(860, 751);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.gb_logo);
             this.Controls.Add(this.mytab);
@@ -3141,7 +3191,6 @@
             this.menuStrip_main.ResumeLayout(false);
             this.menuStrip_main.PerformLayout();
             this.gb_logo.ResumeLayout(false);
-            this.gb_logo.PerformLayout();
             this.tab_logCenter.ResumeLayout(false);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
@@ -3254,7 +3303,6 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.ComboBox cbox_basic_injectType;
         private System.Windows.Forms.GroupBox gb_logo;
-        private System.Windows.Forms.TextBox txt_log;
         private System.Windows.Forms.TextBox txt_basic_port;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button btn_autoInject;
@@ -3503,6 +3551,12 @@
         private System.Windows.Forms.CheckBox bypass_chk_use_unicode;
         private System.Windows.Forms.Label label31;
         private System.Windows.Forms.Label label32;
+        private System.Windows.Forms.ToolStripMenuItem tsmi_lang;
+        private System.Windows.Forms.ToolStripMenuItem tsmi_zh_cn;
+        private System.Windows.Forms.ToolStripMenuItem tsmi_en_us;
+        private System.Windows.Forms.ToolStripMenuItem data_dbs_tsmi_selectAllSubNode;
+        private System.Windows.Forms.ToolStripMenuItem data_dbs_tsmi_selectReversSubNode;
+        private System.Windows.Forms.RichTextBox txt_log;
     }
 }
 

@@ -33,7 +33,7 @@ namespace SuperSQLInjection.tools
         public const String Content_Encoding = "content-encoding";
         public const String Transfer_Encoding = "transfer-encoding";
         public const String Connection = "connection";
-        public const int WaitTime =10;
+        public const int WaitTime =5;
         public static Main main = null;
         public static long index = 0;
 

