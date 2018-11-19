@@ -16,6 +16,7 @@ using System.Security.Cryptography.X509Certificates;
 using SuperSQLInjection.bypass;
 using SuperSQLInjection.tools.http;
 using System.Runtime.Serialization.Formatters.Binary;
+using SuperSQLInjection.model;
 
 namespace SuperSQLInjection.tools
 {
@@ -155,7 +156,7 @@ namespace SuperSQLInjection.tools
 
             //重新计算并设置Content-length
             int sindex = request.IndexOf(CTRL);
-            server.reuqestHeader = request;
+            server.request = request;
             if (sindex != -1)
             {
                 server.reuqestHeader = request.Substring(0, sindex);
@@ -174,7 +175,9 @@ namespace SuperSQLInjection.tools
                 }
                 else
                 {
-                    request = request.Insert(sindex, "\r\n" + newContentLength);
+                    if (request.StartsWith("POST")|| contentLength!=0||request.StartsWith("PUT")) {
+                        request = request.Insert(sindex, "\r\n" + newContentLength);
+                    }
                 }
             }
             else
@@ -269,6 +272,7 @@ namespace SuperSQLInjection.tools
                     server.request = request;
                     TimeOutSocket tos = new TimeOutSocket();
                     clientSocket = tos.Connect(host, port, timeout);
+
                     if (sw.ElapsedMilliseconds >= timeout)
                     {
                         return server;
@@ -278,9 +282,13 @@ namespace SuperSQLInjection.tools
                     {
                         checkContentLength(ref server, ref request);
                         server.request = request;
+                        //分开发送header和body，可以绕过某些情况下的安全防护
+                        server.reuqestHeader = Regex.Split(request,"\r\n\r\n")[0];
+                        server.reuqestBody = Regex.Split(request, "\r\n\r\n")[1];
 
-                        byte[] requestByte = Encoding.UTF8.GetBytes(request);
-                        clientSocket.Client.Send(requestByte);
+                        clientSocket.Client.Send(Encoding.UTF8.GetBytes(server.reuqestHeader + "\r\n\r\n"));
+                        clientSocket.Client.Send(Encoding.UTF8.GetBytes(server.reuqestBody));
+                        
                         byte[] responseBody = new byte[1024 * 1000];
                         int len = 0;
                         //获取header头
@@ -569,8 +577,11 @@ namespace SuperSQLInjection.tools
                         {
                             checkContentLength(ref server, ref request);
                             server.request = request;
-                            byte[] requestByte = Encoding.UTF8.GetBytes(request);
-                            ssl.Write(requestByte);
+                            //分开发送header和body，可以绕过某些情况下的安全防护
+                            server.reuqestHeader = Regex.Split(request, "\r\n\r\n")[0];
+                            server.reuqestBody = Regex.Split(request, "\r\n\r\n")[1];
+                            ssl.Write(Encoding.UTF8.GetBytes(server.reuqestHeader + "\r\n\r\n"));
+                            ssl.Write(Encoding.UTF8.GetBytes(server.reuqestBody));
                             ssl.Flush();
                         }
                     }

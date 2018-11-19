@@ -17,7 +17,7 @@ namespace SuperSQLInjection.tools
         /// <summary>
         /// 指定排序的方式
         /// </summary>
-        private SortOrder OrderOfSort;
+        public SortOrder OrderOfSort;
         /**/
         /// <summary>
         /// 声明CaseInsensitiveComparer类对象，

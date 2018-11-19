@@ -18,6 +18,8 @@ using Amib.Threading;
 using System.Management;
 using Microsoft.Win32;
 using System.Drawing;
+using System.Net.Sockets;
+using System.Net.NetworkInformation;
 
 namespace SuperSQLInjection
 {
@@ -138,7 +140,7 @@ namespace SuperSQLInjection
             {
                 new Thread(checkUpdate).Start();
             }
-
+            
         }
         public void HttpDownloadFile(string url, string path)
         {
@@ -216,7 +218,7 @@ namespace SuperSQLInjection
             return sid;
         }
 
-        public static int version = 20181117;
+        public static int version = 20181119;
         public static string versionURL = "http://www.shack2.org/soft/getNewVersion?ENNAME=SSuperSQLInjection&NO=" + URLEncode.UrlEncode(getSid()) + "&VERSION=" + version;
         //检查更新
         public void checkUpdate()
@@ -2012,7 +2014,7 @@ namespace SuperSQLInjection
        
         public delegate void StringDelegate(String str);
 
-        delegate void showLogDelegate(String log,LogLevel level);
+        public delegate void showLogDelegate(String log,LogLevel level);
         public void log(String log, LogLevel level)
         {
             if (config.isOpenInfoLog)
@@ -5233,6 +5235,7 @@ namespace SuperSQLInjection
             try
             {
                 XML.saveConfig("lastConfig.xml", this.config);
+               
             }
             catch (Exception ex)
             {
@@ -5350,6 +5353,10 @@ namespace SuperSQLInjection
                         if (dc.Text.Equals(cname))
                         {
                             this.data_dbs_lvw_data.Columns.Remove(dc);
+                            if (data_dbs_lvw_lvwColumnSorter != null) {
+                                data_dbs_lvw_lvwColumnSorter.OrderOfSort = SortOrder.None;
+                                data_dbs_lvw_lvwColumnSorter.SortColumn = 0;
+                            } ;
                         }
 
                     }
@@ -5371,6 +5378,7 @@ namespace SuperSQLInjection
 
                 if (isColumn)
                 {
+          
                     foreach (TreeNode tn in e.Node.Parent.Parent.Nodes)
                     {
                         if (tn.Checked && tn != e.Node.Parent)
@@ -6701,7 +6709,7 @@ namespace SuperSQLInjection
                     }
                     else
                     {
-                        this.Invoke(new showLogDelegate(log), url + "----此URL以检测过了，自动跳过！", LogLevel.info);
+                        this.Invoke(new showLogDelegate(log), url + "----此URL以检测过了，自动跳过！", LogLevel.waring);
                     }
                 }
             }
@@ -7783,5 +7791,30 @@ namespace SuperSQLInjection
                 }
             }
         }
+        private void readData(Object osockt)
+        {
+            this.Invoke(new showLogDelegate(log), "接受数据", LogLevel.info);
+            Socket socket = (Socket)osockt;
+
+            byte[] data = new byte[1024 * 1024];
+            //侦听端口号
+            String ctmp = "";
+            int sum = 0;
+            do
+            {
+               
+                int len = socket.Receive(data,sum, 1024, SocketFlags.None);
+                if (len > 0)
+                {
+                    sum += len;
+                }
+                ctmp = Encoding.UTF8.GetString(data);
+
+            } while ((ctmp.IndexOf("\r\n\r\n") == -1));
+            this.Invoke(new showLogDelegate(log), ctmp, LogLevel.info);
+            
+
+        }
+       
     }
 }
