@@ -9,6 +9,7 @@ namespace model
     {
         public String host = "";//host主机头
         public String url = "";//pathAndQuery
+        public String method = "";//请求方法
         public int port = 80;
         public String request = "";
         public String encoding = "";

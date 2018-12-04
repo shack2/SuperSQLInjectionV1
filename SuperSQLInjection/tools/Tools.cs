@@ -130,19 +130,71 @@ namespace tools
 
         public static void delHTTPLog()
         {
+            delAllFiles(AppDomain.CurrentDomain.BaseDirectory+"/"+httpLogPath);
+        }
+        public static void delAllFiles(String path)
+        {
             try
             {
-                DirectoryInfo din = new DirectoryInfo(httpLogPath);
+                DirectoryInfo din = new DirectoryInfo(path);
                 FileInfo[] files = din.GetFiles();
+                DirectoryInfo[] dis = din.GetDirectories();
                 foreach (FileInfo f in files)
                 {
                     f.Delete();
                 }
+                foreach (DirectoryInfo df in dis)
+                {
+                    delAllFiles(df.FullName);
+                    df.Delete();
+                }
             }
             catch (Exception re)
             {
-                Tools.SysLog("删除HTTP日志发生错误！" + re.Message);
+                Tools.SysLog("删除日志发生错误！" + re.Message);
             }
+        }
+
+        public static void delFile(String filepath)
+        {
+            try
+            {
+                File.Delete(filepath);
+            }
+            catch (Exception re)
+            {
+                Tools.SysLog("删除日志发生错误！" + re.Message);
+            }
+        }
+
+        public static List<String> readAllXmlFile(String dir, List<String> list)
+        {
+            try
+            {
+                if (list == null) {
+                    list = new List<String>();
+                }
+                DirectoryInfo d = new DirectoryInfo(dir);
+                FileInfo[] files = d.GetFiles();//文件
+                DirectoryInfo[] directs = d.GetDirectories();//文件夹
+                foreach (FileInfo f in files)
+                {
+                    if (f.Extension.EndsWith("xml")) {
+                        list.Add(f.FullName);
+                    }
+                }
+                //获取子文件夹内的文件列表，递归遍历  
+                foreach (DirectoryInfo dd in directs)
+                {
+                    readAllXmlFile(dd.FullName, list);
+                }
+                
+            }
+            catch (Exception re)
+            {
+                Tools.SysLog("读取文件发生错误！" + re.Message);
+            }
+            return list;
         }
 
 
@@ -761,60 +813,69 @@ namespace tools
             if (datapack.StartsWith("GET"))
             {
                 int pl = datapack.IndexOf("?");
-                if (pl != -1) {
-                    int el = datapack.IndexOf(" ",pl);
-                    if (el != -1) {
+                if (pl != -1)
+                {
+                    int el = datapack.IndexOf(" ", pl);
+                    if (el != -1)
+                    {
 
-                       String cparams= datapack.Substring(pl+1,el-pl-1);
-                       datapack = datapack.Replace("?"+ cparams,"");
-                       int sl= datapack.IndexOf("\r\n");
-                       datapack= datapack.Insert(sl, "\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 0");
-                       int ssl = datapack.IndexOf("\r\n\r\n");
-                        if (!datapack.EndsWith("\r\n\r\n")) {
+                        String cparams = datapack.Substring(pl + 1, el - pl - 1);
+                        datapack = datapack.Replace("?" + cparams, "");
+                        int sl = datapack.IndexOf("\r\n");
+                        datapack = datapack.Insert(sl, "\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 0");
+                        int ssl = datapack.IndexOf("\r\n\r\n");
+                        if (!datapack.EndsWith("\r\n\r\n"))
+                        {
 
                             datapack += "\r\n\r\n";
                         }
-                       datapack+=cparams;
+                        datapack += cparams;
 
-                       int me = datapack.IndexOf(" ");
-                        if (me != -1) {
+                        int me = datapack.IndexOf(" ");
+                        if (me != -1)
+                        {
 
                             datapack = "POST" + datapack.Substring(me, datapack.Length - me);
                         }
 
-                       return datapack;
+                        return datapack;
                     }
                 }
             }
-
+            else if (datapack.IndexOf("Transfer-Encoding: chunked") != -1) {
+                return datapack;
+            }
             else if (datapack.StartsWith("POST"))
             {
                 int ssl = datapack.IndexOf("\r\n\r\n");
 
-                if (ssl != -1) {
+                if (ssl != -1)
+                {
 
-                  
-                    String cparams = datapack.Substring(ssl+4,datapack.Length- ssl - 4);
-                    datapack = datapack.Substring(0, ssl+1);
+
+                    String cparams = datapack.Substring(ssl + 4, datapack.Length - ssl - 4);
+                    datapack = datapack.Substring(0, ssl + 1);
                     int cys = datapack.IndexOf("Content-Type");
-                    int cye = datapack.IndexOf("\r\n",cys);
+                    int cye = datapack.IndexOf("\r\n", cys);
 
-                    if (cye > cys) {
-                        datapack=datapack.Remove(cys, cye - cys+2);
+                    if (cye > cys)
+                    {
+                        datapack = datapack.Remove(cys, cye - cys + 2);
                     }
                     int cls = datapack.IndexOf("Content-Length");
-                    int cle = datapack.IndexOf("\r\n", cls+1);
+                    int cle = datapack.IndexOf("\r\n", cls + 1);
                     if (cle > cls)
                     {
-                        datapack = datapack.Remove(cls, cle - cls+2);
+                        datapack = datapack.Remove(cls, cle - cls + 2);
                     }
 
                     int hl = datapack.IndexOf(" HTTP");
-                    if (hl != -1) {
+                    if (hl != -1)
+                    {
 
-                        datapack = datapack.Insert(hl, "?"+cparams);
+                        datapack = datapack.Insert(hl, "?" + cparams);
                     }
-                   
+
                     int me = datapack.IndexOf(" ");
 
                     if (me != -1)
@@ -871,6 +932,125 @@ namespace tools
             }
             return "";
 
+        }
+
+
+        public static String getRequestURL(String header,bool isSSL,String ip,int port)
+        {
+            int start = header.IndexOf(' ');
+            String url = "";
+            if (start != -1) {
+                int end = header.IndexOf(' ', start);
+                if (end != -1) {
+                    String str = header.Substring(start, end - start);
+                    if (str.StartsWith("/"))
+                    {
+                        if (isSSL)
+                        {
+                            url = "https://" + ip + ":" + port + "/" + str;
+                        }
+                        else
+                        {
+                            url = "http://" + ip + ":" + port + "/" + str;
+                        }
+                    }
+                    else {
+                        url = str;
+                    }
+                }
+            }
+            return url;
+        }
+
+        public static int caseDBTypeInt(String dbname)
+        {
+            if ("Access".Equals(dbname))
+            {
+
+                return 1;
+            }
+            else if ("MySQL".Equals(dbname))
+            {
+
+                return 2;
+            }
+            else if ("SQLServer".Equals(dbname))
+            {
+
+                return 3;
+            }
+            else if ("Oracle".Equals(dbname))
+            {
+
+                return 4;
+            }
+
+            else {
+                return 0;
+            }
+        }
+
+        public static DBType caseDBType(String dbname)
+        {
+
+            if ("Access".Equals(dbname))
+            {
+
+                return DBType.Access;
+            }
+            else if ("MySQL".Equals(dbname))
+            {
+
+                return DBType.MySQL;
+            }
+            else if ("SQLServer".Equals(dbname))
+            {
+
+                return DBType.SQLServer;
+            }
+            else if ("Oracle".Equals(dbname))
+            {
+
+                return DBType.Oracle;
+            }
+
+            else
+            {
+                return 0;
+            }
+        }
+
+        public static String getRequestURI(String header)
+        {
+            int start = header.IndexOf(' ');
+            String uri = "";
+            if (start != -1)
+            {
+                int end = header.IndexOf(' ', start + 1);
+                if (end != -1)
+                {
+                    String str = header.Substring(start + 1, end - start);
+                    if (str.StartsWith("/"))
+                    {
+                        int send = str.IndexOf('?');
+                        if (send != -1)
+                        {
+                            uri = str.Substring(0, send);
+                        }
+                        else
+                        {
+                            uri = str;
+                        }
+
+                    }
+                    else
+                    {
+                        Uri u = new Uri(str);
+                        uri = u.AbsolutePath;
+                    }
+                }
+            }
+            return uri;
         }
 
     }

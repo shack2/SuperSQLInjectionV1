@@ -217,6 +217,7 @@
             this.label18 = new System.Windows.Forms.Label();
             this.label17 = new System.Windows.Forms.Label();
             this.bypass_cbox_sendHTTPSleepTime = new System.Windows.Forms.ComboBox();
+            this.bypass_chk_useLike = new System.Windows.Forms.CheckBox();
             this.bypass_chk_usebetween = new System.Windows.Forms.CheckBox();
             this.bypass_chk_use_unicode = new System.Windows.Forms.CheckBox();
             this.bypass_hex = new System.Windows.Forms.CheckBox();
@@ -281,6 +282,20 @@
             this.scanInjection_domainsCount = new System.Windows.Forms.Label();
             this.scanInjection_scanedDomainCount = new System.Windows.Forms.Label();
             this.label25 = new System.Windows.Forms.Label();
+            this.tab_injectLog = new System.Windows.Forms.TabPage();
+            this.lvw_injectLog = new System.Windows.Forms.ListView();
+            this.injectlog_col_ip = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.injectlog_col_port = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.injectlog_col_uri = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.injectlog_col_pname = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.injectlog_col_injectType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.injectlog_col_dbType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.injectlog_col_payload = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.injectlog_col_time = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.injectLog_cm = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.tsmi_injectLog_useCLog = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmi_injectLog_delSLog = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmi_injectLog_clearAllLog = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.status_lbl_time = new System.Windows.Forms.ToolStripStatusLabel();
@@ -367,6 +382,8 @@
             this.scanInjectionURL_cms.SuspendLayout();
             this.scanInjection_cms.SuspendLayout();
             this.groupBox12.SuspendLayout();
+            this.tab_injectLog.SuspendLayout();
+            this.injectLog_cm.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -2096,9 +2113,10 @@
             this.mytab.Controls.Add(this.tab_bypass);
             this.mytab.Controls.Add(this.tab_encoding);
             this.mytab.Controls.Add(this.tab_scanInjection);
+            this.mytab.Controls.Add(this.tab_injectLog);
             this.mytab.Controls.Add(this.tab_logCenter);
             this.mytab.ImageList = this.myicon_list;
-            this.mytab.Location = new System.Drawing.Point(9, 120);
+            this.mytab.Location = new System.Drawing.Point(8, 120);
             this.mytab.Name = "mytab";
             this.mytab.SelectedIndex = 0;
             this.mytab.Size = new System.Drawing.Size(840, 478);
@@ -2208,6 +2226,7 @@
             this.groupBox9.Controls.Add(this.label18);
             this.groupBox9.Controls.Add(this.label17);
             this.groupBox9.Controls.Add(this.bypass_cbox_sendHTTPSleepTime);
+            this.groupBox9.Controls.Add(this.bypass_chk_useLike);
             this.groupBox9.Controls.Add(this.bypass_chk_usebetween);
             this.groupBox9.Controls.Add(this.bypass_chk_use_unicode);
             this.groupBox9.Controls.Add(this.bypass_hex);
@@ -2230,9 +2249,9 @@
             // 
             this.groupBox18.Controls.Add(this.bypass_btn_saveTemplate);
             this.groupBox18.Controls.Add(this.bypass_cbox_loadTemplate);
-            this.groupBox18.Location = new System.Drawing.Point(426, 177);
+            this.groupBox18.Location = new System.Drawing.Point(426, 173);
             this.groupBox18.Name = "groupBox18";
-            this.groupBox18.Size = new System.Drawing.Size(371, 55);
+            this.groupBox18.Size = new System.Drawing.Size(383, 55);
             this.groupBox18.TabIndex = 25;
             this.groupBox18.TabStop = false;
             this.groupBox18.Text = "选择绕过模板";
@@ -2276,13 +2295,13 @@
             this.cbox_base64Count.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbox_base64Count.FormattingEnabled = true;
             this.cbox_base64Count.Items.AddRange(new object[] {
-            "选择Base64编码",
-            "Base64编码一次",
-            "Base64编码二次",
-            "Base64编码三次"});
-            this.cbox_base64Count.Location = new System.Drawing.Point(593, 130);
+            "选择",
+            "一次",
+            "二次",
+            "三次"});
+            this.cbox_base64Count.Location = new System.Drawing.Point(507, 23);
             this.cbox_base64Count.Name = "cbox_base64Count";
-            this.cbox_base64Count.Size = new System.Drawing.Size(216, 20);
+            this.cbox_base64Count.Size = new System.Drawing.Size(66, 20);
             this.cbox_base64Count.TabIndex = 22;
             this.cbox_base64Count.SelectedIndexChanged += new System.EventHandler(this.cbox_base64Count_SelectedIndexChanged);
             this.cbox_base64Count.TextChanged += new System.EventHandler(this.cbox_base64Count_TextChanged);
@@ -2307,16 +2326,16 @@
             "随机大小写",
             "关键字大写",
             "关键字小写"});
-            this.cob_keyRepalce.Location = new System.Drawing.Point(671, 58);
+            this.cob_keyRepalce.Location = new System.Drawing.Point(680, 58);
             this.cob_keyRepalce.Name = "cob_keyRepalce";
-            this.cob_keyRepalce.Size = new System.Drawing.Size(138, 20);
+            this.cob_keyRepalce.Size = new System.Drawing.Size(129, 20);
             this.cob_keyRepalce.TabIndex = 17;
             this.cob_keyRepalce.SelectedIndexChanged += new System.EventHandler(this.cob_keyRepalce_SelectedIndexChanged);
             // 
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(588, 61);
+            this.label10.Location = new System.Drawing.Point(595, 61);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(65, 12);
             this.label10.TabIndex = 16;
@@ -2330,9 +2349,9 @@
             "X-Forwarded-For",
             "Remote-Addr",
             "Client_Ip"});
-            this.bypass_cbox_randIPToHeader.Location = new System.Drawing.Point(671, 93);
+            this.bypass_cbox_randIPToHeader.Location = new System.Drawing.Point(680, 94);
             this.bypass_cbox_randIPToHeader.Name = "bypass_cbox_randIPToHeader";
-            this.bypass_cbox_randIPToHeader.Size = new System.Drawing.Size(138, 20);
+            this.bypass_cbox_randIPToHeader.Size = new System.Drawing.Size(129, 20);
             this.bypass_cbox_randIPToHeader.TabIndex = 14;
             this.bypass_cbox_randIPToHeader.TextChanged += new System.EventHandler(this.bypass_cbox_randIPToHeader_TextChanged);
             // 
@@ -2348,16 +2367,16 @@
             // label31
             // 
             this.label31.AutoSize = true;
-            this.label31.Location = new System.Drawing.Point(427, 133);
+            this.label31.Location = new System.Drawing.Point(424, 27);
             this.label31.Name = "label31";
-            this.label31.Size = new System.Drawing.Size(125, 12);
+            this.label31.Size = new System.Drawing.Size(77, 12);
             this.label31.TabIndex = 13;
-            this.label31.Text = "进行Base64编码处理：";
+            this.label31.Text = "Base64编码：";
             // 
             // label18
             // 
             this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(588, 97);
+            this.label18.Location = new System.Drawing.Point(595, 97);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(65, 12);
             this.label18.TabIndex = 13;
@@ -2396,16 +2415,27 @@
             "8000",
             "9000",
             "10000"});
-            this.bypass_cbox_sendHTTPSleepTime.Location = new System.Drawing.Point(494, 58);
+            this.bypass_cbox_sendHTTPSleepTime.Location = new System.Drawing.Point(507, 58);
             this.bypass_cbox_sendHTTPSleepTime.Name = "bypass_cbox_sendHTTPSleepTime";
-            this.bypass_cbox_sendHTTPSleepTime.Size = new System.Drawing.Size(56, 20);
+            this.bypass_cbox_sendHTTPSleepTime.Size = new System.Drawing.Size(66, 20);
             this.bypass_cbox_sendHTTPSleepTime.TabIndex = 11;
             this.bypass_cbox_sendHTTPSleepTime.TextChanged += new System.EventHandler(this.bypass_cbox_sendHTTPSleepTime_TextChanged);
+            // 
+            // bypass_chk_useLike
+            // 
+            this.bypass_chk_useLike.AutoSize = true;
+            this.bypass_chk_useLike.Location = new System.Drawing.Point(597, 131);
+            this.bypass_chk_useLike.Name = "bypass_chk_useLike";
+            this.bypass_chk_useLike.Size = new System.Drawing.Size(144, 16);
+            this.bypass_chk_useLike.TabIndex = 3;
+            this.bypass_chk_useLike.Text = "使用like查询进行绕过";
+            this.bypass_chk_useLike.UseVisualStyleBackColor = true;
+            this.bypass_chk_useLike.CheckedChanged += new System.EventHandler(this.bypass_chk_useLike_CheckedChanged);
             // 
             // bypass_chk_usebetween
             // 
             this.bypass_chk_usebetween.AutoSize = true;
-            this.bypass_chk_usebetween.Location = new System.Drawing.Point(426, 96);
+            this.bypass_chk_usebetween.Location = new System.Drawing.Point(426, 131);
             this.bypass_chk_usebetween.Name = "bypass_chk_usebetween";
             this.bypass_chk_usebetween.Size = new System.Drawing.Size(138, 16);
             this.bypass_chk_usebetween.TabIndex = 3;
@@ -2416,7 +2446,7 @@
             // bypass_chk_use_unicode
             // 
             this.bypass_chk_use_unicode.AutoSize = true;
-            this.bypass_chk_use_unicode.Location = new System.Drawing.Point(671, 27);
+            this.bypass_chk_use_unicode.Location = new System.Drawing.Point(680, 27);
             this.bypass_chk_use_unicode.Name = "bypass_chk_use_unicode";
             this.bypass_chk_use_unicode.Size = new System.Drawing.Size(138, 16);
             this.bypass_chk_use_unicode.TabIndex = 3;
@@ -2427,7 +2457,7 @@
             // bypass_hex
             // 
             this.bypass_hex.AutoSize = true;
-            this.bypass_hex.Location = new System.Drawing.Point(590, 27);
+            this.bypass_hex.Location = new System.Drawing.Point(594, 25);
             this.bypass_hex.Name = "bypass_hex";
             this.bypass_hex.Size = new System.Drawing.Size(66, 16);
             this.bypass_hex.TabIndex = 3;
@@ -2438,7 +2468,7 @@
             // bypass_chk_inculdeStr
             // 
             this.bypass_chk_inculdeStr.AutoSize = true;
-            this.bypass_chk_inculdeStr.Location = new System.Drawing.Point(426, 26);
+            this.bypass_chk_inculdeStr.Location = new System.Drawing.Point(426, 96);
             this.bypass_chk_inculdeStr.Name = "bypass_chk_inculdeStr";
             this.bypass_chk_inculdeStr.Size = new System.Drawing.Size(126, 16);
             this.bypass_chk_inculdeStr.TabIndex = 3;
@@ -3031,6 +3061,105 @@
             this.label25.TabIndex = 13;
             this.label25.Text = "已爬行：";
             // 
+            // tab_injectLog
+            // 
+            this.tab_injectLog.Controls.Add(this.lvw_injectLog);
+            this.tab_injectLog.Location = new System.Drawing.Point(4, 23);
+            this.tab_injectLog.Name = "tab_injectLog";
+            this.tab_injectLog.Padding = new System.Windows.Forms.Padding(3);
+            this.tab_injectLog.Size = new System.Drawing.Size(832, 451);
+            this.tab_injectLog.TabIndex = 10;
+            this.tab_injectLog.Text = "识别注入记录";
+            this.tab_injectLog.UseVisualStyleBackColor = true;
+            // 
+            // lvw_injectLog
+            // 
+            this.lvw_injectLog.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.injectlog_col_ip,
+            this.injectlog_col_port,
+            this.injectlog_col_uri,
+            this.injectlog_col_pname,
+            this.injectlog_col_injectType,
+            this.injectlog_col_dbType,
+            this.injectlog_col_payload,
+            this.injectlog_col_time});
+            this.lvw_injectLog.ContextMenuStrip = this.injectLog_cm;
+            this.lvw_injectLog.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lvw_injectLog.FullRowSelect = true;
+            this.lvw_injectLog.Location = new System.Drawing.Point(3, 3);
+            this.lvw_injectLog.Name = "lvw_injectLog";
+            this.lvw_injectLog.Size = new System.Drawing.Size(826, 445);
+            this.lvw_injectLog.TabIndex = 1;
+            this.lvw_injectLog.UseCompatibleStateImageBehavior = false;
+            this.lvw_injectLog.View = System.Windows.Forms.View.Details;
+            // 
+            // injectlog_col_ip
+            // 
+            this.injectlog_col_ip.Text = "IP";
+            // 
+            // injectlog_col_port
+            // 
+            this.injectlog_col_port.Text = "端口";
+            // 
+            // injectlog_col_uri
+            // 
+            this.injectlog_col_uri.Text = "资源路径";
+            // 
+            // injectlog_col_pname
+            // 
+            this.injectlog_col_pname.Text = "参数名称";
+            this.injectlog_col_pname.Width = 82;
+            // 
+            // injectlog_col_injectType
+            // 
+            this.injectlog_col_injectType.Text = "注入类型";
+            this.injectlog_col_injectType.Width = 71;
+            // 
+            // injectlog_col_dbType
+            // 
+            this.injectlog_col_dbType.Text = "数据库类型";
+            this.injectlog_col_dbType.Width = 86;
+            // 
+            // injectlog_col_payload
+            // 
+            this.injectlog_col_payload.Text = "测试Payload";
+            this.injectlog_col_payload.Width = 259;
+            // 
+            // injectlog_col_time
+            // 
+            this.injectlog_col_time.Text = "记录时间";
+            this.injectlog_col_time.Width = 109;
+            // 
+            // injectLog_cm
+            // 
+            this.injectLog_cm.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsmi_injectLog_useCLog,
+            this.tsmi_injectLog_delSLog,
+            this.tsmi_injectLog_clearAllLog});
+            this.injectLog_cm.Name = "contextMenuStrip1";
+            this.injectLog_cm.Size = new System.Drawing.Size(185, 70);
+            // 
+            // tsmi_injectLog_useCLog
+            // 
+            this.tsmi_injectLog_useCLog.Name = "tsmi_injectLog_useCLog";
+            this.tsmi_injectLog_useCLog.Size = new System.Drawing.Size(184, 22);
+            this.tsmi_injectLog_useCLog.Text = "选择此记录进行注入";
+            this.tsmi_injectLog_useCLog.Click += new System.EventHandler(this.tsmi_injectLog_useCLog_Click);
+            // 
+            // tsmi_injectLog_delSLog
+            // 
+            this.tsmi_injectLog_delSLog.Name = "tsmi_injectLog_delSLog";
+            this.tsmi_injectLog_delSLog.Size = new System.Drawing.Size(184, 22);
+            this.tsmi_injectLog_delSLog.Text = "删除选择记录";
+            this.tsmi_injectLog_delSLog.Click += new System.EventHandler(this.tsmi_injectLog_delSLog_Click);
+            // 
+            // tsmi_injectLog_clearAllLog
+            // 
+            this.tsmi_injectLog_clearAllLog.Name = "tsmi_injectLog_clearAllLog";
+            this.tsmi_injectLog_clearAllLog.Size = new System.Drawing.Size(184, 22);
+            this.tsmi_injectLog_clearAllLog.Text = "清空记录";
+            this.tsmi_injectLog_clearAllLog.Click += new System.EventHandler(this.tsmi_injectLog_clearAllLog_Click);
+            // 
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -3277,6 +3406,8 @@
             this.scanInjection_cms.ResumeLayout(false);
             this.groupBox12.ResumeLayout(false);
             this.groupBox12.PerformLayout();
+            this.tab_injectLog.ResumeLayout(false);
+            this.injectLog_cm.ResumeLayout(false);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -3557,6 +3688,21 @@
         private System.Windows.Forms.ToolStripMenuItem data_dbs_tsmi_selectAllSubNode;
         private System.Windows.Forms.ToolStripMenuItem data_dbs_tsmi_selectReversSubNode;
         private System.Windows.Forms.RichTextBox txt_log;
+        private System.Windows.Forms.CheckBox bypass_chk_useLike;
+        private System.Windows.Forms.TabPage tab_injectLog;
+        private System.Windows.Forms.ListView lvw_injectLog;
+        private System.Windows.Forms.ColumnHeader injectlog_col_uri;
+        private System.Windows.Forms.ColumnHeader injectlog_col_pname;
+        private System.Windows.Forms.ColumnHeader injectlog_col_injectType;
+        private System.Windows.Forms.ColumnHeader injectlog_col_dbType;
+        private System.Windows.Forms.ColumnHeader injectlog_col_payload;
+        private System.Windows.Forms.ColumnHeader injectlog_col_time;
+        private System.Windows.Forms.ContextMenuStrip injectLog_cm;
+        private System.Windows.Forms.ToolStripMenuItem tsmi_injectLog_useCLog;
+        private System.Windows.Forms.ToolStripMenuItem tsmi_injectLog_delSLog;
+        private System.Windows.Forms.ToolStripMenuItem tsmi_injectLog_clearAllLog;
+        private System.Windows.Forms.ColumnHeader injectlog_col_ip;
+        private System.Windows.Forms.ColumnHeader injectlog_col_port;
     }
 }
 

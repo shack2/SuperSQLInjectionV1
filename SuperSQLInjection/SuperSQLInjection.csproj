@@ -123,6 +123,7 @@
       <DependentUpon>Main.cs</DependentUpon>
     </Compile>
     <Compile Include="model\DataBase.cs" />
+    <Compile Include="model\InjectLog.cs" />
     <Compile Include="model\KeyType.cs" />
     <Compile Include="model\DBType.cs" />
     <Compile Include="model\GetDataPam.cs" />
@@ -137,7 +138,7 @@
     <Compile Include="payload\Access.cs" />
     <Compile Include="payload\Comm.cs" />
     <Compile Include="model\Injection.cs" />
-    <Compile Include="payload\MySQL5.cs" />
+    <Compile Include="payload\MySQL.cs" />
     <Compile Include="payload\MSSQL.cs" />
     <Compile Include="payload\Oracle.cs" />
     <Compile Include="Program.cs" />
@@ -165,6 +166,8 @@
     <Compile Include="tools\http\HTTP.cs" />
     <Compile Include="tools\http\HTTPRequest.cs" />
     <Compile Include="tools\http\HttpTools.cs" />
+    <Compile Include="tools\http\model\HttpRequest.cs" />
+    <Compile Include="tools\http\model\HttpResponse.cs" />
     <Compile Include="tools\http\TimeOutSocket.cs" />
     <Compile Include="tools\InjectionTools.cs" />
     <Compile Include="tools\LikeMath.cs" />
@@ -264,7 +267,6 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

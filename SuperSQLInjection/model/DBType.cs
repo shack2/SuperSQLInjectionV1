@@ -9,9 +9,8 @@ namespace SuperSQLInjection.model
     {
         UnKnow=0,
         Access=1,  
-        MySQL5 = 2,
+        MySQL = 2,
         SQLServer = 3,
-        Oracle = 4,
-        MySQL4 = 5
+        Oracle = 4
     }
 }

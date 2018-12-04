@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 using tools;
-using System.Net;
 using System.Net.Sockets;
 using model;
 using System.IO.Compression;
@@ -15,8 +13,6 @@ using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using SuperSQLInjection.bypass;
 using SuperSQLInjection.tools.http;
-using System.Runtime.Serialization.Formatters.Binary;
-using SuperSQLInjection.model;
 
 namespace SuperSQLInjection.tools
 {
@@ -159,7 +155,12 @@ namespace SuperSQLInjection.tools
             server.request = request;
             if (sindex != -1)
             {
+               
                 server.reuqestHeader = request.Substring(0, sindex);
+                //chunked发送数据不修正Content-Length
+                if (server.reuqestHeader.IndexOf("Transfer-Encoding: chunked")!=-1) {
+                    return;
+                }
                 server.reuqestBody = request.Substring(sindex + 4, request.Length - sindex - 4);
                 int contentLength = Encoding.UTF8.GetBytes(server.reuqestBody).Length;
                 String newContentLength = Content_Length_Str_M + contentLength;

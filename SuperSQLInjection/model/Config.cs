@@ -11,7 +11,12 @@ namespace SuperSQLInjection.model
         public Config() {
         
         }
+        public String saveConfigpath = "";
+        public String time = "";
         public String domain = "";
+        public String uri = "";//注入URI
+        public String pname = "";//当前注入参数
+        public String testPayload = "";//注入测试payload
         public int port = 80;
         public int maxTime = 10;//延时注入判断阀值
         public InjectType injectType=new InjectType();
@@ -56,7 +61,6 @@ namespace SuperSQLInjection.model
         public Boolean showCmdResult = true;
 
         //bypass
-
         public Boolean reaplaceBeforURLEncode = true;//是否在URL编码前处理bypass字符
         public Boolean inculdeStr = false;
         public int keyReplace = 0;
@@ -67,7 +71,7 @@ namespace SuperSQLInjection.model
         public Boolean useBetweenByPass = false;//between绕过
         public Boolean usehex = false;//hex绕过
         public Boolean useUnicode = false;//uniocde绕过
-
+        public Boolean useLike = false;//Like查询绕过
 
         //scan
         public int level = 0;

