@@ -217,7 +217,6 @@
             this.label18 = new System.Windows.Forms.Label();
             this.label17 = new System.Windows.Forms.Label();
             this.bypass_cbox_sendHTTPSleepTime = new System.Windows.Forms.ComboBox();
-            this.bypass_chk_useLike = new System.Windows.Forms.CheckBox();
             this.bypass_chk_usebetween = new System.Windows.Forms.CheckBox();
             this.bypass_chk_use_unicode = new System.Windows.Forms.CheckBox();
             this.bypass_hex = new System.Windows.Forms.CheckBox();
@@ -2226,7 +2225,6 @@
             this.groupBox9.Controls.Add(this.label18);
             this.groupBox9.Controls.Add(this.label17);
             this.groupBox9.Controls.Add(this.bypass_cbox_sendHTTPSleepTime);
-            this.groupBox9.Controls.Add(this.bypass_chk_useLike);
             this.groupBox9.Controls.Add(this.bypass_chk_usebetween);
             this.groupBox9.Controls.Add(this.bypass_chk_use_unicode);
             this.groupBox9.Controls.Add(this.bypass_hex);
@@ -2420,17 +2418,6 @@
             this.bypass_cbox_sendHTTPSleepTime.Size = new System.Drawing.Size(66, 20);
             this.bypass_cbox_sendHTTPSleepTime.TabIndex = 11;
             this.bypass_cbox_sendHTTPSleepTime.TextChanged += new System.EventHandler(this.bypass_cbox_sendHTTPSleepTime_TextChanged);
-            // 
-            // bypass_chk_useLike
-            // 
-            this.bypass_chk_useLike.AutoSize = true;
-            this.bypass_chk_useLike.Location = new System.Drawing.Point(597, 131);
-            this.bypass_chk_useLike.Name = "bypass_chk_useLike";
-            this.bypass_chk_useLike.Size = new System.Drawing.Size(144, 16);
-            this.bypass_chk_useLike.TabIndex = 3;
-            this.bypass_chk_useLike.Text = "使用like查询进行绕过";
-            this.bypass_chk_useLike.UseVisualStyleBackColor = true;
-            this.bypass_chk_useLike.CheckedChanged += new System.EventHandler(this.bypass_chk_useLike_CheckedChanged);
             // 
             // bypass_chk_usebetween
             // 
@@ -3688,7 +3675,6 @@
         private System.Windows.Forms.ToolStripMenuItem data_dbs_tsmi_selectAllSubNode;
         private System.Windows.Forms.ToolStripMenuItem data_dbs_tsmi_selectReversSubNode;
         private System.Windows.Forms.RichTextBox txt_log;
-        private System.Windows.Forms.CheckBox bypass_chk_useLike;
         private System.Windows.Forms.TabPage tab_injectLog;
         private System.Windows.Forms.ListView lvw_injectLog;
         private System.Windows.Forms.ColumnHeader injectlog_col_uri;

