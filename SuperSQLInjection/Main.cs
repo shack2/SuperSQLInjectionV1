@@ -18,8 +18,6 @@ using Amib.Threading;
 using System.Management;
 using Microsoft.Win32;
 using System.Drawing;
-using System.Net.Sockets;
-using System.Net.NetworkInformation;
 
 namespace SuperSQLInjection
 {
@@ -71,6 +69,7 @@ namespace SuperSQLInjection
                 Thread.CurrentThread.Name = "SendThread-";
             }
             ServerInfo server = HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, "", this.txt_inject_request.Text, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
+            this.btn_inject_sendData.Enabled = true;
             if (server.timeout)
             {
                 MessageBox.Show("连接超时！");
@@ -96,6 +95,7 @@ namespace SuperSQLInjection
         {
             if (checkSendDataConfig())
             {
+                this.btn_inject_sendData.Enabled = false;
                 Thread t = new Thread(sendRequestAndShowResponseInvoke);
                 t.Start();
             }
@@ -230,7 +230,7 @@ namespace SuperSQLInjection
             return sid;
         }
 
-        public static int version = 20181206;
+        public static int version = 20181209;
         public static string versionURL = "http://www.shack2.org/soft/getNewVersion?ENNAME=SSuperSQLInjection&NO=" + URLEncode.UrlEncode(getSid()) + "&VERSION=" + version;
         //检查更新
         public void checkUpdate()
@@ -1754,16 +1754,17 @@ namespace SuperSQLInjection
 
         /// <summary>
         /// 用betweent绕过大于
+        /// 方法废弃，修改为StringReplace中自动处理
         /// </summary>
         /// <param name="paylaod"></param>
         /// <returns></returns>
         private String ByPassForBetween(String paylaod, int len)
         {
-
-            String newpayload = paylaod.Replace("{len}", len + "");
-            if(config.useBetweenByPass)
+            /*
+            String newpayload = "";
+            if (config.useBetweenByPass)
             {
-               
+
                 if (newpayload.IndexOf(">=") != -1)
                 {
                     newpayload = newpayload.Replace(">=", " not between 0 and " + (len - 1));
@@ -1778,11 +1779,17 @@ namespace SuperSQLInjection
                 }
                 else if (paylaod.IndexOf("<") != -1)
                 {
-                    newpayload = newpayload.Replace("<", " between 0 and " + len);
-                }    
+                    newpayload = newpayload.Replace("<=", " between 0 and " + len);
+                }
+                else if (paylaod.IndexOf("<") != -1)
+                {
+                    newpayload = newpayload.Replace("<", " between 0 and " + (len - 1));
+                }
             }
-            
-            return newpayload;
+            else {
+                newpayload = paylaod.Replace("{len}", len + "");
+            }*/
+            return paylaod.Replace("{len}", len + "");
         }
        
         /// <summary>
@@ -5490,7 +5497,7 @@ namespace SuperSQLInjection
             this.bypass_chk_usebetween.Checked = config.useBetweenByPass;
             this.bypass_hex.Checked = config.usehex;
             this.bypass_chk_use_unicode.Checked = config.useUnicode;
-
+           
             //替换字符
             this.chk_reaplaceBeforURLEncode.Checked = config.reaplaceBeforURLEncode;
             String[] replaceStrs = Regex.Split(config.replaceStrs, "\\n");
@@ -5525,14 +5532,19 @@ namespace SuperSQLInjection
         {
             if (e.Control && e.KeyCode == Keys.F)
             {
-                if (fs == null)
+                if (fs == null||fs.IsDisposed)
                 {
 
                     fs = new FindString();
-
+                    fs.Show();
+                    fs.txtbox = textBox;
                 }
-                fs.txtbox = textBox;
-                fs.ShowDialog();
+                else {
+                    fs.txtbox = textBox;
+                    fs.Activate();
+                }
+                
+               
             }
         }
 
@@ -6562,9 +6574,6 @@ namespace SuperSQLInjection
             addStatus = 0;
             MessageBox.Show("加载列表完成！");
         }
-
-        Thread scanedThread = null;
-
 
         public void stopScan()
         {

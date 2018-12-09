@@ -557,7 +557,7 @@
             this.cbox_basic_dbType.Items.AddRange(new object[] {
             "未 知",
             "Access",
-            "MySQL5",
+            "MySQL",
             "SQLServer",
             "Oracle"});
             this.cbox_basic_dbType.Location = new System.Drawing.Point(495, 50);

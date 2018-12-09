@@ -21,7 +21,7 @@ namespace SuperSQLInjection.bypass
             foreach (Match m in mc)
             {
                  str = m.Value;
-                 
+                str = bypassUseBetweentAnd(config, str);
                 if (config.reaplaceBeforURLEncode || config.isOpenURLEncoding==false)
                 {
                     //替换字符
@@ -212,7 +212,45 @@ namespace SuperSQLInjection.bypass
             }
             return sb.ToString();
         }
+        public static String bypassUseBetweentAnd(Config config,String paylaod) {
 
+            String newpayload = "";
+            if (config.useBetweenByPass)
+            {
+                Match m=Regex.Match(paylaod, @"(?<str>[\>\<\=]+)(?<len>\d+)");
+                String str = m.Groups["str"].Value;
+
+                if (String.IsNullOrEmpty(m.Groups["len"].Value)) {
+                    return paylaod;
+                }
+                int len = Tools.convertToInt(m.Groups["len"].Value);
+                if (str.Equals(">="))
+                {
+                    newpayload = Regex.Replace(paylaod, @"[\>\=]+\d+"," not between 0 and " + (len - 1));
+                    
+                }
+                else  if (str.Equals(">"))
+                {
+             
+                    newpayload = Regex.Replace(paylaod, @"[\>\=]+\d+", " not between 0 and " + len);
+                }
+                else if (str.Equals("="))
+                {
+                    newpayload = Regex.Replace(paylaod, @"[\>\=]+\d+", " between " + len + " and " + len);
+                }
+                else if (str.Equals("<="))
+                {
+                    newpayload = Regex.Replace(paylaod, @"[\>\=]+\d+", " between 0 and " + len);
+                }
+                else if (str.Equals("<"))
+                {
+                    newpayload = Regex.Replace(paylaod, @"[\>\=]+\d+", " between 0 and " + (len - 1));
+                }
+            }
+      
+            return newpayload;
+        }
+   
         public static String toLowerOrUpperCase(String oldStr, String split,int changeType)
         {
 

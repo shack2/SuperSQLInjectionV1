@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
@@ -10,14 +11,13 @@ namespace SuperSQLInjection
 {
     public partial class FindString : Form
     {
-       
         public FindString()
         {
             InitializeComponent();
         }
         public int searchPoint = 0;
         public TextBox txtbox = null;
-        private void button1_Click(object sender, EventArgs e)
+        private void btn_find_Click(object sender, EventArgs e)
         {
             //查找下一个
 
@@ -29,8 +29,8 @@ namespace SuperSQLInjection
             else
             {
                 //有查找内容时
-                searchPoint = txtbox.Text.IndexOf(this.find_txt.Text, searchPoint);//用IndexOf索引
-                if (searchPoint <0)
+                searchPoint = txtbox.Text.IndexOf(this.txt_key.Text, searchPoint);//用IndexOf索引
+                if (searchPoint < 0)
                 {
                     //没找到
                     MessageBox.Show("已到文本末尾，没有找到", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -39,19 +39,21 @@ namespace SuperSQLInjection
                 else
                 {
                     //找到了，选中文本
-                    txtbox.Select(searchPoint, this.find_txt.Text.Length);
-                    searchPoint = searchPoint + this.find_txt.Text.Length;
                     txtbox.Focus();
+                    txtbox.Select(searchPoint, this.txt_key.Text.Length);
+                    searchPoint = searchPoint + this.txt_key.Text.Length;
+                   
+
                 }
             }
         }
 
-        private void find_txt_TextChanged(object sender, EventArgs e)
+        private void txt_key_TextChanged(object sender, EventArgs e)
         {
-            
             int count = 0; //计数器
-            string search = this.find_txt.Text; //要查的字符串
-            if("".Equals(search)){
+            string search = this.txt_key.Text; //要查的字符串
+            if ("".Equals(search))
+            {
                 return;
             }
 
@@ -62,7 +64,7 @@ namespace SuperSQLInjection
                     count++;
                 }
             }
-            this.lbl_count.Text = count.ToString();
+            this.label2.Text = "匹配："+count.ToString();
         }
     }
 }
