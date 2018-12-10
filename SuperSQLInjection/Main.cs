@@ -230,7 +230,7 @@ namespace SuperSQLInjection
             return sid;
         }
 
-        public static int version = 20181209;
+        public static int version = 20181210;
         public static string versionURL = "http://www.shack2.org/soft/getNewVersion?ENNAME=SSuperSQLInjection&NO=" + URLEncode.UrlEncode(getSid()) + "&VERSION=" + version;
         //检查更新
         public void checkUpdate()
@@ -6582,7 +6582,7 @@ namespace SuperSQLInjection
             this.scanInjection_btn_scan.Text = "正在停止...";
             while (stp.InUseThreads > 0)
             {
-                Thread.Sleep(50);
+                Thread.Sleep(20);
             }
             this.scanInjection_btn_scan.Text = "开始扫描";
             this.scanInjection_btn_scan.Enabled = true;
@@ -6595,7 +6595,7 @@ namespace SuperSQLInjection
             this.scanInjection_btn_spider.Text = "正在停止...";
             while (stp.InUseThreads > 0)
             {
-                Thread.Sleep(50);
+                Thread.Sleep(20);
             }
             this.scanInjection_btn_spider.Text = "爬行链接";
             this.scanInjection_domainsCount.Text = this.scanInject_lsb_links.Items.Count.ToString();

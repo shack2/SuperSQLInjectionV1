@@ -20,7 +20,7 @@ namespace SuperSQLInjection.bypass
             String str="";
             foreach (Match m in mc)
             {
-                 str = m.Value;
+                str = m.Value;
                 str = bypassUseBetweentAnd(config, str);
                 if (config.reaplaceBeforURLEncode || config.isOpenURLEncoding==false)
                 {
@@ -217,21 +217,22 @@ namespace SuperSQLInjection.bypass
             String newpayload = "";
             if (config.useBetweenByPass)
             {
-                Match m=Regex.Match(paylaod, @"(?<str>[\>\<\=]+)(?<len>\d+)");
+                Match m = Regex.Match(paylaod, @"(?<str>[\>\<\=]+)(?<len>\d+)");
                 String str = m.Groups["str"].Value;
 
-                if (String.IsNullOrEmpty(m.Groups["len"].Value)) {
+                if (String.IsNullOrEmpty(m.Groups["len"].Value))
+                {
                     return paylaod;
                 }
                 int len = Tools.convertToInt(m.Groups["len"].Value);
                 if (str.Equals(">="))
                 {
-                    newpayload = Regex.Replace(paylaod, @"[\>\=]+\d+"," not between 0 and " + (len - 1));
-                    
+                    newpayload = Regex.Replace(paylaod, @"[\>\=]+\d+", " not between 0 and " + (len - 1));
+
                 }
-                else  if (str.Equals(">"))
+                else if (str.Equals(">"))
                 {
-             
+
                     newpayload = Regex.Replace(paylaod, @"[\>\=]+\d+", " not between 0 and " + len);
                 }
                 else if (str.Equals("="))
@@ -240,12 +241,15 @@ namespace SuperSQLInjection.bypass
                 }
                 else if (str.Equals("<="))
                 {
-                    newpayload = Regex.Replace(paylaod, @"[\>\=]+\d+", " between 0 and " + len);
+                    newpayload = Regex.Replace(paylaod, @"[\<\=]+\d+", " between 0 and " + len);
                 }
                 else if (str.Equals("<"))
                 {
-                    newpayload = Regex.Replace(paylaod, @"[\>\=]+\d+", " between 0 and " + (len - 1));
+                    newpayload = Regex.Replace(paylaod, @"[\<=]+\d+", " between 0 and " + (len - 1));
                 }
+            }
+            else {
+                newpayload = paylaod;
             }
       
             return newpayload;

@@ -53,13 +53,13 @@ namespace SuperSQLInjection.tools
                 string queryString = (uri.Query != null && uri.Query.Length > 0) ? uri.Query.Substring(1, uri.Query.Length - 1) : "";
 
                 String[] strparams = queryString.Split('&');
-                int timeout = 0;//超时5次，认为此URL为坏死URL
+                int timeout = 0;//超时3次，认为此URL为坏死URL
                 //对参数进行注入测试
                 foreach (String param in strparams)
                 {
-                    if (timeout >= 5)
+                    if (timeout >= 3)
                     {
-                        break;//超时5次，认为此URL为坏死URL
+                        break;//超时3次，认为此URL为坏死URL
                     }
                     if (param.IndexOf("=") == -1) {
                         continue;
@@ -83,10 +83,13 @@ namespace SuperSQLInjection.tools
                     String oldrequest = Spider.reqestGetTemplate.Replace("{url}", uri.PathAndQuery).Replace("{host}", uri.Host + ":" + uri.Port);
                     String request = Spider.reqestGetTemplate.Replace("{url}", curl).Replace("{host}", uri.Host + ":" + uri.Port);
                     //通过错误显示判断
-
+                    if (timeout >= 3)
+                    {
+                        break;//超时3次，认为此URL为坏死URL
+                    }
                     ServerInfo errorDBServer = HTTP.sendRequestRetry(isSSL, config.reTry, uri.Host, uri.Port, payload, request, config.timeOut, HTTP.AutoGetEncoding, config.is_foward_302, config.redirectDoGet);
-                    if (errorDBServer.runTime > config.timeOut * 1000) timeout++;
-                    if (errorDBServer.runTime > config.timeOut) timeout++;
+                    if (errorDBServer.runTime >= config.timeOut * 1000) timeout++;
+ 
 
                     if (errorDBServer.body.Length == 0 | errorDBServer.code == 404)
                     {
@@ -113,10 +116,13 @@ namespace SuperSQLInjection.tools
                     }
                     if (!injection.isInjection && justScanError == false)
                     {
-
+                        if (timeout >= 3)
+                        {
+                            break;//超时3次，认为此URL为坏死URL
+                        }
                         //读取bool payload
                         ServerInfo oserver = HTTP.sendRequestRetry(isSSL, config.reTry, uri.Host, uri.Port, "获取原始页面内容", oldrequest, config.timeOut, HTTP.AutoGetEncoding, config.is_foward_302, config.redirectDoGet);
-                        if (oserver.runTime > config.timeOut * 1000) timeout++;
+                        if (oserver.runTime >= config.timeOut * 1000) timeout++;
 
                         if (bool_payloads.Count > 0)
                         {
@@ -129,7 +135,10 @@ namespace SuperSQLInjection.tools
                                 String falseURL = uri.PathAndQuery.Replace(param, flasePayload);
                                 injection.paramName = sprarm[0];
                                 injection.testUrl = testUrl.Replace(param, flasePayload);
-
+                                if (timeout >= 3)
+                                {
+                                    break;//超时3次，认为此URL为坏死URL
+                                }
                                 String falserequest = Spider.reqestGetTemplate.Replace("{url}", falseURL).Replace("{host}", uri.Host + ":" + uri.Port);
                                 ServerInfo falseServer = HTTP.sendRequestRetry(isSSL, config.reTry, uri.Host, uri.Port, flasePayload, falserequest, config.timeOut, HTTP.AutoGetEncoding, false, config.redirectDoGet);
                                 if (falseServer.runTime > config.timeOut * 1000) timeout++;
@@ -143,7 +152,10 @@ namespace SuperSQLInjection.tools
                                 String truePayload = pramName + "=" + URLEncode.UrlEncode(pramValue + bool_ps[0]);
                                 String trueURL = uri.PathAndQuery.Replace(param, truePayload);
                                 String truerequest = Spider.reqestGetTemplate.Replace("{url}", trueURL).Replace("{host}", uri.Host + ":" + uri.Port);
-                                
+                                if (timeout >= 3)
+                                {
+                                    break;//超时3次，认为此URL为坏死URL
+                                }
                                 ServerInfo trueServer = HTTP.sendRequestRetry(isSSL, config.reTry, uri.Host, uri.Port, truePayload, truerequest, config.timeOut, HTTP.AutoGetEncoding, false, config.redirectDoGet);
                                 if (trueServer.runTime > config.timeOut*1000) timeout++;
                                 //计算相似度
@@ -192,7 +204,10 @@ namespace SuperSQLInjection.tools
                                             }
                                         }
                                         else {
-
+                                            if (timeout >= 3)
+                                            {
+                                                break;//超时3次，认为此URL为坏死URL
+                                            }
                                             ServerInfo true1Server = HTTP.sendRequestRetry(isSSL, config.reTry, uri.Host, uri.Port, truePayload, truerequest.Replace("1%3d1", "2%3d2"), config.timeOut, HTTP.AutoGetEncoding, false, config.redirectDoGet);
                                             if (true1Server.runTime > config.timeOut * 1000) timeout++;
                                             decimal p = Tools.getLike(oserver.body, true1Server.body);
