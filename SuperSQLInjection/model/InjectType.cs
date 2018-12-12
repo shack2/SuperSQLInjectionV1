@@ -10,7 +10,6 @@ namespace SuperSQLInjection.model
         UnKnow = 0,
         Bool=1,
         Error=2,
-        Union = 3,
-        Sleep=4
+        Union = 3
     }
 }

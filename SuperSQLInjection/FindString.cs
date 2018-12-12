@@ -42,7 +42,7 @@ namespace SuperSQLInjection
                     txtbox.Focus();
                     txtbox.Select(searchPoint, this.txt_key.Text.Length);
                     searchPoint = searchPoint + this.txt_key.Text.Length;
-                   
+                    this.Hide();
 
                 }
             }

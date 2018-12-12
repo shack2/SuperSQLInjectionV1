@@ -230,7 +230,7 @@ namespace SuperSQLInjection
             return sid;
         }
 
-        public static int version = 20181210;
+        public static int version = 20181212;
         public static string versionURL = "http://www.shack2.org/soft/getNewVersion?ENNAME=SSuperSQLInjection&NO=" + URLEncode.UrlEncode(getSid()) + "&VERSION=" + version;
         //检查更新
         public void checkUpdate()
@@ -363,7 +363,7 @@ namespace SuperSQLInjection
                 return false;
             }
 
-            if (this.cbox_basic_injectType.SelectedIndex == 1 && (this.txt_inject_unionColumnsCount.Text.Length <= 0 || this.txt_inject_showColumn.Text.Length <= 0))
+            if (InjectType.Union.Equals(config.injectType)&& (this.txt_inject_unionColumnsCount.Text.Length <= 0 || this.txt_inject_showColumn.Text.Length <= 0))
             {
                 MessageBox.Show("Union注入需要设置查询总列数和数据显示列！");
                 return false;
@@ -3369,30 +3369,30 @@ namespace SuperSQLInjection
 
                 GetDataPam gp = (GetDataPam)opam;
 
-                String data_payload = MySQL.data_value.Replace("{dbname}", gp.dbname).Replace("{table}", gp.table).Replace("{limit}", gp.limit + "");
-
+               
                 ListViewItem lvi = null;
 
                 foreach (String columnName in gp.columns)
                 {
                     //取每一列的值
+                    String data_payload = MySQL.getBoolDataPayLoad(columnName, gp.columns[0],gp.dbname,gp.table,gp.limit);
 
-                    String payload_len = MySQL.ver_length.Replace("{data}", data_payload).Replace("{columns}", columnName);
+                    String payload_len = MySQL.ver_length.Replace("{data}", data_payload);
 
                     if (config.keyType.Equals(KeyType.Time))
                     {
-                        payload_len = MySQL.getBoolCountBySleep(MySQL.bool_length.Replace("{data}", data_payload).Replace("{columns}", columnName), config.maxTime);
+                        payload_len = MySQL.getBoolCountBySleep(MySQL.bool_length.Replace("{data}", data_payload), config.maxTime);
                     }
                     int len = getValueByStepUp(payload_len, 0, 50);
 
 
-                    String va_payload = MySQL.ver_value.Replace("{data}", data_payload).Replace("{columns}", columnName);
+                    String va_payload = MySQL.ver_value.Replace("{data}", data_payload);
                     String colvalue = "";
 
                     //获取值
                     for (int i = 1; i <= len; i++)
                     {
-                        String tmp_va_payload = MySQL.ord_value.Replace("{data}", data_payload).Replace("{index}", i + "").Replace("{columns}", columnName);
+                        String tmp_va_payload = MySQL.ord_value.Replace("{data}", data_payload).Replace("{index}", i + "");
                         String plen = MySQL.ver_length.Replace("{data}", tmp_va_payload);
                         int mu_payload_len = 0;
                         //MySQL多字节ord，先判断ord后的长度，在取每一个的值
@@ -3690,7 +3690,7 @@ namespace SuperSQLInjection
                 foreach (String columnName in gp.columns)
                 {
                     //取每一列的值
-                    String data_payload = Oracle.getBoolDataPayLoad(columnName, gp.columns[0], gp.dbname, gp.table, gp.limit);
+                    String data_payload = Oracle.getBoolDataPayLoad(columnName, gp.dbname, gp.table, gp.limit);
                     String payload_len = Oracle.bool_length.Replace("{data}", data_payload).Replace("{column}", columnName);
 
                     int len = getValueByStepUp(payload_len, 0, 50);
@@ -4529,7 +4529,7 @@ namespace SuperSQLInjection
         {
             try
             {
-                selectInjectType(0);
+                selectInjectType(InjectType.UnKnow);
                 selectDB("UnKnow");
                 //判断提交数据内型
                 String data = "";
@@ -4702,7 +4702,7 @@ namespace SuperSQLInjection
 
                                 this.Invoke(new showLogDelegate(log), "存在" + pals[2] + "payload:" + pals[0], LogLevel.success);
                                 config.testPayload = pals[0];
-                                selectInjectType(1);
+                                selectInjectType(InjectType.Bool);
                                 //识别数据库
                                 List<String> database_lsit = FileTool.readAllDic("config/database/");
 
@@ -4828,7 +4828,7 @@ namespace SuperSQLInjection
                                     this.Invoke(new showLogDelegate(log), "发现" + pals[2], LogLevel.success);
                                     selectDB(pals[3]);
                                     //标记注入
-                                    selectInjectType(2);
+                                    selectInjectType(InjectType.Error);
                                     errorInject = true;
                                     newParam = strparam.Replace(param, param + "<Encode>" + pals[0].Replace(pals[4], "#inject#") + "</Encode>");
                                     config.testPayload = pals[0];
@@ -4877,7 +4877,7 @@ namespace SuperSQLInjection
                     }
                     else
                     {
-                        payload = unionStartPayLoad + "{payload}-- ";
+                        payload = unionStartPayLoad + "{payload}-- -";
 
                     }
                     //判断总列数
@@ -4938,7 +4938,7 @@ namespace SuperSQLInjection
                                 {
                                     isFind = true;
                                     newParam = strparam.Replace(param, param + "<Encode>" + payload.Replace("{payload}", "#inject#") + "</Encode>");
-                                    selectInjectType(3);
+                                    selectInjectType(InjectType.Union);
                                     unionInject = true;
                                     this.txt_inject_unionColumnsCount.Text = i + "";
                                     this.txt_inject_showColumn.Text = j + "";
@@ -5016,9 +5016,10 @@ namespace SuperSQLInjection
             this.lvw_injectLog.Items.Add(lvw);
         }
 
-        public void selectInjectType(int index)
+        public void selectInjectType(InjectType type)
         {
-            this.cbox_basic_injectType.SelectedIndex = index;
+            this.cbox_basic_injectType.SelectedIndex = (int)type;
+            config.injectType = type;
         }
         public void selectDB(String currentDB)
         {
@@ -5534,17 +5535,14 @@ namespace SuperSQLInjection
             {
                 if (fs == null||fs.IsDisposed)
                 {
-
                     fs = new FindString();
                     fs.Show();
                     fs.txtbox = textBox;
                 }
                 else {
                     fs.txtbox = textBox;
-                    fs.Activate();
-                }
-                
-               
+                    fs.Show();
+                }  
             }
         }
 
