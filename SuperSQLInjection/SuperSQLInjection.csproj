@@ -138,8 +138,9 @@
     <Compile Include="payload\Access.cs" />
     <Compile Include="payload\Comm.cs" />
     <Compile Include="model\Injection.cs" />
+    <Compile Include="payload\PostgreSQL.cs" />
     <Compile Include="payload\MySQL.cs" />
-    <Compile Include="payload\MSSQL.cs" />
+    <Compile Include="payload\SQLServer.cs" />
     <Compile Include="payload\Oracle.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ProgressBar.cs">

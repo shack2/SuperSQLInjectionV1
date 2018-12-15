@@ -23,7 +23,7 @@ namespace model
         public int length = 0;
         public int code = 0;
         public int location = 0;
-        public int runTime = 0;//获取网页消耗时间，毫秒
+        public long runTime = 0;//获取网页消耗时间，毫秒
         public int sleepTime = 0;//休息时间
         public String cookies = "";
         public Boolean timeout = false;

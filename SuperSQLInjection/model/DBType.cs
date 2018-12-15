@@ -11,6 +11,7 @@ namespace SuperSQLInjection.model
         Access=1,  
         MySQL = 2,
         SQLServer = 3,
-        Oracle = 4
+        Oracle = 4,
+        PostgreSQL=5
     }
 }

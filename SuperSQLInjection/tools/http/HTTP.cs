@@ -274,7 +274,7 @@ namespace SuperSQLInjection.tools
                     TimeOutSocket tos = new TimeOutSocket();
                     clientSocket = tos.Connect(host, port, timeout);
 
-                    if (sw.ElapsedMilliseconds >= timeout)
+                    if (sw.ElapsedMilliseconds > timeout)
                     {
                         return server;
                     }
@@ -313,7 +313,7 @@ namespace SuperSQLInjection.tools
                                     tmp = String.Concat(sb[sb.Length - 4], sb[sb.Length - 3], sb[sb.Length - 2], c);
                                 }
                             }
-                        } while (!tmp.Equals(CTRL) && sw.ElapsedMilliseconds < timeout);
+                        } while (!tmp.Equals(CTRL) && sw.ElapsedMilliseconds <= timeout);
 
                         server.header = sb.ToString().Replace(CTRL, "");
                         String[] headers = Regex.Split(server.header, CT);
@@ -354,7 +354,7 @@ namespace SuperSQLInjection.tools
                             {
                                 int length = int.Parse(server.headers[Content_Length]);
                                 responseBody = new byte[length];
-                                while (sum < length && sw.ElapsedMilliseconds < timeout)
+                                while (sum < length && sw.ElapsedMilliseconds <= timeout)
                                 {
                                     int readsize = length - sum;
                                     len = clientSocket.Client.Receive(responseBody, sum, readsize, SocketFlags.None);
@@ -386,7 +386,7 @@ namespace SuperSQLInjection.tools
                                         }
                                         ctmp += Encoding.UTF8.GetString(chunkedByte);
 
-                                    } while ((ctmp.IndexOf(CT) == -1) && (sw.ElapsedMilliseconds < timeout));
+                                    } while ((ctmp.IndexOf(CT) == -1) && (sw.ElapsedMilliseconds <= timeout));
 
                                     chunkedSize = Tools.convertToIntBy16(ctmp.Replace(CT, ""));
 
@@ -401,7 +401,7 @@ namespace SuperSQLInjection.tools
                                         break;
                                     }
                                     int onechunkLen = 0;
-                                    while (onechunkLen < chunkedSize && sw.ElapsedMilliseconds < timeout)
+                                    while (onechunkLen < chunkedSize && sw.ElapsedMilliseconds <= timeout)
                                     {
                                         len = clientSocket.Client.Receive(responseBody, sum, chunkedSize - onechunkLen, SocketFlags.None);
                                         if (len > 0)
@@ -416,12 +416,12 @@ namespace SuperSQLInjection.tools
                                     }
 
                                     //判断
-                                } while (sw.ElapsedMilliseconds < timeout);
+                                } while (sw.ElapsedMilliseconds <= timeout);
                             }
                             //connection close方式或未知body长度
                             else
                             {
-                                while (sw.ElapsedMilliseconds < timeout)
+                                while (sw.ElapsedMilliseconds <= timeout)
                                 {
                                     if (clientSocket.Client.Poll(timeout, SelectMode.SelectRead))
                                     {
@@ -490,7 +490,8 @@ namespace SuperSQLInjection.tools
             {
                 sw.Stop();
                 server.length = sum;
-                server.runTime = (int)sw.ElapsedMilliseconds;
+                server.runTime = sw.ElapsedMilliseconds;
+
                 if (clientSocket != null)
                 {
                     clientSocket.Close();
@@ -610,7 +611,7 @@ namespace SuperSQLInjection.tools
                             tmp = String.Concat(sb[sb.Length - 4], sb[sb.Length - 3], sb[sb.Length - 2], c);
                         }
 
-                    } while (!tmp.Equals(CTRL) && sw.ElapsedMilliseconds < timeout);
+                    } while (!tmp.Equals(CTRL) && sw.ElapsedMilliseconds <= timeout);
 
                     server.header = sb.ToString().Replace(CTRL, "");
                     String[] headers = Regex.Split(server.header, CT);
@@ -657,7 +658,7 @@ namespace SuperSQLInjection.tools
                         //根据长度申请byte
                         responseBody = new byte[length];
 
-                        while (sum < length && sw.ElapsedMilliseconds < timeout)
+                        while (sum < length && sw.ElapsedMilliseconds <= timeout)
                         {
                             len = ssl.Read(responseBody, sum, length - sum);
                             if (len > 0)
@@ -690,7 +691,7 @@ namespace SuperSQLInjection.tools
                                 }
                                 ctmp += Encoding.UTF8.GetString(chunkedByte);
 
-                            } while (ctmp.IndexOf(CT) == -1 && sw.ElapsedMilliseconds < timeout);
+                            } while (ctmp.IndexOf(CT) == -1 && sw.ElapsedMilliseconds <= timeout);
 
                             chunkedSize = Tools.convertToIntBy16(ctmp.Replace(CT, ""));
 
@@ -706,7 +707,7 @@ namespace SuperSQLInjection.tools
                             }
                             int onechunkLen = 0;
 
-                            while (onechunkLen < chunkedSize && sw.ElapsedMilliseconds < timeout)
+                            while (onechunkLen < chunkedSize && sw.ElapsedMilliseconds <= timeout)
                             {
                                 len = ssl.Read(responseBody, sum, chunkedSize - onechunkLen);
                                 if (len > 0)
@@ -721,12 +722,12 @@ namespace SuperSQLInjection.tools
                             }
 
                             //判断
-                        } while (sw.ElapsedMilliseconds < timeout);
+                        } while (sw.ElapsedMilliseconds <= timeout);
                     }
                     //connection close方式或未知body长度
                     else
                     {
-                        while (sw.ElapsedMilliseconds < timeout)
+                        while (sw.ElapsedMilliseconds <= timeout)
                         {
                             if (clientSocket.Client.Poll(timeout, SelectMode.SelectRead))
                             {
@@ -794,7 +795,7 @@ namespace SuperSQLInjection.tools
             {
                 sw.Stop();
                 server.length = sum;
-                server.runTime = (int)sw.ElapsedMilliseconds;
+                server.runTime = sw.ElapsedMilliseconds;
 
                 if (clientSocket != null)
                 {

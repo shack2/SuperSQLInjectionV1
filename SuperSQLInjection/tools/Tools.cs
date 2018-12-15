@@ -47,13 +47,17 @@ namespace tools
         {
             FileTool.AppendLogToFile("logs/" + DateTime.Now.ToLongDateString() + ".log.txt", log + "----" + DateTime.Now);
         }
-
+        /// <summary>
+        /// 随机生成小写字母
+        /// </summary>
+        /// <param name="len"></param>
+        /// <returns></returns>
         public static String RandStr(int len)
         {
             StringBuilder str = new StringBuilder();
             Random rd = new Random();
             for (int i=0;i<len;i++) {
-                char c=(char)rd.Next(65, 91);
+                char c=(char)rd.Next(97, 122);
                 str.Append(c);
             }
             return str.ToString();
@@ -445,8 +449,9 @@ namespace tools
                 
 
                 case KeyType.Time:
+                    //由于计数器有误差（可能客户端计数小于服务端，，如果页面正常响应时间非常快，可能导致返回时间可能提前，所以考虑设置一个误差值）
                     int time = Tools.convertToInt(key);
-                    if (server.runTime > time*1000)
+                    if (server.runTime > (time*1000-(time*20)))
                     {
                         if (reverKey)
                         {
@@ -541,7 +546,33 @@ namespace tools
             }
             catch (Exception e)
             {
-                Tools.SysLog("hex转换错误，传递str:" + str + ",encode:" + encode + "！错误消息：" + e.Message);
+                Tools.SysLog("hex转换错误！"+ e.Message);
+            }
+            return "";
+        }
+
+        /// <summary>
+        /// 转换chr供postgresql替换库名，防止单引号被拦截或过滤
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="encode"></param>
+        /// <returns></returns>
+        public static String strToChr(String str, String encode)
+        {
+            try
+            {
+
+                StringBuilder sb = new StringBuilder("(");//存储转换后的编码
+                Byte[] strByte = Encoding.GetEncoding(encode).GetBytes(str);
+                foreach (Byte s in strByte)
+                {
+                    sb.Append("chr("+s+ ")||");
+                }
+                return sb.Remove(sb.Length-2,2).Append(")").ToString();
+            }
+            catch (Exception e)
+            {
+                Tools.SysLog("strToChr错误！" + e.Message);
             }
             return "";
         }
@@ -962,62 +993,11 @@ namespace tools
             return url;
         }
 
-        public static int caseDBTypeInt(String dbname)
-        {
-            if ("Access".Equals(dbname))
-            {
-
-                return 1;
-            }
-            else if ("MySQL".Equals(dbname))
-            {
-
-                return 2;
-            }
-            else if ("SQLServer".Equals(dbname))
-            {
-
-                return 3;
-            }
-            else if ("Oracle".Equals(dbname))
-            {
-
-                return 4;
-            }
-
-            else {
-                return 0;
-            }
-        }
-
         public static DBType caseDBType(String dbname)
         {
-
-            if ("Access".Equals(dbname))
-            {
-
-                return DBType.Access;
-            }
-            else if ("MySQL".Equals(dbname))
-            {
-
-                return DBType.MySQL;
-            }
-            else if ("SQLServer".Equals(dbname))
-            {
-
-                return DBType.SQLServer;
-            }
-            else if ("Oracle".Equals(dbname))
-            {
-
-                return DBType.Oracle;
-            }
-
-            else
-            {
-                return 0;
-            }
+                DBType db= DBType.UnKnow;
+                Enum.TryParse(dbname, out db);
+                return db;
         }
 
         public static String getRequestURI(String header)

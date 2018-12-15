@@ -429,7 +429,7 @@
             // 
             // btn_exportConfig
             // 
-            this.btn_exportConfig.Location = new System.Drawing.Point(720, 50);
+            this.btn_exportConfig.Location = new System.Drawing.Point(718, 50);
             this.btn_exportConfig.Name = "btn_exportConfig";
             this.btn_exportConfig.Size = new System.Drawing.Size(100, 23);
             this.btn_exportConfig.TabIndex = 11;
@@ -458,7 +458,7 @@
             "50",
             "70",
             "100"});
-            this.cbox_basic_threadSize.Location = new System.Drawing.Point(643, 19);
+            this.cbox_basic_threadSize.Location = new System.Drawing.Point(641, 19);
             this.cbox_basic_threadSize.Name = "cbox_basic_threadSize";
             this.cbox_basic_threadSize.Size = new System.Drawing.Size(60, 20);
             this.cbox_basic_threadSize.TabIndex = 10;
@@ -472,7 +472,7 @@
             "1",
             "2",
             "3"});
-            this.cbox_basic_reTryCount.Location = new System.Drawing.Point(643, 50);
+            this.cbox_basic_reTryCount.Location = new System.Drawing.Point(641, 50);
             this.cbox_basic_reTryCount.Name = "cbox_basic_reTryCount";
             this.cbox_basic_reTryCount.Size = new System.Drawing.Size(60, 20);
             this.cbox_basic_reTryCount.TabIndex = 9;
@@ -487,7 +487,7 @@
             "GB2312",
             "GBK",
             "ISO-8859-1"});
-            this.cbox_basic_encoding.Location = new System.Drawing.Point(332, 52);
+            this.cbox_basic_encoding.Location = new System.Drawing.Point(329, 52);
             this.cbox_basic_encoding.Name = "cbox_basic_encoding";
             this.cbox_basic_encoding.Size = new System.Drawing.Size(78, 20);
             this.cbox_basic_encoding.TabIndex = 8;
@@ -506,7 +506,7 @@
             "40",
             "50",
             "60"});
-            this.cbox_basic_timeOut.Location = new System.Drawing.Point(332, 20);
+            this.cbox_basic_timeOut.Location = new System.Drawing.Point(329, 20);
             this.cbox_basic_timeOut.Name = "cbox_basic_timeOut";
             this.cbox_basic_timeOut.Size = new System.Drawing.Size(78, 20);
             this.cbox_basic_timeOut.TabIndex = 7;
@@ -515,7 +515,7 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(261, 56);
+            this.label9.Location = new System.Drawing.Point(259, 56);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(65, 12);
             this.label9.TabIndex = 2;
@@ -524,7 +524,7 @@
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(593, 54);
+            this.label11.Location = new System.Drawing.Point(591, 54);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(47, 12);
             this.label11.TabIndex = 2;
@@ -533,7 +533,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(593, 23);
+            this.label5.Location = new System.Drawing.Point(591, 23);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(47, 12);
             this.label5.TabIndex = 2;
@@ -542,7 +542,7 @@
             // btn_autoInject
             // 
             this.btn_autoInject.ImageKey = "(无)";
-            this.btn_autoInject.Location = new System.Drawing.Point(720, 17);
+            this.btn_autoInject.Location = new System.Drawing.Point(718, 17);
             this.btn_autoInject.Name = "btn_autoInject";
             this.btn_autoInject.Size = new System.Drawing.Size(100, 23);
             this.btn_autoInject.TabIndex = 5;
@@ -559,17 +559,18 @@
             "Access",
             "MySQL",
             "SQLServer",
-            "Oracle"});
-            this.cbox_basic_dbType.Location = new System.Drawing.Point(495, 50);
+            "Oracle",
+            "PostgreSQL"});
+            this.cbox_basic_dbType.Location = new System.Drawing.Point(488, 50);
             this.cbox_basic_dbType.Name = "cbox_basic_dbType";
-            this.cbox_basic_dbType.Size = new System.Drawing.Size(80, 20);
+            this.cbox_basic_dbType.Size = new System.Drawing.Size(87, 20);
             this.cbox_basic_dbType.TabIndex = 3;
             this.cbox_basic_dbType.SelectedIndexChanged += new System.EventHandler(this.cbox_basic_dbType_SelectedIndexChanged);
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(426, 53);
+            this.label6.Location = new System.Drawing.Point(419, 53);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(65, 12);
             this.label6.TabIndex = 4;
@@ -584,9 +585,9 @@
             "盲 注",
             "显错注入",
             "Union注入"});
-            this.cbox_basic_injectType.Location = new System.Drawing.Point(495, 19);
+            this.cbox_basic_injectType.Location = new System.Drawing.Point(488, 19);
             this.cbox_basic_injectType.Name = "cbox_basic_injectType";
-            this.cbox_basic_injectType.Size = new System.Drawing.Size(81, 20);
+            this.cbox_basic_injectType.Size = new System.Drawing.Size(87, 20);
             this.cbox_basic_injectType.TabIndex = 5;
             this.cbox_basic_injectType.SelectedIndexChanged += new System.EventHandler(this.cbox_basic_injectType_SelectedIndexChanged);
             // 
@@ -612,7 +613,7 @@
             // 
             this.txt_basic_host.Location = new System.Drawing.Point(88, 19);
             this.txt_basic_host.Name = "txt_basic_host";
-            this.txt_basic_host.Size = new System.Drawing.Size(160, 21);
+            this.txt_basic_host.Size = new System.Drawing.Size(155, 21);
             this.txt_basic_host.TabIndex = 2;
             this.txt_basic_host.Text = "127.0.0.1";
             this.txt_basic_host.TextChanged += new System.EventHandler(this.txt_basic_host_TextChanged);
@@ -620,7 +621,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(262, 23);
+            this.label3.Location = new System.Drawing.Point(260, 23);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(65, 12);
             this.label3.TabIndex = 2;
@@ -629,7 +630,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(426, 22);
+            this.label7.Location = new System.Drawing.Point(419, 22);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(65, 12);
             this.label7.TabIndex = 1;
@@ -1037,9 +1038,9 @@
             // 
             // file_btn_start
             // 
-            this.file_btn_start.Location = new System.Drawing.Point(695, 31);
+            this.file_btn_start.Location = new System.Drawing.Point(717, 28);
             this.file_btn_start.Name = "file_btn_start";
-            this.file_btn_start.Size = new System.Drawing.Size(75, 23);
+            this.file_btn_start.Size = new System.Drawing.Size(100, 23);
             this.file_btn_start.TabIndex = 12;
             this.file_btn_start.Text = "开始";
             this.file_btn_start.UseVisualStyleBackColor = true;
@@ -1059,7 +1060,7 @@
             "加载获取IIS虚拟网站信息VBS"});
             this.file_cbox_readWrite.Location = new System.Drawing.Point(409, 31);
             this.file_cbox_readWrite.Name = "file_cbox_readWrite";
-            this.file_cbox_readWrite.Size = new System.Drawing.Size(274, 20);
+            this.file_cbox_readWrite.Size = new System.Drawing.Size(291, 20);
             this.file_cbox_readWrite.TabIndex = 2;
             this.file_cbox_readWrite.SelectedIndexChanged += new System.EventHandler(this.file_cbox_readWrite_SelectedIndexChanged);
             // 
@@ -2249,7 +2250,7 @@
             this.groupBox18.Controls.Add(this.bypass_cbox_loadTemplate);
             this.groupBox18.Location = new System.Drawing.Point(426, 173);
             this.groupBox18.Name = "groupBox18";
-            this.groupBox18.Size = new System.Drawing.Size(383, 55);
+            this.groupBox18.Size = new System.Drawing.Size(391, 55);
             this.groupBox18.TabIndex = 25;
             this.groupBox18.TabStop = false;
             this.groupBox18.Text = "选择绕过模板";
@@ -2326,14 +2327,14 @@
             "关键字小写"});
             this.cob_keyRepalce.Location = new System.Drawing.Point(680, 58);
             this.cob_keyRepalce.Name = "cob_keyRepalce";
-            this.cob_keyRepalce.Size = new System.Drawing.Size(129, 20);
+            this.cob_keyRepalce.Size = new System.Drawing.Size(137, 20);
             this.cob_keyRepalce.TabIndex = 17;
             this.cob_keyRepalce.SelectedIndexChanged += new System.EventHandler(this.cob_keyRepalce_SelectedIndexChanged);
             // 
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(595, 61);
+            this.label10.Location = new System.Drawing.Point(590, 61);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(65, 12);
             this.label10.TabIndex = 16;
@@ -2349,7 +2350,7 @@
             "Client_Ip"});
             this.bypass_cbox_randIPToHeader.Location = new System.Drawing.Point(680, 94);
             this.bypass_cbox_randIPToHeader.Name = "bypass_cbox_randIPToHeader";
-            this.bypass_cbox_randIPToHeader.Size = new System.Drawing.Size(129, 20);
+            this.bypass_cbox_randIPToHeader.Size = new System.Drawing.Size(137, 20);
             this.bypass_cbox_randIPToHeader.TabIndex = 14;
             this.bypass_cbox_randIPToHeader.TextChanged += new System.EventHandler(this.bypass_cbox_randIPToHeader_TextChanged);
             // 
@@ -2374,7 +2375,7 @@
             // label18
             // 
             this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(595, 97);
+            this.label18.Location = new System.Drawing.Point(590, 97);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(65, 12);
             this.label18.TabIndex = 13;
@@ -2444,7 +2445,7 @@
             // bypass_hex
             // 
             this.bypass_hex.AutoSize = true;
-            this.bypass_hex.Location = new System.Drawing.Point(594, 25);
+            this.bypass_hex.Location = new System.Drawing.Point(592, 25);
             this.bypass_hex.Name = "bypass_hex";
             this.bypass_hex.Size = new System.Drawing.Size(66, 16);
             this.bypass_hex.TabIndex = 3;

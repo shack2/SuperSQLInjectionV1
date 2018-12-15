@@ -8,7 +8,7 @@ namespace SuperSQLInjection.payload
     class Oracle
     {
         //加载对应配置(需要读取的环境变量)
-        public static String path = "config/oracle/ver.txt";
+        public static String path = "config/vers/oracle.txt";
         public static List<String> vers = FileTool.readFileToList(path);
 
 
@@ -57,8 +57,9 @@ namespace SuperSQLInjection.payload
 
 
         //union获取数据条数
-        public static String union_data_count = "(select count(*) from {dbname}.{table})";
-        public static String bool_datas_count = " " + union_data_count + ">={len}";
+        public static String data_count = "(select count(*) from {dbname}.{table})";
+
+        public static String bool_datas_count = " " + data_count + ">={len}";
 
         //union获取值
         public static String union_value = " 1=2 union all select {data} from dual";
