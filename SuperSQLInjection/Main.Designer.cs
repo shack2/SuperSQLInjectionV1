@@ -92,6 +92,7 @@
             this.tab_file = new System.Windows.Forms.TabPage();
             this.file_txt_result = new System.Windows.Forms.TextBox();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.file_btn_stop = new System.Windows.Forms.Button();
             this.file_btn_start = new System.Windows.Forms.Button();
             this.file_cbox_readWrite = new System.Windows.Forms.ComboBox();
             this.file_txt_filePath = new System.Windows.Forms.TextBox();
@@ -198,6 +199,7 @@
             this.cmd_txt_result = new System.Windows.Forms.TextBox();
             this.groupBox8 = new System.Windows.Forms.GroupBox();
             this.cmd_chk_showCmdResult = new System.Windows.Forms.CheckBox();
+            this.cmd_btn_stop = new System.Windows.Forms.Button();
             this.cmd_btn_start = new System.Windows.Forms.Button();
             this.cmd_txt_cmd = new System.Windows.Forms.TextBox();
             this.label15 = new System.Windows.Forms.Label();
@@ -231,6 +233,7 @@
             this.bypass_delselect = new System.Windows.Forms.ToolStripMenuItem();
             this.bypass_btn_addReplaceStr = new System.Windows.Forms.Button();
             this.label19 = new System.Windows.Forms.Label();
+            this.tab_useDB = new System.Windows.Forms.TabPage();
             this.tab_encoding = new System.Windows.Forms.TabPage();
             this.groupBox13 = new System.Windows.Forms.GroupBox();
             this.label21 = new System.Windows.Forms.Label();
@@ -1022,6 +1025,7 @@
             // 
             // groupBox7
             // 
+            this.groupBox7.Controls.Add(this.file_btn_stop);
             this.groupBox7.Controls.Add(this.file_btn_start);
             this.groupBox7.Controls.Add(this.file_cbox_readWrite);
             this.groupBox7.Controls.Add(this.file_txt_filePath);
@@ -1036,11 +1040,21 @@
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "文件操作";
             // 
+            // file_btn_stop
+            // 
+            this.file_btn_stop.Location = new System.Drawing.Point(748, 30);
+            this.file_btn_stop.Name = "file_btn_stop";
+            this.file_btn_stop.Size = new System.Drawing.Size(69, 23);
+            this.file_btn_stop.TabIndex = 12;
+            this.file_btn_stop.Text = "停止";
+            this.file_btn_stop.UseVisualStyleBackColor = true;
+            this.file_btn_stop.Click += new System.EventHandler(this.file_btn_stop_Click);
+            // 
             // file_btn_start
             // 
-            this.file_btn_start.Location = new System.Drawing.Point(717, 28);
+            this.file_btn_start.Location = new System.Drawing.Point(659, 30);
             this.file_btn_start.Name = "file_btn_start";
-            this.file_btn_start.Size = new System.Drawing.Size(100, 23);
+            this.file_btn_start.Size = new System.Drawing.Size(69, 23);
             this.file_btn_start.TabIndex = 12;
             this.file_btn_start.Text = "开始";
             this.file_btn_start.UseVisualStyleBackColor = true;
@@ -1050,17 +1064,9 @@
             // 
             this.file_cbox_readWrite.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.file_cbox_readWrite.FormattingEnabled = true;
-            this.file_cbox_readWrite.Items.AddRange(new object[] {
-            "MySQL Load_File读文件",
-            "MySQL Union写文件",
-            "SQLServer FileSystemObject写文件",
-            "SQLServer Sp_MakeWebTask写文件",
-            "SQLServer 备份写WebShell(有多余数据)",
-            "SQLServer FileSystemObject读文件",
-            "加载获取IIS虚拟网站信息VBS"});
             this.file_cbox_readWrite.Location = new System.Drawing.Point(409, 31);
             this.file_cbox_readWrite.Name = "file_cbox_readWrite";
-            this.file_cbox_readWrite.Size = new System.Drawing.Size(291, 20);
+            this.file_cbox_readWrite.Size = new System.Drawing.Size(230, 20);
             this.file_cbox_readWrite.TabIndex = 2;
             this.file_cbox_readWrite.SelectedIndexChanged += new System.EventHandler(this.file_cbox_readWrite_SelectedIndexChanged);
             // 
@@ -2111,6 +2117,7 @@
             this.mytab.Controls.Add(this.tab_file);
             this.mytab.Controls.Add(this.tab_cmd);
             this.mytab.Controls.Add(this.tab_bypass);
+            this.mytab.Controls.Add(this.tab_useDB);
             this.mytab.Controls.Add(this.tab_encoding);
             this.mytab.Controls.Add(this.tab_scanInjection);
             this.mytab.Controls.Add(this.tab_injectLog);
@@ -2150,6 +2157,7 @@
             // groupBox8
             // 
             this.groupBox8.Controls.Add(this.cmd_chk_showCmdResult);
+            this.groupBox8.Controls.Add(this.cmd_btn_stop);
             this.groupBox8.Controls.Add(this.cmd_btn_start);
             this.groupBox8.Controls.Add(this.cmd_txt_cmd);
             this.groupBox8.Controls.Add(this.label15);
@@ -2173,6 +2181,16 @@
             this.cmd_chk_showCmdResult.Text = "回显结果";
             this.cmd_chk_showCmdResult.UseVisualStyleBackColor = true;
             this.cmd_chk_showCmdResult.CheckedChanged += new System.EventHandler(this.cmd_chk_showCmdResult_CheckedChanged);
+            // 
+            // cmd_btn_stop
+            // 
+            this.cmd_btn_stop.Location = new System.Drawing.Point(592, 28);
+            this.cmd_btn_stop.Name = "cmd_btn_stop";
+            this.cmd_btn_stop.Size = new System.Drawing.Size(75, 23);
+            this.cmd_btn_stop.TabIndex = 12;
+            this.cmd_btn_stop.Text = "停止";
+            this.cmd_btn_stop.UseVisualStyleBackColor = true;
+            this.cmd_btn_stop.Click += new System.EventHandler(this.cmd_btn_stop_Click);
             // 
             // cmd_btn_start
             // 
@@ -2549,6 +2567,16 @@
             this.label19.TabIndex = 5;
             this.label19.Text = "将字符";
             // 
+            // tab_useDB
+            // 
+            this.tab_useDB.Location = new System.Drawing.Point(4, 23);
+            this.tab_useDB.Name = "tab_useDB";
+            this.tab_useDB.Padding = new System.Windows.Forms.Padding(3);
+            this.tab_useDB.Size = new System.Drawing.Size(832, 451);
+            this.tab_useDB.TabIndex = 11;
+            this.tab_useDB.Text = "数据库利用";
+            this.tab_useDB.UseVisualStyleBackColor = true;
+            // 
             // tab_encoding
             // 
             this.tab_encoding.Controls.Add(this.groupBox13);
@@ -2610,7 +2638,9 @@
             "Base64Encode",
             "字符转Unicode",
             "字符转16进制（UTF-8编码）",
-            "MD5加密"});
+            "MD5加密",
+            "字符串转chr",
+            "字符串转char"});
             this.encode_cbox_encode.Location = new System.Drawing.Point(103, 25);
             this.encode_cbox_encode.Name = "encode_cbox_encode";
             this.encode_cbox_encode.Size = new System.Drawing.Size(200, 20);
@@ -3690,6 +3720,9 @@
         private System.Windows.Forms.ToolStripMenuItem tsmi_injectLog_clearAllLog;
         private System.Windows.Forms.ColumnHeader injectlog_col_ip;
         private System.Windows.Forms.ColumnHeader injectlog_col_port;
+        private System.Windows.Forms.TabPage tab_useDB;
+        private System.Windows.Forms.Button cmd_btn_stop;
+        private System.Windows.Forms.Button file_btn_stop;
     }
 }
 

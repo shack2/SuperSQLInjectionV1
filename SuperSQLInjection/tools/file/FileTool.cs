@@ -137,7 +137,7 @@ namespace tools
             
         }
         //读取文件
-        public static Byte[] readFileToByte(String path,int a)
+        public static Byte[] readFileToByte(String path,Encoding encode)
         {
             Byte[] buffer = null;
             FileStream fs_dir=null;
@@ -145,7 +145,7 @@ namespace tools
             try
             {
                 fs_dir = new FileStream(path, FileMode.Open, FileAccess.Read);
-                BinaryReader br = new BinaryReader(fs_dir);
+                BinaryReader br = new BinaryReader(fs_dir, encode);
                 int len = (int)fs_dir.Length;
 
                 buffer = new byte[len];

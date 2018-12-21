@@ -275,12 +275,25 @@ namespace tools
         /// <returns></returns>
         public static String convertToString(String[] strs){
 
+            return convertToString(strs,false);
+
+
+        }
+
+       
+        public static String convertToString(String[] strs,bool appendNewLine)
+        {
+           
             StringBuilder sb = new StringBuilder();
-            foreach(String s in strs){
+            foreach (String s in strs)
+            {
                 sb.Append(s);
+                if (appendNewLine) {
+                    sb.Append("\r\n");
+                }  
             }
             return sb.ToString();
-        
+
         }
 
         /// <summary>
@@ -383,7 +396,7 @@ namespace tools
         /// <param name="isUseCode">是否使用状态码判断</param>
         /// <param name="key">关键字</param>
         /// <returns></returns>
-        public static Boolean isTrue(ServerInfo server,String key,Boolean reverKey,KeyType keyType)
+        public static Boolean isTrue(ServerInfo server,String key,Boolean reverKey,KeyType keyType,int trueHTTPCode)
         {
             switch (keyType) {
                
@@ -392,17 +405,30 @@ namespace tools
                     //用关键字判断
                     if (server.body.Length > 0 && server.body.IndexOf(key)!=-1)
                     {
-                        ;
                         if (reverKey)
-                        {
-                            return false;
+                        {                    
+                                return false;
                         }
-                        return true;
+                        else
+                        {
+                            //判断httpcode是否一致
+                            if (trueHTTPCode != 0 && server.code == trueHTTPCode) {
+                                return true;
+                            }
+                            return false;
+                               
+                        }
+                       
                     }
                     else
                     {
                         if (reverKey)
                         {
+                            //判断httpcode是否一致
+                            if (trueHTTPCode != 0 && server.code == trueHTTPCode)
+                            {
+                                return true;
+                            }
                             return true;
                         }
                         return false;
@@ -552,6 +578,51 @@ namespace tools
         }
 
         /// <summary>
+        /// byte[]转hex，udf调用
+        /// </summary>
+        /// <param name="bytes"></param>
+        /// <returns></returns>
+        public static String bytesToHex(byte[] bytes)
+        {
+            try
+            {
+                StringBuilder sb = new StringBuilder();
+                if (bytes != null && bytes.Length > 0) {
+                    foreach (Byte s in bytes)
+                    {
+                        sb.Append(s.ToString("x").PadLeft(2, '0'));
+                    }
+                   
+                }
+                return sb.ToString();
+            }
+            catch (Exception e)
+            {
+                Tools.SysLog("bytesToHex转换错误！" + e.Message);
+            }
+            return "";
+        }
+
+        /// <summary>
+        /// byte[]转hex，udf调用
+        /// </summary>
+        /// <param name="bytes"></param>
+        /// <returns></returns>
+        public static String FileToHex(String path,Encoding encode)
+        {
+            try
+            {
+                byte[] filedata=FileTool.readFileToByte(path, encode);
+                return bytesToHex(filedata);
+            }
+            catch (Exception e)
+            {
+                Tools.SysLog("FileToHex转换错误！" + e.Message);
+            }
+            return "";
+        }
+
+        /// <summary>
         /// 转换chr供postgresql替换库名，防止单引号被拦截或过滤
         /// </summary>
         /// <param name="str"></param>
@@ -559,22 +630,68 @@ namespace tools
         /// <returns></returns>
         public static String strToChr(String str, String encode)
         {
+            return strToChrOrChar(str, "chr", "||", encode);
+        }
+
+       
+        public static String strToChrOrChar(String str, String charFunction,String charConcatStr,String encode)
+        {
             try
             {
 
-                StringBuilder sb = new StringBuilder("(");//存储转换后的编码
+                StringBuilder sb = new StringBuilder();
                 Byte[] strByte = Encoding.GetEncoding(encode).GetBytes(str);
                 foreach (Byte s in strByte)
                 {
-                    sb.Append("chr("+s+ ")||");
+                    sb.Append(charFunction+"(" + s + ")"+ charConcatStr);
                 }
-                return sb.Remove(sb.Length-2,2).Append(")").ToString();
+                return sb.Remove(sb.Length - charConcatStr.Length, charConcatStr.Length).ToString();
             }
             catch (Exception e)
             {
-                Tools.SysLog("strToChr错误！" + e.Message);
+                Tools.SysLog("strToChrOrChar错误！" + e.Message);
             }
             return "";
+        }
+
+        
+        public static String chrOrCharToStr(String str, String charFunction, String encode)
+        {
+            try
+            {
+                String[] chars = str.Split(' ');
+                if (chars.Length > 0) {
+
+                    Byte[] bs = new Byte[chars.Length];
+                    int index = 0;
+                    foreach (String s in chars)
+                    {
+                        String cs = s.Replace(charFunction,"").Replace(charFunction + "(", "").Replace(charFunction + ")", "");
+                        Byte b = (Byte)Tools.convertToInt(cs);
+                        bs[index] = b;
+                        index++;
+                    }
+                    return Encoding.GetEncoding(encode).GetString(bs);
+                   
+                }
+                    
+            }
+            catch (Exception e)
+            {
+                Tools.SysLog("strToChrOrChar错误！" + e.Message);
+            }
+            return "";
+        }
+
+        /// <summary>
+        /// 转换chr供SQLServer替换库名，防止单引号被拦截或过滤
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="encode"></param>
+        /// <returns></returns>
+        public static String strToChar(String str, String encode)
+        {
+            return strToChrOrChar(str, "char", "+", encode);
         }
         public static int UnicodeInt2UTF8Int(int UnicodeInt)
         {

