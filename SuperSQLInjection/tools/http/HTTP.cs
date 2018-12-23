@@ -13,6 +13,8 @@ using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using SuperSQLInjection.bypass;
 using SuperSQLInjection.tools.http;
+using System.Net;
+using SuperSQLInjection.model;
 
 namespace SuperSQLInjection.tools
 {
@@ -36,7 +38,7 @@ namespace SuperSQLInjection.tools
 
         public static String getTemplate = "GET /mysql.jsp?id=1 HTTP/1.1\r\nUser-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.10240\r\nAccept-Encoding: gzip, deflate\r\nHost: 127.0.0.1:8090\r\nConnection: Close\r\nCookie: JSESSIONID=2F6D5F1AC8C376FF0AB48A08282A6CED";
         public static String postTemplate = "POST /search/index.htm HTTP/1.1\r\nReferer: http://www.shack2.org/\r\nUser-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.10240\r\nContent-Type: application/x-www-form-urlencoded\r\nAccept-Encoding: gzip, deflate\r\nContent-Length: 5\r\nHost: www.shack2.org\r\nConnection: Keep-Alive\r\nPragma: no-cache\r\nCookie: CNZZDATA4159773=cnzz_eid%3D217492251-1446476958-%26ntime%3D1447834260; bdshare_firstime=1446476958863\r\n\r\nkey=s";
-        public void initMain(Main m)
+        public static void initMain(Main m)
         {
             main = m;
         }
@@ -93,7 +95,8 @@ namespace SuperSQLInjection.tools
                 }
                 catch (Exception e)
                 {
-                    Tools.SysLog("发包发生异常，正在重试----" + e.Message);
+                    Tools.SysLog(e.Message);
+                    main.Invoke(new Main.showLogDelegate(main.log),e.Message, LogLevel.waring);
                     server.timeout = true;
                     continue;
                 }
@@ -134,7 +137,8 @@ namespace SuperSQLInjection.tools
                 }
                 catch (Exception e)
                 {
-                    Tools.SysLog("发包发生异常，正在重试----" + e.Message);
+                    Tools.SysLog(e.Message);
+                    main.Invoke(new Main.showLogDelegate(main.log), e.Message, LogLevel.waring);
                     server.timeout = true;
                     continue;
                 }
@@ -573,7 +577,8 @@ namespace SuperSQLInjection.tools
                     if (clientSocket.Connected)
                     {
                         ssl = new SslStream(clientSocket.GetStream(), false, new RemoteCertificateValidationCallback(ValidateServerCertificate));
-                        SslProtocols protocol = SslProtocols.Ssl3 | SslProtocols.Ssl2 | SslProtocols.Tls;
+                        //增加支持TLS1.1和TLS1.2支持3072，768
+                        SslProtocols protocol = (SslProtocols)3072|(SslProtocols)768|SslProtocols.Tls|SslProtocols.Ssl3;
                         ssl.AuthenticateAsClient(host, null, protocol, false);
                         if (ssl.IsAuthenticated)
                         {
@@ -588,7 +593,7 @@ namespace SuperSQLInjection.tools
                         }
                     }
                     server.request = request;
-                    byte[] responseBody = new byte[1024 * 1024*10];
+                    byte[] responseBody = new byte[1024 * 1024 * 10];
                     int len = 0;
                     //获取header头
                     String tmp = "";
@@ -616,7 +621,7 @@ namespace SuperSQLInjection.tools
                     server.header = sb.ToString().Replace(CTRL, "");
                     String[] headers = Regex.Split(server.header, CT);
                     //处理header
-                    doHeader(ref server, ref headers,ref encoding);
+                    doHeader(ref server, ref headers, ref encoding);
                     //302 301跳转
                     if ((server.code == 302 || server.code == 301) && foward_302)
                     {
@@ -641,7 +646,7 @@ namespace SuperSQLInjection.tools
                                 rsb.Remove(0, 4);
                                 rsb.Insert(0, "GET");
                             }
-                            
+
                             return sendHTTPSRequest(count, host, port, payload, rsb.ToString(), timeout, encoding, false, redirectDoGet);
                         }
 
@@ -782,13 +787,10 @@ namespace SuperSQLInjection.tools
                     }
                 }
 
-            }
-            catch (Exception e)
+            }catch (Exception e)
             {
                 Exception ee = new Exception("HTTPS发包错误！错误消息：" + e.Message + "----发包编号：" + index);
-                if (ee.Message.IndexOf("doHeader") != -1) {
-                    String a=e.Message;
-                }
+                
                 throw ee;
             }
             finally

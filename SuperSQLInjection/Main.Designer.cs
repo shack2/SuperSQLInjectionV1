@@ -233,7 +233,6 @@
             this.bypass_delselect = new System.Windows.Forms.ToolStripMenuItem();
             this.bypass_btn_addReplaceStr = new System.Windows.Forms.Button();
             this.label19 = new System.Windows.Forms.Label();
-            this.tab_useDB = new System.Windows.Forms.TabPage();
             this.tab_encoding = new System.Windows.Forms.TabPage();
             this.groupBox13 = new System.Windows.Forms.GroupBox();
             this.label21 = new System.Windows.Forms.Label();
@@ -1631,7 +1630,7 @@
             this.tsmi_changeRequestMethod,
             this.tsmi_createPackByURL});
             this.cms_dataPacks.Name = "cms_dataPacks";
-            this.cms_dataPacks.Size = new System.Drawing.Size(184, 92);
+            this.cms_dataPacks.Size = new System.Drawing.Size(184, 114);
             this.cms_dataPacks.Text = "复制数据";
             // 
             // tsmi_createGetTemplate
@@ -2117,7 +2116,6 @@
             this.mytab.Controls.Add(this.tab_file);
             this.mytab.Controls.Add(this.tab_cmd);
             this.mytab.Controls.Add(this.tab_bypass);
-            this.mytab.Controls.Add(this.tab_useDB);
             this.mytab.Controls.Add(this.tab_encoding);
             this.mytab.Controls.Add(this.tab_scanInjection);
             this.mytab.Controls.Add(this.tab_injectLog);
@@ -2566,16 +2564,6 @@
             this.label19.Size = new System.Drawing.Size(41, 12);
             this.label19.TabIndex = 5;
             this.label19.Text = "将字符";
-            // 
-            // tab_useDB
-            // 
-            this.tab_useDB.Location = new System.Drawing.Point(4, 23);
-            this.tab_useDB.Name = "tab_useDB";
-            this.tab_useDB.Padding = new System.Windows.Forms.Padding(3);
-            this.tab_useDB.Size = new System.Drawing.Size(832, 451);
-            this.tab_useDB.TabIndex = 11;
-            this.tab_useDB.Text = "数据库利用";
-            this.tab_useDB.UseVisualStyleBackColor = true;
             // 
             // tab_encoding
             // 
@@ -3720,7 +3708,6 @@
         private System.Windows.Forms.ToolStripMenuItem tsmi_injectLog_clearAllLog;
         private System.Windows.Forms.ColumnHeader injectlog_col_ip;
         private System.Windows.Forms.ColumnHeader injectlog_col_port;
-        private System.Windows.Forms.TabPage tab_useDB;
         private System.Windows.Forms.Button cmd_btn_stop;
         private System.Windows.Forms.Button file_btn_stop;
     }

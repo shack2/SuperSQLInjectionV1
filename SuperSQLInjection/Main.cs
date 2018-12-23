@@ -115,7 +115,7 @@ namespace SuperSQLInjection
             this.cbox_bypass_urlencode_count.SelectedIndex = 0;
             this.cbox_base64Count.SelectedIndex = 0;
 
-            HTTP.main = this;
+            HTTP.initMain(this);
             //清空日志
             Thread t = new Thread(Tools.delHTTPLog);
             t.Start();
@@ -230,7 +230,7 @@ namespace SuperSQLInjection
             return sid;
         }
 
-        public static int version = 20181221;
+        public static int version = 20181223;
         public static string versionURL = "http://www.shack2.org/soft/getNewVersion?ENNAME=SSuperSQLInjection&NO=" + URLEncode.UrlEncode(getSid()) + "&VERSION=" + version;
         //检查更新
         public void checkUpdate()
@@ -5403,8 +5403,8 @@ namespace SuperSQLInjection
                     //自定义
                     if (!config.encoding.Equals(oserver.encoding))
                     {
-                        DialogResult dr = MessageBox.Show("自动识别发现网页编码为“" + oserver.encoding + ",而你选择的编码是“" + config.encoding + "””，是否采用自定义编码，不选择将自动识别！", "提示信息", MessageBoxButtons.YesNo);
-                        if (DialogResult.No.Equals(dr))
+                        DialogResult dr = MessageBox.Show("自动识别发现网页编码为“" + oserver.encoding + ",而你选择的编码是“" + config.encoding + "””，是否采用自定义编码？", "提示信息", MessageBoxButtons.YesNo);
+                        if (DialogResult.Yes.Equals(dr))
                         {
                             this.cbox_basic_encoding.Text = HTTP.AutoGetEncoding;
                         }
@@ -5648,7 +5648,8 @@ namespace SuperSQLInjection
                                 if (!config.dbType.ToString().Equals(pals[3])&& !config.dbType.Equals(DBType.UnKnow)) {
                                     continue;
                                 }
-                                ServerInfo errorServer = HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, pals[0], payload_request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
+                                
+                                ServerInfo errorServer = HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, HttpUtility.UrlDecode(pals[0]), payload_request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
 
                                 if (errorServer.body.IndexOf(pals[1]) != -1)
                                 {
@@ -8681,6 +8682,9 @@ namespace SuperSQLInjection
                 if (config.request.StartsWith("https"))
                 {
                     this.chk_useSSL.Checked = true;
+                }
+                else {
+                    this.chk_useSSL.Checked = false;
                 }
                 Uri url = new Uri(config.request);
                 this.txt_inject_request.Text = Spider.reqestGetTemplate.Replace("{url}", url.PathAndQuery).Replace("{host}", url.Host + ":" + url.Port);
