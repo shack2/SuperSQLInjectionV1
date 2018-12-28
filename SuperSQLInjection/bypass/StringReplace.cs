@@ -217,10 +217,16 @@ namespace SuperSQLInjection.bypass
             String newpayload = "";
             if (config.useBetweenByPass)
             {
-                //只能匹配数字1-9，如果是0，可能会替换16进制，导致语句出错
-                Match m = Regex.Match(paylaod, @"(?<str>[\>\<\=]+)(?<len>[1-9]+)");
+                //判断是否存在16进制情况，有则跳出
+                bool m1 = Regex.IsMatch(paylaod, @"[\>\<\=]+0x");
+                if (m1) {
+                    return paylaod;
+                }
+
+                //替换
+                Match m = Regex.Match(paylaod, @"(?<str>[\>\<\=]+)(?<len>\d+)");
                 String str = m.Groups["str"].Value;
-                String replaceReg = @"[\>\=]+[1-9]+";
+                String replaceReg = @"[\>\=]+\d+";
                 if (String.IsNullOrEmpty(m.Groups["len"].Value))
                 {
                     return paylaod;

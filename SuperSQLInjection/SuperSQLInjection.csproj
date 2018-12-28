@@ -174,7 +174,6 @@
     <Compile Include="tools\http\HttpTools.cs" />
     <Compile Include="tools\http\model\HttpRequest.cs" />
     <Compile Include="tools\http\model\HttpResponse.cs" />
-    <Compile Include="tools\http\SslProtocols.cs" />
     <Compile Include="tools\http\TimeOutSocket.cs" />
     <Compile Include="tools\InjectionTools.cs" />
     <Compile Include="tools\LikeMath.cs" />

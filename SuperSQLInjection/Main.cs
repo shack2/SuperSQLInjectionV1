@@ -230,7 +230,7 @@ namespace SuperSQLInjection
             return sid;
         }
 
-        public static int version = 20181223;
+        public static int version = 20181228;
         public static string versionURL = "http://www.shack2.org/soft/getNewVersion?ENNAME=SSuperSQLInjection&NO=" + URLEncode.UrlEncode(getSid()) + "&VERSION=" + version;
         //检查更新
         public void checkUpdate()
