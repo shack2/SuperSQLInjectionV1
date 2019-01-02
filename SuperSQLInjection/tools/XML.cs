@@ -57,7 +57,6 @@ namespace SuperSQLInjection.tools
             }
             catch (Exception e)
             {
-
                 throw e;
             }
             finally {

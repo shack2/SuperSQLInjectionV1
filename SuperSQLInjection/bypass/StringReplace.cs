@@ -131,7 +131,7 @@ namespace SuperSQLInjection.bypass
                     {
                         String key = ite.Key.ToString();
                         if (!String.IsNullOrEmpty(key)) {
-                            str = str.ToLower().Replace(key, ite.Value + "");
+                            str = str.Replace(key, ite.Value + "");
                         }
                         
                     }
@@ -273,7 +273,7 @@ namespace SuperSQLInjection.bypass
 
                     String keyStr =m.Groups[0].Value;
                     //库名.表,全局变量,环境变量不处理防止部分情况出现错误
-                    if (keyStr.IndexOf(".") != -1||keyStr.IndexOf("@") != -1 || keyStr.IndexOf("()") != -1) {
+                    if (keyStr.IndexOf("'") != -1||keyStr.IndexOf(".") != -1||keyStr.IndexOf("@") != -1 || keyStr.IndexOf("()") != -1) {
                         continue;
                     }
                     if (changeType == 1) {

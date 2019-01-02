@@ -94,6 +94,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
+    <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
     <Reference Include="System.Web" />
@@ -143,6 +144,7 @@
     <Compile Include="payload\Comm.cs" />
     <Compile Include="model\Injection.cs" />
     <Compile Include="payload\DBPayload.cs" />
+    <Compile Include="payload\DB2.cs" />
     <Compile Include="payload\PostgreSQL.cs" />
     <Compile Include="payload\MySQL.cs" />
     <Compile Include="payload\SQLServer.cs" />

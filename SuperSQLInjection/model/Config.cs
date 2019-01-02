@@ -33,6 +33,8 @@ namespace SuperSQLInjection.model
         public Boolean useCode = false;
         public int columnsCount = 0;
 
+        public String unionFillTemplate = "";
+
         public Boolean sencondInject = false;//二次注入
         public int showColumn = 0;
         public Boolean reverseKey = false;//反取关键字

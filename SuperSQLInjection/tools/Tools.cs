@@ -309,7 +309,7 @@ namespace tools
                 return int.Parse(str);
             }
             catch (Exception e) {
-                Tools.SysLog("info:-"+e.Message);
+                Tools.SysLog("info:数字转换错误:-"+e.Message);
             }
             return 0;
 
@@ -1150,5 +1150,70 @@ namespace tools
             return uri;
         }
 
+        //DB2的每列是数字或者字符的穷举
+        private static String[] fillStr = { "1", "chr(32)"};
+
+
+        /// <summary>
+        /// 获得DB2的每列是数字或者字符的穷举
+        /// </summary>
+        /// <param name="n">总列数</param>
+        /// <returns></returns>
+        public static List<String> getDB2UnionTemplates(int sumCount, int showIndex)
+        {
+            List < String > list= new List<String>();
+            if (sumCount == 1)
+            {
+                list.Add("{data}");
+               
+            }
+            else {
+                int n = sumCount - 1;
+                String[] codes = new String[2 << (n - 1)];
+                createGrayCode(codes, n);
+                foreach(String code in codes)
+                {
+                    String cp = insertDB2ShowTemplate(code,showIndex);
+                    list.Add(cp);
+                    //插入,显示列
+                }
+            }
+            return list;
+        }
+
+        private static String insertDB2ShowTemplate(String temlate,int showIndex) {
+            List<String> list = new List<String>(temlate.Split(','));
+            list.Insert(showIndex,"{data}");
+            return String.Join(",", list);
+
+        }
+
+        private static void createGrayCode(String[] codes, int n)
+        {
+            if (n == 1)
+            {
+                codes[0] = fillStr[0];
+                codes[1] = fillStr[1];
+            }
+            else
+            {
+                createGrayCode(codes, n - 1);
+                int len = 2 << (n - 1);
+                int half = len >> 1;
+                for (int i = len - 1, j = 0; i >= 0; i--)
+                {
+                    if (i < half)
+                    {
+                        codes[i] = fillStr[0] + "," + codes[--j];
+                    }
+                    else
+                    {
+                        codes[i] = fillStr[1] + "," + codes[j++];
+                    }
+                }
+            }
+        }
     }
+
+
 }

