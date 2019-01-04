@@ -105,6 +105,7 @@
             this.tab_vers = new System.Windows.Forms.TabPage();
             this.data_lvw_ver = new System.Windows.Forms.ListView();
             this.data_lvw_ver_verName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.data_lvw_ver_val = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.data_cms_vers = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.data_cms_tsmi_getVariable = new System.Windows.Forms.ToolStripMenuItem();
             this.data_cms_tsmi_stopGetVariable = new System.Windows.Forms.ToolStripMenuItem();
@@ -171,9 +172,11 @@
             this.txt_sencond_request = new System.Windows.Forms.TextBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.groupBox16 = new System.Windows.Forms.GroupBox();
+            this.label34 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.txt_inject_showIndex = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
+            this.txt_inject_unionTemplate = new System.Windows.Forms.TextBox();
             this.txt_inject_unionColumnsCount = new System.Windows.Forms.TextBox();
             this.btn_inject_sendData = new System.Windows.Forms.Button();
             this.btn_inject_clearRequest = new System.Windows.Forms.Button();
@@ -321,9 +324,6 @@
             this.lbl_packsCount = new System.Windows.Forms.ToolStripStatusLabel();
             this.timer_status = new System.Windows.Forms.Timer(this.components);
             this.timer_scanInjection = new System.Windows.Forms.Timer(this.components);
-            this.data_lvw_ver_val = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.label34 = new System.Windows.Forms.Label();
-            this.txt_inject_unionTemplate = new System.Windows.Forms.TextBox();
             this.gb_basic.SuspendLayout();
             this.menuStrip_main.SuspendLayout();
             this.gb_logo.SuspendLayout();
@@ -572,7 +572,8 @@
             "SQLServer",
             "Oracle",
             "PostgreSQL",
-            "DB2"});
+            "DB2",
+            "SQLite"});
             this.cbox_basic_dbType.Location = new System.Drawing.Point(489, 50);
             this.cbox_basic_dbType.Name = "cbox_basic_dbType";
             this.cbox_basic_dbType.Size = new System.Drawing.Size(87, 20);
@@ -1182,6 +1183,11 @@
             this.data_lvw_ver_verName.Text = "变量名";
             this.data_lvw_ver_verName.Width = 250;
             // 
+            // data_lvw_ver_val
+            // 
+            this.data_lvw_ver_val.Text = "变量值";
+            this.data_lvw_ver_val.Width = 500;
+            // 
             // data_cms_vers
             // 
             this.data_cms_vers.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -1509,7 +1515,7 @@
             this.groupBox4.Controls.Add(this.data_dbs_lvw_data);
             this.groupBox4.Location = new System.Drawing.Point(3, 6);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(577, 379);
+            this.groupBox4.Size = new System.Drawing.Size(578, 379);
             this.groupBox4.TabIndex = 1;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "获取数据";
@@ -1523,7 +1529,7 @@
             this.data_dbs_lvw_data.GridLines = true;
             this.data_dbs_lvw_data.Location = new System.Drawing.Point(3, 17);
             this.data_dbs_lvw_data.Name = "data_dbs_lvw_data";
-            this.data_dbs_lvw_data.Size = new System.Drawing.Size(571, 359);
+            this.data_dbs_lvw_data.Size = new System.Drawing.Size(572, 359);
             this.data_dbs_lvw_data.TabIndex = 1;
             this.data_dbs_lvw_data.UseCompatibleStateImageBehavior = false;
             this.data_dbs_lvw_data.View = System.Windows.Forms.View.Details;
@@ -1879,6 +1885,15 @@
             this.groupBox16.TabStop = false;
             this.groupBox16.Text = "Union注入取数据配置";
             // 
+            // label34
+            // 
+            this.label34.AutoSize = true;
+            this.label34.Location = new System.Drawing.Point(10, 61);
+            this.label34.Name = "label34";
+            this.label34.Size = new System.Drawing.Size(65, 12);
+            this.label34.TabIndex = 1;
+            this.label34.Text = "填充模板：";
+            // 
             // label4
             // 
             this.label4.AutoSize = true;
@@ -1906,6 +1921,17 @@
             this.label8.Size = new System.Drawing.Size(53, 12);
             this.label8.TabIndex = 8;
             this.label8.Text = "显示列：";
+            // 
+            // txt_inject_unionTemplate
+            // 
+            this.txt_inject_unionTemplate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txt_inject_unionTemplate.Location = new System.Drawing.Point(78, 58);
+            this.txt_inject_unionTemplate.MaxLength = 1000;
+            this.txt_inject_unionTemplate.Name = "txt_inject_unionTemplate";
+            this.txt_inject_unionTemplate.Size = new System.Drawing.Size(158, 21);
+            this.txt_inject_unionTemplate.TabIndex = 7;
+            this.txt_inject_unionTemplate.TextChanged += new System.EventHandler(this.txt_inject_unionTemplate_TextChanged);
             // 
             // txt_inject_unionColumnsCount
             // 
@@ -3375,31 +3401,6 @@
             this.timer_scanInjection.Enabled = true;
             this.timer_scanInjection.Interval = 1000;
             this.timer_scanInjection.Tick += new System.EventHandler(this.timer_scanInjection_Tick);
-            // 
-            // data_lvw_ver_val
-            // 
-            this.data_lvw_ver_val.Text = "变量值";
-            this.data_lvw_ver_val.Width = 500;
-            // 
-            // label34
-            // 
-            this.label34.AutoSize = true;
-            this.label34.Location = new System.Drawing.Point(10, 61);
-            this.label34.Name = "label34";
-            this.label34.Size = new System.Drawing.Size(65, 12);
-            this.label34.TabIndex = 1;
-            this.label34.Text = "填充模板：";
-            // 
-            // txt_inject_unionTemplate
-            // 
-            this.txt_inject_unionTemplate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txt_inject_unionTemplate.Location = new System.Drawing.Point(78, 58);
-            this.txt_inject_unionTemplate.MaxLength = 1000;
-            this.txt_inject_unionTemplate.Name = "txt_inject_unionTemplate";
-            this.txt_inject_unionTemplate.Size = new System.Drawing.Size(158, 21);
-            this.txt_inject_unionTemplate.TabIndex = 7;
-            this.txt_inject_unionTemplate.TextChanged += new System.EventHandler(this.txt_inject_unionTemplate_TextChanged);
             // 
             // Main
             // 

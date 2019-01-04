@@ -683,6 +683,17 @@ namespace tools
             return "";
         }
 
+
+        public static String strToChar(String str,String encode,String joinStr)
+        {
+            return strToChrOrChar(str, "char", joinStr, encode);
+        }
+
+        public static String strToChr(String str, String encode, String joinStr)
+        {
+            return strToChrOrChar(str, "chr", joinStr, encode);
+        }
+
         /// <summary>
         /// 转换chr供SQLServer替换库名，防止单引号被拦截或过滤
         /// </summary>
@@ -1212,6 +1223,19 @@ namespace tools
                     }
                 }
             }
+        }
+
+        public static List<String> GetSQLiteColumns(String sql)
+        {
+            List<String> list = new List<String>(); 
+            MatchCollection mc =Regex.Matches(sql, "\"(?<column>\\w+)\"[\\w ]+\\,");
+            if (mc!=null&&mc.Count > 0) {
+                foreach (Match m in mc) {
+                    list.Add(m.Groups["column"].Value);
+                }
+
+            }
+            return list;
         }
     }
 

