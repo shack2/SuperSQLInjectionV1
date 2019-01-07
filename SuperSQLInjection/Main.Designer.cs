@@ -79,6 +79,7 @@
             this.log_col_code = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.log_col_bodyLength = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.log_col_sleepTime = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.col_proxy = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.log_cms_dataifo = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.data_cms_clearLog = new System.Windows.Forms.ToolStripMenuItem();
             this.data_cms_copyPaylaod = new System.Windows.Forms.ToolStripMenuItem();
@@ -108,8 +109,10 @@
             this.data_lvw_ver_val = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.data_cms_vers = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.data_cms_tsmi_getVariable = new System.Windows.Forms.ToolStripMenuItem();
-            this.data_cms_tsmi_stopGetVariable = new System.Windows.Forms.ToolStripMenuItem();
             this.data_cms_tsmi_copyVerValue = new System.Windows.Forms.ToolStripMenuItem();
+            this.data_cms_tsmi_selectAllVers = new System.Windows.Forms.ToolStripMenuItem();
+            this.data_cms_tsmi_selectReversVers = new System.Windows.Forms.ToolStripMenuItem();
+            this.data_cms_tsmi_stopGetVariable = new System.Windows.Forms.ToolStripMenuItem();
             this.tab_dbs = new System.Windows.Forms.TabPage();
             this.spc_dbs = new System.Windows.Forms.SplitContainer();
             this.data_dbs_ts = new System.Windows.Forms.ToolStrip();
@@ -198,6 +201,56 @@
             this.chk_inject_foward_302 = new System.Windows.Forms.CheckBox();
             this.btn_inject_setInject = new System.Windows.Forms.Button();
             this.mytab = new System.Windows.Forms.TabControl();
+            this.tab_proxy = new System.Windows.Forms.TabPage();
+            this.groupBox25 = new System.Windows.Forms.GroupBox();
+            this.label46 = new System.Windows.Forms.Label();
+            this.proxy_lbl_proxyType = new System.Windows.Forms.Label();
+            this.proxy_lbl_proxy_port = new System.Windows.Forms.Label();
+            this.proxy_lbl_proxy_password = new System.Windows.Forms.Label();
+            this.proxy_lbl_proxy_username = new System.Windows.Forms.Label();
+            this.proxy_lbl_proxy_host = new System.Windows.Forms.Label();
+            this.label45 = new System.Windows.Forms.Label();
+            this.label39 = new System.Windows.Forms.Label();
+            this.label38 = new System.Windows.Forms.Label();
+            this.label35 = new System.Windows.Forms.Label();
+            this.proxy_cmb_proxyMode = new System.Windows.Forms.ComboBox();
+            this.groupBox24 = new System.Windows.Forms.GroupBox();
+            this.toolStrip_proxyList = new System.Windows.Forms.ToolStrip();
+            this.proxy_ts_btn_clearAllFailedProxy = new System.Windows.Forms.ToolStripLabel();
+            this.proxy_ts_btn_proxy_checkNoCheckProxy = new System.Windows.Forms.ToolStripLabel();
+            this.groupBox26 = new System.Windows.Forms.GroupBox();
+            this.label40 = new System.Windows.Forms.Label();
+            this.label41 = new System.Windows.Forms.Label();
+            this.proxy_btn_importProxy = new System.Windows.Forms.Button();
+            this.proxy_btn_addProxy = new System.Windows.Forms.Button();
+            this.label44 = new System.Windows.Forms.Label();
+            this.label43 = new System.Windows.Forms.Label();
+            this.proxy_txt_addProxyPassword = new System.Windows.Forms.TextBox();
+            this.label42 = new System.Windows.Forms.Label();
+            this.proxy_txt_addProxyUserName = new System.Windows.Forms.TextBox();
+            this.proxy_txt_addProxyHost = new System.Windows.Forms.TextBox();
+            this.proxy_txt_addProxyPort = new System.Windows.Forms.TextBox();
+            this.proxy_txt_addProxyType = new System.Windows.Forms.ComboBox();
+            this.proxy_lvw_proxyList = new System.Windows.Forms.ListView();
+            this.col_host = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.col_port = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.col_proxyType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.col_username = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.col_password = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.col_conectIsOK = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.col_useTime = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.col_checkTime = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.proxy_cms = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.proxy_tsmi_setCurrentProxy = new System.Windows.Forms.ToolStripMenuItem();
+            this.proxy_checkNoCheckProxy = new System.Windows.Forms.ToolStripMenuItem();
+            this.proxy_checkSelectedProxy = new System.Windows.Forms.ToolStripMenuItem();
+            this.proxy_checkAllProxy = new System.Windows.Forms.ToolStripMenuItem();
+            this.proxy_importProxy = new System.Windows.Forms.ToolStripMenuItem();
+            this.proxy_exportProxy = new System.Windows.Forms.ToolStripMenuItem();
+            this.proxy_delSelectedProxy = new System.Windows.Forms.ToolStripMenuItem();
+            this.proxy_copySelectedProxy = new System.Windows.Forms.ToolStripMenuItem();
+            this.proxy_clearAllProxy = new System.Windows.Forms.ToolStripMenuItem();
+            this.proxy_clearAllFailedProxy = new System.Windows.Forms.ToolStripMenuItem();
             this.tab_cmd = new System.Windows.Forms.TabPage();
             this.cmd_txt_result = new System.Windows.Forms.TextBox();
             this.groupBox8 = new System.Windows.Forms.GroupBox();
@@ -322,6 +375,7 @@
             this.status_lbl_all_status = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel11 = new System.Windows.Forms.ToolStripStatusLabel();
             this.lbl_packsCount = new System.Windows.Forms.ToolStripStatusLabel();
+            this.lbl_info = new System.Windows.Forms.ToolStripStatusLabel();
             this.timer_status = new System.Windows.Forms.Timer(this.components);
             this.timer_scanInjection = new System.Windows.Forms.Timer(this.components);
             this.gb_basic.SuspendLayout();
@@ -371,6 +425,12 @@
             this.groupBox16.SuspendLayout();
             this.groupBox15.SuspendLayout();
             this.mytab.SuspendLayout();
+            this.tab_proxy.SuspendLayout();
+            this.groupBox25.SuspendLayout();
+            this.groupBox24.SuspendLayout();
+            this.toolStrip_proxyList.SuspendLayout();
+            this.groupBox26.SuspendLayout();
+            this.proxy_cms.SuspendLayout();
             this.tab_cmd.SuspendLayout();
             this.groupBox8.SuspendLayout();
             this.tab_bypass.SuspendLayout();
@@ -865,7 +925,8 @@
             this.col_runtime,
             this.log_col_code,
             this.log_col_bodyLength,
-            this.log_col_sleepTime});
+            this.log_col_sleepTime,
+            this.col_proxy});
             this.log_lvw_httpLog.ContextMenuStrip = this.log_cms_dataifo;
             this.log_lvw_httpLog.Dock = System.Windows.Forms.DockStyle.Fill;
             this.log_lvw_httpLog.FullRowSelect = true;
@@ -877,37 +938,40 @@
             this.log_lvw_httpLog.View = System.Windows.Forms.View.Details;
             this.log_lvw_httpLog.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.log_lvw_httpLog_ColumnClick);
             this.log_lvw_httpLog.SelectedIndexChanged += new System.EventHandler(this.log_lvw_httpLog_SelectedIndexChanged);
-            this.log_lvw_httpLog.MouseClick += new System.Windows.Forms.MouseEventHandler(this.log_lvw_httpLog_MouseClick);
             // 
             // log_col_index
             // 
             this.log_col_index.Text = "发包序号";
-            this.log_col_index.Width = 75;
             // 
             // log_col_payload
             // 
             this.log_col_payload.Text = "Payload";
-            this.log_col_payload.Width = 376;
+            this.log_col_payload.Width = 360;
             // 
             // col_runtime
             // 
             this.col_runtime.Text = "用时[毫秒]";
-            this.col_runtime.Width = 85;
+            this.col_runtime.Width = 72;
             // 
             // log_col_code
             // 
             this.log_col_code.Text = "状态码";
-            this.log_col_code.Width = 65;
+            this.log_col_code.Width = 50;
             // 
             // log_col_bodyLength
             // 
             this.log_col_bodyLength.Text = "body长度";
-            this.log_col_bodyLength.Width = 85;
+            this.log_col_bodyLength.Width = 80;
             // 
             // log_col_sleepTime
             // 
             this.log_col_sleepTime.Text = "延时[毫秒]";
-            this.log_col_sleepTime.Width = 85;
+            this.log_col_sleepTime.Width = 72;
+            // 
+            // col_proxy
+            // 
+            this.col_proxy.Text = "代理";
+            this.col_proxy.Width = 120;
             // 
             // log_cms_dataifo
             // 
@@ -1192,10 +1256,12 @@
             // 
             this.data_cms_vers.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.data_cms_tsmi_getVariable,
-            this.data_cms_tsmi_stopGetVariable,
-            this.data_cms_tsmi_copyVerValue});
+            this.data_cms_tsmi_copyVerValue,
+            this.data_cms_tsmi_selectAllVers,
+            this.data_cms_tsmi_selectReversVers,
+            this.data_cms_tsmi_stopGetVariable});
             this.data_cms_vers.Name = "data_cms_getVariable";
-            this.data_cms_vers.Size = new System.Drawing.Size(149, 70);
+            this.data_cms_vers.Size = new System.Drawing.Size(149, 114);
             // 
             // data_cms_tsmi_getVariable
             // 
@@ -1204,19 +1270,33 @@
             this.data_cms_tsmi_getVariable.Text = "获取环境变量";
             this.data_cms_tsmi_getVariable.Click += new System.EventHandler(this.data_cms_tsmi_getVariable_Click);
             // 
-            // data_cms_tsmi_stopGetVariable
-            // 
-            this.data_cms_tsmi_stopGetVariable.Name = "data_cms_tsmi_stopGetVariable";
-            this.data_cms_tsmi_stopGetVariable.Size = new System.Drawing.Size(148, 22);
-            this.data_cms_tsmi_stopGetVariable.Text = "立即停止";
-            this.data_cms_tsmi_stopGetVariable.Click += new System.EventHandler(this.data_cms_tsmi_stopGetVariable_Click);
-            // 
             // data_cms_tsmi_copyVerValue
             // 
             this.data_cms_tsmi_copyVerValue.Name = "data_cms_tsmi_copyVerValue";
             this.data_cms_tsmi_copyVerValue.Size = new System.Drawing.Size(148, 22);
             this.data_cms_tsmi_copyVerValue.Text = "复制变量值";
             this.data_cms_tsmi_copyVerValue.Click += new System.EventHandler(this.data_cms_tsmi_copyVerValue_Click);
+            // 
+            // data_cms_tsmi_selectAllVers
+            // 
+            this.data_cms_tsmi_selectAllVers.Name = "data_cms_tsmi_selectAllVers";
+            this.data_cms_tsmi_selectAllVers.Size = new System.Drawing.Size(148, 22);
+            this.data_cms_tsmi_selectAllVers.Text = "全 选";
+            this.data_cms_tsmi_selectAllVers.Click += new System.EventHandler(this.data_cms_tsmi_selectAllVers_Click);
+            // 
+            // data_cms_tsmi_selectReversVers
+            // 
+            this.data_cms_tsmi_selectReversVers.Name = "data_cms_tsmi_selectReversVers";
+            this.data_cms_tsmi_selectReversVers.Size = new System.Drawing.Size(148, 22);
+            this.data_cms_tsmi_selectReversVers.Text = "反 选";
+            this.data_cms_tsmi_selectReversVers.Click += new System.EventHandler(this.data_cms_tsmi_selectReversVers_Click);
+            // 
+            // data_cms_tsmi_stopGetVariable
+            // 
+            this.data_cms_tsmi_stopGetVariable.Name = "data_cms_tsmi_stopGetVariable";
+            this.data_cms_tsmi_stopGetVariable.Size = new System.Drawing.Size(148, 22);
+            this.data_cms_tsmi_stopGetVariable.Text = "立即停止";
+            this.data_cms_tsmi_stopGetVariable.Click += new System.EventHandler(this.data_cms_tsmi_stopGetVariable_Click);
             // 
             // tab_dbs
             // 
@@ -1252,6 +1332,7 @@
             // data_dbs_ts
             // 
             this.data_dbs_ts.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.data_dbs_ts.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.data_dbs_ts.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.data_dbs_tsl_getDBS,
             this.data_dbs_tsl_getTables,
@@ -1425,6 +1506,7 @@
             // toolStrip1
             // 
             this.toolStrip1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripLabel3,
             this.data_dbs_txt_start,
@@ -1515,7 +1597,7 @@
             this.groupBox4.Controls.Add(this.data_dbs_lvw_data);
             this.groupBox4.Location = new System.Drawing.Point(3, 6);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(578, 379);
+            this.groupBox4.Size = new System.Drawing.Size(584, 379);
             this.groupBox4.TabIndex = 1;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "获取数据";
@@ -1529,7 +1611,7 @@
             this.data_dbs_lvw_data.GridLines = true;
             this.data_dbs_lvw_data.Location = new System.Drawing.Point(3, 17);
             this.data_dbs_lvw_data.Name = "data_dbs_lvw_data";
-            this.data_dbs_lvw_data.Size = new System.Drawing.Size(572, 359);
+            this.data_dbs_lvw_data.Size = new System.Drawing.Size(578, 359);
             this.data_dbs_lvw_data.TabIndex = 1;
             this.data_dbs_lvw_data.UseCompatibleStateImageBehavior = false;
             this.data_dbs_lvw_data.View = System.Windows.Forms.View.Details;
@@ -1580,6 +1662,7 @@
             this.myicon_list.Images.SetKeyName(8, "tools.png");
             this.myicon_list.Images.SetKeyName(9, "scan.png");
             this.myicon_list.Images.SetKeyName(10, "Ilog.png");
+            this.myicon_list.Images.SetKeyName(11, "proxy.png");
             // 
             // tab_injectCenter
             // 
@@ -1701,7 +1784,7 @@
             this.groupBox17.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox17.Location = new System.Drawing.Point(3, 3);
             this.groupBox17.Name = "groupBox17";
-            this.groupBox17.Size = new System.Drawing.Size(552, 260);
+            this.groupBox17.Size = new System.Drawing.Size(552, 329);
             this.groupBox17.TabIndex = 25;
             this.groupBox17.TabStop = false;
             this.groupBox17.Text = "获取Token的HTTP请求包";
@@ -1715,7 +1798,7 @@
             this.token_txt_http_request.Multiline = true;
             this.token_txt_http_request.Name = "token_txt_http_request";
             this.token_txt_http_request.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.token_txt_http_request.Size = new System.Drawing.Size(546, 240);
+            this.token_txt_http_request.Size = new System.Drawing.Size(546, 309);
             this.token_txt_http_request.TabIndex = 8;
             this.token_txt_http_request.TextChanged += new System.EventHandler(this.token_txt_http_request_TextChanged);
             this.token_txt_http_request.KeyDown += new System.Windows.Forms.KeyEventHandler(this.token_txt_http_request_KeyDown);
@@ -1728,9 +1811,9 @@
             this.groupBox19.Controls.Add(this.token_txt_startStr);
             this.groupBox19.Controls.Add(this.token_btn_testGetToken);
             this.groupBox19.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.groupBox19.Location = new System.Drawing.Point(3, 263);
+            this.groupBox19.Location = new System.Drawing.Point(3, 332);
             this.groupBox19.Name = "groupBox19";
-            this.groupBox19.Size = new System.Drawing.Size(552, 133);
+            this.groupBox19.Size = new System.Drawing.Size(552, 64);
             this.groupBox19.TabIndex = 25;
             this.groupBox19.TabStop = false;
             this.groupBox19.Text = "随机Token抓取规则";
@@ -1738,7 +1821,7 @@
             // label36
             // 
             this.label36.AutoSize = true;
-            this.label36.Location = new System.Drawing.Point(231, 42);
+            this.label36.Location = new System.Drawing.Point(230, 27);
             this.label36.Name = "label36";
             this.label36.Size = new System.Drawing.Size(65, 12);
             this.label36.TabIndex = 16;
@@ -1747,7 +1830,7 @@
             // label37
             // 
             this.label37.AutoSize = true;
-            this.label37.Location = new System.Drawing.Point(21, 42);
+            this.label37.Location = new System.Drawing.Point(20, 27);
             this.label37.Name = "label37";
             this.label37.Size = new System.Drawing.Size(65, 12);
             this.label37.TabIndex = 16;
@@ -1756,7 +1839,7 @@
             // token_txt_endStr
             // 
             this.token_txt_endStr.AcceptsReturn = true;
-            this.token_txt_endStr.Location = new System.Drawing.Point(303, 40);
+            this.token_txt_endStr.Location = new System.Drawing.Point(302, 25);
             this.token_txt_endStr.MaxLength = 100;
             this.token_txt_endStr.Name = "token_txt_endStr";
             this.token_txt_endStr.Size = new System.Drawing.Size(121, 21);
@@ -1766,7 +1849,7 @@
             // token_txt_startStr
             // 
             this.token_txt_startStr.AcceptsReturn = true;
-            this.token_txt_startStr.Location = new System.Drawing.Point(91, 40);
+            this.token_txt_startStr.Location = new System.Drawing.Point(90, 25);
             this.token_txt_startStr.MaxLength = 100;
             this.token_txt_startStr.Name = "token_txt_startStr";
             this.token_txt_startStr.Size = new System.Drawing.Size(121, 21);
@@ -1775,7 +1858,7 @@
             // 
             // token_btn_testGetToken
             // 
-            this.token_btn_testGetToken.Location = new System.Drawing.Point(441, 38);
+            this.token_btn_testGetToken.Location = new System.Drawing.Point(440, 23);
             this.token_btn_testGetToken.Name = "token_btn_testGetToken";
             this.token_btn_testGetToken.Size = new System.Drawing.Size(93, 23);
             this.token_btn_testGetToken.TabIndex = 6;
@@ -1812,9 +1895,9 @@
             this.groupBox21.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox21.Controls.Add(this.label28);
-            this.groupBox21.Location = new System.Drawing.Point(6, 316);
+            this.groupBox21.Location = new System.Drawing.Point(6, 340);
             this.groupBox21.Name = "groupBox21";
-            this.groupBox21.Size = new System.Drawing.Size(543, 74);
+            this.groupBox21.Size = new System.Drawing.Size(543, 50);
             this.groupBox21.TabIndex = 10;
             this.groupBox21.TabStop = false;
             this.groupBox21.Text = "说明";
@@ -1822,7 +1905,7 @@
             // label28
             // 
             this.label28.AutoSize = true;
-            this.label28.Location = new System.Drawing.Point(21, 38);
+            this.label28.Location = new System.Drawing.Point(19, 24);
             this.label28.Name = "label28";
             this.label28.Size = new System.Drawing.Size(425, 12);
             this.label28.TabIndex = 9;
@@ -1839,7 +1922,7 @@
             this.txt_sencond_request.Multiline = true;
             this.txt_sencond_request.Name = "txt_sencond_request";
             this.txt_sencond_request.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txt_sencond_request.Size = new System.Drawing.Size(551, 292);
+            this.txt_sencond_request.Size = new System.Drawing.Size(551, 316);
             this.txt_sencond_request.TabIndex = 8;
             this.txt_sencond_request.TextChanged += new System.EventHandler(this.txt_sencond_request_TextChanged);
             this.txt_sencond_request.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txt_sencond_request_KeyDown);
@@ -2157,6 +2240,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.mytab.Controls.Add(this.tab_injectCenter);
             this.mytab.Controls.Add(this.tab_dataCenter);
+            this.mytab.Controls.Add(this.tab_proxy);
             this.mytab.Controls.Add(this.tab_file);
             this.mytab.Controls.Add(this.tab_cmd);
             this.mytab.Controls.Add(this.tab_bypass);
@@ -2170,6 +2254,471 @@
             this.mytab.SelectedIndex = 0;
             this.mytab.Size = new System.Drawing.Size(840, 478);
             this.mytab.TabIndex = 1;
+            // 
+            // tab_proxy
+            // 
+            this.tab_proxy.Controls.Add(this.groupBox25);
+            this.tab_proxy.Controls.Add(this.groupBox24);
+            this.tab_proxy.ImageKey = "proxy.png";
+            this.tab_proxy.Location = new System.Drawing.Point(4, 23);
+            this.tab_proxy.Name = "tab_proxy";
+            this.tab_proxy.Padding = new System.Windows.Forms.Padding(3);
+            this.tab_proxy.Size = new System.Drawing.Size(832, 451);
+            this.tab_proxy.TabIndex = 11;
+            this.tab_proxy.Text = "代理设置";
+            this.tab_proxy.UseVisualStyleBackColor = true;
+            // 
+            // groupBox25
+            // 
+            this.groupBox25.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox25.Controls.Add(this.label46);
+            this.groupBox25.Controls.Add(this.proxy_lbl_proxyType);
+            this.groupBox25.Controls.Add(this.proxy_lbl_proxy_port);
+            this.groupBox25.Controls.Add(this.proxy_lbl_proxy_password);
+            this.groupBox25.Controls.Add(this.proxy_lbl_proxy_username);
+            this.groupBox25.Controls.Add(this.proxy_lbl_proxy_host);
+            this.groupBox25.Controls.Add(this.label45);
+            this.groupBox25.Controls.Add(this.label39);
+            this.groupBox25.Controls.Add(this.label38);
+            this.groupBox25.Controls.Add(this.label35);
+            this.groupBox25.Controls.Add(this.proxy_cmb_proxyMode);
+            this.groupBox25.Location = new System.Drawing.Point(6, 6);
+            this.groupBox25.Name = "groupBox25";
+            this.groupBox25.Size = new System.Drawing.Size(820, 53);
+            this.groupBox25.TabIndex = 6;
+            this.groupBox25.TabStop = false;
+            this.groupBox25.Text = "设置代理";
+            // 
+            // label46
+            // 
+            this.label46.AutoSize = true;
+            this.label46.Location = new System.Drawing.Point(439, 25);
+            this.label46.Name = "label46";
+            this.label46.Size = new System.Drawing.Size(41, 12);
+            this.label46.TabIndex = 0;
+            this.label46.Text = "类型：";
+            // 
+            // proxy_lbl_proxyType
+            // 
+            this.proxy_lbl_proxyType.AutoSize = true;
+            this.proxy_lbl_proxyType.Location = new System.Drawing.Point(486, 25);
+            this.proxy_lbl_proxyType.Name = "proxy_lbl_proxyType";
+            this.proxy_lbl_proxyType.Size = new System.Drawing.Size(53, 12);
+            this.proxy_lbl_proxyType.TabIndex = 0;
+            this.proxy_lbl_proxyType.Text = "--------";
+            // 
+            // proxy_lbl_proxy_port
+            // 
+            this.proxy_lbl_proxy_port.AutoSize = true;
+            this.proxy_lbl_proxy_port.Location = new System.Drawing.Point(385, 25);
+            this.proxy_lbl_proxy_port.Name = "proxy_lbl_proxy_port";
+            this.proxy_lbl_proxy_port.Size = new System.Drawing.Size(41, 12);
+            this.proxy_lbl_proxy_port.TabIndex = 0;
+            this.proxy_lbl_proxy_port.Text = "------";
+            // 
+            // proxy_lbl_proxy_password
+            // 
+            this.proxy_lbl_proxy_password.AutoSize = true;
+            this.proxy_lbl_proxy_password.Location = new System.Drawing.Point(731, 25);
+            this.proxy_lbl_proxy_password.Name = "proxy_lbl_proxy_password";
+            this.proxy_lbl_proxy_password.Size = new System.Drawing.Size(77, 12);
+            this.proxy_lbl_proxy_password.TabIndex = 0;
+            this.proxy_lbl_proxy_password.Text = "------------";
+            // 
+            // proxy_lbl_proxy_username
+            // 
+            this.proxy_lbl_proxy_username.AutoSize = true;
+            this.proxy_lbl_proxy_username.Location = new System.Drawing.Point(610, 25);
+            this.proxy_lbl_proxy_username.Name = "proxy_lbl_proxy_username";
+            this.proxy_lbl_proxy_username.Size = new System.Drawing.Size(71, 12);
+            this.proxy_lbl_proxy_username.TabIndex = 0;
+            this.proxy_lbl_proxy_username.Text = "-----------";
+            // 
+            // proxy_lbl_proxy_host
+            // 
+            this.proxy_lbl_proxy_host.AutoSize = true;
+            this.proxy_lbl_proxy_host.Location = new System.Drawing.Point(232, 25);
+            this.proxy_lbl_proxy_host.Name = "proxy_lbl_proxy_host";
+            this.proxy_lbl_proxy_host.Size = new System.Drawing.Size(95, 12);
+            this.proxy_lbl_proxy_host.TabIndex = 0;
+            this.proxy_lbl_proxy_host.Text = "---------------";
+            // 
+            // label45
+            // 
+            this.label45.AutoSize = true;
+            this.label45.Location = new System.Drawing.Point(151, 25);
+            this.label45.Name = "label45";
+            this.label45.Size = new System.Drawing.Size(77, 12);
+            this.label45.TabIndex = 0;
+            this.label45.Text = "固定代理IP：";
+            // 
+            // label39
+            // 
+            this.label39.AutoSize = true;
+            this.label39.Location = new System.Drawing.Point(687, 25);
+            this.label39.Name = "label39";
+            this.label39.Size = new System.Drawing.Size(41, 12);
+            this.label39.TabIndex = 0;
+            this.label39.Text = "密码：";
+            // 
+            // label38
+            // 
+            this.label38.AutoSize = true;
+            this.label38.Location = new System.Drawing.Point(551, 25);
+            this.label38.Name = "label38";
+            this.label38.Size = new System.Drawing.Size(53, 12);
+            this.label38.TabIndex = 0;
+            this.label38.Text = "用户名：";
+            // 
+            // label35
+            // 
+            this.label35.AutoSize = true;
+            this.label35.Location = new System.Drawing.Point(338, 25);
+            this.label35.Name = "label35";
+            this.label35.Size = new System.Drawing.Size(41, 12);
+            this.label35.TabIndex = 0;
+            this.label35.Text = "端口：";
+            // 
+            // proxy_cmb_proxyMode
+            // 
+            this.proxy_cmb_proxyMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.proxy_cmb_proxyMode.FormattingEnabled = true;
+            this.proxy_cmb_proxyMode.Items.AddRange(new object[] {
+            "不开启代理",
+            "代理池随机选择",
+            "固定代理方式"});
+            this.proxy_cmb_proxyMode.Location = new System.Drawing.Point(14, 22);
+            this.proxy_cmb_proxyMode.Name = "proxy_cmb_proxyMode";
+            this.proxy_cmb_proxyMode.Size = new System.Drawing.Size(131, 20);
+            this.proxy_cmb_proxyMode.TabIndex = 5;
+            this.proxy_cmb_proxyMode.TextChanged += new System.EventHandler(this.proxy_cmb_proxyMode_TextChanged);
+            // 
+            // groupBox24
+            // 
+            this.groupBox24.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox24.Controls.Add(this.toolStrip_proxyList);
+            this.groupBox24.Controls.Add(this.groupBox26);
+            this.groupBox24.Controls.Add(this.proxy_lvw_proxyList);
+            this.groupBox24.Location = new System.Drawing.Point(6, 65);
+            this.groupBox24.Name = "groupBox24";
+            this.groupBox24.Size = new System.Drawing.Size(820, 380);
+            this.groupBox24.TabIndex = 6;
+            this.groupBox24.TabStop = false;
+            this.groupBox24.Text = "代理池列表";
+            // 
+            // toolStrip_proxyList
+            // 
+            this.toolStrip_proxyList.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.toolStrip_proxyList.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.toolStrip_proxyList.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.proxy_ts_btn_clearAllFailedProxy,
+            this.proxy_ts_btn_proxy_checkNoCheckProxy});
+            this.toolStrip_proxyList.Location = new System.Drawing.Point(3, 352);
+            this.toolStrip_proxyList.Name = "toolStrip_proxyList";
+            this.toolStrip_proxyList.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+            this.toolStrip_proxyList.Size = new System.Drawing.Size(814, 25);
+            this.toolStrip_proxyList.TabIndex = 7;
+            this.toolStrip_proxyList.Text = "toolStrip2";
+            // 
+            // proxy_ts_btn_clearAllFailedProxy
+            // 
+            this.proxy_ts_btn_clearAllFailedProxy.Name = "proxy_ts_btn_clearAllFailedProxy";
+            this.proxy_ts_btn_clearAllFailedProxy.Size = new System.Drawing.Size(80, 22);
+            this.proxy_ts_btn_clearAllFailedProxy.Text = "清除无效代理";
+            this.proxy_ts_btn_clearAllFailedProxy.Click += new System.EventHandler(this.proxy_ts_btn_clearAllFailedProxy_Click);
+            // 
+            // proxy_ts_btn_proxy_checkNoCheckProxy
+            // 
+            this.proxy_ts_btn_proxy_checkNoCheckProxy.Name = "proxy_ts_btn_proxy_checkNoCheckProxy";
+            this.proxy_ts_btn_proxy_checkNoCheckProxy.Size = new System.Drawing.Size(92, 22);
+            this.proxy_ts_btn_proxy_checkNoCheckProxy.Text = "验证未验证代理";
+            this.proxy_ts_btn_proxy_checkNoCheckProxy.Click += new System.EventHandler(this.proxy_ts_btn_proxy_checkNoCheckProxy_Click);
+            // 
+            // groupBox26
+            // 
+            this.groupBox26.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox26.Controls.Add(this.label40);
+            this.groupBox26.Controls.Add(this.label41);
+            this.groupBox26.Controls.Add(this.proxy_btn_importProxy);
+            this.groupBox26.Controls.Add(this.proxy_btn_addProxy);
+            this.groupBox26.Controls.Add(this.label44);
+            this.groupBox26.Controls.Add(this.label43);
+            this.groupBox26.Controls.Add(this.proxy_txt_addProxyPassword);
+            this.groupBox26.Controls.Add(this.label42);
+            this.groupBox26.Controls.Add(this.proxy_txt_addProxyUserName);
+            this.groupBox26.Controls.Add(this.proxy_txt_addProxyHost);
+            this.groupBox26.Controls.Add(this.proxy_txt_addProxyPort);
+            this.groupBox26.Controls.Add(this.proxy_txt_addProxyType);
+            this.groupBox26.Location = new System.Drawing.Point(6, 15);
+            this.groupBox26.Name = "groupBox26";
+            this.groupBox26.Size = new System.Drawing.Size(808, 57);
+            this.groupBox26.TabIndex = 6;
+            this.groupBox26.TabStop = false;
+            // 
+            // label40
+            // 
+            this.label40.AutoSize = true;
+            this.label40.Location = new System.Drawing.Point(274, 26);
+            this.label40.Name = "label40";
+            this.label40.Size = new System.Drawing.Size(41, 12);
+            this.label40.TabIndex = 0;
+            this.label40.Text = "类型：";
+            // 
+            // label41
+            // 
+            this.label41.AutoSize = true;
+            this.label41.Location = new System.Drawing.Point(6, 25);
+            this.label41.Name = "label41";
+            this.label41.Size = new System.Drawing.Size(53, 12);
+            this.label41.TabIndex = 0;
+            this.label41.Text = "代理IP：";
+            // 
+            // proxy_btn_importProxy
+            // 
+            this.proxy_btn_importProxy.ImageKey = "(无)";
+            this.proxy_btn_importProxy.Location = new System.Drawing.Point(737, 21);
+            this.proxy_btn_importProxy.Name = "proxy_btn_importProxy";
+            this.proxy_btn_importProxy.Size = new System.Drawing.Size(65, 23);
+            this.proxy_btn_importProxy.TabIndex = 5;
+            this.proxy_btn_importProxy.Text = "导入代理";
+            this.proxy_btn_importProxy.UseVisualStyleBackColor = true;
+            this.proxy_btn_importProxy.Click += new System.EventHandler(this.proxy_btn_importProxy_Click);
+            // 
+            // proxy_btn_addProxy
+            // 
+            this.proxy_btn_addProxy.ImageKey = "(无)";
+            this.proxy_btn_addProxy.Location = new System.Drawing.Point(664, 21);
+            this.proxy_btn_addProxy.Name = "proxy_btn_addProxy";
+            this.proxy_btn_addProxy.Size = new System.Drawing.Size(65, 23);
+            this.proxy_btn_addProxy.TabIndex = 5;
+            this.proxy_btn_addProxy.Text = "添加代理";
+            this.proxy_btn_addProxy.UseVisualStyleBackColor = true;
+            this.proxy_btn_addProxy.Click += new System.EventHandler(this.proxy_btn_addProxy_Click);
+            // 
+            // label44
+            // 
+            this.label44.AutoSize = true;
+            this.label44.Location = new System.Drawing.Point(545, 26);
+            this.label44.Name = "label44";
+            this.label44.Size = new System.Drawing.Size(41, 12);
+            this.label44.TabIndex = 0;
+            this.label44.Text = "密码：";
+            // 
+            // label43
+            // 
+            this.label43.AutoSize = true;
+            this.label43.Location = new System.Drawing.Point(415, 26);
+            this.label43.Name = "label43";
+            this.label43.Size = new System.Drawing.Size(53, 12);
+            this.label43.TabIndex = 0;
+            this.label43.Text = "用户名：";
+            // 
+            // proxy_txt_addProxyPassword
+            // 
+            this.proxy_txt_addProxyPassword.Location = new System.Drawing.Point(591, 22);
+            this.proxy_txt_addProxyPassword.Name = "proxy_txt_addProxyPassword";
+            this.proxy_txt_addProxyPassword.Size = new System.Drawing.Size(65, 21);
+            this.proxy_txt_addProxyPassword.TabIndex = 4;
+            this.proxy_txt_addProxyPassword.TextChanged += new System.EventHandler(this.txt_basic_port_TextChanged);
+            // 
+            // label42
+            // 
+            this.label42.AutoSize = true;
+            this.label42.Location = new System.Drawing.Point(187, 26);
+            this.label42.Name = "label42";
+            this.label42.Size = new System.Drawing.Size(41, 12);
+            this.label42.TabIndex = 0;
+            this.label42.Text = "端口：";
+            // 
+            // proxy_txt_addProxyUserName
+            // 
+            this.proxy_txt_addProxyUserName.Location = new System.Drawing.Point(472, 23);
+            this.proxy_txt_addProxyUserName.Name = "proxy_txt_addProxyUserName";
+            this.proxy_txt_addProxyUserName.Size = new System.Drawing.Size(65, 21);
+            this.proxy_txt_addProxyUserName.TabIndex = 4;
+            this.proxy_txt_addProxyUserName.TextChanged += new System.EventHandler(this.txt_basic_port_TextChanged);
+            // 
+            // proxy_txt_addProxyHost
+            // 
+            this.proxy_txt_addProxyHost.Location = new System.Drawing.Point(65, 22);
+            this.proxy_txt_addProxyHost.Name = "proxy_txt_addProxyHost";
+            this.proxy_txt_addProxyHost.Size = new System.Drawing.Size(116, 21);
+            this.proxy_txt_addProxyHost.TabIndex = 4;
+            this.proxy_txt_addProxyHost.TextChanged += new System.EventHandler(this.txt_basic_port_TextChanged);
+            // 
+            // proxy_txt_addProxyPort
+            // 
+            this.proxy_txt_addProxyPort.Location = new System.Drawing.Point(229, 23);
+            this.proxy_txt_addProxyPort.Name = "proxy_txt_addProxyPort";
+            this.proxy_txt_addProxyPort.Size = new System.Drawing.Size(39, 21);
+            this.proxy_txt_addProxyPort.TabIndex = 4;
+            this.proxy_txt_addProxyPort.TextChanged += new System.EventHandler(this.txt_basic_port_TextChanged);
+            // 
+            // proxy_txt_addProxyType
+            // 
+            this.proxy_txt_addProxyType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.proxy_txt_addProxyType.FormattingEnabled = true;
+            this.proxy_txt_addProxyType.Items.AddRange(new object[] {
+            "Socks5",
+            "HTTP/HTTPS"});
+            this.proxy_txt_addProxyType.Location = new System.Drawing.Point(321, 23);
+            this.proxy_txt_addProxyType.Name = "proxy_txt_addProxyType";
+            this.proxy_txt_addProxyType.Size = new System.Drawing.Size(88, 20);
+            this.proxy_txt_addProxyType.TabIndex = 5;
+            this.proxy_txt_addProxyType.SelectedIndexChanged += new System.EventHandler(this.cbox_basic_injectType_SelectedIndexChanged);
+            // 
+            // proxy_lvw_proxyList
+            // 
+            this.proxy_lvw_proxyList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.proxy_lvw_proxyList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.col_host,
+            this.col_port,
+            this.col_proxyType,
+            this.col_username,
+            this.col_password,
+            this.col_conectIsOK,
+            this.col_useTime,
+            this.col_checkTime});
+            this.proxy_lvw_proxyList.ContextMenuStrip = this.proxy_cms;
+            this.proxy_lvw_proxyList.FullRowSelect = true;
+            this.proxy_lvw_proxyList.Location = new System.Drawing.Point(6, 83);
+            this.proxy_lvw_proxyList.Name = "proxy_lvw_proxyList";
+            this.proxy_lvw_proxyList.Size = new System.Drawing.Size(808, 266);
+            this.proxy_lvw_proxyList.TabIndex = 0;
+            this.proxy_lvw_proxyList.UseCompatibleStateImageBehavior = false;
+            this.proxy_lvw_proxyList.View = System.Windows.Forms.View.Details;
+            // 
+            // col_host
+            // 
+            this.col_host.Text = "域名或IP";
+            this.col_host.Width = 120;
+            // 
+            // col_port
+            // 
+            this.col_port.Text = "代理端口";
+            this.col_port.Width = 80;
+            // 
+            // col_proxyType
+            // 
+            this.col_proxyType.Text = "代理类型";
+            this.col_proxyType.Width = 80;
+            // 
+            // col_username
+            // 
+            this.col_username.Text = "代理账号";
+            this.col_username.Width = 120;
+            // 
+            // col_password
+            // 
+            this.col_password.Text = "代理密码";
+            this.col_password.Width = 120;
+            // 
+            // col_conectIsOK
+            // 
+            this.col_conectIsOK.Text = "是否可用";
+            this.col_conectIsOK.Width = 70;
+            // 
+            // col_useTime
+            // 
+            this.col_useTime.Text = "用时[毫秒]";
+            this.col_useTime.Width = 80;
+            // 
+            // col_checkTime
+            // 
+            this.col_checkTime.Text = "验证时间";
+            this.col_checkTime.Width = 130;
+            // 
+            // proxy_cms
+            // 
+            this.proxy_cms.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.proxy_tsmi_setCurrentProxy,
+            this.proxy_checkNoCheckProxy,
+            this.proxy_checkSelectedProxy,
+            this.proxy_checkAllProxy,
+            this.proxy_importProxy,
+            this.proxy_exportProxy,
+            this.proxy_delSelectedProxy,
+            this.proxy_copySelectedProxy,
+            this.proxy_clearAllProxy,
+            this.proxy_clearAllFailedProxy});
+            this.proxy_cms.Name = "proxy_cms";
+            this.proxy_cms.Size = new System.Drawing.Size(161, 224);
+            // 
+            // proxy_tsmi_setCurrentProxy
+            // 
+            this.proxy_tsmi_setCurrentProxy.Name = "proxy_tsmi_setCurrentProxy";
+            this.proxy_tsmi_setCurrentProxy.Size = new System.Drawing.Size(160, 22);
+            this.proxy_tsmi_setCurrentProxy.Text = "设置固定代理";
+            this.proxy_tsmi_setCurrentProxy.Click += new System.EventHandler(this.proxy_tsmi_setCurrentProxy_Click);
+            // 
+            // proxy_checkNoCheckProxy
+            // 
+            this.proxy_checkNoCheckProxy.Name = "proxy_checkNoCheckProxy";
+            this.proxy_checkNoCheckProxy.Size = new System.Drawing.Size(160, 22);
+            this.proxy_checkNoCheckProxy.Text = "验证未验证代理";
+            this.proxy_checkNoCheckProxy.Click += new System.EventHandler(this.proxy_checkNoCheckProxy_Click);
+            // 
+            // proxy_checkSelectedProxy
+            // 
+            this.proxy_checkSelectedProxy.Name = "proxy_checkSelectedProxy";
+            this.proxy_checkSelectedProxy.Size = new System.Drawing.Size(160, 22);
+            this.proxy_checkSelectedProxy.Text = "验证选中代理";
+            this.proxy_checkSelectedProxy.Click += new System.EventHandler(this.proxy_checkSelectedProxy_Click);
+            // 
+            // proxy_checkAllProxy
+            // 
+            this.proxy_checkAllProxy.Name = "proxy_checkAllProxy";
+            this.proxy_checkAllProxy.Size = new System.Drawing.Size(160, 22);
+            this.proxy_checkAllProxy.Text = "验证全部代理";
+            this.proxy_checkAllProxy.Click += new System.EventHandler(this.proxy_checkAllProxy_Click);
+            // 
+            // proxy_importProxy
+            // 
+            this.proxy_importProxy.Name = "proxy_importProxy";
+            this.proxy_importProxy.Size = new System.Drawing.Size(160, 22);
+            this.proxy_importProxy.Text = "导入代理";
+            this.proxy_importProxy.Click += new System.EventHandler(this.proxy_importProxy_Click);
+            // 
+            // proxy_exportProxy
+            // 
+            this.proxy_exportProxy.Name = "proxy_exportProxy";
+            this.proxy_exportProxy.Size = new System.Drawing.Size(160, 22);
+            this.proxy_exportProxy.Text = "导出代理";
+            this.proxy_exportProxy.Click += new System.EventHandler(this.proxy_exportProxy_Click);
+            // 
+            // proxy_delSelectedProxy
+            // 
+            this.proxy_delSelectedProxy.Name = "proxy_delSelectedProxy";
+            this.proxy_delSelectedProxy.Size = new System.Drawing.Size(160, 22);
+            this.proxy_delSelectedProxy.Text = "删除此代理";
+            this.proxy_delSelectedProxy.Click += new System.EventHandler(this.proxy_delSelectedProxy_Click);
+            // 
+            // proxy_copySelectedProxy
+            // 
+            this.proxy_copySelectedProxy.Name = "proxy_copySelectedProxy";
+            this.proxy_copySelectedProxy.Size = new System.Drawing.Size(160, 22);
+            this.proxy_copySelectedProxy.Text = "复制此代理";
+            this.proxy_copySelectedProxy.Click += new System.EventHandler(this.proxy_copySelectedProxy_Click);
+            // 
+            // proxy_clearAllProxy
+            // 
+            this.proxy_clearAllProxy.Name = "proxy_clearAllProxy";
+            this.proxy_clearAllProxy.Size = new System.Drawing.Size(160, 22);
+            this.proxy_clearAllProxy.Text = "清空代理池";
+            this.proxy_clearAllProxy.Click += new System.EventHandler(this.proxy_clearAllProxy_Click);
+            // 
+            // proxy_clearAllFailedProxy
+            // 
+            this.proxy_clearAllFailedProxy.Name = "proxy_clearAllFailedProxy";
+            this.proxy_clearAllFailedProxy.Size = new System.Drawing.Size(160, 22);
+            this.proxy_clearAllFailedProxy.Text = "清除无效代理";
+            this.proxy_clearAllFailedProxy.Click += new System.EventHandler(this.proxy_clearAllFailedProxy_Click);
             // 
             // tab_cmd
             // 
@@ -3171,7 +3720,7 @@
             this.tab_injectLog.Padding = new System.Windows.Forms.Padding(3);
             this.tab_injectLog.Size = new System.Drawing.Size(832, 451);
             this.tab_injectLog.TabIndex = 10;
-            this.tab_injectLog.Text = "识别注入记录";
+            this.tab_injectLog.Text = "注入记录";
             this.tab_injectLog.UseVisualStyleBackColor = true;
             // 
             // lvw_injectLog
@@ -3281,7 +3830,8 @@
             this.toolStripStatusLabel8,
             this.status_lbl_all_status,
             this.toolStripStatusLabel11,
-            this.lbl_packsCount});
+            this.lbl_packsCount,
+            this.lbl_info});
             this.statusStrip1.Location = new System.Drawing.Point(0, 728);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Padding = new System.Windows.Forms.Padding(1, 0, 15, 0);
@@ -3390,6 +3940,11 @@
             this.lbl_packsCount.Size = new System.Drawing.Size(15, 17);
             this.lbl_packsCount.Text = "0";
             // 
+            // lbl_info
+            // 
+            this.lbl_info.Name = "lbl_info";
+            this.lbl_info.Size = new System.Drawing.Size(0, 17);
+            // 
             // timer_status
             // 
             this.timer_status.Enabled = true;
@@ -3487,6 +4042,16 @@
             this.groupBox15.ResumeLayout(false);
             this.groupBox15.PerformLayout();
             this.mytab.ResumeLayout(false);
+            this.tab_proxy.ResumeLayout(false);
+            this.groupBox25.ResumeLayout(false);
+            this.groupBox25.PerformLayout();
+            this.groupBox24.ResumeLayout(false);
+            this.groupBox24.PerformLayout();
+            this.toolStrip_proxyList.ResumeLayout(false);
+            this.toolStrip_proxyList.PerformLayout();
+            this.groupBox26.ResumeLayout(false);
+            this.groupBox26.PerformLayout();
+            this.proxy_cms.ResumeLayout(false);
             this.tab_cmd.ResumeLayout(false);
             this.tab_cmd.PerformLayout();
             this.groupBox8.ResumeLayout(false);
@@ -3822,6 +4387,60 @@
         private System.Windows.Forms.ColumnHeader data_lvw_ver_val;
         private System.Windows.Forms.Label label34;
         private System.Windows.Forms.TextBox txt_inject_unionTemplate;
+        private System.Windows.Forms.ToolStripStatusLabel lbl_info;
+        private System.Windows.Forms.TabPage tab_proxy;
+        private System.Windows.Forms.ToolStripMenuItem data_cms_tsmi_selectAllVers;
+        private System.Windows.Forms.ToolStripMenuItem data_cms_tsmi_selectReversVers;
+        private System.Windows.Forms.GroupBox groupBox25;
+        private System.Windows.Forms.GroupBox groupBox24;
+        private System.Windows.Forms.ListView proxy_lvw_proxyList;
+        private System.Windows.Forms.ColumnHeader col_host;
+        private System.Windows.Forms.ColumnHeader col_port;
+        private System.Windows.Forms.ColumnHeader col_username;
+        private System.Windows.Forms.ColumnHeader col_password;
+        private System.Windows.Forms.ColumnHeader col_conectIsOK;
+        private System.Windows.Forms.ColumnHeader col_checkTime;
+        private System.Windows.Forms.ColumnHeader col_useTime;
+        private System.Windows.Forms.ContextMenuStrip proxy_cms;
+        private System.Windows.Forms.ToolStripMenuItem proxy_checkSelectedProxy;
+        private System.Windows.Forms.ToolStripMenuItem proxy_checkAllProxy;
+        private System.Windows.Forms.ToolStripMenuItem proxy_importProxy;
+        private System.Windows.Forms.ToolStripMenuItem proxy_exportProxy;
+        private System.Windows.Forms.ToolStripMenuItem proxy_tsmi_setCurrentProxy;
+        private System.Windows.Forms.ToolStripMenuItem proxy_delSelectedProxy;
+        private System.Windows.Forms.ToolStripMenuItem proxy_copySelectedProxy;
+        private System.Windows.Forms.ToolStripMenuItem proxy_clearAllProxy;
+        private System.Windows.Forms.ColumnHeader col_proxyType;
+        private System.Windows.Forms.GroupBox groupBox26;
+        private System.Windows.Forms.Label label40;
+        private System.Windows.Forms.Label label41;
+        private System.Windows.Forms.Button proxy_btn_addProxy;
+        private System.Windows.Forms.Label label42;
+        private System.Windows.Forms.TextBox proxy_txt_addProxyHost;
+        private System.Windows.Forms.TextBox proxy_txt_addProxyPort;
+        private System.Windows.Forms.ComboBox proxy_txt_addProxyType;
+        private System.Windows.Forms.Button proxy_btn_importProxy;
+        private System.Windows.Forms.Label label44;
+        private System.Windows.Forms.Label label43;
+        private System.Windows.Forms.TextBox proxy_txt_addProxyPassword;
+        private System.Windows.Forms.TextBox proxy_txt_addProxyUserName;
+        private System.Windows.Forms.Label label46;
+        private System.Windows.Forms.Label label45;
+        private System.Windows.Forms.Label label39;
+        private System.Windows.Forms.Label label38;
+        private System.Windows.Forms.Label label35;
+        private System.Windows.Forms.Label proxy_lbl_proxyType;
+        private System.Windows.Forms.Label proxy_lbl_proxy_port;
+        private System.Windows.Forms.Label proxy_lbl_proxy_password;
+        private System.Windows.Forms.Label proxy_lbl_proxy_username;
+        private System.Windows.Forms.Label proxy_lbl_proxy_host;
+        private System.Windows.Forms.ComboBox proxy_cmb_proxyMode;
+        private System.Windows.Forms.ToolStripMenuItem proxy_clearAllFailedProxy;
+        private System.Windows.Forms.ToolStrip toolStrip_proxyList;
+        private System.Windows.Forms.ToolStripLabel proxy_ts_btn_clearAllFailedProxy;
+        private System.Windows.Forms.ColumnHeader col_proxy;
+        private System.Windows.Forms.ToolStripMenuItem proxy_checkNoCheckProxy;
+        private System.Windows.Forms.ToolStripLabel proxy_ts_btn_proxy_checkNoCheckProxy;
     }
 }
 

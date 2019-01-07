@@ -19,6 +19,9 @@ using System.Management;
 using Microsoft.Win32;
 using System.Drawing;
 using System.Reflection;
+using static System.Windows.Forms.ListView;
+using SuperSQLInjection.tools.http;
+using System.Net.Sockets;
 
 namespace SuperSQLInjection
 {
@@ -55,7 +58,16 @@ namespace SuperSQLInjection
 
         public int injectionURLCount = 0;//注入URL数
 
-   
+        //代理池
+        public Dictionary<String, Proxy> proxy_List = new Dictionary<String, Proxy>();
+      
+        public int loadProxyList = 0;//代理池未加载完成，1加载完成，加载完成后，才允许人工添加
+
+        //不放到Config中序列化，防止信息泄露
+        //当前设置的代理
+        public Proxy proxy = new Proxy();
+        public int checkProxyStatus = 0;//验证代理状态，如果是1，表示正在验证，否则表示完成
+
         private SmartThreadPool stp = new SmartThreadPool();
 
         public void sendRequestAndShowResponse()
@@ -104,6 +116,21 @@ namespace SuperSQLInjection
 
         private void Main_Shown(object sender, EventArgs e)
         {
+            HTTP.initMain(this);
+            //清空日志
+            Thread t = new Thread(Tools.delHTTPLog);
+            t.Start();
+
+            //加载代理池
+            Thread loadProxyListThread = new Thread(reloadProxyList);
+            loadProxyList = 0;
+            loadProxyListThread.Start();
+
+            //加载注入日志记录
+            Thread tt = new Thread(loadInjectLogs);
+            tt.Start();
+
+
             //初始化配置
             this.Text = "超级SQL注入工具 v1.0 正式版 " + version;
             this.cbox_basic_encoding.SelectedIndex = 0;
@@ -114,21 +141,39 @@ namespace SuperSQLInjection
             this.bypass_cbox_sendHTTPSleepTime.SelectedIndex = 0;
             this.cbox_bypass_urlencode_count.SelectedIndex = 0;
             this.cbox_base64Count.SelectedIndex = 0;
+            this.proxy_txt_addProxyType.SelectedIndex = 0;
 
-            HTTP.initMain(this);
-            //清空日志
-            Thread t = new Thread(Tools.delHTTPLog);
-            t.Start();
+        
+
+            //加载当前代理配置
             try
             {
-                this.config = XML.readConfig("lastConfig.xml");
+                this.proxy = (Proxy)XML.readObject(AppDomain.CurrentDomain.BaseDirectory + "/proxy/proxy.xml", proxy);
+                this.proxy_lbl_proxy_host.Text = this.proxy.host;
+                this.proxy_lbl_proxy_port.Text = this.proxy.port.ToString();
+                this.proxy_lbl_proxyType.Text = this.proxy.proxyType;
+                this.proxy_lbl_proxy_username.Text = this.proxy.username;
+                this.proxy_lbl_proxy_password.Text = this.proxy.password;
+                log("自动加载当前固定代理配置成功！", LogLevel.success);
+            }
+            catch (Exception ex)
+            {
+                log("自动加载当前固定代理配置失败！", LogLevel.waring);
+                Tools.SysLog("加载当前固定代理配置失败！" + ex.Message);
+            }
+            
+            //加载配置
+            try
+            {
+                this.config = XML.readConfig(AppDomain.CurrentDomain.BaseDirectory+"/lastConfig.xml");
                 reloadConfig(this.config);
+                this.Invoke(new showLogDelegate(log), "自动加载上次配置成功！", LogLevel.success);
             }
             catch (Exception ex)
             {
                 Tools.SysLog("加载配置发生错误！" + ex.Message);
             }
-            this.Invoke(new showLogDelegate(log), "自动加载上次配置成功！",LogLevel.success);
+
             InjectionTools.addErrorCode();
             //读取模板
             List<String> templates = FileTool.readAllDic("/config/template/");
@@ -140,10 +185,25 @@ namespace SuperSQLInjection
             {
                 new Thread(checkUpdate).Start();
             }
-            //加载注入日志记录
-            Thread tt = new Thread(loadInjectLogs);
-            tt.Start();
+        }
 
+        private void reloadProxyList() {
+            try
+            {
+                this.proxy_List = FileTool.ReadProxyList(AppDomain.CurrentDomain.BaseDirectory + "/proxy/proxylist.txt");
+                if (this.proxy_List.Count > 0) {
+                    foreach (Proxy proxy in this.proxy_List.Values)
+                    {
+                        this.proxy_lvw_proxyList.Invoke(new DelegateAddItemToProxy(addItemsToProxy_lvw), proxy);
+                    }
+                }
+                this.Invoke(new showLogDelegate(log), "自动加载上次代理池配置成功，发现代理：" + this.proxy_List.Count+"个！", LogLevel.success);
+                loadProxyList = 1;
+            }
+            catch (Exception e) {
+                this.Invoke(new showLogDelegate(log), "自动加载上次代理池配置失败！"+e.Message, LogLevel.waring);
+            }
+           
         }
         public void loadInjectLogs() {
             //加载注入日志记录
@@ -154,6 +214,8 @@ namespace SuperSQLInjection
                 this.Invoke(new delegatelogInject(logInjectTolvw), config);
             }
         }
+
+        
         public void HttpDownloadFile(string url, string path)
         {
             // 设置参数
@@ -163,17 +225,23 @@ namespace SuperSQLInjection
             HttpWebResponse response = request.GetResponse() as HttpWebResponse;
             //直到request.GetResponse()程序才开始向目标网页发送Post请求
             Stream responseStream = response.GetResponseStream();
-
+            long sum = response.ContentLength;
             //创建本地文件写入流
             Stream stream = new FileStream(path, FileMode.Create);
-
+           
             byte[] bArr = new byte[1024];
             int size = responseStream.Read(bArr, 0, (int)bArr.Length);
+            int csum = 0;
+            csum += size;
             while (size > 0)
             {
                 stream.Write(bArr, 0, size);
                 size = responseStream.Read(bArr, 0, (int)bArr.Length);
+                csum += size;
+                int val = (int)(csum*100 / sum);
+                this.lbl_info.Text = "下载更新文件：" + val + "%";
             }
+            this.lbl_info.Text = "下载更新文件完成！";
             stream.Close();
             responseStream.Close();
         }
@@ -230,7 +298,7 @@ namespace SuperSQLInjection
             return sid;
         }
 
-        public static int version = 20190104;
+        public static int version = 20190107;
         public static string versionURL = "http://www.shack2.org/soft/getNewVersion?ENNAME=SSuperSQLInjection&NO=" + URLEncode.UrlEncode(getSid()) + "&VERSION=" + version;
         //检查更新
         public void checkUpdate()
@@ -2403,9 +2471,9 @@ namespace SuperSQLInjection
             return len;
         }
 
-        public delegate void sendHTTPLogDelegate(String index, ServerInfo server, String payload);
+        public delegate void sendHTTPLogDelegate(String index, ServerInfo server, String payload,String proxy);
 
-        public void sendHTTPLog(String index, ServerInfo server, String payload)
+        public void sendHTTPLog(String index, ServerInfo server, String payload, String proxy)
         {
             ListViewItem lvi = new ListViewItem(index);
             lvi.Tag = index;
@@ -2415,6 +2483,7 @@ namespace SuperSQLInjection
             lvi.SubItems.Add(server.code + "");
             lvi.SubItems.Add(server.length + "");
             lvi.SubItems.Add(server.sleepTime.ToString());
+            lvi.SubItems.Add(proxy);
             this.log_lvw_httpLog.Items.Add(lvi);
         }
 
@@ -5950,43 +6019,7 @@ namespace SuperSQLInjection
             }
             else
             {
-
                 MessageBox.Show("请在左边点击选择列！");
-            }
-        }
-
-
-        private void log_lvw_httpLog_MouseClick(object sender, MouseEventArgs e)
-        {
-            if (this.log_lvw_httpLog.SelectedItems.Count > 0)
-            {
-                try
-                {
-                    String tag = this.log_lvw_httpLog.SelectedItems[0].Tag.ToString();
-                    this.log_txt_request.Text = FileTool.readFileToString(Tools.httpLogPath + tag + "-request.txt");
-                    String response = FileTool.readFileToString(Tools.httpLogPath + tag + "-response.txt");
-                    if (!String.IsNullOrEmpty(response))
-                    {
-                        int index = response.IndexOf("\r\n\r\n");
-
-                        if (index != -1)
-                        {
-                            this.log_txt_response.Text = response;
-                            this.webBro_log.ScriptErrorsSuppressed = true;
-                            this.webBro_log.DocumentText = response.Substring(index, response.Length - index);
-                        }
-
-
-                    }
-                    else
-                    {
-                        MessageBox.Show("没有读到详细HTTP日志，可能上一次清除记录时已清除！");
-                    }
-                }
-                catch (Exception ee)
-                {
-                    Tools.SysLog("查看详细HTTP日志，发生异常----" + ee.Message);
-                }
             }
         }
 
@@ -6004,7 +6037,7 @@ namespace SuperSQLInjection
         {
             if (autoinject == 0)
             {
-                if (config.request.IndexOf("#inject#") != -1)
+                if (config.request.IndexOf(setInjectStr) != -1)
                 {
                     MessageBox.Show("已经标记好注入，无需识别！");
                     return;
@@ -6063,7 +6096,7 @@ namespace SuperSQLInjection
 
                 }
 
-                String strparam = data.Replace("<Encode>", "").Replace("</Encode>", "").Replace("#inject#", "");
+                String strparam = data.Replace("<Encode>", "").Replace("</Encode>", "").Replace(setInjectStr, "");
 
                 //获取原始的页面信息
                 String request = config.request.Replace(data, strparam);
@@ -6121,7 +6154,7 @@ namespace SuperSQLInjection
                     }
                     this.Invoke(new showLogDelegate(log), "报告大侠，正在对参数参数" + param + "进行盲注测试！", LogLevel.info);
                     String newParam = "";//标记注入
-                    String payload_location = strparam.Replace(param, param + "<Encode>#inject#</Encode>");
+                    String payload_location = strparam.Replace(param, param + "<Encode>"+ setInjectStr + "</Encode>");
                     String payload_request = request.Replace(strparam, payload_location);
                     String currentDB = "UnKnow";
                     //读取payload
@@ -6234,7 +6267,7 @@ namespace SuperSQLInjection
                                     }
                                 }
                                 //用于标记注入的新字符
-                                newParam = strparam.Replace(param, param + "<Encode>" + pals[0].Replace(pals[3], "#inject#") + "</Encode>");
+                                newParam = strparam.Replace(param, param + "<Encode>" + pals[0].Replace(pals[3], setInjectStr) + "</Encode>");
                                 unionStartPayLoad = pals[0].Substring(0, pals[0].IndexOf(pals[3]));
 
                                 if (!String.IsNullOrEmpty(currentDB))
@@ -6329,7 +6362,7 @@ namespace SuperSQLInjection
                                     //标记注入
                                     selectInjectType(InjectType.Error);
                                     errorInject = true;
-                                    newParam = strparam.Replace(param, param + "<Encode>" + pals[0].Replace(pals[4], "#inject#") + "</Encode>");
+                                    newParam = strparam.Replace(param, param + "<Encode>" + pals[0].Replace(pals[4], setInjectStr) + "</Encode>");
                                     config.testPayload = pals[0];
                                     unionStartPayLoad = pals[0].Substring(0, pals[0].IndexOf(pals[4])).Replace(" or", " and");
                                     this.Invoke(new showLogDelegate(log), "自动标记错误显示注入完成！", LogLevel.info);
@@ -6439,7 +6472,7 @@ namespace SuperSQLInjection
                                         if (cunionServer.code == 200 && cunionServer.body.IndexOf("1111111111") != -1)
                                         {
                                             isFind = true;
-                                            newParam = strparam.Replace(param, param + "<Encode>" + payload.Replace("{payload}", "#inject#") + "</Encode>");
+                                            newParam = strparam.Replace(param, param + "<Encode>" + payload.Replace("{payload}", setInjectStr) + "</Encode>");
                                             unionInject = true;
                                             selectInjectType(InjectType.Union);
                                             this.txt_inject_unionTemplate.Text = tp;
@@ -6465,7 +6498,7 @@ namespace SuperSQLInjection
                                     if (unionServer.code == 200 && unionServer.body.IndexOf("1111111111") != -1)
                                     {
                                         isFind = true;
-                                        newParam = strparam.Replace(param, param + "<Encode>" + payload.Replace("{payload}", "#inject#") + "</Encode>");
+                                        newParam = strparam.Replace(param, param + "<Encode>" + payload.Replace("{payload}", setInjectStr) + "</Encode>");
                                         unionInject = true;
                                         selectInjectType(InjectType.Union);
                                         this.txt_inject_unionColumnsCount.Text = i + "";
@@ -6485,11 +6518,11 @@ namespace SuperSQLInjection
                                 if (unionServer.code == 200 && unionServer.body.IndexOf((basecolumn)) != -1)
                                 {
                                     isFind = true;
-                                    newParam = strparam.Replace(param, param + "<Encode>" + payload.Replace("{payload}", "#inject#") + "</Encode>");
+                                    newParam = strparam.Replace(param, param + "<Encode>" + payload.Replace("{payload}", setInjectStr) + "</Encode>");
                                     if ("Access".Equals(currentDB))
                                     {
                                         //%16不能被URL编码
-                                        newParam = strparam.Replace(param, param + "<Encode>" + payload.Replace("{payload}", "#inject#") + "</Encode>%16");
+                                        newParam = strparam.Replace(param, param + "<Encode>" + payload.Replace("{payload}", setInjectStr) + "</Encode>%16");
                                     }
                                     selectInjectType(InjectType.Union);
                                     unionInject = true;
@@ -6747,7 +6780,9 @@ namespace SuperSQLInjection
             try
             {
                 Type type = Type.GetType("SuperSQLInjection.payload." + config.dbType.ToString());
-                vers = (List<String>)type.GetField("vers").GetValue(null);
+                if (type != null) {
+                    vers = (List<String>)type.GetField("vers").GetValue(null);
+                } 
             }
             catch (Exception e)
             {
@@ -6807,11 +6842,29 @@ namespace SuperSQLInjection
 
             try
             {
-                XML.saveConfig("lastConfig.xml", this.config);
+                XML.saveConfig(AppDomain.CurrentDomain.BaseDirectory+"/lastConfig.xml", this.config);
             }
             catch (Exception ex)
             {
                 Tools.SysLog("保存配置发生错误！" + ex.Message);
+            }
+
+            try
+            {
+                XML.saveObject(AppDomain.CurrentDomain.BaseDirectory + "/proxy/proxy.xml", proxy);
+            }
+            catch (Exception ex)
+            {
+                Tools.SysLog("保存代理配置发生错误！" + ex.Message);
+            }
+
+            try
+            {
+                 FileTool.SaveProxyList(AppDomain.CurrentDomain.BaseDirectory + "/proxy/proxylist.txt", this.proxy_List.Values); 
+            }
+            catch (Exception ex)
+            {
+                Tools.SysLog("保存代理池发生错误！" + ex.Message);
             }
 
             System.Environment.Exit(0);
@@ -7094,7 +7147,10 @@ namespace SuperSQLInjection
             this.bypass_chk_usebetween.Checked = config.useBetweenByPass;
             this.bypass_hex.Checked = config.usehex;
             this.bypass_chk_use_unicode.Checked = config.useUnicode;
-           
+
+            //proxy
+            this.proxy_cmb_proxyMode.SelectedIndex = config.proxy_mode;
+
             //替换字符
             this.chk_reaplaceBeforURLEncode.Checked = config.reaplaceBeforURLEncode;
             String[] replaceStrs = Regex.Split(config.replaceStrs, "\\n");
@@ -8954,8 +9010,6 @@ namespace SuperSQLInjection
                             String html = response.Substring(index, response.Length - index);
                             this.webBro_log.DocumentText = html;
                         }
-
-
                     }
                     else
                     {
@@ -9621,22 +9675,11 @@ namespace SuperSQLInjection
 
         private void data_dbs_tsmi_selectAllSubNode_Click(object sender, EventArgs e)
         {
-            TreeNode tn = this.data_tvw_dbs.SelectedNode;
-            if (tn != null)
-            {
-                tn.Checked = true;
-                foreach (TreeNode stn in this.data_tvw_dbs.SelectedNode.Nodes) {
-                    if (!stn.Checked){
-                        stn.Checked = true;
-                    }
-                }
-            }
-            
+            SelectAllNodes(this.data_tvw_dbs);
         }
 
-        private void data_dbs_tsmi_selectReversSubNode_Click(object sender, EventArgs e)
-        {
-            TreeNode tn = this.data_tvw_dbs.SelectedNode;
+        private void SelectReversNodes(TreeView tvw) {
+            TreeNode tn = tvw.SelectedNode;
             if (tn != null)
             {
                 tn.Checked = true;
@@ -9654,6 +9697,60 @@ namespace SuperSQLInjection
             }
         }
 
+        private void SelectAllNodes(TreeView tvw) {
+            TreeNode tn = this.data_tvw_dbs.SelectedNode;
+            if (tn != null)
+            {
+                tn.Checked = true;
+                foreach (TreeNode stn in this.data_tvw_dbs.SelectedNode.Nodes)
+                {
+                    if (!stn.Checked)
+                    {
+                        stn.Checked = true;
+                    }
+                }
+            }
+        }
+
+        private void SelectReversNodes(ListView lvw)
+        {
+            ListViewItemCollection lvl = lvw.Items;
+            if (lvl != null&& lvl.Count>0)
+            {
+
+                foreach (ListViewItem lvi in lvl)
+                {
+                    if (lvi.Checked)
+                    {
+                        lvi.Checked = false;
+                    }
+                    else
+                    {
+                        lvi.Checked = true;
+                    }
+                }
+            }
+        }
+
+        private void SelectAllNodes(ListView lvw)
+        {
+            ListViewItemCollection lvl = lvw.Items;
+            if (lvl != null && lvl.Count > 0)
+            {
+                foreach (ListViewItem lvi in lvl)
+                {
+                    if (!lvi.Checked)
+                    {
+                        lvi.Checked = true;
+                    }
+                }
+            }
+        }
+
+        private void data_dbs_tsmi_selectReversSubNode_Click(object sender, EventArgs e)
+        {
+            SelectReversNodes(this.data_tvw_dbs);
+        }
 
         private void tsmi_injectLog_clearAllLog_Click(object sender, EventArgs e)
         {
@@ -9761,5 +9858,403 @@ namespace SuperSQLInjection
         {
             config.unionFillTemplate = this.txt_inject_unionTemplate.Text;
         }
+
+        private void data_cms_tsmi_selectAllVers_Click(object sender, EventArgs e)
+        {
+            SelectAllNodes(this.data_lvw_ver);
+        }
+
+        private void data_cms_tsmi_selectReversVers_Click(object sender, EventArgs e)
+        {
+            SelectReversNodes(this.data_lvw_ver);
+        }
+
+        private void proxy_btn_addProxy_Click(object sender, EventArgs e)
+        {
+            if (loadProxyList != 1) {
+                MessageBox.Show("请稍后，正在加载上一次设置的代理池！");
+                return;
+            }
+            String host = this.proxy_txt_addProxyHost.Text;
+            int port = Tools.convertToInt(this.proxy_txt_addProxyPort.Text);
+            if (!StringTools.CheckIsDomainOrIP(host)) {
+                MessageBox.Show("代理IP未填写或格式错误！");
+                return;
+            }
+            if (port <= 0|| port>65535)
+            {
+                MessageBox.Show("代理端口未填写或格式错误！");
+                return;
+            }
+            String key = host + port;
+            if (proxy_List.ContainsKey(key)) {
+                MessageBox.Show("代理已经存在，不能重复添加！");
+                return;
+            }
+
+            Proxy proxy = new Proxy();
+            proxy.host = host;
+            proxy.port = port;
+            proxy.proxyType = this.proxy_txt_addProxyType.Text;
+            proxy.username = this.proxy_txt_addProxyUserName.Text;
+            proxy.password = this.proxy_txt_addProxyPassword.Text;
+            proxy.proxyType = this.proxy_txt_addProxyType.Text;
+            addItemsToProxy_lvw(proxy);
+        }
+
+        private delegate void DelegateAddItemToProxy(Proxy proxy);
+        private void addItemsToProxy_lvw(Proxy proxy){
+
+            String key = proxy.host + proxy.port;
+            ListViewItem lvi = new ListViewItem(proxy.host);
+            lvi.Tag = key;
+            lvi.SubItems.Add(proxy.port.ToString());
+            lvi.SubItems.Add(proxy.proxyType);
+            lvi.SubItems.Add(proxy.username);
+            lvi.SubItems.Add(proxy.password);
+            lvi.SubItems.Add(proxy.isOk);
+            lvi.SubItems.Add(proxy.useTime.ToString());
+            lvi.SubItems.Add(proxy.checkTime);
+            if ("是".Equals(proxy.isOk)) {
+                lvi.ForeColor = Color.Green;
+            }
+            else if ("否".Equals(proxy.isOk))
+            {
+                lvi.ForeColor = Color.Red;
+            }
+            this.proxy_lvw_proxyList.Items.Add(lvi);
+            if (!proxy_List.ContainsKey(key))
+            {
+                proxy_List.Add(key, proxy);
+            }
+           
+        }
+
+        private void proxy_delSelectedProxy_Click(object sender, EventArgs e)
+        {
+            if (this.proxy_lvw_proxyList.SelectedItems.Count > 0) {
+                foreach (ListViewItem lvi in this.proxy_lvw_proxyList.SelectedItems) {
+                    String key = lvi.Tag.ToString();
+                    if (this.proxy_List.ContainsKey(key))
+                    {
+                        this.proxy_List.Remove(key);
+                    }
+                    this.proxy_lvw_proxyList.Items.Remove(lvi);
+                }
+                
+                MessageBox.Show("删除成功！");
+            }
+        }
+
+        private void proxy_tsmi_setCurrentProxy_Click(object sender, EventArgs e)
+        {
+            if (this.proxy_lvw_proxyList.SelectedItems.Count > 0)
+            {
+                Proxy proxy = new Proxy();
+                proxy.host = this.proxy_lvw_proxyList.SelectedItems[0].SubItems[0].Text;
+                proxy.port = int.Parse(this.proxy_lvw_proxyList.SelectedItems[0].SubItems[1].Text);
+                proxy.proxyType = this.proxy_lvw_proxyList.SelectedItems[0].SubItems[2].Text;
+                proxy.username = this.proxy_lvw_proxyList.SelectedItems[0].SubItems[3].Text;
+                proxy.password = this.proxy_lvw_proxyList.SelectedItems[0].SubItems[4].Text;
+                proxy.isOk = this.proxy_lvw_proxyList.SelectedItems[0].SubItems[5].Text;
+                proxy.useTime = Tools.convertToInt(this.proxy_lvw_proxyList.SelectedItems[0].SubItems[6].Text);
+                if (this.proxy_cmb_proxyMode.SelectedIndex != 2)
+                {
+                    this.proxy_cmb_proxyMode.SelectedIndex = 2;
+                }
+                this.proxy_lbl_proxy_host.Text = proxy.host;
+                this.proxy_lbl_proxy_port.Text = proxy.port.ToString();
+                this.proxy_lbl_proxyType.Text = proxy.proxyType;
+                this.proxy_lbl_proxy_username.Text = proxy.username;
+                this.proxy_lbl_proxy_password.Text = proxy.password;
+                this.proxy = proxy;
+                MessageBox.Show("选择代理成功！");
+            }
+        }
+
+        private void proxy_cmb_proxyMode_TextChanged(object sender, EventArgs e)
+        {
+            config.proxy_mode = this.proxy_cmb_proxyMode.SelectedIndex;
+            if (config.proxy_mode == 1)
+            {
+                if (this.proxy_List.Count <= 0)
+                {
+                    MessageBox.Show("选择随机代理，但是目前代理池没有代理资源，请添加代理资源，才能生效！");
+                }
+            }
+            else if (config.proxy_mode == 2)
+            {
+                if (String.IsNullOrEmpty(this.proxy.host) || this.proxy.port <= 0)
+                {
+                    //固定代理
+                    MessageBox.Show("请在代理池中选择固定代理！");
+                }
+
+            }
+        }
+
+        private void proxy_clearAllProxy_Click(object sender, EventArgs e)
+        {
+            this.proxy_List.Clear();
+            this.proxy_lvw_proxyList.Items.Clear();
+            MessageBox.Show("代理池已经清空！");
+        }
+
+        private void proxy_copySelectedProxy_Click(object sender, EventArgs e)
+        {
+            if (this.proxy_lvw_proxyList.SelectedItems.Count >0)
+            {
+                StringBuilder sb = new StringBuilder();
+
+                for (int i = 0; i < this.proxy_lvw_proxyList.SelectedItems[0].SubItems.Count; i++) {
+                    sb.Append(this.proxy_lvw_proxyList.SelectedItems[0].SubItems[i].Text+"\t");
+                }
+                if (sb.Length > 1)
+                {
+                    sb.Remove(sb.Length - 1, 1);
+                }
+                Clipboard.SetText(sb.ToString());
+                MessageBox.Show("复制成功！");
+            }
+           
+        }
+
+
+        private void loadAddProxyList(Object path) {
+            
+            Dictionary<String,Proxy>  list= FileTool.ReadProxyList(path.ToString());
+            int i = 0;
+            if (this.proxy_List.Count > 0)
+            {
+               
+                foreach (String key in list.Keys)
+                {
+                    if (!this.proxy_List.ContainsKey(key)) {
+                       
+                        Proxy cproxy = null;
+                        bool istrue = list.TryGetValue(key, out cproxy);
+                        if (istrue&&cproxy!=null) {
+                            i++;
+                            this.proxy_lvw_proxyList.Invoke(new DelegateAddItemToProxy(addItemsToProxy_lvw), proxy);
+                            this.proxy_List.Add(cproxy.host+cproxy.port,cproxy);
+                        }
+                    } 
+                }
+            }
+            else {
+                this.proxy_List = list;
+            }
+            this.proxy_btn_importProxy.Enabled = true;
+            this.Invoke(new showLogDelegate(log), "导入代理成功，发现代理：" + i + "个！", LogLevel.success);
+
+        }
+
+        private void proxy_btn_importProxy_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog { Filter = "文本文件(*.txt)|*.txt" };
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                Thread th = new Thread(new ParameterizedThreadStart(loadAddProxyList));
+                this.proxy_btn_importProxy.Enabled = false;
+                th.Start(ofd.FileName);
+                
+            }
+        }
+
+        private void checkOneProxy(ListViewItem lvi) {
+
+            Proxy proxy = null;
+            bool isok = this.proxy_List.TryGetValue(lvi.Tag.ToString(), out proxy);
+            if (proxy != null && isok)
+            {
+                bool istrue = false;
+                if ("Socks5".Equals(proxy.proxyType))
+                {
+                    SocketProxy sp = new SocketProxy();
+                    TcpClient client = sp.creatProxySocket(proxy.host, proxy.port, config.timeOut);
+                    if (client != null)
+                    {
+                        istrue = sp.ConnectProxyServer(config.proxy_check_host, config.proxy_check_port, client, proxy.username, proxy.password, config.timeOut);
+                        proxy.useTime = sp.ConectProxyUseTime;
+                    }
+                }
+                else
+                {
+                    istrue = HttpProxy.checkConnection(config, proxy);
+                    proxy.useTime = HttpProxy.ConectProxyUseTime;
+                }
+                proxy.checkTime = DateTime.Now.ToString();
+                if (istrue)
+                {
+                    proxy.isOk = "是";
+                    lvi.ForeColor = Color.Green;
+                }
+                else
+                {
+                    proxy.isOk = "否";
+                    lvi.ForeColor = Color.Red;
+                }
+                lvi.SubItems[5].Text = proxy.isOk;
+                lvi.SubItems[6].Text = proxy.useTime.ToString();
+                lvi.SubItems[7].Text = proxy.checkTime;
+            }
+        }
+
+        private void checkSelectProxy(Object obj) {
+            this.checkProxyStatus = 1;
+            SelectedListViewItemCollection list = (SelectedListViewItemCollection)obj;
+            if (list.Count > 0)
+            {
+                foreach (ListViewItem lvi in list)
+                {
+                    checkOneProxy(lvi);
+                }
+            }
+            this.checkProxyStatus = 0;
+        }
+
+        private void checkAllProxy(Object obj)
+        {
+            this.checkProxyStatus = 1;
+            ListViewItemCollection list = (ListViewItemCollection)obj;
+            if (list.Count > 0)
+            {
+                foreach (ListViewItem lvi in list)
+                {
+                    checkOneProxy(lvi);
+                }
+            }
+            this.checkProxyStatus = 0;
+        }
+
+        private void checkNoCheckProxy(Object obj)
+        {
+            this.checkProxyStatus = 1;
+            ListViewItemCollection list = (ListViewItemCollection)obj;
+            if (list.Count > 0)
+            {
+                foreach (ListViewItem lvi in list)
+                {
+                    if ("未验证".Equals(lvi.SubItems[5].Text)) {
+                        
+                        checkOneProxy(lvi);
+                    }  
+                }
+            }
+            this.checkProxyStatus = 0;
+        }
+
+        private void proxy_checkSelectedProxy_Click(object sender, EventArgs e)
+        {
+            if (this.checkProxyStatus == 0)
+            {
+                if (String.IsNullOrEmpty(config.proxy_check_host)||config.proxy_check_port<=0) {
+                    MessageBox.Show("代理验证域名端口设置错误，请在系统设置中更正！");
+                    return;
+                }
+                Thread t = new Thread(new ParameterizedThreadStart(checkSelectProxy));
+                t.Start(this.proxy_lvw_proxyList.SelectedItems);
+            }
+            else {
+                MessageBox.Show("上一次验证还未结束，请稍后再试！");
+            }
+            
+        }
+
+        private void proxy_importProxy_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog { Filter = "文本文件(*.txt)|*.txt" };
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                Thread th = new Thread(new ParameterizedThreadStart(loadAddProxyList));
+                th.Start(ofd.FileName);
+            }
+        }
+
+        private void proxy_checkAllProxy_Click(object sender, EventArgs e)
+        {
+            if (this.checkProxyStatus == 0)
+            {
+                if (String.IsNullOrEmpty(config.proxy_check_host) || config.proxy_check_port <= 0)
+                {
+                    MessageBox.Show("代理验证域名端口设置错误，请在系统设置中更正！");
+                    return;
+                }
+                Thread t = new Thread(new ParameterizedThreadStart(checkAllProxy));
+                t.Start(this.proxy_lvw_proxyList.Items);
+            }
+            else
+            {
+                MessageBox.Show("上一次验证还未结束，请稍后再试！");
+            }
+        }
+        private void clearAllFailedProxy() {
+
+            if (this.proxy_lvw_proxyList.Items.Count > 0)
+            {
+                foreach (ListViewItem lvi in this.proxy_lvw_proxyList.Items)
+                {
+                    String isok = lvi.SubItems[5].Text;
+                    String key = lvi.Tag.ToString();
+                    if ("否".Equals(isok))
+                    {
+                        if (this.proxy_List.ContainsKey(key))
+                        {
+                            this.proxy_List.Remove(key);
+                        }
+                        this.proxy_lvw_proxyList.Items.Remove(lvi);
+                    }
+                }
+                MessageBox.Show("清除无效代理成功！");
+            }
+        }
+        private void proxy_clearAllFailedProxy_Click(object sender, EventArgs e)
+        {
+            clearAllFailedProxy();
+        }
+
+        private void proxy_ts_btn_clearAllFailedProxy_Click(object sender, EventArgs e)
+        {
+            clearAllFailedProxy();
+        }
+
+        private void proxy_exportProxy_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "文本文件|*.txt";
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                FileTool.SaveProxyList(saveFileDialog.FileName, this.proxy_List.Values);
+                MessageBox.Show("导出代理池成功！");
+            }
+        }
+
+        private void checkNoCheckProxy() {
+
+            if (this.checkProxyStatus == 0)
+            {
+                if (String.IsNullOrEmpty(config.proxy_check_host) || config.proxy_check_port <= 0)
+                {
+                    MessageBox.Show("代理验证域名端口设置错误，请在系统设置中更正！");
+                    return;
+                }
+                Thread t = new Thread(new ParameterizedThreadStart(checkNoCheckProxy));
+                t.Start(this.proxy_lvw_proxyList.Items);
+            }
+            else
+            {
+                MessageBox.Show("上一次验证还未结束，请稍后再试！");
+            }
+        }
+
+        private void proxy_checkNoCheckProxy_Click(object sender, EventArgs e)
+        {
+            checkNoCheckProxy();
+        }
+
+        private void proxy_ts_btn_proxy_checkNoCheckProxy_Click(object sender, EventArgs e)
+        {
+            checkNoCheckProxy();
+        }
     }
-}
+} 

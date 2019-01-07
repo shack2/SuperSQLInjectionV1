@@ -42,6 +42,32 @@ namespace SuperSQLInjection.tools
             }
         }
 
+        public static void saveObject(String fileName, Object obj)
+        {
+            Stream fStream = null;
+            try
+            {
+                fStream = new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite);
+                //创建XML序列化器，需要指定对象的类型
+                XmlSerializer xmlFormat = new XmlSerializer(obj.GetType());
+                xmlFormat.Serialize(fStream, obj);
+
+            }
+            catch (Exception e)
+            {
+
+                throw e;
+            }
+            finally
+            {
+                if (fStream != null)
+                {
+                    fStream.Close();
+                }
+
+            }
+        }
+
         public static Config readConfig(String configPath)
         {
             Stream fStream = null;
@@ -66,6 +92,33 @@ namespace SuperSQLInjection.tools
                 }
             }
         }
+
+        public static Object readObject(String configPath,Object obj)
+        {
+            Stream fStream = null;
+            try
+            {
+                XmlSerializer xml = new XmlSerializer(obj.GetType());
+                //创建XML序列化器，需要指定对象的类型
+                fStream = new FileStream(configPath, FileMode.Open, FileAccess.ReadWrite);
+                XmlTextReader reader = new XmlTextReader(fStream);
+                reader.Normalization = false;
+                return xml.Deserialize(reader);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+            finally
+            {
+                if (fStream != null)
+                {
+                    fStream.Close();
+                }
+            }
+        }
+
+
 
         public static void saveDBS(String fileName, DataBase dbs)
         {

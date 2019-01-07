@@ -33,7 +33,7 @@ namespace SuperSQLInjection.model
         public Boolean useCode = false;
         public int columnsCount = 0;
 
-        public String unionFillTemplate = "";
+        public String unionFillTemplate = "";//DB2填充模板
 
         public Boolean sencondInject = false;//二次注入
         public int showColumn = 0;
@@ -80,5 +80,11 @@ namespace SuperSQLInjection.model
         public int linkCount = 1;
         public int maxSpiderCount=10;
         public int maxScanCount = 10;
+
+        //proxy
+        public int proxy_mode = 0;//0关闭代理，1随机代理，2固定代理
+        public String proxy_check_host = "www.baidu.com";
+        public int proxy_check_port = 80;
+        public String proxy_check_Keys = "百度一下，你就知道";
     }
 }

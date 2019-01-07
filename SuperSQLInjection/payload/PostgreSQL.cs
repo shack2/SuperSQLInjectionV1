@@ -8,7 +8,7 @@ namespace SuperSQLInjection.payload
     class PostgreSQL
     {
         //加载对应配置(需要读取的环境变量)
-        public static String path = "config/vers/db2.txt";
+        public static String path = "config/vers/postgresql.txt";
         public static List<String> vers = FileTool.readFileToList(path);
 
         public static String char_length = "(char_length({data}))";

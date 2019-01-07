@@ -15,6 +15,8 @@ using SuperSQLInjection.bypass;
 using SuperSQLInjection.tools.http;
 using System.Net;
 using SuperSQLInjection.model;
+using System.Collections.Generic;
+using System.Collections;
 
 namespace SuperSQLInjection.tools
 {
@@ -35,6 +37,8 @@ namespace SuperSQLInjection.tools
         public const int WaitTime =5;
         public static Main main = null;
         public static long index = 0;
+
+        public const String Socks5ProxyType = "Socks5";
 
         public static String getTemplate = "GET /mysql.jsp?id=1 HTTP/1.1\r\nUser-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.10240\r\nAccept-Encoding: gzip, deflate\r\nHost: 127.0.0.1:8090\r\nConnection: Close\r\nCookie: JSESSIONID=2F6D5F1AC8C376FF0AB48A08282A6CED";
         public static String postTemplate = "POST /search/index.htm HTTP/1.1\r\nReferer: http://www.shack2.org/\r\nUser-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.10240\r\nContent-Type: application/x-www-form-urlencoded\r\nAccept-Encoding: gzip, deflate\r\nContent-Length: 5\r\nHost: www.shack2.org\r\nConnection: Keep-Alive\r\nPragma: no-cache\r\nCookie: CNZZDATA4159773=cnzz_eid%3D217492251-1446476958-%26ntime%3D1447834260; bdshare_firstime=1446476958863\r\n\r\nkey=s";
@@ -265,6 +269,7 @@ namespace SuperSQLInjection.tools
             ServerInfo server = new ServerInfo();
             TcpClient clientSocket = null;
             int sum = 0;
+            Proxy cproxy = null;//当前使用代理
             Boolean isupdateEncoding = false;
             try
             {
@@ -276,8 +281,53 @@ namespace SuperSQLInjection.tools
                     //编码处理
                     server.request = request;
                     TimeOutSocket tos = new TimeOutSocket();
-                    clientSocket = tos.Connect(host, port, timeout);
+                    if (main.config.proxy_mode == 1 || main.config.proxy_mode == 2)
+                    {
+                        if (main.config.proxy_mode == 1)
+                        {
+                            //随机代理
+                            cproxy = getRandProxy();
+                        }
+                        else
+                        {
+                            cproxy = main.proxy;
+                        }
+                        //为空，没有代理资源
+                        if (cproxy == null)
+                        {
+                            //不使用代理
+                            clientSocket = tos.Connect(host, port, timeout);
+                        }
+                        else {
+                            if (Socks5ProxyType.Equals(cproxy.proxyType))
+                            {
+                                SocketProxy sp = new SocketProxy();
+                                bool isok = false;
+                                clientSocket = sp.creatProxySocket(cproxy.host, cproxy.port, timeout);
+                                if (clientSocket != null)
+                                {
+                                    isok = sp.ConnectProxyServer(host, port, clientSocket, cproxy.username, cproxy.password, timeout);
+                                }
+                                if (!isok)
+                                {
+                                    throw new Exception("代理连接失败！");
+                                }
+                                tos.useTime = sp.ConectProxyUseTime;
+                            }
+                            else
+                            {
+                                //直接替换IP和端口即可
+                                clientSocket = tos.Connect(cproxy.host, cproxy.port, timeout);
+                            }
+                        } 
+                    }
 
+                    else
+                    {
+                        //不使用代理
+                        clientSocket = tos.Connect(host, port, timeout);
+                    }
+                 
                     if (sw.ElapsedMilliseconds > timeout)
                     {
                         return server;
@@ -505,7 +555,11 @@ namespace SuperSQLInjection.tools
                 {
                     server.sleepTime = main.config.sendHTTPSleepTime;
                     Tools.sysHTTPLog(index, server);
-                    main.Invoke(new Main.sendHTTPLogDelegate(main.sendHTTPLog), index, server, payload);
+                    String proxyInfo = "";
+                    if (cproxy != null) {
+                        proxyInfo = cproxy.host + ":" + cproxy.port;
+                    }
+                    main.Invoke(new Main.sendHTTPLogDelegate(main.sendHTTPLog), index, server, payload, proxyInfo);
                 }
                 if (main.config.sendHTTPSleepTime > 0)
                 {
@@ -515,7 +569,41 @@ namespace SuperSQLInjection.tools
             return server;
 
         }
+        
+        private static Random rd = new Random();
+        private static Proxy getRandProxy() {
+            //复制一个，如果有未验证或验证失败的去掉。
+            Dictionary<String, Proxy> ok_porxyList = new Dictionary<String, Proxy>(main.proxy_List);
 
+            while (ok_porxyList.Count>0) {
+
+                int rand = rd.Next(0,ok_porxyList.Count);
+                lock (ok_porxyList)
+                {
+                    int i = 0;
+
+                    foreach (Proxy proxy in ok_porxyList.Values)
+                    {
+                        if (i == rand)
+                        {
+                            if ("是".Equals(proxy.isOk))
+                            {
+                                return proxy;
+                            }
+                            else
+                            {
+                                ok_porxyList.Remove(proxy.host+ proxy.port);
+                                break;
+                            }
+                        }
+
+                        i++;
+                    }
+
+                }
+            }
+            return null;
+        }
 
         private static void getBody(ref ServerInfo server, ref byte[] responseBody, ref int sum, ref Encoding encod, ref String index) {
             if (server.headers.ContainsKey(Content_Encoding))
@@ -543,6 +631,9 @@ namespace SuperSQLInjection.tools
         {
             return true;
         }
+
+        
+
         private static ServerInfo sendHTTPSRequest(int count, String host, int port, String payload, String request, int timeout, String encoding, Boolean foward_302,Boolean redirectDoGet)
         {
             Interlocked.Increment(ref HTTP.index);
@@ -552,7 +643,7 @@ namespace SuperSQLInjection.tools
             ServerInfo server = new ServerInfo();
             Boolean isupdateEncoding = false;
             int sum = 0;
-
+            Proxy cproxy = null;//当前使用代理
             TcpClient clientSocket = null; ;
 
             try
@@ -564,9 +655,55 @@ namespace SuperSQLInjection.tools
 
                     //编码处理
                     request = StringReplace.strReplaceCenter(main.config, request, main.replaceList);
-
                     TimeOutSocket tos = new TimeOutSocket();
-                    clientSocket = tos.Connect(host, port, timeout);
+                    if (main.config.proxy_mode == 1 || main.config.proxy_mode == 2)
+                    {
+                        if (main.config.proxy_mode == 1)
+                        {
+                            //随机代理
+                            cproxy = getRandProxy();
+                        }
+                        else
+                        {
+                            cproxy = main.proxy;
+                        }
+                        //为空，没有代理资源
+                        if (cproxy == null)
+                        {
+                            //不使用代理
+                            clientSocket = tos.Connect(host, port, timeout);
+                        }
+                        else
+                        {
+                            if (Socks5ProxyType.Equals(cproxy.proxyType))
+                            {
+                                SocketProxy sp = new SocketProxy();
+                                bool isok = false;
+                                clientSocket = sp.creatProxySocket(cproxy.host, cproxy.port, timeout);
+                                if (clientSocket != null)
+                                {
+                                    isok = sp.ConnectProxyServer(host, port, clientSocket, cproxy.username, cproxy.password, timeout);
+                                }
+                                if (!isok)
+                                {
+                                    throw new Exception("代理连接失败！");
+                                }
+                                tos.useTime = sp.ConectProxyUseTime;
+                            }
+                            else
+                            {
+                                //直接替换IP和端口即可
+                                clientSocket = tos.Connect(cproxy.host, cproxy.port, timeout);
+                            }
+                        }
+                    }
+
+                    else
+                    {
+                        //不使用代理
+                        clientSocket = tos.Connect(host, port, timeout);
+                    }
+
                     if (sw.ElapsedMilliseconds >= timeout)
                     {
                         return server;
@@ -808,7 +945,12 @@ namespace SuperSQLInjection.tools
                 {
                     server.sleepTime = main.config.sendHTTPSleepTime;
                     Tools.sysHTTPLog(index, server);
-                    main.Invoke(new Main.sendHTTPLogDelegate(main.sendHTTPLog), index, server, payload);
+                    String proxyInfo = "";
+                    if (cproxy != null)
+                    {
+                        proxyInfo = cproxy.host + ":" + cproxy.port;
+                    }
+                    main.Invoke(new Main.sendHTTPLogDelegate(main.sendHTTPLog), index, server, payload, proxyInfo);
                 }
                 if (main.config.sendHTTPSleepTime > 0)
                 {

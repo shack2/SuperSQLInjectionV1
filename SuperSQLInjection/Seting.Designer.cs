@@ -30,22 +30,30 @@
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.chk_redirectDoGet = new System.Windows.Forms.CheckBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.cmb_unionFill = new System.Windows.Forms.ComboBox();
             this.lbl_maxColumnsCount = new System.Windows.Forms.Label();
-            this.cob_maxClolumnsCount = new System.Windows.Forms.ComboBox();
+            this.cmb_maxClolumnsCount = new System.Windows.Forms.ComboBox();
             this.chk_isAutoSaveConfig = new System.Windows.Forms.CheckBox();
             this.chk_autoCheckUpdate = new System.Windows.Forms.CheckBox();
             this.chk_mysqlMuStr = new System.Windows.Forms.CheckBox();
             this.chk_openHTTPLog = new System.Windows.Forms.CheckBox();
             this.chk_openInfoLog = new System.Windows.Forms.CheckBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.cob_oneDomainMaxSpiderCount = new System.Windows.Forms.ComboBox();
-            this.cob_oneDomainMaxScanCount = new System.Windows.Forms.ComboBox();
+            this.cmb_oneDomainMaxSpiderCount = new System.Windows.Forms.ComboBox();
+            this.cmb_oneDomainMaxScanCount = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.cmb_unionFill = new System.Windows.Forms.ComboBox();
-            this.label3 = new System.Windows.Forms.Label();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.txt_proxy_host = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.txt_proxy_port = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.txt_proxy_keys = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -54,7 +62,7 @@
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.cmb_unionFill);
             this.groupBox1.Controls.Add(this.lbl_maxColumnsCount);
-            this.groupBox1.Controls.Add(this.cob_maxClolumnsCount);
+            this.groupBox1.Controls.Add(this.cmb_maxClolumnsCount);
             this.groupBox1.Controls.Add(this.chk_isAutoSaveConfig);
             this.groupBox1.Controls.Add(this.chk_autoCheckUpdate);
             this.groupBox1.Controls.Add(this.chk_mysqlMuStr);
@@ -78,6 +86,27 @@
             this.chk_redirectDoGet.UseVisualStyleBackColor = true;
             this.chk_redirectDoGet.CheckedChanged += new System.EventHandler(this.chk_redirectDoGet_CheckedChanged);
             // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(274, 132);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(71, 12);
+            this.label3.TabIndex = 6;
+            this.label3.Text = "Union填充：";
+            // 
+            // cmb_unionFill
+            // 
+            this.cmb_unionFill.FormattingEnabled = true;
+            this.cmb_unionFill.Items.AddRange(new object[] {
+            "1",
+            "null"});
+            this.cmb_unionFill.Location = new System.Drawing.Point(351, 129);
+            this.cmb_unionFill.Name = "cmb_unionFill";
+            this.cmb_unionFill.Size = new System.Drawing.Size(70, 20);
+            this.cmb_unionFill.TabIndex = 5;
+            this.cmb_unionFill.SelectedValueChanged += new System.EventHandler(this.cmb_unionFill_SelectedValueChanged);
+            // 
             // lbl_maxColumnsCount
             // 
             this.lbl_maxColumnsCount.AutoSize = true;
@@ -87,10 +116,10 @@
             this.lbl_maxColumnsCount.TabIndex = 6;
             this.lbl_maxColumnsCount.Text = "最大列数：";
             // 
-            // cob_maxClolumnsCount
+            // cmb_maxClolumnsCount
             // 
-            this.cob_maxClolumnsCount.FormattingEnabled = true;
-            this.cob_maxClolumnsCount.Items.AddRange(new object[] {
+            this.cmb_maxClolumnsCount.FormattingEnabled = true;
+            this.cmb_maxClolumnsCount.Items.AddRange(new object[] {
             "5",
             "10",
             "15",
@@ -105,11 +134,11 @@
             "100",
             "150",
             "200"});
-            this.cob_maxClolumnsCount.Location = new System.Drawing.Point(88, 86);
-            this.cob_maxClolumnsCount.Name = "cob_maxClolumnsCount";
-            this.cob_maxClolumnsCount.Size = new System.Drawing.Size(70, 20);
-            this.cob_maxClolumnsCount.TabIndex = 5;
-            this.cob_maxClolumnsCount.SelectedValueChanged += new System.EventHandler(this.cob_maxClolumnsCount_SelectedValueChanged);
+            this.cmb_maxClolumnsCount.Location = new System.Drawing.Point(88, 86);
+            this.cmb_maxClolumnsCount.Name = "cmb_maxClolumnsCount";
+            this.cmb_maxClolumnsCount.Size = new System.Drawing.Size(70, 20);
+            this.cmb_maxClolumnsCount.TabIndex = 5;
+            this.cmb_maxClolumnsCount.SelectedValueChanged += new System.EventHandler(this.cob_maxClolumnsCount_SelectedValueChanged);
             // 
             // chk_isAutoSaveConfig
             // 
@@ -175,10 +204,10 @@
             this.label1.TabIndex = 8;
             this.label1.Text = "单域名最大爬行数：";
             // 
-            // cob_oneDomainMaxSpiderCount
+            // cmb_oneDomainMaxSpiderCount
             // 
-            this.cob_oneDomainMaxSpiderCount.FormattingEnabled = true;
-            this.cob_oneDomainMaxSpiderCount.Items.AddRange(new object[] {
+            this.cmb_oneDomainMaxSpiderCount.FormattingEnabled = true;
+            this.cmb_oneDomainMaxSpiderCount.Items.AddRange(new object[] {
             "3",
             "5",
             "10",
@@ -187,26 +216,26 @@
             "30",
             "40",
             "50"});
-            this.cob_oneDomainMaxSpiderCount.Location = new System.Drawing.Point(136, 31);
-            this.cob_oneDomainMaxSpiderCount.Name = "cob_oneDomainMaxSpiderCount";
-            this.cob_oneDomainMaxSpiderCount.Size = new System.Drawing.Size(70, 20);
-            this.cob_oneDomainMaxSpiderCount.TabIndex = 7;
-            this.cob_oneDomainMaxSpiderCount.SelectedValueChanged += new System.EventHandler(this.cob_oneDomainMaxSpiderCount_SelectedValueChanged);
+            this.cmb_oneDomainMaxSpiderCount.Location = new System.Drawing.Point(136, 31);
+            this.cmb_oneDomainMaxSpiderCount.Name = "cmb_oneDomainMaxSpiderCount";
+            this.cmb_oneDomainMaxSpiderCount.Size = new System.Drawing.Size(70, 20);
+            this.cmb_oneDomainMaxSpiderCount.TabIndex = 7;
+            this.cmb_oneDomainMaxSpiderCount.SelectedValueChanged += new System.EventHandler(this.cob_oneDomainMaxSpiderCount_SelectedValueChanged);
             // 
-            // cob_oneDomainMaxScanCount
+            // cmb_oneDomainMaxScanCount
             // 
-            this.cob_oneDomainMaxScanCount.FormattingEnabled = true;
-            this.cob_oneDomainMaxScanCount.Items.AddRange(new object[] {
+            this.cmb_oneDomainMaxScanCount.FormattingEnabled = true;
+            this.cmb_oneDomainMaxScanCount.Items.AddRange(new object[] {
             "3",
             "5",
             "10",
             "15",
             "20"});
-            this.cob_oneDomainMaxScanCount.Location = new System.Drawing.Point(393, 31);
-            this.cob_oneDomainMaxScanCount.Name = "cob_oneDomainMaxScanCount";
-            this.cob_oneDomainMaxScanCount.Size = new System.Drawing.Size(70, 20);
-            this.cob_oneDomainMaxScanCount.TabIndex = 7;
-            this.cob_oneDomainMaxScanCount.SelectedValueChanged += new System.EventHandler(this.cob_oneDomainMaxScanCount_SelectedValueChanged);
+            this.cmb_oneDomainMaxScanCount.Location = new System.Drawing.Point(393, 31);
+            this.cmb_oneDomainMaxScanCount.Name = "cmb_oneDomainMaxScanCount";
+            this.cmb_oneDomainMaxScanCount.Size = new System.Drawing.Size(70, 20);
+            this.cmb_oneDomainMaxScanCount.TabIndex = 7;
+            this.cmb_oneDomainMaxScanCount.SelectedValueChanged += new System.EventHandler(this.cob_oneDomainMaxScanCount_SelectedValueChanged);
             // 
             // label2
             // 
@@ -221,8 +250,8 @@
             // 
             this.groupBox2.Controls.Add(this.label2);
             this.groupBox2.Controls.Add(this.label1);
-            this.groupBox2.Controls.Add(this.cob_oneDomainMaxScanCount);
-            this.groupBox2.Controls.Add(this.cob_oneDomainMaxSpiderCount);
+            this.groupBox2.Controls.Add(this.cmb_oneDomainMaxScanCount);
+            this.groupBox2.Controls.Add(this.cmb_oneDomainMaxSpiderCount);
             this.groupBox2.Location = new System.Drawing.Point(12, 204);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(487, 75);
@@ -230,32 +259,78 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "批量注入设置";
             // 
-            // cmb_unionFill
+            // groupBox3
             // 
-            this.cmb_unionFill.FormattingEnabled = true;
-            this.cmb_unionFill.Items.AddRange(new object[] {
-            "1",
-            "null"});
-            this.cmb_unionFill.Location = new System.Drawing.Point(351, 129);
-            this.cmb_unionFill.Name = "cmb_unionFill";
-            this.cmb_unionFill.Size = new System.Drawing.Size(70, 20);
-            this.cmb_unionFill.TabIndex = 5;
-            this.cmb_unionFill.SelectedValueChanged += new System.EventHandler(this.cmb_unionFill_SelectedValueChanged);
+            this.groupBox3.Controls.Add(this.txt_proxy_port);
+            this.groupBox3.Controls.Add(this.txt_proxy_keys);
+            this.groupBox3.Controls.Add(this.txt_proxy_host);
+            this.groupBox3.Controls.Add(this.label4);
+            this.groupBox3.Controls.Add(this.label6);
+            this.groupBox3.Controls.Add(this.label5);
+            this.groupBox3.Location = new System.Drawing.Point(12, 285);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(487, 75);
+            this.groupBox3.TabIndex = 9;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "代理验证设置";
             // 
-            // label3
+            // label5
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(274, 132);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(71, 12);
-            this.label3.TabIndex = 6;
-            this.label3.Text = "Union填充：";
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(17, 34);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(65, 12);
+            this.label5.TabIndex = 8;
+            this.label5.Text = "验证域名：";
+            // 
+            // txt_proxy_host
+            // 
+            this.txt_proxy_host.Location = new System.Drawing.Point(88, 30);
+            this.txt_proxy_host.Name = "txt_proxy_host";
+            this.txt_proxy_host.Size = new System.Drawing.Size(96, 21);
+            this.txt_proxy_host.TabIndex = 9;
+            this.txt_proxy_host.TextChanged += new System.EventHandler(this.txt_proxy_host_TextChanged);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(190, 34);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(41, 12);
+            this.label4.TabIndex = 8;
+            this.label4.Text = "端口：";
+            // 
+            // txt_proxy_port
+            // 
+            this.txt_proxy_port.Location = new System.Drawing.Point(237, 30);
+            this.txt_proxy_port.Name = "txt_proxy_port";
+            this.txt_proxy_port.Size = new System.Drawing.Size(38, 21);
+            this.txt_proxy_port.TabIndex = 9;
+            this.txt_proxy_port.TextChanged += new System.EventHandler(this.txt_proxy_port_TextChanged);
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(281, 34);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(53, 12);
+            this.label6.TabIndex = 8;
+            this.label6.Text = "关键词：";
+            // 
+            // txt_proxy_keys
+            // 
+            this.txt_proxy_keys.Location = new System.Drawing.Point(340, 30);
+            this.txt_proxy_keys.Name = "txt_proxy_keys";
+            this.txt_proxy_keys.Size = new System.Drawing.Size(123, 21);
+            this.txt_proxy_keys.TabIndex = 9;
+            this.txt_proxy_keys.TextChanged += new System.EventHandler(this.txt_proxy_keys_TextChanged);
             // 
             // Seting
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(519, 300);
+            this.ClientSize = new System.Drawing.Size(513, 379);
+            this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Name = "Seting";
@@ -266,6 +341,8 @@
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -279,14 +356,21 @@
         private System.Windows.Forms.CheckBox chk_autoCheckUpdate;
         private System.Windows.Forms.CheckBox chk_isAutoSaveConfig;
         private System.Windows.Forms.Label lbl_maxColumnsCount;
-        private System.Windows.Forms.ComboBox cob_maxClolumnsCount;
+        private System.Windows.Forms.ComboBox cmb_maxClolumnsCount;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ComboBox cob_oneDomainMaxSpiderCount;
-        private System.Windows.Forms.ComboBox cob_oneDomainMaxScanCount;
+        private System.Windows.Forms.ComboBox cmb_oneDomainMaxSpiderCount;
+        private System.Windows.Forms.ComboBox cmb_oneDomainMaxScanCount;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.CheckBox chk_redirectDoGet;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.ComboBox cmb_unionFill;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.TextBox txt_proxy_port;
+        private System.Windows.Forms.TextBox txt_proxy_host;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.TextBox txt_proxy_keys;
+        private System.Windows.Forms.Label label6;
     }
 }

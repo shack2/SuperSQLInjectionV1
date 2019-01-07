@@ -24,8 +24,7 @@ namespace SuperSQLInjection.tools.http
             TcpClient tcpclient = new TcpClient();
 
             tcpclient.BeginConnect(host, port,new AsyncCallback(CallBackMethod), tcpclient);
-
-
+          
             if (TimeoutObject.WaitOne(timeoutMSec, false))
             {
                 if (IsConnectionSuccessful)
