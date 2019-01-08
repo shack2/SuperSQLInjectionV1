@@ -33,19 +33,23 @@
             // 
             // richTextBox1
             // 
-            this.richTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.richTextBox1.Location = new System.Drawing.Point(0, 0);
+            this.richTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.richTextBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.richTextBox1.Location = new System.Drawing.Point(12, 12);
             this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(487, 115);
+            this.richTextBox1.ReadOnly = true;
+            this.richTextBox1.Size = new System.Drawing.Size(463, 94);
             this.richTextBox1.TabIndex = 0;
             this.richTextBox1.Text = "本工具提供给个人、站长、企业、渗透测试工程师、Web安全工程师等信息安全人员进行信息安全检查工具，请勿利用此工具进行非授权测试，产生的法律责任与作者无关。\n作者：" +
-                "shack2\nQQ：1341413415\n博客：www.shack2.org";
+    "shack2\nQQ：1341413415\n官网：www.shack2.org";
             // 
             // Waring
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(487, 115);
+            this.ClientSize = new System.Drawing.Size(487, 117);
             this.Controls.Add(this.richTextBox1);
             this.Name = "Waring";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -57,7 +61,5 @@
         #endregion
 
         private System.Windows.Forms.RichTextBox richTextBox1;
-
-
     }
 }

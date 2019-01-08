@@ -167,7 +167,7 @@ namespace SuperSQLInjection
             {
                 this.config = XML.readConfig(AppDomain.CurrentDomain.BaseDirectory+"/lastConfig.xml");
                 reloadConfig(this.config);
-                this.Invoke(new showLogDelegate(log), "自动加载上次配置成功！", LogLevel.success);
+                this.txt_log.Invoke(new showLogDelegate(log), "自动加载上次配置成功！", LogLevel.success);
             }
             catch (Exception ex)
             {
@@ -197,11 +197,11 @@ namespace SuperSQLInjection
                         this.proxy_lvw_proxyList.Invoke(new DelegateAddItemToProxy(addItemsToProxy_lvw), proxy);
                     }
                 }
-                this.Invoke(new showLogDelegate(log), "自动加载上次代理池配置成功，发现代理：" + this.proxy_List.Count+"个！", LogLevel.success);
+                this.txt_log.Invoke(new showLogDelegate(log), "自动加载上次代理池配置成功，发现代理：" + this.proxy_List.Count+"个！", LogLevel.success);
                 loadProxyList = 1;
             }
             catch (Exception e) {
-                this.Invoke(new showLogDelegate(log), "自动加载上次代理池配置失败！"+e.Message, LogLevel.waring);
+                this.txt_log.Invoke(new showLogDelegate(log), "自动加载上次代理池配置失败！"+e.Message, LogLevel.waring);
             }
            
         }
@@ -298,7 +298,7 @@ namespace SuperSQLInjection
             return sid;
         }
 
-        public static int version = 20190107;
+        public static int version = 20190108;
         public static string versionURL = "http://www.shack2.org/soft/getNewVersion?ENNAME=SSuperSQLInjection&NO=" + URLEncode.UrlEncode(getSid()) + "&VERSION=" + version;
         //检查更新
         public void checkUpdate()
@@ -335,12 +335,12 @@ namespace SuperSQLInjection
                 }
                 else
                 {
-                    this.Invoke(new showLogDelegate(log), "自动检查更新，没有发现新版本！", LogLevel.info);
+                    this.txt_log.Invoke(new showLogDelegate(log), "自动检查更新，没有发现新版本！", LogLevel.info);
                 }
             }
             catch (Exception e)
             {
-                this.Invoke(new showLogDelegate(log), "更新异常！" + e.Message, LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "更新异常！" + e.Message, LogLevel.info);
             }
         }
 
@@ -561,7 +561,7 @@ namespace SuperSQLInjection
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "发生异常：" + e.Message, LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "发生异常：" + e.Message, LogLevel.error);
 
             }
             return "";
@@ -594,7 +594,7 @@ namespace SuperSQLInjection
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "发生异常：" + e.Message, LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "发生异常：" + e.Message, LogLevel.error);
 
             }
             return "";
@@ -620,7 +620,7 @@ namespace SuperSQLInjection
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "发生异常：" + e.Message, LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "发生异常：" + e.Message, LogLevel.error);
 
             }
             return "";
@@ -979,7 +979,7 @@ namespace SuperSQLInjection
                 String[] vs = vers.ToString().Split(':');
                 String payload_len = MySQL.ver_length.Replace("{data}", vs[1]);
                 int len = getValueByStepUp(payload_len, 0, 10);
-                this.Invoke(new showLogDelegate(log), vs[0] + "长度为：" + len, LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), vs[0] + "长度为：" + len, LogLevel.info);
                 String va_payload = MySQL.ver_value.Replace("{data}", vs[1]);
                 String value = "";
                 //获取值
@@ -990,14 +990,14 @@ namespace SuperSQLInjection
                     value += ((char)ascii).ToString();
                     this.Invoke(new setVariableDelegate(setVariable), vs[0], value);
                 }
-                this.Invoke(new showLogDelegate(log), vs[0] + "值为：" + value, LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), vs[0] + "值为：" + value, LogLevel.info);
                 
 
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
             }
             Interlocked.Increment(ref this.currentDataCount);
         }
@@ -1011,7 +1011,7 @@ namespace SuperSQLInjection
                 String payload_len = MySQL.getBoolDataBySleep(MySQL.bool_length, config.maxTime).Replace("{data}", vs[1]);
 
                 int len = getValueByStepUp(payload_len, 0, 10);
-                this.Invoke(new showLogDelegate(log), vs[0] + "长度为：" + len, LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), vs[0] + "长度为：" + len, LogLevel.info);
                 String va_payload = MySQL.getBoolDataBySleep(MySQL.bool_value, config.maxTime).Replace("{data}", vs[1]);
                 String value = "";
                 //获取值
@@ -1022,14 +1022,14 @@ namespace SuperSQLInjection
                     value += ((char)ascii).ToString();
                     this.Invoke(new setVariableDelegate(setVariable), vs[0], value);
                 }
-                this.Invoke(new showLogDelegate(log), vs[0] + "值为：" + value, LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), vs[0] + "值为：" + value, LogLevel.info);
                 
 
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
             }
             Interlocked.Increment(ref this.currentDataCount);
 
@@ -1044,7 +1044,7 @@ namespace SuperSQLInjection
                 String payload_len = PostgreSQL.getBoolDataBySleep(PostgreSQL.bool_length, config.maxTime).Replace("{data}", vs[1]);
 
                 int len = getValueByStepUp(payload_len, 0, 10);
-                this.Invoke(new showLogDelegate(log), vs[0] + "长度为：" + len, LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), vs[0] + "长度为：" + len, LogLevel.info);
                 String va_payload = PostgreSQL.getBoolDataBySleep(PostgreSQL.bool_value, config.maxTime).Replace("{data}", vs[1]);
                 String value = "";
                 //获取值
@@ -1055,14 +1055,14 @@ namespace SuperSQLInjection
                     value += ((char)ascii).ToString();
                     this.Invoke(new setVariableDelegate(setVariable), vs[0], value);
                 }
-                this.Invoke(new showLogDelegate(log), vs[0] + "值为：" + value, LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), vs[0] + "值为：" + value, LogLevel.info);
                 
 
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
             }
             Interlocked.Increment(ref this.currentDataCount);
 
@@ -1079,7 +1079,7 @@ namespace SuperSQLInjection
                 String[] vs = vers.ToString().Split(':');
                 String payload_len = PostgreSQL.ver_length.Replace("{data}", vs[1]);
                 int len = getValueByStepUp(payload_len, 0, 10);
-                this.Invoke(new showLogDelegate(log), vs[0] + "长度为：" + len, LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), vs[0] + "长度为：" + len, LogLevel.info);
                 String va_payload = PostgreSQL.ver_value.Replace("{data}", vs[1]);
                 String value = "";
                 //获取值
@@ -1090,14 +1090,14 @@ namespace SuperSQLInjection
                     value += ((char)ascii).ToString();
                     this.Invoke(new setVariableDelegate(setVariable), vs[0], value);
                 }
-                this.Invoke(new showLogDelegate(log), vs[0] + "值为：" + value, LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), vs[0] + "值为：" + value, LogLevel.info);
                
 
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
             }
             Interlocked.Increment(ref this.currentDataCount);
         }
@@ -1114,7 +1114,7 @@ namespace SuperSQLInjection
                 //判断变量长度
                 String payload_len = SQLServer.getBoolDataBySleep(SQLServer.bool_length, config.maxTime).Replace("{data}", vs[1]);
                 int len = getValueByStepUp(payload_len, 0, 10);
-                this.Invoke(new showLogDelegate(log), vs[0] + "长度为：" + len, LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), vs[0] + "长度为：" + len, LogLevel.info);
                 String va_payload = SQLServer.getBoolDataBySleep(SQLServer.bool_value, config.maxTime).Replace("{data}", vs[1]);
                 String value = "";
                 //获取值
@@ -1129,13 +1129,13 @@ namespace SuperSQLInjection
                     this.Invoke(new setVariableDelegate(setVariable), vs[0], value);
                  
                 }
-                this.Invoke(new showLogDelegate(log), vs[0] + "值为：" + value,LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), vs[0] + "值为：" + value,LogLevel.info);
               
 
             }
             catch (Exception e)
             {
-                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message,LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message,LogLevel.error);
             }
             Interlocked.Increment(ref this.currentDataCount);
         }
@@ -1150,7 +1150,7 @@ namespace SuperSQLInjection
                 String[] vs = vers.ToString().Split(':');
                 //判断变量长度
                 int len = getValueByStepUp(SQLServer.bool_length.Replace("{data}", vs[1]), 0, 10);
-                this.Invoke(new showLogDelegate(log), vs[0] + "长度为：" + len,LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), vs[0] + "长度为：" + len,LogLevel.info);
                 String value = "";
                 //获取值
                 for (int i = 1; i <= len; i++)
@@ -1167,13 +1167,13 @@ namespace SuperSQLInjection
                     this.Invoke(new setVariableDelegate(setVariable), vs[0], value);
                 }
 
-                this.Invoke(new showLogDelegate(log), vs[0] + "值为：" + value, LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), vs[0] + "值为：" + value, LogLevel.info);
                 
 
             }
             catch (Exception e)
             {
-                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
             }
             Interlocked.Increment(ref this.currentDataCount);
         }
@@ -1190,7 +1190,7 @@ namespace SuperSQLInjection
                 String[] vs = vers.ToString().Split(':');
                 //判断变量长度
                 int len = getValueByStepUp(Oracle.bool_length.Replace("{data}", vs[1]), 0, 10);
-                this.Invoke(new showLogDelegate(log), vs[0] + "长度为：" + len, LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), vs[0] + "长度为：" + len, LogLevel.info);
 
                 String va_payload = Oracle.bool_value.Replace("{data}", vs[1]);
                 String value = "";
@@ -1202,14 +1202,14 @@ namespace SuperSQLInjection
                     value += (char)ascii;
                     this.Invoke(new setVariableDelegate(setVariable), vs[0], value);
                 }
-                this.Invoke(new showLogDelegate(log), vs[0] + "值为：" + value, LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), vs[0] + "值为：" + value, LogLevel.info);
                
 
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
             }
             Interlocked.Increment(ref this.currentDataCount);
         }
@@ -1225,7 +1225,7 @@ namespace SuperSQLInjection
                 String[] vs = vers.ToString().Split(':');
                 //判断变量长度
                 int len = getValueByStepUp(DB2.bool_length.Replace("{data}", vs[1]), 0, 10);
-                this.Invoke(new showLogDelegate(log), vs[0] + "长度为：" + len, LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), vs[0] + "长度为：" + len, LogLevel.info);
 
                 String va_payload = DB2.bool_value.Replace("{data}", vs[1]);
                 String value = "";
@@ -1237,14 +1237,14 @@ namespace SuperSQLInjection
                     value += (char)ascii;
                     this.Invoke(new setVariableDelegate(setVariable), vs[0], value);
                 }
-                this.Invoke(new showLogDelegate(log), vs[0] + "值为：" + value, LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), vs[0] + "值为：" + value, LogLevel.info);
                 
 
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
             }
             Interlocked.Increment(ref this.currentDataCount);
         }
@@ -1260,7 +1260,7 @@ namespace SuperSQLInjection
                 String[] vs = vers.ToString().Split(':');
                 //判断变量长度
                 int len = getValueByStepUp(SQLite.bool_length.Replace("{data}", vs[1]), 0, 10);
-                this.Invoke(new showLogDelegate(log), vs[0] + "长度为：" + len, LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), vs[0] + "长度为：" + len, LogLevel.info);
 
                 String va_payload = SQLite.bool_value.Replace("{data}", vs[1]);
                 String value = "";
@@ -1272,14 +1272,14 @@ namespace SuperSQLInjection
                     value += (char)ascii;
                     this.Invoke(new setVariableDelegate(setVariable), vs[0], value);
                 }
-                this.Invoke(new showLogDelegate(log), vs[0] + "值为：" + value, LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), vs[0] + "值为：" + value, LogLevel.info);
 
 
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
             }
             Interlocked.Increment(ref this.currentDataCount);
         }
@@ -1330,7 +1330,7 @@ namespace SuperSQLInjection
 
                 //判断当前数据库长度限制1-50
                 int len = getValue(payload_len, 1, 50);
-                this.Invoke(new showLogDelegate(log), "数据库" + (db_index + 1) + "长度为：" + len, LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "数据库" + (db_index + 1) + "长度为：" + len, LogLevel.info);
 
                 //判断当前数据库对应的ascii码
                 String va_payload = MySQL.ver_value.Replace("{data}", MySQL.db_value.Replace("{index}", oindex.ToString()));
@@ -1351,14 +1351,14 @@ namespace SuperSQLInjection
                     int ascii = getValue(tmp_va_payload, 32, 126);
                     value += ((char)ascii).ToString();
                 }
-                this.Invoke(new showLogDelegate(log), "数据库" + db_index + "的名称为：" + value,LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "数据库" + db_index + "的名称为：" + value,LogLevel.info);
                 this.Invoke(new addDBToTreeListDelegate(addDBToTreeList), value);
 
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取数据库名称时发生异常：" + e.Message, LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取数据库名称时发生异常：" + e.Message, LogLevel.error);
             }
             Interlocked.Increment(ref this.currentDbsCount);
         }
@@ -1383,7 +1383,7 @@ namespace SuperSQLInjection
 
                 //判断当前数据库长度限制1-50
                 int len = getValue(payload_len, 1, 50);
-                this.Invoke(new showLogDelegate(log), "数据库" + (db_index + 1) + "长度为：" + len, LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "数据库" + (db_index + 1) + "长度为：" + len, LogLevel.info);
 
                 //判断当前数据库对应的ascii码
                 String va_payload = PostgreSQL.ver_value.Replace("{data}", PostgreSQL.db_value.Replace("{index}", oindex.ToString()));
@@ -1404,14 +1404,14 @@ namespace SuperSQLInjection
                     int ascii = getValue(tmp_va_payload, 32, 126);
                     value += ((char)ascii).ToString();
                 }
-                this.Invoke(new showLogDelegate(log), "数据库" + db_index + "的名称为：" + value, LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "数据库" + db_index + "的名称为：" + value, LogLevel.info);
                 this.Invoke(new addDBToTreeListDelegate(addDBToTreeList), value);
 
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取数据库名称时发生异常：" + e.Message, LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取数据库名称时发生异常：" + e.Message, LogLevel.error);
             }
             Interlocked.Increment(ref this.currentDbsCount);
         }
@@ -1430,7 +1430,7 @@ namespace SuperSQLInjection
                 String data_payload = SQLServer.db_value.Replace("{index}", db_index.ToString());
                 int len = getValueByStepUp(SQLServer.bool_length.Replace("{data}", data_payload), 0, 10);
 
-                this.Invoke(new showLogDelegate(log), "数据库" + db_index + "长度为：" + len,LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "数据库" + db_index + "长度为：" + len,LogLevel.info);
 
                 //判断当前数据库对应的ascii码
                 String va_payload = SQLServer.bool_value.Replace("{data}", SQLServer.db_value.Replace("{index}", oindex.ToString()));
@@ -1461,14 +1461,14 @@ namespace SuperSQLInjection
                         }
                     }
                 }
-                this.Invoke(new showLogDelegate(log), "数据库" + db_index + "的名称为：" + value,LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "数据库" + db_index + "的名称为：" + value,LogLevel.info);
                 this.Invoke(new addDBToTreeListDelegate(addDBToTreeList), value);
 
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取数据库名称时发生异常：" + e.Message, LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取数据库名称时发生异常：" + e.Message, LogLevel.error);
             }
             Interlocked.Increment(ref this.currentDbsCount);
         }
@@ -1486,7 +1486,7 @@ namespace SuperSQLInjection
                 String data_payload = SQLServer.db_value.Replace("{index}", db_index.ToString());
                 int len = getValueByStepUp(SQLServer.getBoolDataBySleep(SQLServer.bool_length.Replace("{data}", data_payload), config.maxTime), 0, 10);
 
-                this.Invoke(new showLogDelegate(log), "数据库" + db_index + "长度为：" + len, LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "数据库" + db_index + "长度为：" + len, LogLevel.info);
 
                 String value = "";
                 //获取值
@@ -1526,14 +1526,14 @@ namespace SuperSQLInjection
                         value += (char)Tools.convertToInt(unicodes.ToString());
                     }
                 }
-                this.Invoke(new showLogDelegate(log), "数据库" + db_index + "的名称为：" + value, LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "数据库" + db_index + "的名称为：" + value, LogLevel.info);
                 this.Invoke(new addDBToTreeListDelegate(addDBToTreeList), value);
 
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取数据库名称时发生异常：" + e.Message, LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取数据库名称时发生异常：" + e.Message, LogLevel.error);
             }
             Interlocked.Increment(ref this.currentDbsCount);
         }
@@ -1552,7 +1552,7 @@ namespace SuperSQLInjection
 
                 //判断当前数据库长度限制1-50
                 int len = getValue(payload_len,1, 50);
-                this.Invoke(new showLogDelegate(log), "数据库" + (db_index) + "长度为：" + len,LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "数据库" + (db_index) + "长度为：" + len,LogLevel.info);
 
                 //判断当前数据库对应的ascii码
                 String va_payload = Oracle.bool_value.Replace("{data}", Oracle.db_value.Replace("{index}", oindex.ToString()));
@@ -1569,14 +1569,14 @@ namespace SuperSQLInjection
                     int ascii = getValue(tmp_va_payload, 32, 126);
                     value += ((char)ascii).ToString();
                 }
-                this.Invoke(new showLogDelegate(log), "数据库" + db_index + "的名称为：" + value,LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "数据库" + db_index + "的名称为：" + value,LogLevel.info);
                 this.Invoke(new addDBToTreeListDelegate(addDBToTreeList), value);
 
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取数据库名称时发生异常：" + e.Message, LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取数据库名称时发生异常：" + e.Message, LogLevel.error);
             }
             Interlocked.Increment(ref this.currentDbsCount);
         }
@@ -1595,7 +1595,7 @@ namespace SuperSQLInjection
 
                 //判断当前数据库长度限制1-50
                 int len = getValue(payload_len, 1, 50);
-                this.Invoke(new showLogDelegate(log), "数据库表模式" + (db_index) + "长度为：" + len, LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "数据库表模式" + (db_index) + "长度为：" + len, LogLevel.info);
 
                 //判断当前数据库对应的ascii码
                 String va_payload = DB2.bool_value.Replace("{data}", DB2.db_value.Replace("{index}", oindex.ToString()));
@@ -1612,14 +1612,14 @@ namespace SuperSQLInjection
                     int ascii = getValue(tmp_va_payload, 32, 126);
                     value += ((char)ascii).ToString();
                 }
-                this.Invoke(new showLogDelegate(log), "数据库" + db_index + "的名称为：" + value, LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "数据库" + db_index + "的名称为：" + value, LogLevel.info);
                 this.Invoke(new addDBToTreeListDelegate(addDBToTreeList), value);
 
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取数据库名称时发生异常：" + e.Message, LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取数据库名称时发生异常：" + e.Message, LogLevel.error);
             }
             Interlocked.Increment(ref this.currentDbsCount);
         }
@@ -1638,13 +1638,13 @@ namespace SuperSQLInjection
                 data_list.Add(MySQL.db_value.Replace("{index}", oindex.ToString()));
                 String db_Name_data = MySQL.creatMySQLColumnsStrByUnion(config.columnsCount, config.showColumn, config.unionFill, data_list, null, null, -1);
                 String result = getOneDataByUnionOrError(MySQL.union_value.Replace("{data}", db_Name_data));
-                this.Invoke(new showLogDelegate(log), "数据库" + oindex + "的名称为：" + result,LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "数据库" + oindex + "的名称为：" + result,LogLevel.info);
                 this.Invoke(new addDBToTreeListDelegate(addDBToTreeList), result);
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取数据库名称时发生异常：" + e.Message, LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取数据库名称时发生异常：" + e.Message, LogLevel.error);
             }
             Interlocked.Increment(ref this.currentDbsCount);
         }
@@ -1659,13 +1659,13 @@ namespace SuperSQLInjection
             {
                 //获取数据库数量
                 String result = getOneDataByUnionOrError(SQLServer.getUnionDataValue(config.columnsCount, config.showColumn, config.unionFill, SQLServer.db_value, "", "", oindex.ToString()));
-                this.Invoke(new showLogDelegate(log), "数据库" + oindex + "的名称为：" + result, LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "数据库" + oindex + "的名称为：" + result, LogLevel.info);
                 this.Invoke(new addDBToTreeListDelegate(addDBToTreeList), result);
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取数据库名称时发生异常：" + e.Message, LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取数据库名称时发生异常：" + e.Message, LogLevel.error);
             }
             Interlocked.Increment(ref this.currentDbsCount);
         }
@@ -1680,13 +1680,13 @@ namespace SuperSQLInjection
             {
                 //获取数据库数量
                 String result = getOneDataByUnionOrError(Oracle.getUnionDataValue(config.columnsCount, config.showColumn, Oracle.db_value, "", "", oindex.ToString()));
-                this.Invoke(new showLogDelegate(log), "数据库" + oindex + "的名称为：" + result, LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "数据库" + oindex + "的名称为：" + result, LogLevel.info);
                 this.Invoke(new addDBToTreeListDelegate(addDBToTreeList), result);
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取数据库名称时发生异常：" + e.Message, LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取数据库名称时发生异常：" + e.Message, LogLevel.error);
             }
             Interlocked.Increment(ref this.currentDbsCount);
         }
@@ -1701,13 +1701,13 @@ namespace SuperSQLInjection
             {
                 //获取数据库数量
                 String result = getOneDataByUnionOrError(DB2.getUnionDataValue(config.unionFillTemplate, DB2.db_value, "", "", oindex.ToString()));
-                this.Invoke(new showLogDelegate(log), "数据库表模式" + oindex + "的名称为：" + result, LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "数据库表模式" + oindex + "的名称为：" + result, LogLevel.info);
                 this.Invoke(new addDBToTreeListDelegate(addDBToTreeList), result);
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取数据库名称时发生异常：" + e.Message, LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取数据库名称时发生异常：" + e.Message, LogLevel.error);
             }
             Interlocked.Increment(ref this.currentDbsCount);
         }
@@ -1722,13 +1722,13 @@ namespace SuperSQLInjection
             {
                 //获取数据库数量
                 String result = getOneDataByUnionOrError(PostgreSQL.getUnionDataValue(config.columnsCount, config.showColumn, PostgreSQL.db_value, "", "", oindex.ToString()));
-                this.Invoke(new showLogDelegate(log), "数据库" + oindex + "的名称为：" + result, LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "数据库" + oindex + "的名称为：" + result, LogLevel.info);
                 this.Invoke(new addDBToTreeListDelegate(addDBToTreeList), result);
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取数据库名称时发生异常：" + e.Message, LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取数据库名称时发生异常：" + e.Message, LogLevel.error);
             }
             Interlocked.Increment(ref this.currentDbsCount);
         }
@@ -1746,13 +1746,13 @@ namespace SuperSQLInjection
                 data_list.Add(MySQL.db_value.Replace("{index}", oindex.ToString()));
                 String db_Name_data = MySQL.creatMySQLColumnsStrByError(data_list, null, null, -1);
                 String result = getOneDataByUnionOrError(MySQL.error_value.Replace("{data}", db_Name_data));
-                this.Invoke(new showLogDelegate(log), "数据库" + oindex + "的名称为：" + result, LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "数据库" + oindex + "的名称为：" + result, LogLevel.info);
                 this.Invoke(new addDBToTreeListDelegate(addDBToTreeList), result);
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取数据库名称时发生异常：" + e.Message, LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取数据库名称时发生异常：" + e.Message, LogLevel.info);
             }
             Interlocked.Increment(ref this.currentDbsCount);
         }
@@ -1768,13 +1768,13 @@ namespace SuperSQLInjection
                 String result = getOneDataByUnionOrError(SQLServer.error_value.Replace("{data}", SQLServer.db_value.Replace("{index}", oindex.ToString())));
                 //HTML解码
                 result = HttpUtility.HtmlDecode(result);
-                this.Invoke(new showLogDelegate(log), "数据库" + oindex + "的名称为：" + result, LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "数据库" + oindex + "的名称为：" + result, LogLevel.info);
                 this.Invoke(new addDBToTreeListDelegate(addDBToTreeList), result);
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取数据库名称时发生异常：" + e.Message, LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取数据库名称时发生异常：" + e.Message, LogLevel.error);
             }
             Interlocked.Increment(ref this.currentDbsCount);
         }
@@ -1790,13 +1790,13 @@ namespace SuperSQLInjection
                 String result = getOneDataByUnionOrError(PostgreSQL.error_value.Replace("{data}", PostgreSQL.db_value.Replace("{index}", oindex.ToString())));
                 //HTML解码
                 result = HttpUtility.HtmlDecode(result);
-                this.Invoke(new showLogDelegate(log), "数据库" + oindex + "的名称为：" + result, LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "数据库" + oindex + "的名称为：" + result, LogLevel.info);
                 this.Invoke(new addDBToTreeListDelegate(addDBToTreeList), result);
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取数据库名称时发生异常：" + e.Message, LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取数据库名称时发生异常：" + e.Message, LogLevel.error);
             }
             Interlocked.Increment(ref this.currentDbsCount);
         }
@@ -1812,13 +1812,13 @@ namespace SuperSQLInjection
                 String result = getOneHexDataByUnionOrError(Oracle.getErrorDataValue(Oracle.db_value, "", "", oindex.ToString()));
                 //HTML解码
                 result = HttpUtility.HtmlDecode(result);
-                this.Invoke(new showLogDelegate(log), "数据库" + oindex + "的名称为：" + result, LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "数据库" + oindex + "的名称为：" + result, LogLevel.info);
                 this.Invoke(new addDBToTreeListDelegate(addDBToTreeList), result);
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取数据库名称时发生异常：" + e.Message, LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取数据库名称时发生异常：" + e.Message, LogLevel.error);
             }
             Interlocked.Increment(ref this.currentDbsCount);
         }
@@ -1865,14 +1865,14 @@ namespace SuperSQLInjection
                     int ascii = getValue(tmp_va_payload, 0, 128);
                     value += ((char)ascii).ToString();
                 }
-                this.Invoke(new showLogDelegate(log), "数据库" + sn.dbname + "发现表：" + value, LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "数据库" + sn.dbname + "发现表：" + value, LogLevel.info);
                 this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, value, "table");
 
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
             }
             Interlocked.Increment(ref this.currentTableCount);
         }
@@ -1917,14 +1917,14 @@ namespace SuperSQLInjection
                     int ascii = getValue(tmp_va_payload, 0, 128);
                     value += ((char)ascii).ToString();
                 }
-                this.Invoke(new showLogDelegate(log), "数据库" + sn.dbname + "发现表：" + value, LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "数据库" + sn.dbname + "发现表：" + value, LogLevel.info);
                 this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, value, "table");
 
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
             }
             Interlocked.Increment(ref this.currentTableCount);
         }
@@ -1955,14 +1955,14 @@ namespace SuperSQLInjection
                     int ascii = getValue(tmp_va_payload, 0, 128);
                     value += ((char)ascii).ToString();
                 }
-                this.Invoke(new showLogDelegate(log), "数据库" + sn.dbname + "发现表：" + value, LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "数据库" + sn.dbname + "发现表：" + value, LogLevel.info);
                 this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, value, "table");
 
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
             }
             Interlocked.Increment(ref this.currentTableCount);
         }
@@ -1992,14 +1992,14 @@ namespace SuperSQLInjection
                     int ascii = getValue(tmp_va_payload, 0, 128);
                     value += ((char)ascii).ToString();
                 }
-                this.Invoke(new showLogDelegate(log), "数据库" + sn.dbname + "发现表：" + value, LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "数据库" + sn.dbname + "发现表：" + value, LogLevel.info);
                 this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, value, "table");
 
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
             }
             Interlocked.Increment(ref this.currentTableCount);
         }
@@ -2029,14 +2029,14 @@ namespace SuperSQLInjection
                     int ascii = getValue(tmp_va_payload, 0, 128);
                     value += ((char)ascii).ToString();
                 }
-                this.Invoke(new showLogDelegate(log), "数据库" + sn.dbname + "发现表：" + value, LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "数据库" + sn.dbname + "发现表：" + value, LogLevel.info);
                 this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, value, "table");
 
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
             }
             Interlocked.Increment(ref this.currentTableCount);
         }
@@ -2086,14 +2086,14 @@ namespace SuperSQLInjection
                         value += (char)Tools.convertToInt(unicodes.ToString());
                     }
                 }
-                this.Invoke(new showLogDelegate(log), "数据库" + sn.dbname + "发现表：" + value, LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "数据库" + sn.dbname + "发现表：" + value, LogLevel.info);
                 this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, value, "table");
 
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message,LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message,LogLevel.error);
             }
             Interlocked.Increment(ref this.currentTableCount);
         }
@@ -2132,14 +2132,14 @@ namespace SuperSQLInjection
 
 
                 }
-                this.Invoke(new showLogDelegate(log), "数据库" + sn.dbname + "发现表：" + value, LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "数据库" + sn.dbname + "发现表：" + value, LogLevel.info);
                 this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, value, "table");
 
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
             }
             Interlocked.Increment(ref this.currentTableCount);
         }
@@ -2159,7 +2159,7 @@ namespace SuperSQLInjection
             String tables_value_payload = MySQL.creatMySQLColumnsStrByUnion(config.columnsCount, config.showColumn, config.unionFill, data_list, null, null, -1);
             String result = getOneDataByUnionOrError(MySQL.union_value.Replace("{data}", tables_value_payload));
 
-            this.Invoke(new showLogDelegate(log), "数据库" + sn.dbname + "发现表：" + result, LogLevel.info);
+            this.txt_log.Invoke(new showLogDelegate(log), "数据库" + sn.dbname + "发现表：" + result, LogLevel.info);
             this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, result, "table");
             Interlocked.Increment(ref this.currentTableCount);
         }
@@ -2174,7 +2174,7 @@ namespace SuperSQLInjection
             String tables_value_payload = SQLServer.getUnionDataValue(config.columnsCount, config.showColumn, config.unionFill, SQLServer.table_value, sn.dbname, sn.tableName, sn.limit.ToString());
             String result = getOneDataByUnionOrError(tables_value_payload);
 
-            this.Invoke(new showLogDelegate(log), "数据库" + sn.dbname + "发现表：" + result, LogLevel.info);
+            this.txt_log.Invoke(new showLogDelegate(log), "数据库" + sn.dbname + "发现表：" + result, LogLevel.info);
             this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, result, "table");
             Interlocked.Increment(ref this.currentTableCount);
         }
@@ -2190,7 +2190,7 @@ namespace SuperSQLInjection
             String tables_value_payload = SQLite.getUnionDataValue(config.columnsCount, config.showColumn, config.unionFill, SQLite.table_value.Replace("{index}", sn.limit.ToString()));
             String result = getOneDataByUnionOrError(tables_value_payload);
 
-            this.Invoke(new showLogDelegate(log), "数据库" + sn.dbname + "发现表：" + result, LogLevel.info);
+            this.txt_log.Invoke(new showLogDelegate(log), "数据库" + sn.dbname + "发现表：" + result, LogLevel.info);
             this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, result, "table");
             Interlocked.Increment(ref this.currentTableCount);
         }
@@ -2206,7 +2206,7 @@ namespace SuperSQLInjection
             String tables_value_payload = Oracle.getUnionDataValue(config.columnsCount, config.showColumn, Oracle.table_value, sn.dbname, "", sn.limit.ToString());
             String result = getOneDataByUnionOrError(tables_value_payload);
 
-            this.Invoke(new showLogDelegate(log), "用户" + sn.dbname + "发现表：" + result, LogLevel.info);
+            this.txt_log.Invoke(new showLogDelegate(log), "用户" + sn.dbname + "发现表：" + result, LogLevel.info);
             this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, result, "table");
             Interlocked.Increment(ref this.currentTableCount);
         }
@@ -2223,7 +2223,7 @@ namespace SuperSQLInjection
             String tables_value_payload = DB2.getUnionDataValue(config.unionFillTemplate, DB2.table_value, sn.dbname, "", sn.limit.ToString());
             String result = getOneDataByUnionOrError(tables_value_payload);
 
-            this.Invoke(new showLogDelegate(log), "数据库表模式" + sn.dbname + "发现表：" + result, LogLevel.info);
+            this.txt_log.Invoke(new showLogDelegate(log), "数据库表模式" + sn.dbname + "发现表：" + result, LogLevel.info);
             this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, result, "table");
             Interlocked.Increment(ref this.currentTableCount);
         }
@@ -2240,7 +2240,7 @@ namespace SuperSQLInjection
             String tables_value_payload = PostgreSQL.getUnionDataValue(config.columnsCount, config.showColumn, PostgreSQL.table_value.Replace("'{dbname}'", Tools.strToChr(sn.dbname, "UTF-8")), sn.dbname, "", sn.limit.ToString());
             String result = getOneDataByUnionOrError(tables_value_payload);
 
-            this.Invoke(new showLogDelegate(log), "用户" + sn.dbname + "发现表：" + result, LogLevel.info);
+            this.txt_log.Invoke(new showLogDelegate(log), "用户" + sn.dbname + "发现表：" + result, LogLevel.info);
             this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, result, "table");
             Interlocked.Increment(ref this.currentTableCount);
         }
@@ -2254,7 +2254,7 @@ namespace SuperSQLInjection
             String table_value_payload = MySQL.creatMySQLColumnsStrByError(data_list, null, null, -1);
             String result = getOneDataByUnionOrError(MySQL.error_value.Replace("{data}", table_value_payload));
 
-            this.Invoke(new showLogDelegate(log), "数据库" + sn.dbname + "发现表：" + result, LogLevel.info);
+            this.txt_log.Invoke(new showLogDelegate(log), "数据库" + sn.dbname + "发现表：" + result, LogLevel.info);
             this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, result, "table");
             Interlocked.Increment(ref this.currentTableCount);
         }
@@ -2266,7 +2266,7 @@ namespace SuperSQLInjection
             List<String> data_list = new List<String>();
             String result = getOneDataByUnionOrError(SQLServer.error_value.Replace("{data}", SQLServer.table_value.Replace("{dbname}", sn.dbname).Replace("{index}", sn.limit.ToString())));
 
-            this.Invoke(new showLogDelegate(log), "数据库" + sn.dbname + "发现表：" + result, LogLevel.info);
+            this.txt_log.Invoke(new showLogDelegate(log), "数据库" + sn.dbname + "发现表：" + result, LogLevel.info);
             this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, result, "table");
             Interlocked.Increment(ref this.currentTableCount);
         }
@@ -2278,7 +2278,7 @@ namespace SuperSQLInjection
             List<String> data_list = new List<String>();
             String result = getOneDataByUnionOrError(PostgreSQL.error_value.Replace("{data}", PostgreSQL.table_value.Replace("'{dbname}'", Tools.strToChr(sn.dbname, "UTF-8")).Replace("{index}", sn.limit.ToString())));
 
-            this.Invoke(new showLogDelegate(log), "数据库" + sn.dbname + "发现表：" + result, LogLevel.info);
+            this.txt_log.Invoke(new showLogDelegate(log), "数据库" + sn.dbname + "发现表：" + result, LogLevel.info);
             this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, result, "table");
             Interlocked.Increment(ref this.currentTableCount);
         }
@@ -2290,7 +2290,7 @@ namespace SuperSQLInjection
             List<String> data_list = new List<String>();
             String result = getOneHexDataByUnionOrError(Oracle.getErrorDataValue(Oracle.table_value, sn.dbname, "", sn.limit.ToString()));
 
-            this.Invoke(new showLogDelegate(log), "数据库" + sn.dbname + "发现表：" + result, LogLevel.info);
+            this.txt_log.Invoke(new showLogDelegate(log), "数据库" + sn.dbname + "发现表：" + result, LogLevel.info);
             this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, result, "table");
             Interlocked.Increment(ref this.currentTableCount);
         }
@@ -2506,7 +2506,7 @@ namespace SuperSQLInjection
                     catch (Exception e)
                     {
                         tryCount++;
-                        this.Invoke(new showLogDelegate(log), "发包失败！异常：" + e.Message, LogLevel.error);
+                        this.txt_log.Invoke(new showLogDelegate(log), "发包失败！异常：" + e.Message, LogLevel.error);
                     }
                 }
                 if (server == null)
@@ -2537,7 +2537,7 @@ namespace SuperSQLInjection
                     catch (Exception e)
                     {
                         tryCount++;
-                        this.Invoke(new showLogDelegate(log), "发包失败！异常：" + e.Message, LogLevel.error);
+                        this.txt_log.Invoke(new showLogDelegate(log), "发包失败！异常：" + e.Message, LogLevel.error);
                     }
                 }
                 if (server == null)
@@ -2558,7 +2558,7 @@ namespace SuperSQLInjection
         {
             if (config.isOpenInfoLog)
             {
-                if (this.txt_log.Left > 1024*1000)
+                if (this.txt_log.Text.Length > 10240)
                 {
                     this.txt_log.Text = "";
                 }
@@ -2637,7 +2637,7 @@ namespace SuperSQLInjection
                     data_list.Add(MySQL.dbs_count);
                     db_Count_data = MySQL.creatMySQLColumnsStrByError(data_list, null, null, -1);
                     result = getOneDataByUnionOrError(MySQL.error_value.Replace("{data}", db_Count_data));
-                    this.Invoke(new showLogDelegate(log), "报告大侠，我发现了" + result + "个数据库！", LogLevel.info);
+                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，我发现了" + result + "个数据库！", LogLevel.info);
                     db_len = Tools.convertToInt(result);
                     this.dbsCount = db_len;
                     if (db_len > 0)
@@ -2657,7 +2657,7 @@ namespace SuperSQLInjection
                 case DBType.SQLServer:
                     //获取数据库数量
                     result = getOneDataByUnionOrError(SQLServer.error_value.Replace("{data}", SQLServer.dbs_count));
-                    this.Invoke(new showLogDelegate(log), "报告大侠，我发现了" + result + "个数据库！", LogLevel.info);
+                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，我发现了" + result + "个数据库！", LogLevel.info);
                     db_len = Tools.convertToInt(result);
                     this.dbsCount = db_len;
                     if (db_len > 0)
@@ -2679,7 +2679,7 @@ namespace SuperSQLInjection
                 case DBType.Oracle:
                     //获取数据库数量
                     result = getOneHexDataByUnionOrError(Oracle.getErrorDataValue(Oracle.dbs_count, "", "", ""));
-                    this.Invoke(new showLogDelegate(log), "报告大侠，我发现了" + result + "个数据库用户！", LogLevel.info);
+                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，我发现了" + result + "个数据库用户！", LogLevel.info);
                     db_len = Tools.convertToInt(result);
                     this.dbsCount = db_len;
                     if (db_len > 0)
@@ -2701,7 +2701,7 @@ namespace SuperSQLInjection
                 case DBType.PostgreSQL:
                     //获取数据库数量
                     result = getOneDataByUnionOrError(PostgreSQL.error_value.Replace("{data}", PostgreSQL.dbs_count));
-                    this.Invoke(new showLogDelegate(log), "报告大侠，我发现了" + result + "个数据库！", LogLevel.info);
+                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，我发现了" + result + "个数据库！", LogLevel.info);
                     db_len = Tools.convertToInt(result);
                     this.dbsCount = db_len;
                     if (db_len > 0)
@@ -2742,7 +2742,7 @@ namespace SuperSQLInjection
                     db_Count_data = MySQL.creatMySQLColumnsStrByUnion(config.columnsCount, config.showColumn, config.unionFill, data_list, null, null, -1);
                     result = getOneDataByUnionOrError(MySQL.union_value.Replace("{data}", db_Count_data));
 
-                    this.Invoke(new showLogDelegate(log), "报告大侠，我发现了" + result + "个数据库！", LogLevel.info);
+                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，我发现了" + result + "个数据库！", LogLevel.info);
                     db_len = Tools.convertToInt(result);
                     this.dbsCount = db_len;
                     if (db_len > 0)
@@ -2763,7 +2763,7 @@ namespace SuperSQLInjection
                     //获取数据库数量
                     result = getOneDataByUnionOrError(SQLServer.getUnionDataValue(config.columnsCount, config.showColumn, config.unionFill, SQLServer.dbs_count));
 
-                    this.Invoke(new showLogDelegate(log), "报告大侠，我发现了" + result + "个数据库！", LogLevel.info);
+                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，我发现了" + result + "个数据库！", LogLevel.info);
                     db_len = Tools.convertToInt(result);
                     this.dbsCount = db_len;
                     if (db_len > 0)
@@ -2784,7 +2784,7 @@ namespace SuperSQLInjection
                     //获取数据库数量
                     result = getOneDataByUnionOrError(Oracle.getUnionDataValue(config.columnsCount, config.showColumn, Oracle.dbs_count, "", "", ""));
 
-                    this.Invoke(new showLogDelegate(log), "报告大侠，我发现了" + result + "个数据库用户！", LogLevel.info);
+                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，我发现了" + result + "个数据库用户！", LogLevel.info);
                     db_len = Tools.convertToInt(result);
                     this.dbsCount = db_len;
                     if (db_len > 0)
@@ -2805,7 +2805,7 @@ namespace SuperSQLInjection
                     //获取数据库数量
                     result = getOneDataByUnionOrError(PostgreSQL.getUnionDataValue(config.columnsCount, config.showColumn, PostgreSQL.dbs_count, "", "", ""));
 
-                    this.Invoke(new showLogDelegate(log), "报告大侠，我发现了" + result + "个数据库用户！", LogLevel.info);
+                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，我发现了" + result + "个数据库用户！", LogLevel.info);
                     db_len = Tools.convertToInt(result);
                     this.dbsCount = db_len;
                     if (db_len > 0)
@@ -2826,7 +2826,7 @@ namespace SuperSQLInjection
                     //获取数据库数量
                     result = getOneDataByUnionOrError(DB2.getUnionDataValue(config.unionFillTemplate, DB2.dbs_count, "", "", ""));
 
-                    this.Invoke(new showLogDelegate(log), "报告大侠，我发现了" + result + "个数据库表模式！", LogLevel.info);
+                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，我发现了" + result + "个数据库表模式！", LogLevel.info);
                     db_len = Tools.convertToInt(result);
                     this.dbsCount = db_len;
                     if (db_len > 0)
@@ -2866,7 +2866,7 @@ namespace SuperSQLInjection
                         db_len = getValueByStepUp(MySQL.bool_db_count, 0, 10);
                     }
 
-                    this.Invoke(new showLogDelegate(log), "报告大侠，我发现了" + db_len + "个数据库！", LogLevel.info);
+                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，我发现了" + db_len + "个数据库！", LogLevel.info);
                     this.dbsCount = db_len;
                     if (db_len > 0)
                     {
@@ -2893,7 +2893,7 @@ namespace SuperSQLInjection
                     {
                         db_len = getValueByStepUp(SQLServer.bool_db_count, 0, 10);
                     }
-                    this.Invoke(new showLogDelegate(log), "报告大侠，我发现了" + db_len + "个数据库！", LogLevel.info);
+                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，我发现了" + db_len + "个数据库！", LogLevel.info);
                     this.dbsCount = db_len;
                     if (db_len > 0)
                     {
@@ -2920,7 +2920,7 @@ namespace SuperSQLInjection
                     break;
                 case DBType.Oracle:
                     db_len = getValueByStepUp(Oracle.bool_db_count, 0, 10);
-                    this.Invoke(new showLogDelegate(log), "报告大侠，我发现了" + db_len + "个数据库！", LogLevel.info);
+                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，我发现了" + db_len + "个数据库！", LogLevel.info);
                     this.dbsCount = db_len;
                     if (db_len > 0)
                     {
@@ -2949,7 +2949,7 @@ namespace SuperSQLInjection
                         db_len = getValueByStepUp(PostgreSQL.bool_db_count, 0, 10);
                     }
 
-                    this.Invoke(new showLogDelegate(log), "报告大侠，我发现了" + db_len + "个数据库！", LogLevel.info);
+                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，我发现了" + db_len + "个数据库！", LogLevel.info);
                     this.dbsCount = db_len;
                     if (db_len > 0)
                     {
@@ -2969,7 +2969,7 @@ namespace SuperSQLInjection
 
                 case DBType.DB2:
                     db_len = getValueByStepUp(DB2.bool_db_count, 0, 10);
-                    this.Invoke(new showLogDelegate(log), "报告大侠，我发现了" + db_len + "个数据库表模式！", LogLevel.info);
+                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，我发现了" + db_len + "个数据库表模式！", LogLevel.info);
                     this.dbsCount = db_len;
                     if (db_len > 0)
                     {
@@ -3009,7 +3009,7 @@ namespace SuperSQLInjection
             bool findKey = findKeyInBody(payload);
             if (findKey)
             {
-                this.Invoke(new showLogDelegate(log),"表" + sn.tableName + "发现列：" + sn.columnName);
+                this.txt_log.Invoke(new showLogDelegate(log),"表" + sn.tableName + "发现列：" + sn.columnName);
                 this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, sn.columnName, "column");
             }
 
@@ -3024,7 +3024,7 @@ namespace SuperSQLInjection
             foreach (String fpath in dirs)
             {
                 if (status != 1) break;
-                this.Invoke(new showLogDelegate(log), "正在使用字典" + fpath + "进行盲猜！", LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "正在使用字典" + fpath + "进行盲猜！", LogLevel.info);
                 List<String> tables = FileTool.readFileToList("config/tables/" + fpath);
                 comm_count = tables.Count;
                 for (int i = 0; i < tables.Count; i++)
@@ -3048,7 +3048,7 @@ namespace SuperSQLInjection
             foreach (String fpath in dirs)
             {
                 if (status != 1) break;
-                this.Invoke(new showLogDelegate(log), "正在使用字典" + fpath + "进行盲猜！", LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "正在使用字典" + fpath + "进行盲猜！", LogLevel.info);
                 List<String> columns = FileTool.readFileToList("config/columns/" + fpath);
                 comm_count = columns.Count;
                 for (int i = 0; i < columns.Count; i++)
@@ -3096,7 +3096,7 @@ namespace SuperSQLInjection
                         this.tableCount = getValueByStepUp(MySQL.bool_tables_count.Replace("'{dbname}'", Tools.strToHex(dbname, "UTF-8")), 0, 50);
                     }
 
-                    this.Invoke(new showLogDelegate(log), "报告大侠，数据库" + dbname + "发现" + this.tableCount + "个表！", LogLevel.info);
+                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，数据库" + dbname + "发现" + this.tableCount + "个表！", LogLevel.info);
                     for (int i = 0; i < this.tableCount; i++)
                     {
                         SelectNode sn = new SelectNode();
@@ -3117,7 +3117,7 @@ namespace SuperSQLInjection
                         this.tableCount = getValueByStepUp(SQLServer.bool_tables_count.Replace("{dbname}", dbname), 0, 50);
                     }
 
-                    this.Invoke(new showLogDelegate(log), "报告大侠，数据库" + dbname + "发现" + this.tableCount + "个表！", LogLevel.info);
+                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，数据库" + dbname + "发现" + this.tableCount + "个表！", LogLevel.info);
                     for (int i = 0; i < this.tableCount; i++)
                     {
                         SelectNode sn = new SelectNode();
@@ -3139,7 +3139,7 @@ namespace SuperSQLInjection
                 case DBType.Oracle:
                     //获取当前数据库长度
                     this.tableCount = getValueByStepUp(Oracle.bool_tables_count.Replace("{dbname}", dbname), 0, 50);
-                    this.Invoke(new showLogDelegate(log), "报告大侠，数据库" + dbname + "发现" + this.tableCount + "个表！", LogLevel.info);
+                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，数据库" + dbname + "发现" + this.tableCount + "个表！", LogLevel.info);
                     for (int i = 1; i <= this.tableCount; i++)
                     {
                         SelectNode sn = new SelectNode();
@@ -3162,7 +3162,7 @@ namespace SuperSQLInjection
                         this.tableCount = getValueByStepUp(PostgreSQL.bool_tables_count.Replace("'{dbname}'", Tools.strToChr(dbname, "UTF-8")), 0, 50);
                     }
 
-                    this.Invoke(new showLogDelegate(log), "报告大侠，数据库" + dbname + "发现" + this.tableCount + "个表！", LogLevel.info);
+                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，数据库" + dbname + "发现" + this.tableCount + "个表！", LogLevel.info);
                     for (int i = 0; i < this.tableCount; i++)
                     {
                         SelectNode sn = new SelectNode();
@@ -3176,7 +3176,7 @@ namespace SuperSQLInjection
                 case DBType.DB2:
                     //获取当前数据库长度
                     this.tableCount = getValueByStepUp(DB2.bool_tables_count.Replace("{dbname}", dbname), 0, 50);
-                    this.Invoke(new showLogDelegate(log), "报告大侠，数据库" + dbname + "发现" + this.tableCount + "个表！", LogLevel.info);
+                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，数据库" + dbname + "发现" + this.tableCount + "个表！", LogLevel.info);
                     for (int i = 1; i <= this.tableCount; i++)
                     {
                         SelectNode sn = new SelectNode();
@@ -3190,7 +3190,7 @@ namespace SuperSQLInjection
                 case DBType.SQLite:
                     //获取当前数据库长度
                     this.tableCount = getValueByStepUp(SQLite.bool_tables_count, 0, 50);
-                    this.Invoke(new showLogDelegate(log), "报告大侠，数据库" + dbname + "发现" + this.tableCount + "个表！", LogLevel.info);
+                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，数据库" + dbname + "发现" + this.tableCount + "个表！", LogLevel.info);
                     for (int i = 0; i < this.tableCount; i++)
                     {
                         SelectNode sn = new SelectNode();
@@ -3232,7 +3232,7 @@ namespace SuperSQLInjection
                     tables_count_payload = MySQL.creatMySQLColumnsStrByUnion(config.columnsCount, config.showColumn, config.unionFill, data_list, null, null, -1);
                     result = getOneDataByUnionOrError(MySQL.union_value.Replace("{data}", tables_count_payload));
 
-                    this.Invoke(new showLogDelegate(log), "报告大侠，数据库" + dbName + "有" + Tools.convertToInt(result) + "个表！", LogLevel.info);
+                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，数据库" + dbName + "有" + Tools.convertToInt(result) + "个表！", LogLevel.info);
                     this.tableCount = Tools.convertToInt(result);
                     for (int i = 0; i < this.tableCount; i++)
                     {
@@ -3249,7 +3249,7 @@ namespace SuperSQLInjection
                     tables_count_payload = SQLServer.getUnionDataValue(config.columnsCount, config.showColumn, config.unionFill, SQLServer.tables_count, dbName, "", "");
                     result = getOneDataByUnionOrError(tables_count_payload);
 
-                    this.Invoke(new showLogDelegate(log), "报告大侠，数据库" + dbName + "有" + Tools.convertToInt(result) + "个表！", LogLevel.info);
+                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，数据库" + dbName + "有" + Tools.convertToInt(result) + "个表！", LogLevel.info);
                     this.tableCount = Tools.convertToInt(result);
                     for (int i = 0; i < this.tableCount; i++)
                     {
@@ -3266,7 +3266,7 @@ namespace SuperSQLInjection
                     tables_count_payload = Oracle.getUnionDataValue(config.columnsCount, config.showColumn, Oracle.tables_count, dbName, "", "");
                     result = getOneDataByUnionOrError(tables_count_payload);
 
-                    this.Invoke(new showLogDelegate(log), "报告大侠，用户" + dbName + "有" + Tools.convertToInt(result) + "个表！",LogLevel.info);
+                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，用户" + dbName + "有" + Tools.convertToInt(result) + "个表！",LogLevel.info);
                     this.tableCount = Tools.convertToInt(result);
                     //下标1开始
                     for (int i = 1; i <= this.tableCount; i++)
@@ -3284,7 +3284,7 @@ namespace SuperSQLInjection
                     tables_count_payload = PostgreSQL.getUnionDataValue(config.columnsCount, config.showColumn, PostgreSQL.tables_count.Replace("'{dbname}'", Tools.strToChr(dbName, "UTF-8")), dbName, "", "");
                     result = getOneDataByUnionOrError(tables_count_payload);
 
-                    this.Invoke(new showLogDelegate(log), "报告大侠，用户" + dbName + "有" + Tools.convertToInt(result) + "个表！", LogLevel.info);
+                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，用户" + dbName + "有" + Tools.convertToInt(result) + "个表！", LogLevel.info);
                     this.tableCount = Tools.convertToInt(result);
                     //下标1开始
                     for (int i = 0; i < this.tableCount; i++)
@@ -3302,7 +3302,7 @@ namespace SuperSQLInjection
                     tables_count_payload = DB2.getUnionDataValue(config.unionFillTemplate, DB2.tables_count, dbName, "", "");
                     result = getOneDataByUnionOrError(tables_count_payload);
 
-                    this.Invoke(new showLogDelegate(log), "报告大侠，数据库表模式" + dbName + "有" + Tools.convertToInt(result) + "个表！", LogLevel.info);
+                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，数据库表模式" + dbName + "有" + Tools.convertToInt(result) + "个表！", LogLevel.info);
                     this.tableCount = Tools.convertToInt(result);
                     //下标1开始
                     for (int i = 1; i <= this.tableCount; i++)
@@ -3320,7 +3320,7 @@ namespace SuperSQLInjection
                     tables_count_payload = SQLite.getUnionDataValue(config.columnsCount, config.showColumn, config.unionFill, SQLite.tables_count);
                     result = getOneDataByUnionOrError(tables_count_payload);
 
-                    this.Invoke(new showLogDelegate(log), "报告大侠，数据库" + dbName + "有" + Tools.convertToInt(result) + "个表！", LogLevel.info);
+                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，数据库" + dbName + "有" + Tools.convertToInt(result) + "个表！", LogLevel.info);
                     this.tableCount = Tools.convertToInt(result);
                     for (int i = 0; i < this.tableCount; i++)
                     {
@@ -3357,7 +3357,7 @@ namespace SuperSQLInjection
                     tables_count_payload = MySQL.creatMySQLColumnsStrByError(data_list, null, null, -1);
                     result = getOneDataByUnionOrError(MySQL.error_value.Replace("{data}", tables_count_payload));
 
-                    this.Invoke(new showLogDelegate(log), "报告大侠，数据库" + dbName + "有" + Tools.convertToInt(result) + "个表！", LogLevel.info);
+                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，数据库" + dbName + "有" + Tools.convertToInt(result) + "个表！", LogLevel.info);
                     this.tableCount = Tools.convertToInt(result);
                     for (int i = 0; i < this.tableCount; i++)
                     {
@@ -3374,7 +3374,7 @@ namespace SuperSQLInjection
                     result = getOneDataByUnionOrError(SQLServer.error_value.Replace("{data}", SQLServer.tables_count.Replace("{dbname}", dbName)));
                     //HTML解码
                     result = HttpUtility.HtmlDecode(result);
-                    this.Invoke(new showLogDelegate(log), "报告大侠，数据库" + dbName + "有" + Tools.convertToInt(result) + "个表！", LogLevel.info);
+                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，数据库" + dbName + "有" + Tools.convertToInt(result) + "个表！", LogLevel.info);
                     this.tableCount = Tools.convertToInt(result);
 
                     for (int i = 0; i < this.tableCount; i++)
@@ -3391,7 +3391,7 @@ namespace SuperSQLInjection
                     //获取当前数据库表长度
                     result = getOneHexDataByUnionOrError(Oracle.getErrorDataValue(Oracle.tables_count, dbName, "", ""));
 
-                    this.Invoke(new showLogDelegate(log), "报告大侠，数据库" + dbName + "有" + Tools.convertToInt(result) + "个表！", LogLevel.info);
+                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，数据库" + dbName + "有" + Tools.convertToInt(result) + "个表！", LogLevel.info);
                     this.tableCount = Tools.convertToInt(result);
 
                     for (int i = 1; i <= this.tableCount; i++)
@@ -3410,7 +3410,7 @@ namespace SuperSQLInjection
                     result = getOneDataByUnionOrError(PostgreSQL.error_value.Replace("{data}", PostgreSQL.tables_count.Replace("'{dbname}'", Tools.strToChr(dbName, "UTF-8"))));
                     //HTML解码
                     result = HttpUtility.HtmlDecode(result);
-                    this.Invoke(new showLogDelegate(log), "报告大侠，数据库" + dbName + "有" + Tools.convertToInt(result) + "个表！", LogLevel.info);
+                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，数据库" + dbName + "有" + Tools.convertToInt(result) + "个表！", LogLevel.info);
                     this.tableCount = Tools.convertToInt(result);
 
                     for (int i = 0; i < this.tableCount; i++)
@@ -3579,14 +3579,14 @@ namespace SuperSQLInjection
                     int ascii = getValue(tmp_va_payload, 0, 128);
                     value += ((char)ascii).ToString();
                 }
-                this.Invoke(new showLogDelegate(log), "表" + sn.tableName + "发现列：" + value, LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "表" + sn.tableName + "发现列：" + value, LogLevel.info);
                 this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, value, "column");
 
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取列名时发生异常：" + e.Message, LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取列名时发生异常：" + e.Message, LogLevel.error);
             }
         }
 
@@ -3628,14 +3628,14 @@ namespace SuperSQLInjection
                     int ascii = getValue(tmp_va_payload, 0, 128);
                     value += ((char)ascii).ToString();
                 }
-                this.Invoke(new showLogDelegate(log), "表" + sn.tableName + "发现列：" + value, LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "表" + sn.tableName + "发现列：" + value, LogLevel.info);
                 this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, value, "column");
 
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取列名时发生异常：" + e.Message, LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取列名时发生异常：" + e.Message, LogLevel.error);
             }
         }
 
@@ -3674,14 +3674,14 @@ namespace SuperSQLInjection
                     }
 
                 }
-                this.Invoke(new showLogDelegate(log), "表" + sn.tableName + "发现列：" + value, LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "表" + sn.tableName + "发现列：" + value, LogLevel.info);
                 this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, value, "column");
 
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取列名时发生异常：" + e.Message, LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取列名时发生异常：" + e.Message, LogLevel.error);
             }
         }
 
@@ -3731,14 +3731,14 @@ namespace SuperSQLInjection
                         value += (char)Tools.convertToInt(unicodes.ToString());
                     }
                 }
-                this.Invoke(new showLogDelegate(log), "表" + sn.tableName + "发现列：" + value, LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "表" + sn.tableName + "发现列：" + value, LogLevel.info);
                 this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, value, "column");
 
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取列名时发生异常：" + e.Message, LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取列名时发生异常：" + e.Message, LogLevel.error);
             }
         }
 
@@ -3768,14 +3768,14 @@ namespace SuperSQLInjection
                     int ascii = getValue(tmp_va_payload, 0, 128);
                     value += ((char)ascii).ToString();
                 }
-                this.Invoke(new showLogDelegate(log), "表" + sn.tableName + "发现列：" + value,LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "表" + sn.tableName + "发现列：" + value,LogLevel.info);
                 this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, value, "column");
 
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取列名时发生异常：" + e.Message,LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取列名时发生异常：" + e.Message,LogLevel.error);
             }
         }
 
@@ -3804,14 +3804,14 @@ namespace SuperSQLInjection
                     int ascii = getValue(tmp_va_payload, 0, 128);
                     value += ((char)ascii).ToString();
                 }
-                this.Invoke(new showLogDelegate(log), "表" + sn.tableName + "发现列：" + value, LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "表" + sn.tableName + "发现列：" + value, LogLevel.info);
                 this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, value, "column");
 
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取列名时发生异常：" + e.Message, LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取列名时发生异常：" + e.Message, LogLevel.error);
             }
         }
 
@@ -3841,7 +3841,7 @@ namespace SuperSQLInjection
                     value += ((char)ascii).ToString();
                 }
                 List<String> columns = Tools.GetSQLiteColumns(value);
-                this.Invoke(new showLogDelegate(log), "表" + sn.tableName + "发现列：" + String.Join(",", columns), LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "表" + sn.tableName + "发现列：" + String.Join(",", columns), LogLevel.info);
                 foreach (String column in columns) {
 
                     this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, column, "column");
@@ -3851,7 +3851,7 @@ namespace SuperSQLInjection
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取列名时发生异常：" + e.Message, LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取列名时发生异常：" + e.Message, LogLevel.error);
             }
         }
 
@@ -3869,13 +3869,13 @@ namespace SuperSQLInjection
                 data_list.Add(MySQL.column_value.Replace("{index}", sn.limit.ToString()).Replace("'{dbname}'", Tools.strToHex(sn.dbname, "UTF-8")).Replace("'{table}'", Tools.strToHex(sn.tableName, "UTF-8")));
                 String column_Name_data = MySQL.creatMySQLColumnsStrByUnion(config.columnsCount, config.showColumn, config.unionFill, data_list, null, null, -1);
                 String result = getOneDataByUnionOrError(MySQL.union_value.Replace("{data}", column_Name_data));
-                this.Invoke(new showLogDelegate(log), "发现列：" + result, LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "发现列：" + result, LogLevel.info);
                 this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, result, "column");
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取列名时发生异常：" + e.Message, LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取列名时发生异常：" + e.Message, LogLevel.error);
             }
         }
 
@@ -3891,13 +3891,13 @@ namespace SuperSQLInjection
 
                 String column_Name_data = SQLServer.getUnionDataValue(config.columnsCount, config.showColumn, config.unionFill, SQLServer.column_value.Replace("'{dbname}..{table}'", Tools.strToChar(sn.dbname + ".." + sn.tableName, "UTF-8")), sn.dbname, sn.tableName, sn.limit.ToString());
                 String result = getOneDataByUnionOrError(column_Name_data);
-                this.Invoke(new showLogDelegate(log), "发现列：" + result, LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "发现列：" + result, LogLevel.info);
                 this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, result, "column");
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取列名时发生异常：" + e.Message, LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取列名时发生异常：" + e.Message, LogLevel.error);
             }
         }
 
@@ -3915,7 +3915,7 @@ namespace SuperSQLInjection
                 String result = getOneDataByUnionOrError(column_Name_data);
                 //SQLite获取的列需要进行处理
                 List<String> columns = Tools.GetSQLiteColumns(result);
-                this.Invoke(new showLogDelegate(log), "发现列：" + String.Join(",",columns), LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "发现列：" + String.Join(",",columns), LogLevel.info);
                 foreach (String column in columns) {
 
                     this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, column, "column");
@@ -3923,7 +3923,7 @@ namespace SuperSQLInjection
             }
             catch (Exception e)
             {
-                this.Invoke(new showLogDelegate(log), "获取列名时发生异常：" + e.Message, LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取列名时发生异常：" + e.Message, LogLevel.error);
             }
         }
 
@@ -3940,13 +3940,13 @@ namespace SuperSQLInjection
 
                 String column_Name_data = Oracle.getUnionDataValue(config.columnsCount, config.showColumn, Oracle.column_value, sn.dbname, sn.tableName, sn.limit.ToString());
                 String result = getOneDataByUnionOrError(column_Name_data);
-                this.Invoke(new showLogDelegate(log), "发现列：" + result, LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "发现列：" + result, LogLevel.info);
                 this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, result, "column");
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取列名时发生异常：" + e.Message, LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取列名时发生异常：" + e.Message, LogLevel.error);
             }
         }
 
@@ -3962,13 +3962,13 @@ namespace SuperSQLInjection
 
                 String column_Name_data = DB2.getUnionDataValue(config.unionFillTemplate, DB2.column_value, sn.dbname, sn.tableName, sn.limit.ToString());
                 String result = getOneDataByUnionOrError(column_Name_data);
-                this.Invoke(new showLogDelegate(log), "发现列：" + result, LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "发现列：" + result, LogLevel.info);
                 this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, result, "column");
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取列名时发生异常：" + e.Message, LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取列名时发生异常：" + e.Message, LogLevel.error);
             }
         }
 
@@ -3984,13 +3984,13 @@ namespace SuperSQLInjection
 
                 String column_Name_data = PostgreSQL.getUnionDataValue(config.columnsCount, config.showColumn, PostgreSQL.column_value.Replace("{index}", sn.limit.ToString()).Replace("'{dbname}'", Tools.strToChr(sn.dbname, "UTF-8")).Replace("'{table}'", Tools.strToChr(sn.tableName, "UTF-8")), sn.dbname, sn.tableName, sn.limit.ToString());
                 String result = getOneDataByUnionOrError(column_Name_data);
-                this.Invoke(new showLogDelegate(log), "发现列：" + result, LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "发现列：" + result, LogLevel.info);
                 this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, result, "column");
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取列名时发生异常：" + e.Message, LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取列名时发生异常：" + e.Message, LogLevel.error);
             }
         }
 
@@ -4005,13 +4005,13 @@ namespace SuperSQLInjection
                 data_list.Add(MySQL.column_value.Replace("{index}", sn.limit.ToString()).Replace("'{dbname}'", Tools.strToHex(sn.dbname, "UTF-8")).Replace("'{table}'", Tools.strToHex(sn.tableName, "UTF-8")));
                 String column_Name_data = MySQL.creatMySQLColumnsStrByError(data_list, null, null, -1);
                 String result = getOneDataByUnionOrError(MySQL.error_value.Replace("{data}", column_Name_data));
-                this.Invoke(new showLogDelegate(log), "发现列：" + result, LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "发现列：" + result, LogLevel.info);
                 this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, result, "column");
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取列名时发生异常：" + e.Message, LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取列名时发生异常：" + e.Message, LogLevel.error);
             }
         }
 
@@ -4021,13 +4021,13 @@ namespace SuperSQLInjection
             {
                 SelectNode sn = (SelectNode)osn;
                 String result = getOneDataByUnionOrError(SQLServer.error_value.Replace("{data}", SQLServer.column_value.Replace("{index}", sn.limit.ToString()).Replace("'{dbname}..{table}'", Tools.strToChar(sn.dbname + ".." + sn.tableName, "UTF-8"))).Replace("{dbname}", sn.dbname));
-                this.Invoke(new showLogDelegate(log), "发现列：" + result,LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "发现列：" + result,LogLevel.info);
                 this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, result, "column");
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取列名时发生异常：" + e.Message,LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取列名时发生异常：" + e.Message,LogLevel.error);
             }
         }
 
@@ -4037,13 +4037,13 @@ namespace SuperSQLInjection
             {
                 SelectNode sn = (SelectNode)osn;
                 String result = getOneDataByUnionOrError(PostgreSQL.error_value.Replace("{data}", PostgreSQL.column_value.Replace("{index}", sn.limit.ToString()).Replace("'{dbname}'", Tools.strToChr(sn.dbname, "UTF-8")).Replace("'{table}'", Tools.strToChr(sn.tableName, "UTF-8"))));
-                this.Invoke(new showLogDelegate(log), "发现列：" + result, LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "发现列：" + result, LogLevel.info);
                 this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, result, "column");
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取列名时发生异常：" + e.Message, LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取列名时发生异常：" + e.Message, LogLevel.error);
             }
         }
 
@@ -4053,13 +4053,13 @@ namespace SuperSQLInjection
             {
                 SelectNode sn = (SelectNode)osn;
                 String result = getOneHexDataByUnionOrError(Oracle.getErrorDataValue(Oracle.column_value, sn.dbname, sn.tableName, sn.limit.ToString()));
-                this.Invoke(new showLogDelegate(log), "发现列：" + result,LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "发现列：" + result,LogLevel.info);
                 this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, result, "column");
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取列名时发生异常：" + e.Message,LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取列名时发生异常：" + e.Message,LogLevel.error);
             }
         }
 
@@ -4098,7 +4098,7 @@ namespace SuperSQLInjection
                                     columns_count = getValueByStepUp(MySQL.bool_columns_count.Replace("'{dbname}'", Tools.strToHex(dbName, "UTF-8")).Replace("'{table}'", Tools.strToHex(tableName, "UTF-8")), 0, 20);
                                 }
 
-                                this.Invoke(new showLogDelegate(log), "报告大侠，表" + tableName + "发现" + columns_count + "个列！",LogLevel.info);
+                                this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，表" + tableName + "发现" + columns_count + "个列！",LogLevel.info);
                                 for (int i = 0; i < columns_count; i++)
                                 {
                                     SelectNode sn = new SelectNode();
@@ -4120,7 +4120,7 @@ namespace SuperSQLInjection
                                     columns_count = getValueByStepUp(SQLServer.bool_columns_count.Replace("'{dbname}..{table}'", Tools.strToChar(dbName + ".." + tableName, "UTF-8")).Replace("{dbname}", dbName), 0, 20);
                                 }
 
-                                this.Invoke(new showLogDelegate(log), "报告大侠，表" + tableName + "发现" + columns_count + "个列！", LogLevel.info);
+                                this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，表" + tableName + "发现" + columns_count + "个列！", LogLevel.info);
                                 for (int i = 0; i < columns_count; i++)
                                 {
                                     SelectNode sn = new SelectNode();
@@ -4142,7 +4142,7 @@ namespace SuperSQLInjection
                                 break;
                             case DBType.Oracle:
                                 columns_count = getValueByStepUp(Oracle.bool_columns_count.Replace("{dbname}", dbName).Replace("{table}", tableName), 0, 20);
-                                this.Invoke(new showLogDelegate(log), "报告大侠，表" + tableName + "发现" + columns_count + "个列！", LogLevel.info);
+                                this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，表" + tableName + "发现" + columns_count + "个列！", LogLevel.info);
                                 for (int i = 1; i <= columns_count; i++)
                                 {
                                     SelectNode sn = new SelectNode();
@@ -4165,7 +4165,7 @@ namespace SuperSQLInjection
                                     columns_count = getValueByStepUp(PostgreSQL.bool_columns_count.Replace("'{dbname}'", Tools.strToChr(dbName, "UTF-8")).Replace("'{table}'", Tools.strToChr(tableName, "UTF-8")), 0, 20);
                                 }
 
-                                this.Invoke(new showLogDelegate(log), "报告大侠，表" + tableName + "发现" + columns_count + "个列！", LogLevel.info);
+                                this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，表" + tableName + "发现" + columns_count + "个列！", LogLevel.info);
                                 for (int i = 0; i < columns_count; i++)
                                 {
                                     SelectNode sn = new SelectNode();
@@ -4179,7 +4179,7 @@ namespace SuperSQLInjection
                                 break;
                             case DBType.DB2:
                                 columns_count = getValueByStepUp(DB2.bool_columns_count.Replace("{dbname}", dbName).Replace("{table}", tableName), 0, 20);
-                                this.Invoke(new showLogDelegate(log), "报告大侠，表" + tableName + "发现" + columns_count + "个列！", LogLevel.info);
+                                this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，表" + tableName + "发现" + columns_count + "个列！", LogLevel.info);
                                 for (int i = 1; i <= columns_count; i++)
                                 {
                                     SelectNode sn = new SelectNode();
@@ -4237,7 +4237,7 @@ namespace SuperSQLInjection
                                 columns_count_payload = MySQL.creatMySQLColumnsStrByUnion(config.columnsCount, config.showColumn, config.unionFill, data_list, null, null, -1);
                                 result = getOneDataByUnionOrError(MySQL.union_value.Replace("{data}", columns_count_payload));
 
-                                this.Invoke(new showLogDelegate(log), "报告大侠，表" + tableName + "有" + Tools.convertToInt(result) + "个列！", LogLevel.info);
+                                this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，表" + tableName + "有" + Tools.convertToInt(result) + "个列！", LogLevel.info);
                                 columns_count = Tools.convertToInt(result);
                                 for (int i = 0; i < columns_count; i++)
                                 {
@@ -4254,7 +4254,7 @@ namespace SuperSQLInjection
                                 columns_count_payload = SQLServer.getUnionDataValue(config.columnsCount, config.showColumn, config.unionFill, SQLServer.columns_count.Replace("'{dbname}..{table}'", Tools.strToChar(dbName + ".." + tableName, "UTF-8")), dbName, tableName, "");
                                 result = getOneDataByUnionOrError(columns_count_payload);
 
-                                this.Invoke(new showLogDelegate(log), "报告大侠，表" + tableName + "有" + Tools.convertToInt(result) + "个列！", LogLevel.info);
+                                this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，表" + tableName + "有" + Tools.convertToInt(result) + "个列！", LogLevel.info);
                                 columns_count = Tools.convertToInt(result);
                                 for (int i = 0; i < columns_count; i++)
                                 {
@@ -4271,7 +4271,7 @@ namespace SuperSQLInjection
                                 columns_count_payload = Oracle.getUnionDataValue(config.columnsCount, config.showColumn, Oracle.columns_count, dbName, tableName, "");
                                 result = getOneDataByUnionOrError(columns_count_payload);
 
-                                this.Invoke(new showLogDelegate(log), "报告大侠，表" + tableName + "有" + Tools.convertToInt(result) + "个列！", LogLevel.info);
+                                this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，表" + tableName + "有" + Tools.convertToInt(result) + "个列！", LogLevel.info);
                                 columns_count = Tools.convertToInt(result);
                                 for (int i = 1; i <= columns_count; i++)
                                 {
@@ -4288,7 +4288,7 @@ namespace SuperSQLInjection
                                 columns_count_payload = PostgreSQL.getUnionDataValue(config.columnsCount, config.showColumn, PostgreSQL.columns_count.Replace("'{dbname}'", Tools.strToChr(dbName, "UTF-8")).Replace("'{table}'", Tools.strToChr(tableName, "UTF-8")), dbName, tableName, "");
                                 result = getOneDataByUnionOrError(columns_count_payload);
 
-                                this.Invoke(new showLogDelegate(log), "报告大侠，表" + tableName + "有" + Tools.convertToInt(result) + "个列！", LogLevel.info);
+                                this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，表" + tableName + "有" + Tools.convertToInt(result) + "个列！", LogLevel.info);
                                 columns_count = Tools.convertToInt(result);
                                 for (int i = 0; i < columns_count; i++)
                                 {
@@ -4306,7 +4306,7 @@ namespace SuperSQLInjection
                                 columns_count_payload = DB2.getUnionDataValue(config.unionFillTemplate, DB2.columns_count, dbName, tableName, "");
                                 result = getOneDataByUnionOrError(columns_count_payload);
 
-                                this.Invoke(new showLogDelegate(log), "报告大侠，表" + tableName + "有" + Tools.convertToInt(result) + "个列！", LogLevel.info);
+                                this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，表" + tableName + "有" + Tools.convertToInt(result) + "个列！", LogLevel.info);
                                 columns_count = Tools.convertToInt(result);
                                 for (int i = 1; i <= columns_count; i++)
                                 {
@@ -4364,7 +4364,7 @@ namespace SuperSQLInjection
                                 columns_count_payload = MySQL.creatMySQLColumnsStrByError(data_list, null, null, -1);
                                 result = getOneDataByUnionOrError(MySQL.error_value.Replace("{data}", columns_count_payload));
 
-                                this.Invoke(new showLogDelegate(log), "报告大侠，表" + tableName + "有" + Tools.convertToInt(result) + "个列！", LogLevel.info);
+                                this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，表" + tableName + "有" + Tools.convertToInt(result) + "个列！", LogLevel.info);
                                 columns_count = Tools.convertToInt(result);
                                 for (int i = 0; i < columns_count; i++)
                                 {
@@ -4382,7 +4382,7 @@ namespace SuperSQLInjection
                                 result = getOneDataByUnionOrError(SQLServer.error_value.Replace("{data}",columns_count_data));
                                 //HTML解码
                                 result = HttpUtility.HtmlDecode(result);
-                                this.Invoke(new showLogDelegate(log), "报告大侠，表" + tableName + "有" + Tools.convertToInt(result) + "个列！", LogLevel.info);
+                                this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，表" + tableName + "有" + Tools.convertToInt(result) + "个列！", LogLevel.info);
                                 columns_count = Tools.convertToInt(result);
                                 for (int i = 0; i < columns_count; i++)
                                 {
@@ -4398,7 +4398,7 @@ namespace SuperSQLInjection
                             case DBType.Oracle:
                                 result = getOneHexDataByUnionOrError(Oracle.getErrorDataValue(Oracle.columns_count, dbName, tableName, ""));
 
-                                this.Invoke(new showLogDelegate(log), "报告大侠，表" + tableName + "有" + Tools.convertToInt(result) + "个列！", LogLevel.info);
+                                this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，表" + tableName + "有" + Tools.convertToInt(result) + "个列！", LogLevel.info);
                                 columns_count = Tools.convertToInt(result);
                                 for (int i = 1; i <= columns_count; i++)
                                 {
@@ -4415,7 +4415,7 @@ namespace SuperSQLInjection
                                 result = getOneDataByUnionOrError(PostgreSQL.error_value.Replace("{data}", PostgreSQL.columns_count.Replace("'{dbname}'", Tools.strToChr(dbName, "UTF-8")).Replace("'{table}'", Tools.strToChr(tableName, "UTF-8"))));
                                 //HTML解码
                                 result = HttpUtility.HtmlDecode(result);
-                                this.Invoke(new showLogDelegate(log), "报告大侠，表" + tableName + "有" + Tools.convertToInt(result) + "个列！", LogLevel.info);
+                                this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，表" + tableName + "有" + Tools.convertToInt(result) + "个列！", LogLevel.info);
                                 columns_count = Tools.convertToInt(result);
                                 for (int i = 0; i < columns_count; i++)
                                 {
@@ -4566,16 +4566,16 @@ namespace SuperSQLInjection
                     {
                         lvi.SubItems.Add(colvalue);
                     }
-                    this.Invoke(new showLogDelegate(log), "获取到第" + (gp.limit + 1) + "行," + columnName + "的值:" + colvalue, LogLevel.info);
+                    this.txt_log.Invoke(new showLogDelegate(log), "获取到第" + (gp.limit + 1) + "行," + columnName + "的值:" + colvalue, LogLevel.info);
 
                 }
                 this.Invoke(new addItemToListViewDelegate(addItemToListView), lvi);
-                this.Invoke(new showLogDelegate(log), "获取到第" + (gp.limit + 1) + "行的值！", LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取到第" + (gp.limit + 1) + "行的值！", LogLevel.info);
 
             }
             catch (Exception e)
             {
-                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message,LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message,LogLevel.error);
             }
             Interlocked.Increment(ref this.currentDataCount);
         }
@@ -4661,16 +4661,16 @@ namespace SuperSQLInjection
                     {
                         lvi.SubItems.Add(colvalue);
                     }
-                    this.Invoke(new showLogDelegate(log), "获取到第" + (gp.limit + 1) + "行," + columnName + "的值:" + colvalue, LogLevel.info);
+                    this.txt_log.Invoke(new showLogDelegate(log), "获取到第" + (gp.limit + 1) + "行," + columnName + "的值:" + colvalue, LogLevel.info);
 
                 }
                 this.Invoke(new addItemToListViewDelegate(addItemToListView), lvi);
-                this.Invoke(new showLogDelegate(log), "获取到第" + (gp.limit + 1) + "行的值！", LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取到第" + (gp.limit + 1) + "行的值！", LogLevel.info);
 
             }
             catch (Exception e)
             {
-                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
             }
             Interlocked.Increment(ref this.currentDataCount);
         }
@@ -4730,12 +4730,12 @@ namespace SuperSQLInjection
 
                 }
                 this.Invoke(new addItemToListViewDelegate(addItemToListView), lvi);
-                this.Invoke(new showLogDelegate(log), "获取到第" + gp.limit + "行的值！", LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取到第" + gp.limit + "行的值！", LogLevel.info);
 
             }
             catch (Exception e)
             {
-                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message,LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message,LogLevel.error);
             }
             Interlocked.Increment(ref this.currentDataCount);
         }
@@ -4789,16 +4789,16 @@ namespace SuperSQLInjection
                     {
                         lvi.SubItems.Add(value);
                     }
-                    this.Invoke(new showLogDelegate(log), "获取到第" + (gp.limit + 1) + "行,"+columnName+"的值:"+ value, LogLevel.info);
+                    this.txt_log.Invoke(new showLogDelegate(log), "获取到第" + (gp.limit + 1) + "行,"+columnName+"的值:"+ value, LogLevel.info);
 
                 }
                 this.Invoke(new addItemToListViewDelegate(addItemToListView), lvi);
-                this.Invoke(new showLogDelegate(log), "获取到第" + (gp.limit+1) + "行的值！", LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取到第" + (gp.limit+1) + "行的值！", LogLevel.info);
 
             }
             catch (Exception e)
             {
-                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
             }
             Interlocked.Increment(ref this.currentDataCount);
         }
@@ -4867,16 +4867,16 @@ namespace SuperSQLInjection
                     {
                         lvi.SubItems.Add(value);
                     }
-                    this.Invoke(new showLogDelegate(log), "获取到" + columnName + "列的值！"+ value, LogLevel.info);
+                    this.txt_log.Invoke(new showLogDelegate(log), "获取到" + columnName + "列的值！"+ value, LogLevel.info);
 
                 }
                 this.Invoke(new addItemToListViewDelegate(addItemToListView), lvi);
-                this.Invoke(new showLogDelegate(log), "获取到第" + gp.limit + "行的值！", LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取到第" + gp.limit + "行的值！", LogLevel.info);
 
             }
             catch (Exception e)
             {
-                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message,LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message,LogLevel.error);
             }
             Interlocked.Increment(ref this.currentDataCount);
         }
@@ -4951,12 +4951,12 @@ namespace SuperSQLInjection
 
                 }
                 this.Invoke(new addItemToListViewDelegate(addItemToListView), lvi);
-                this.Invoke(new showLogDelegate(log), "获取到第" + gp.limit + "行的值！",LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取到第" + gp.limit + "行的值！",LogLevel.info);
 
             }
             catch (Exception e)
             {
-                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message,LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message,LogLevel.error);
             }
             Interlocked.Increment(ref this.currentDataCount);
         }
@@ -5018,12 +5018,12 @@ namespace SuperSQLInjection
 
                 }
                 this.Invoke(new addItemToListViewDelegate(addItemToListView), lvi);
-                this.Invoke(new showLogDelegate(log), "获取到第" + gp.limit + "行的值！", LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取到第" + gp.limit + "行的值！", LogLevel.info);
 
             }
             catch (Exception e)
             {
-                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message,LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message,LogLevel.error);
             }
             Interlocked.Increment(ref this.currentDataCount);
         }
@@ -5072,12 +5072,12 @@ namespace SuperSQLInjection
 
                 }
                 this.Invoke(new addItemToListViewDelegate(addItemToListView), lvi);
-                this.Invoke(new showLogDelegate(log), "获取到第" + gp.limit + "行的值！", LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取到第" + gp.limit + "行的值！", LogLevel.info);
 
             }
             catch (Exception e)
             {
-                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
             }
             Interlocked.Increment(ref this.currentDataCount);
         }
@@ -5095,14 +5095,14 @@ namespace SuperSQLInjection
                 String datas_value_payload = MySQL.creatMySQLColumnsStrByUnion(config.columnsCount, config.showColumn, config.unionFill, gp.columns, gp.table, gp.dbname, gp.limit);
                 String result = getOneDataByUnionOrError(MySQL.union_value.Replace("{data}", datas_value_payload));
 
-                this.Invoke(new showLogDelegate(log), "报告大侠，获取到第" + (gp.limit + 1) + "行数据", LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，获取到第" + (gp.limit + 1) + "行数据", LogLevel.info);
                 String[] datas = Regex.Split(result, "\\$\\$\\$");
                 addItemToListView(datas);
 
             }
             catch (Exception e)
             {
-                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message,LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message,LogLevel.error);
             }
             Interlocked.Increment(ref this.currentDataCount);
         }
@@ -5120,12 +5120,12 @@ namespace SuperSQLInjection
                 ListViewItem lvi = new ListViewItem();
                 String result = getOneDataByUnionOrError(SQLServer.getUnionDataValue(config.columnsCount, config.showColumn, config.unionFill, gp.dbname, gp.table, gp.columns, gp.limit));
                 this.Invoke(new addItemToListViewByColumnsDelegate(addItemToListViewByColumns), result);
-                this.Invoke(new showLogDelegate(log), "获取到第" + gp.limit + "行的值！", LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取到第" + gp.limit + "行的值！", LogLevel.info);
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message,LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message,LogLevel.error);
             }
             Interlocked.Increment(ref this.currentDataCount);
         }
@@ -5142,12 +5142,12 @@ namespace SuperSQLInjection
                 ListViewItem lvi = new ListViewItem();
                 String result = getOneDataByUnionOrError(Access.getUnionDataValue(config.columnsCount, config.showColumn, config.unionFill, gp.columns, gp.table, gp.limit.ToString()).Replace("{table}", this.curren_table));
                 this.Invoke(new addItemToListViewByColumnsDelegate(addItemToListViewByColumns), result);
-                this.Invoke(new showLogDelegate(log), "获取到第" + gp.limit + "行的值！", LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取到第" + gp.limit + "行的值！", LogLevel.info);
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message,LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message,LogLevel.error);
             }
             Interlocked.Increment(ref this.currentDataCount);
         }
@@ -5164,12 +5164,12 @@ namespace SuperSQLInjection
                 ListViewItem lvi = new ListViewItem();
                 String result = getOneDataByUnionOrError(SQLite.getUnionDataValue(config.columnsCount, config.showColumn, config.unionFill, gp.columns, gp.table, gp.limit.ToString()));
                 this.Invoke(new addItemToListViewByColumnsDelegate(addItemToListViewByColumns), result);
-                this.Invoke(new showLogDelegate(log), "获取到第" + (gp.limit+1) + "行的值！", LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取到第" + (gp.limit+1) + "行的值！", LogLevel.info);
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
             }
             Interlocked.Increment(ref this.currentDataCount);
         }
@@ -5187,12 +5187,12 @@ namespace SuperSQLInjection
                 ListViewItem lvi = new ListViewItem();
                 String result = getOneDataByUnionOrError(Oracle.getUnionDataValue(config.columnsCount, config.showColumn, gp.columns, gp.dbname, gp.table, gp.limit.ToString()));
                 this.Invoke(new addItemToListViewByColumnsDelegate(addItemToListViewByColumns), result);
-                this.Invoke(new showLogDelegate(log), "获取到第" + gp.limit + "行的值！", LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取到第" + gp.limit + "行的值！", LogLevel.info);
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message,LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message,LogLevel.error);
             }
             Interlocked.Increment(ref this.currentDataCount);
         }
@@ -5210,12 +5210,12 @@ namespace SuperSQLInjection
                 //每行数据只能获取最大值254个字符
                 String result = getOneDataByUnionOrError(DB2.getUnionDataValue(config.unionFillTemplate, gp.columns, gp.dbname, gp.table, gp.limit.ToString()));
                 this.Invoke(new addItemToListViewByColumnsDelegate(addItemToListViewByColumns), result);
-                this.Invoke(new showLogDelegate(log), "获取到第" + gp.limit + "行的值！", LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取到第" + gp.limit + "行的值！", LogLevel.info);
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
             }
             Interlocked.Increment(ref this.currentDataCount);
         }
@@ -5232,12 +5232,12 @@ namespace SuperSQLInjection
                 ListViewItem lvi = new ListViewItem();
                 String result = getOneDataByUnionOrError(PostgreSQL.getUnionDataValue(config.columnsCount, config.showColumn, gp.columns, gp.dbname, gp.table, gp.limit.ToString()));
                 this.Invoke(new addItemToListViewByColumnsDelegate(addItemToListViewByColumns), result);
-                this.Invoke(new showLogDelegate(log), "获取到第" + gp.limit + "行的值！", LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取到第" + gp.limit + "行的值！", LogLevel.info);
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
             }
             Interlocked.Increment(ref this.currentDataCount);
         }
@@ -5287,7 +5287,7 @@ namespace SuperSQLInjection
                 int start = 1;
                 //每次获取长度，err方式有长度限制59个字符
                 int count = 64 - 6;
-                this.Invoke(new showLogDelegate(log), "报告大侠，正在获取数据，每次请求将获取" + count + "字符！", LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，正在获取数据，每次请求将获取" + count + "字符！", LogLevel.info);
                 while (start < sumlen)
                 {
                     //hex编码，防止中文等乱码
@@ -5314,12 +5314,12 @@ namespace SuperSQLInjection
                     }
                 }
                 this.Invoke(new addItemToListViewDelegate(addItemToListView), lvi);
-                this.Invoke(new showLogDelegate(log), "获取到第" + (gp.limit + 1) + "行的值！", LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取到第" + (gp.limit + 1) + "行的值！", LogLevel.info);
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message,LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message,LogLevel.error);
             }
             Interlocked.Increment(ref this.currentDataCount);
 
@@ -5338,12 +5338,12 @@ namespace SuperSQLInjection
                 String result = getOneDataByUnionOrError(SQLServer.getErrorDataValue(gp.dbname, gp.table, gp.limit, gp.columns));
                 result = HttpUtility.HtmlDecode(result);
                 this.Invoke(new addItemToListViewByColumnsDelegate(addItemToListViewByColumns), result);
-                this.Invoke(new showLogDelegate(log), "获取到第" + gp.limit + "行的值！", LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取到第" + gp.limit + "行的值！", LogLevel.info);
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message,LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message,LogLevel.error);
             }
             Interlocked.Increment(ref this.currentDataCount);
 
@@ -5362,12 +5362,12 @@ namespace SuperSQLInjection
                 String result = getOneDataByUnionOrError(PostgreSQL.getErrorDataValue(gp.dbname, gp.table, gp.limit, gp.columns));
                 result = HttpUtility.HtmlDecode(result);
                 this.Invoke(new addItemToListViewByColumnsDelegate(addItemToListViewByColumns), result);
-                this.Invoke(new showLogDelegate(log), "获取到第" + gp.limit + "行的值！", LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取到第" + gp.limit + "行的值！", LogLevel.info);
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
             }
             Interlocked.Increment(ref this.currentDataCount);
 
@@ -5394,10 +5394,10 @@ namespace SuperSQLInjection
                 if (count < 1)
                 {
 
-                    this.Invoke(new showLogDelegate(log), "报告大侠，选择的列太多了，无法获取数据！", LogLevel.info);
+                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，选择的列太多了，无法获取数据！", LogLevel.info);
                     return;
                 }
-                this.Invoke(new showLogDelegate(log), "报告大侠，正在获取数据，每次请求将获取" + count + "个hex字符！",LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，正在获取数据，每次请求将获取" + count + "个hex字符！",LogLevel.info);
                 while (start < sumlen)
                 {
                     //hex编码，防止中文等乱码
@@ -5410,12 +5410,12 @@ namespace SuperSQLInjection
                 result = Tools.unHex(result, config.db_encoding);
 
                 this.Invoke(new addItemToListViewByColumnsDelegate(addItemToListViewByColumns), result);
-                this.Invoke(new showLogDelegate(log), "获取到第" + gp.limit + "行的值！", LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取到第" + gp.limit + "行的值！", LogLevel.info);
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message,LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message,LogLevel.error);
             }
             Interlocked.Increment(ref this.currentDataCount);
         }
@@ -5657,13 +5657,13 @@ namespace SuperSQLInjection
                     datas_count_payload = MySQL.creatMySQLColumnsStrByError(data_list, null, null, -1);
                     result = getOneDataByUnionOrError(MySQL.error_value.Replace("{data}", datas_count_payload));
 
-                    this.Invoke(new showLogDelegate(log), "报告大侠，表" + this.curren_table + "有" + Tools.convertToInt(result) + "行数据！", LogLevel.success);
+                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，表" + this.curren_table + "有" + Tools.convertToInt(result) + "行数据！", LogLevel.success);
 
                     this.dataCount = Tools.convertToInt(result);
 
                     if (this.dataCount < (dataCount + start))
                     {
-                        this.Invoke(new showLogDelegate(log), "大侠，表" + this.curren_table + "只有" + Tools.convertToInt(result) + "行数据，你需要获取的数据没有这么多呀！", LogLevel.waring);
+                        this.txt_log.Invoke(new showLogDelegate(log), "大侠，表" + this.curren_table + "只有" + Tools.convertToInt(result) + "行数据，你需要获取的数据没有这么多呀！", LogLevel.waring);
                         this.data_dbs_txt_count.Text = this.dataCount.ToString();
                         break;
                     }
@@ -5685,13 +5685,13 @@ namespace SuperSQLInjection
                     result = getOneDataByUnionOrError(SQLServer.error_value.Replace("{data}", SQLServer.data_count.Replace("{dbname}", this.curren_db).Replace("{table}", this.curren_table)));
                     //HTML解码
                     result = HttpUtility.HtmlDecode(result);
-                    this.Invoke(new showLogDelegate(log), "报告大侠，表" + this.curren_table + "有" + Tools.convertToInt(result) + "行数据！", LogLevel.success);
+                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，表" + this.curren_table + "有" + Tools.convertToInt(result) + "行数据！", LogLevel.success);
 
                     this.dataCount = Tools.convertToInt(result);
 
                     if (this.dataCount < (dataCount + start))
                     {
-                        this.Invoke(new showLogDelegate(log), "大侠，表" + this.curren_table + "只有" + Tools.convertToInt(result) + "行数据，你需要获取的数据没有这么多呀！", LogLevel.waring);
+                        this.txt_log.Invoke(new showLogDelegate(log), "大侠，表" + this.curren_table + "只有" + Tools.convertToInt(result) + "行数据，你需要获取的数据没有这么多呀！", LogLevel.waring);
                         this.data_dbs_txt_count.Text = this.dataCount.ToString();
                         break;
                     }
@@ -5713,13 +5713,13 @@ namespace SuperSQLInjection
                 case DBType.Oracle:
                     result = getOneHexDataByUnionOrError(Oracle.getErrorDataValue(Oracle.data_count, this.curren_db, this.curren_table, ""));
 
-                    this.Invoke(new showLogDelegate(log), "报告大侠，表" + this.curren_table + "有" + Tools.convertToInt(result) + "行数据！", LogLevel.success);
+                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，表" + this.curren_table + "有" + Tools.convertToInt(result) + "行数据！", LogLevel.success);
 
                     this.dataCount = Tools.convertToInt(result);
 
                     if (this.dataCount < (dataCount + start))
                     {
-                        this.Invoke(new showLogDelegate(log), "大侠，表" + this.curren_table + "只有" + Tools.convertToInt(result) + "行数据，你需要获取的数据没有这么多呀！", LogLevel.waring);
+                        this.txt_log.Invoke(new showLogDelegate(log), "大侠，表" + this.curren_table + "只有" + Tools.convertToInt(result) + "行数据，你需要获取的数据没有这么多呀！", LogLevel.waring);
                         this.data_dbs_txt_count.Text = this.dataCount.ToString();
                         break;
                     }
@@ -5742,13 +5742,13 @@ namespace SuperSQLInjection
                     result = getOneDataByUnionOrError(PostgreSQL.error_value.Replace("{data}", PostgreSQL.data_count.Replace("{dbname}", this.curren_db).Replace("{table}", this.curren_table)));
                     //HTML解码
                     result = HttpUtility.HtmlDecode(result);
-                    this.Invoke(new showLogDelegate(log), "报告大侠，表" + this.curren_table + "有" + Tools.convertToInt(result) + "行数据！", LogLevel.success);
+                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，表" + this.curren_table + "有" + Tools.convertToInt(result) + "行数据！", LogLevel.success);
 
                     this.dataCount = Tools.convertToInt(result);
 
                     if (this.dataCount < (dataCount + start))
                     {
-                        this.Invoke(new showLogDelegate(log), "大侠，表" + this.curren_table + "只有" + Tools.convertToInt(result) + "行数据，你需要获取的数据没有这么多呀！", LogLevel.waring);
+                        this.txt_log.Invoke(new showLogDelegate(log), "大侠，表" + this.curren_table + "只有" + Tools.convertToInt(result) + "行数据，你需要获取的数据没有这么多呀！", LogLevel.waring);
                         this.data_dbs_txt_count.Text = this.dataCount.ToString();
                         break;
                     }
@@ -5789,13 +5789,13 @@ namespace SuperSQLInjection
                     datas_count_payload = Access.getUnionDataValue(config.columnsCount, config.showColumn, config.unionFill, Access.data_count.Replace("{table}", this.curren_table));
                     result = getOneDataByUnionOrError(datas_count_payload);
 
-                    this.Invoke(new showLogDelegate(log), "报告大侠，表" + this.curren_table + "有" + Tools.convertToInt(result) + "行数据！", LogLevel.success);
+                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，表" + this.curren_table + "有" + Tools.convertToInt(result) + "行数据！", LogLevel.success);
 
                     this.dataCount = Tools.convertToInt(result);
 
                     if (this.dataCount < (dataCount + start))
                     {
-                        this.Invoke(new showLogDelegate(log), "大侠，表" + this.curren_table + "只有" + Tools.convertToInt(result) + "行数据，你需要获取的数据没有这么多呀！", LogLevel.waring);
+                        this.txt_log.Invoke(new showLogDelegate(log), "大侠，表" + this.curren_table + "只有" + Tools.convertToInt(result) + "行数据，你需要获取的数据没有这么多呀！", LogLevel.waring);
                         this.data_dbs_txt_count.Text = this.dataCount.ToString();
                         break;
                     }
@@ -5818,12 +5818,12 @@ namespace SuperSQLInjection
                     datas_count_payload = MySQL.creatMySQLColumnsStrByUnion(config.columnsCount, config.showColumn, config.unionFill, data_list, null, null, -1);
                     result = getOneDataByUnionOrError(MySQL.union_value.Replace("{data}", datas_count_payload));
 
-                    this.Invoke(new showLogDelegate(log), "报告大侠，表" + this.curren_table + "有" + Tools.convertToInt(result) + "行数据！", LogLevel.success);
+                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，表" + this.curren_table + "有" + Tools.convertToInt(result) + "行数据！", LogLevel.success);
 
                     this.dataCount = Tools.convertToInt(result);
                     if (this.dataCount < (dataCount + start))
                     {
-                        this.Invoke(new showLogDelegate(log), "大侠，表" + this.curren_table + "只有" + Tools.convertToInt(result) + "行数据，你需要获取的数据没有这么多呀！", LogLevel.waring);
+                        this.txt_log.Invoke(new showLogDelegate(log), "大侠，表" + this.curren_table + "只有" + Tools.convertToInt(result) + "行数据，你需要获取的数据没有这么多呀！", LogLevel.waring);
                         this.data_dbs_txt_count.Text = this.dataCount.ToString();
                         break;
                     }
@@ -5846,13 +5846,13 @@ namespace SuperSQLInjection
                     datas_count_payload = SQLServer.getUnionDataValue(config.columnsCount, config.showColumn, config.unionFill, SQLServer.data_count, this.curren_db, this.curren_table, "");
                     result = getOneDataByUnionOrError(datas_count_payload);
 
-                    this.Invoke(new showLogDelegate(log), "报告大侠，表" + this.curren_table + "有" + Tools.convertToInt(result) + "行数据！", LogLevel.success);
+                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，表" + this.curren_table + "有" + Tools.convertToInt(result) + "行数据！", LogLevel.success);
 
                     this.dataCount = Tools.convertToInt(result);
 
                     if (this.dataCount < (dataCount + start))
                     {
-                        this.Invoke(new showLogDelegate(log), "大侠，表" + this.curren_table + "只有" + Tools.convertToInt(result) + "行数据，你需要获取的数据没有这么多呀！", LogLevel.waring);
+                        this.txt_log.Invoke(new showLogDelegate(log), "大侠，表" + this.curren_table + "只有" + Tools.convertToInt(result) + "行数据，你需要获取的数据没有这么多呀！", LogLevel.waring);
                         this.data_dbs_txt_count.Text = this.dataCount.ToString();
                         break;
                     }
@@ -5874,13 +5874,13 @@ namespace SuperSQLInjection
                     datas_count_payload = Oracle.getUnionDataValue(config.columnsCount, config.showColumn, Oracle.data_count, this.curren_db, this.curren_table, "");
                     result = getOneDataByUnionOrError(datas_count_payload);
 
-                    this.Invoke(new showLogDelegate(log), "报告大侠，表" + this.curren_table + "有" + Tools.convertToInt(result) + "行数据！", LogLevel.success);
+                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，表" + this.curren_table + "有" + Tools.convertToInt(result) + "行数据！", LogLevel.success);
 
                     this.dataCount = Tools.convertToInt(result);
 
                     if (this.dataCount < (dataCount + start))
                     {
-                        this.Invoke(new showLogDelegate(log), "大侠，表" + this.curren_table + "只有" + Tools.convertToInt(result) + "行数据，你需要获取的数据没有这么多呀！", LogLevel.waring);
+                        this.txt_log.Invoke(new showLogDelegate(log), "大侠，表" + this.curren_table + "只有" + Tools.convertToInt(result) + "行数据，你需要获取的数据没有这么多呀！", LogLevel.waring);
                         this.data_dbs_txt_count.Text = this.dataCount.ToString();
                         break;
                     }
@@ -5903,13 +5903,13 @@ namespace SuperSQLInjection
                     datas_count_payload = PostgreSQL.getUnionDataValue(config.columnsCount, config.showColumn, PostgreSQL.data_count, this.curren_db, this.curren_table, "");
                     result = getOneDataByUnionOrError(datas_count_payload);
 
-                    this.Invoke(new showLogDelegate(log), "报告大侠，表" + this.curren_table + "有" + Tools.convertToInt(result) + "行数据！", LogLevel.success);
+                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，表" + this.curren_table + "有" + Tools.convertToInt(result) + "行数据！", LogLevel.success);
 
                     this.dataCount = Tools.convertToInt(result);
 
                     if (this.dataCount < (dataCount + start))
                     {
-                        this.Invoke(new showLogDelegate(log), "大侠，表" + this.curren_table + "只有" + Tools.convertToInt(result) + "行数据，你需要获取的数据没有这么多呀！", LogLevel.waring);
+                        this.txt_log.Invoke(new showLogDelegate(log), "大侠，表" + this.curren_table + "只有" + Tools.convertToInt(result) + "行数据，你需要获取的数据没有这么多呀！", LogLevel.waring);
                         this.data_dbs_txt_count.Text = this.dataCount.ToString();
                         break;
                     }
@@ -5931,13 +5931,13 @@ namespace SuperSQLInjection
                     datas_count_payload = DB2.getUnionDataValue(config.unionFillTemplate, DB2.data_count, this.curren_db, this.curren_table, "");
                     result = getOneDataByUnionOrError(datas_count_payload);
 
-                    this.Invoke(new showLogDelegate(log), "报告大侠，表" + this.curren_table + "有" + Tools.convertToInt(result) + "行数据！", LogLevel.success);
+                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，表" + this.curren_table + "有" + Tools.convertToInt(result) + "行数据！", LogLevel.success);
 
                     this.dataCount = Tools.convertToInt(result);
 
                     if (this.dataCount < (dataCount + start))
                     {
-                        this.Invoke(new showLogDelegate(log), "大侠，表" + this.curren_table + "只有" + Tools.convertToInt(result) + "行数据，你需要获取的数据没有这么多呀！", LogLevel.waring);
+                        this.txt_log.Invoke(new showLogDelegate(log), "大侠，表" + this.curren_table + "只有" + Tools.convertToInt(result) + "行数据，你需要获取的数据没有这么多呀！", LogLevel.waring);
                         this.data_dbs_txt_count.Text = this.dataCount.ToString();
                         break;
                     }
@@ -5960,13 +5960,13 @@ namespace SuperSQLInjection
                     datas_count_payload = SQLite.getUnionDataValue(config.columnsCount, config.showColumn, config.unionFill, SQLite.data_count.Replace("{table}", this.curren_table));
                     result = getOneDataByUnionOrError(datas_count_payload);
 
-                    this.Invoke(new showLogDelegate(log), "报告大侠，表" + this.curren_table + "有" + Tools.convertToInt(result) + "行数据！", LogLevel.success);
+                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，表" + this.curren_table + "有" + Tools.convertToInt(result) + "行数据！", LogLevel.success);
 
                     this.dataCount = Tools.convertToInt(result);
 
                     if (this.dataCount < (dataCount + start))
                     {
-                        this.Invoke(new showLogDelegate(log), "大侠，表" + this.curren_table + "只有" + Tools.convertToInt(result) + "行数据，你需要获取的数据没有这么多呀！", LogLevel.waring);
+                        this.txt_log.Invoke(new showLogDelegate(log), "大侠，表" + this.curren_table + "只有" + Tools.convertToInt(result) + "行数据，你需要获取的数据没有这么多呀！", LogLevel.waring);
                         this.data_dbs_txt_count.Text = this.dataCount.ToString();
                         break;
                     }
@@ -6138,7 +6138,7 @@ namespace SuperSQLInjection
 
                 //拆分参数
                 String[] strparams = strparam.Split('&');
-                this.Invoke(new showLogDelegate(log), "报告大侠，发现" + strparams.Length + "个参数，请稍候正在对每一个参数进行注入测试！", LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，发现" + strparams.Length + "个参数，请稍候正在对每一个参数进行注入测试！", LogLevel.info);
                 foreach (String param in strparams)
                 {
 
@@ -6149,10 +6149,10 @@ namespace SuperSQLInjection
                     }
                     if (param.IndexOf("<Token>") != -1)
                     {
-                        this.Invoke(new showLogDelegate(log), "跳过Token参数检测！" + param, LogLevel.info);
+                        this.txt_log.Invoke(new showLogDelegate(log), "跳过Token参数检测！" + param, LogLevel.info);
                         continue;
                     }
-                    this.Invoke(new showLogDelegate(log), "报告大侠，正在对参数参数" + param + "进行盲注测试！", LogLevel.info);
+                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，正在对参数参数" + param + "进行盲注测试！", LogLevel.info);
                     String newParam = "";//标记注入
                     String payload_location = strparam.Replace(param, param + "<Encode>"+ setInjectStr + "</Encode>");
                     String payload_request = request.Replace(strparam, payload_location);
@@ -6169,7 +6169,7 @@ namespace SuperSQLInjection
                     {
                         foreach (String pal in list)
                         {
-                            this.Invoke(new showLogDelegate(log), "正在测试PayLoad:" + pal, LogLevel.info);
+                            this.txt_log.Invoke(new showLogDelegate(log), "正在测试PayLoad:" + pal, LogLevel.info);
                             String[] pals = pal.Split(':');
 
                             ServerInfo falseServer = HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, pals[1], payload_request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
@@ -6192,7 +6192,7 @@ namespace SuperSQLInjection
                                     this.cbox_inject_type.SelectedIndex = Convert.ToInt32(KeyType.Code);
                                     this.chk_inject_reverseKey.Checked = false;
                                     boolInject = true;
-                                    this.Invoke(new showLogDelegate(log), "根据状态码判断存在SQL注入!", LogLevel.success);
+                                    this.txt_log.Invoke(new showLogDelegate(log), "根据状态码判断存在SQL注入!", LogLevel.success);
                                 }
 
                                 if (falseServer.body.Length < trueServer.body.Length)
@@ -6203,7 +6203,7 @@ namespace SuperSQLInjection
                                         if (ptrue > pfalse)
                                         {
                                             //根据相似度判断
-                                            this.Invoke(new showLogDelegate(log), "根据相似度判断存在SQL注入！固定长度,相似度--false|true1|true2--" + pfalse + "|" + ptrue + "%", LogLevel.success);
+                                            this.txt_log.Invoke(new showLogDelegate(log), "根据相似度判断存在SQL注入！固定长度,相似度--false|true1|true2--" + pfalse + "|" + ptrue + "%", LogLevel.success);
                                             boolInject = true;
                                             //判断关键字
                                             checkTheKey(trueServer, falseServer, oserver);
@@ -6218,7 +6218,7 @@ namespace SuperSQLInjection
                                         if (ptrue - pfalse >= 2 && Math.Abs(p - pfalse) >= 2)
                                         {
                                             //根据相似度判断
-                                            this.Invoke(new showLogDelegate(log), "根据相似度判断存在SQL注入！动态长度,相似度--false|true1|true2--" + pfalse + "|" + ptrue + "|" + p + "%", LogLevel.success);
+                                            this.txt_log.Invoke(new showLogDelegate(log), "根据相似度判断存在SQL注入！动态长度,相似度--false|true1|true2--" + pfalse + "|" + ptrue + "|" + p + "%", LogLevel.success);
                                             boolInject = true;
                                             //判断关键字
                                             checkTheKey(trueServer, falseServer, oserver);
@@ -6230,13 +6230,13 @@ namespace SuperSQLInjection
                             }
                             else
                             {
-                                this.Invoke(new showLogDelegate(log), "程序判断不存在SQL注入！", LogLevel.info);
+                                this.txt_log.Invoke(new showLogDelegate(log), "程序判断不存在SQL注入！", LogLevel.info);
                             }
 
                             if (boolInject)
                             {
 
-                                this.Invoke(new showLogDelegate(log), "存在" + pals[2] + "payload:" + pals[0], LogLevel.success);
+                                this.txt_log.Invoke(new showLogDelegate(log), "存在" + pals[2] + "payload:" + pals[0], LogLevel.success);
                                 config.testPayload = pals[0];
                                 selectInjectType(InjectType.Bool);
                                 //识别数据库
@@ -6249,7 +6249,7 @@ namespace SuperSQLInjection
                                         break;
                                     }
                                     String db = d.Replace(".txt", "");
-                                    this.Invoke(new showLogDelegate(log), "正在判断是否是" + db + "数据库", LogLevel.info);
+                                    this.txt_log.Invoke(new showLogDelegate(log), "正在判断是否是" + db + "数据库", LogLevel.info);
 
                                     List<String> dbpayload_list = FileTool.readFileToList("config/database/" + d);
                                     foreach (String cdpay in dbpayload_list)
@@ -6259,7 +6259,7 @@ namespace SuperSQLInjection
                                         Boolean istrue=Tools.isTrue(dbServer, config.key, config.reverseKey, config.keyType, config.injectHTTPCode);
                                         if (istrue)
                                         {
-                                            this.Invoke(new showLogDelegate(log), "程序判断数据库为" + db + "数据库", LogLevel.success);
+                                            this.txt_log.Invoke(new showLogDelegate(log), "程序判断数据库为" + db + "数据库", LogLevel.success);
                                             currentDB = db;
                                             selectDB(currentDB);
                                             break;
@@ -6303,11 +6303,11 @@ namespace SuperSQLInjection
                                     if (!String.IsNullOrEmpty(currentDB))
                                     {
                                         selectDB(currentDB);
-                                        this.Invoke(new showLogDelegate(log), "通过错误显示发现数据库为" + currentDB + "！", LogLevel.success);
+                                        this.txt_log.Invoke(new showLogDelegate(log), "通过错误显示发现数据库为" + currentDB + "！", LogLevel.success);
                                     }
                                     else
                                     {
-                                        this.Invoke(new showLogDelegate(log), "没有发现发现数据库类型，可能是其他数据库，请人工判断！", LogLevel.waring);
+                                        this.txt_log.Invoke(new showLogDelegate(log), "没有发现发现数据库类型，可能是其他数据库，请人工判断！", LogLevel.waring);
                                     }
                                 }
 
@@ -6317,7 +6317,7 @@ namespace SuperSQLInjection
                     }
                     else
                     {
-                        this.Invoke(new showLogDelegate(log), "报告大侠，没有读取到config/injection/injection.txt注入测试payload！", LogLevel.error);
+                        this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，没有读取到config/injection/injection.txt注入测试payload！", LogLevel.error);
                     }
                     //记录注入日志
                     if (boolInject) {
@@ -6331,12 +6331,12 @@ namespace SuperSQLInjection
                     }
 
                     //错误注入测试
-                    this.Invoke(new showLogDelegate(log), "报告大侠，盲注测试完成，正在进行错误显示注入测试！", LogLevel.info);
+                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，盲注测试完成，正在进行错误显示注入测试！", LogLevel.info);
 
                     if (DBType.Access.ToString().Equals("currentDB"))
                     {
 
-                        this.Invoke(new showLogDelegate(log), "报告大侠，Access数据库不支持错误显示注入，已自动跳过！", LogLevel.info);
+                        this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，Access数据库不支持错误显示注入，已自动跳过！", LogLevel.info);
                     }
                     else
                     {
@@ -6357,7 +6357,7 @@ namespace SuperSQLInjection
 
                                 if (errorServer.body.IndexOf(pals[1]) != -1)
                                 {
-                                    this.Invoke(new showLogDelegate(log), "发现" + pals[2], LogLevel.success);
+                                    this.txt_log.Invoke(new showLogDelegate(log), "发现" + pals[2], LogLevel.success);
                                     selectDB(pals[3]);
                                     //标记注入
                                     selectInjectType(InjectType.Error);
@@ -6365,7 +6365,7 @@ namespace SuperSQLInjection
                                     newParam = strparam.Replace(param, param + "<Encode>" + pals[0].Replace(pals[4], setInjectStr) + "</Encode>");
                                     config.testPayload = pals[0];
                                     unionStartPayLoad = pals[0].Substring(0, pals[0].IndexOf(pals[4])).Replace(" or", " and");
-                                    this.Invoke(new showLogDelegate(log), "自动标记错误显示注入完成！", LogLevel.info);
+                                    this.txt_log.Invoke(new showLogDelegate(log), "自动标记错误显示注入完成！", LogLevel.info);
                                     break;
                                 }
 
@@ -6373,11 +6373,11 @@ namespace SuperSQLInjection
                         }
                         else
                         {
-                            this.Invoke(new showLogDelegate(log), "没有读取到错误显示注入测试payload！", LogLevel.error);
+                            this.txt_log.Invoke(new showLogDelegate(log), "没有读取到错误显示注入测试payload！", LogLevel.error);
                         }
 
                     }
-                    this.Invoke(new showLogDelegate(log), "报告大侠，错误显示测试完成，正在进行Union注入测试！", LogLevel.info);
+                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，错误显示测试完成，正在进行Union注入测试！", LogLevel.info);
 
                     //记录注入日志
                     if (errorInject)
@@ -6427,7 +6427,7 @@ namespace SuperSQLInjection
                     if (order-1>0) {
                         startIndex = order - 1;
                         endIndex = startIndex;
-                        this.Invoke(new showLogDelegate(log), "注入点支持order by判断，自动判断查询有"+ startIndex + "列！", LogLevel.success);  
+                        this.txt_log.Invoke(new showLogDelegate(log), "注入点支持order by判断，自动判断查询有"+ startIndex + "列！", LogLevel.success);  
                     }
 
                     //判断总列数
@@ -6538,7 +6538,7 @@ namespace SuperSQLInjection
                     if (isFind)
                     {
                         
-                        this.Invoke(new showLogDelegate(log), "此注入点支持Union注入，自动选择注入方式完成！", LogLevel.success);
+                        this.txt_log.Invoke(new showLogDelegate(log), "此注入点支持Union注入，自动选择注入方式完成！", LogLevel.success);
                     }
                     //记录注入日志
                     if (unionInject)
@@ -6565,9 +6565,9 @@ namespace SuperSQLInjection
             {
 
                 Tools.SysLog("识别注入发生异常！" + e.Message);
-                this.Invoke(new showLogDelegate(log), "识别注入发生异常！" + e.Message,LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "识别注入发生异常！" + e.Message,LogLevel.error);
             }
-            this.Invoke(new showLogDelegate(log), "注入测试完成！", LogLevel.info);
+            this.txt_log.Invoke(new showLogDelegate(log), "注入测试完成！", LogLevel.info);
             this.btn_autoInject.Text = "自动识别";
             autoinject = 0;
         }
@@ -6584,7 +6584,7 @@ namespace SuperSQLInjection
                 XML.saveConfig(config.saveConfigpath, config);
             }
             catch (Exception e) {
-                this.Invoke(new showLogDelegate(log), "记录注入日志发生异常！" + e.Message, LogLevel.waring);
+                this.txt_log.Invoke(new showLogDelegate(log), "记录注入日志发生异常！" + e.Message, LogLevel.waring);
             }
         }
         delegate void delegatelogInject(Config config);
@@ -6612,7 +6612,7 @@ namespace SuperSQLInjection
         {
             DBType dbtype=Tools.caseDBType(currentDB);
             this.cbox_basic_dbType.SelectedIndex = (int)dbtype;
-            this.Invoke(new showLogDelegate(log), "自动选择数据库类型完成！", LogLevel.info);
+            this.txt_log.Invoke(new showLogDelegate(log), "自动选择数据库类型完成！", LogLevel.info);
         }
 
         private void data_dbs_tsl_getDatas_Click(object sender, EventArgs e)
@@ -7385,12 +7385,12 @@ namespace SuperSQLInjection
                                         value = Tools.unHex(Tools.convertToString(ver_tmp), config.readFileEncoding);
                                     }
                                     this.Invoke(new StringDelegate(file_txt_resultSetText), value);
-                                    this.Invoke(new showLogDelegate(log), this.file_cbox_readWrite.Text + "完成！", LogLevel.success);
+                                    this.txt_log.Invoke(new showLogDelegate(log), this.file_cbox_readWrite.Text + "完成！", LogLevel.success);
 
                                 }
                                 catch (Exception e)
                                 {
-                                    this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
+                                    this.txt_log.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
                                 }
                                 break;
                             case InjectType.Union:
@@ -7406,11 +7406,11 @@ namespace SuperSQLInjection
                                     this.dataCount = result.Length;
                                     this.currentDataCount = result.Length;
                                     this.Invoke(new StringDelegate(file_txt_resultSetText), result);
-                                    this.Invoke(new showLogDelegate(log), "报告大侠，获取到文件数据!", LogLevel.success);
+                                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，获取到文件数据!", LogLevel.success);
                                 }
                                 catch (Exception e)
                                 {
-                                    this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
+                                    this.txt_log.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
                                 }
                                 break;
                             case InjectType.Error:
@@ -7429,7 +7429,7 @@ namespace SuperSQLInjection
                                     int start = 1;
                                     //每次获取长度，err方式有长度限制
                                     int count = 64 - 6;
-                                    this.Invoke(new showLogDelegate(log), "报告大侠，正在获取数据，每次请求将获取" + count + "字符！", LogLevel.info);
+                                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，正在获取数据，每次请求将获取" + count + "字符！", LogLevel.info);
                                     while (start < sumlen)
                                     {
                                         //hex编码，防止中文等乱码
@@ -7448,12 +7448,12 @@ namespace SuperSQLInjection
                                         result = m.Value;
                                     }
                                     this.Invoke(new StringDelegate(file_txt_resultSetText), result);
-                                    this.Invoke(new showLogDelegate(log), "获取文件内容！", LogLevel.info);
+                                    this.txt_log.Invoke(new showLogDelegate(log), "获取文件内容！", LogLevel.info);
                                 }
                                 catch (Exception e)
                                 {
 
-                                    this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
+                                    this.txt_log.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
                                 }
                                 break;
 
@@ -7563,7 +7563,7 @@ namespace SuperSQLInjection
 
                                 ver_tmp = new String[len];
                                 this.dataCount = len;
-                                this.Invoke(new showLogDelegate(log), "读到文件内容，长度为" + len + "字节！", LogLevel.info);
+                                this.txt_log.Invoke(new showLogDelegate(log), "读到文件内容，长度为" + len + "字节！", LogLevel.info);
                                 //获取值
                                 for (int i = 1; i <= len; i++)
                                 {
@@ -7576,13 +7576,13 @@ namespace SuperSQLInjection
                             case InjectType.Union:
                                 String unionresult = getOneDataByUnionOrError(SQLServer.getUnionDataValue(config.columnsCount, config.showColumn, config.unionFill, SQLServer.file_content));
                                 this.Invoke(new StringDelegate(file_txt_resultSetText), unionresult);
-                                this.Invoke(new showLogDelegate(log), "获取到读取的文件内容，长度为" + unionresult.Length + "字节！", LogLevel.info);
+                                this.txt_log.Invoke(new showLogDelegate(log), "获取到读取的文件内容，长度为" + unionresult.Length + "字节！", LogLevel.info);
                                 break;
                             case InjectType.Error:
 
                                 String errorresult = getOneDataByUnionOrError(SQLServer.error_value.Replace("{data}", SQLServer.file_content));
                                 this.Invoke(new StringDelegate(file_txt_resultSetText), errorresult);
-                                this.Invoke(new showLogDelegate(log), "获取到读取的文件内容，长度为" + errorresult.Length + "字节！", LogLevel.info);
+                                this.txt_log.Invoke(new showLogDelegate(log), "获取到读取的文件内容，长度为" + errorresult.Length + "字节！", LogLevel.info);
                                 break;
                         }
                     }
@@ -7666,12 +7666,12 @@ namespace SuperSQLInjection
                                         stp.WaitForIdle();
                                         this.dataCount = len;
                                         this.file_txt_result.AppendText(HttpUtility.HtmlDecode(Tools.StringArrayToString(ver_tmp)) + "\r\n");
-                                        this.Invoke(new showLogDelegate(log), "报告大侠，获取到文件第" + i+1 + "行数据！", LogLevel.info);
+                                        this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，获取到文件第" + i+1 + "行数据！", LogLevel.info);
                                     }
-                                    this.Invoke(new showLogDelegate(log), "报告大侠，读取文件内容完成！", LogLevel.info);
+                                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，读取文件内容完成！", LogLevel.info);
                                 }catch (Exception e)
                                 {
-                                    this.Invoke(new showLogDelegate(log), "读取文件内容发生异常：" + e.Message, LogLevel.error);
+                                    this.txt_log.Invoke(new showLogDelegate(log), "读取文件内容发生异常：" + e.Message, LogLevel.error);
                                 }
                                 break;
 
@@ -7679,7 +7679,7 @@ namespace SuperSQLInjection
 
                                 String lineCount = getOneDataByUnionOrError(PostgreSQL.error_value.Replace("{data}", PostgreSQL.file_content_Count));
                                 this.dataCount = Tools.convertToInt(lineCount);
-                                this.Invoke(new showLogDelegate(log), "报告大侠，读到文件内容，共有" + Tools.convertToInt(lineCount) + "行数据！", LogLevel.success);
+                                this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，读到文件内容，共有" + Tools.convertToInt(lineCount) + "行数据！", LogLevel.success);
                                 //注意下标从1开始
                                 ver_tmp = new String[this.dataCount];
                                 for (int i = 0; i < this.dataCount; i++)
@@ -7692,12 +7692,12 @@ namespace SuperSQLInjection
                                 stp.WaitForIdle();
                                 String result = Tools.convertToString(ver_tmp,true);
                                 this.Invoke(new StringDelegate(file_txt_resultSetText), result);
-                                this.Invoke(new showLogDelegate(log), "获取到读取的文件内容，长度为" + result.Length + "字节！", LogLevel.info);
+                                this.txt_log.Invoke(new showLogDelegate(log), "获取到读取的文件内容，长度为" + result.Length + "字节！", LogLevel.info);
                                 break;
                             case InjectType.Union:
                                 String elineCount = getOneDataByUnionOrError(PostgreSQL.getUnionDataValue(config.columnsCount,config.showColumn, PostgreSQL.file_content_Count,"","",""));
                                 this.dataCount = Tools.convertToInt(elineCount);
-                                this.Invoke(new showLogDelegate(log), "报告大侠，读到文件内容，共有" + Tools.convertToInt(elineCount) + "行数据！", LogLevel.success);
+                                this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，读到文件内容，共有" + Tools.convertToInt(elineCount) + "行数据！", LogLevel.success);
                                 //注意下标从1开始
                                 ver_tmp = new String[this.dataCount];
                                 for (int i = 0; i < this.dataCount; i++)
@@ -7710,13 +7710,13 @@ namespace SuperSQLInjection
                                 stp.WaitForIdle();
                                 String eresult = Tools.convertToString(ver_tmp,true);
                                 this.Invoke(new StringDelegate(file_txt_resultSetText), eresult);
-                                this.Invoke(new showLogDelegate(log), "获取到读取的文件内容，长度为" + eresult.Length + "字节！", LogLevel.info);
+                                this.txt_log.Invoke(new showLogDelegate(log), "获取到读取的文件内容，长度为" + eresult.Length + "字节！", LogLevel.info);
                                 break;
 
                         }
                         //删除临时表
                         HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, PostgreSQL.drop_table, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
-                        this.Invoke(new showLogDelegate(log), "删除临时表，完成！", LogLevel.info);
+                        this.txt_log.Invoke(new showLogDelegate(log), "删除临时表，完成！", LogLevel.info);
 
                     }
 
@@ -7875,13 +7875,13 @@ namespace SuperSQLInjection
                 String result = getOneDataByUnionOrError(PostgreSQL.error_value.Replace("{data}", PostgreSQL.file_content_data.Replace("{index}",index+"")));
                 result = HttpUtility.HtmlDecode(result);
                 ver_tmp[index] = result;
-                this.Invoke(new showLogDelegate(log), "读取到文件第"+index+"行内容，长度"+ result.Length+ "！", LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "读取到文件第"+index+"行内容，长度"+ result.Length+ "！", LogLevel.info);
 
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
             }
         }
 
@@ -7897,13 +7897,13 @@ namespace SuperSQLInjection
                 String result = getOneDataByUnionOrError(PostgreSQL.getUnionDataValue(config.columnsCount,config.showColumn, PostgreSQL.file_content_data,"","",index+""));
                 result = HttpUtility.HtmlDecode(result);
                 ver_tmp[index] = result;
-                this.Invoke(new showLogDelegate(log), "读取到文件第" + index + "行内容，长度" + result.Length + "！", LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "读取到文件第" + index + "行内容，长度" + result.Length + "！", LogLevel.info);
 
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
             }
         }
 
@@ -7970,7 +7970,7 @@ namespace SuperSQLInjection
             int unicode = Tools.convertToInt(temUnicode);
 
             ver_tmp[index - 1] = Tools.unHexByUnicode(unicode, "UTF-8");
-            this.Invoke(new showLogDelegate(log), "获取到CMD执行结果--" + ver_tmp[index - 1], LogLevel.info);
+            this.txt_log.Invoke(new showLogDelegate(log), "获取到CMD执行结果--" + ver_tmp[index - 1], LogLevel.info);
             Interlocked.Increment(ref this.currentDataCount);
         }
 
@@ -7999,7 +7999,7 @@ namespace SuperSQLInjection
                 //String cmdrequest = Regex.Replace(config.request, "\\<Encode\\>(.*?)\\<\\/Encode\\>", "<Encode>#inject#</Encode>");
                 HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, SQLServer.dropTable, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
                 HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, cmd_data_payload, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
-                this.Invoke(new showLogDelegate(log), "报告大侠，CMD命令执行完成，正在等待获取执行结果！", LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，CMD命令执行完成，正在等待获取执行结果！", LogLevel.info);
                 if (config.showCmdResult)
                 {
                     switch (config.injectType)
@@ -8049,13 +8049,13 @@ namespace SuperSQLInjection
                                     stp.WaitForIdle();
                                     this.dataCount = len;
                                     this.cmd_txt_result.AppendText(HttpUtility.HtmlDecode(Tools.StringArrayToString(ver_tmp)) + "\r\n");
-                                    this.Invoke(new showLogDelegate(log), "报告大侠，获取到执行CMD命令第" + i + "行数据！", LogLevel.info);
+                                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，获取到执行CMD命令第" + i + "行数据！", LogLevel.info);
                                 }
-                                this.Invoke(new showLogDelegate(log), "报告大侠，获取CMD执行结果完成！", LogLevel.info);
+                                this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，获取CMD执行结果完成！", LogLevel.info);
                             }
                             catch (Exception e)
                             {
-                                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message,LogLevel.error);
+                                this.txt_log.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message,LogLevel.error);
                             }
                             break;
                         case InjectType.Union:
@@ -8071,7 +8071,7 @@ namespace SuperSQLInjection
 
                                 String data_count = getOneDataByUnionOrError(SQLServer.getUnionDataValueByCMD(config.columnsCount, config.showColumn, config.unionFill, SQLServer.cmdDataCount));
 
-                                this.Invoke(new showLogDelegate(log), "报告大侠，CMD执行后CMD表有" + Tools.convertToInt(data_count) + "行数据，请稍候，正在获取...", LogLevel.info);
+                                this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，CMD执行后CMD表有" + Tools.convertToInt(data_count) + "行数据，请稍候，正在获取...", LogLevel.info);
 
                                 int count = Tools.convertToInt(data_count);
                                 this.dataCount = count;
@@ -8081,16 +8081,16 @@ namespace SuperSQLInjection
                                     String payload = SQLServer.cmdData.Replace("{index}", i.ToString());
                                     String result = getOneDataByUnionOrError(SQLServer.getUnionDataValueByCMD(config.columnsCount, config.showColumn, config.unionFill, payload));
                                     this.cmd_txt_result.AppendText(HttpUtility.HtmlDecode(result) + "\r\n");
-                                    this.Invoke(new showLogDelegate(log), "报告大侠，获取到执行CMD命令第" + i + "行数据！", LogLevel.info);
+                                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，获取到执行CMD命令第" + i + "行数据！", LogLevel.info);
                                     this.currentDataCount = i;
                                 }
-                                this.Invoke(new showLogDelegate(log), "报告大侠，获取CMD执行结果完成！", LogLevel.info);
+                                this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，获取CMD执行结果完成！", LogLevel.info);
 
 
                             }
                             catch (Exception e)
                             {
-                                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message,LogLevel.error);
+                                this.txt_log.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message,LogLevel.error);
                             }
                             break;
                         case InjectType.Error:
@@ -8100,7 +8100,7 @@ namespace SuperSQLInjection
                                 String payload_len = SQLServer.bool_length.Replace("{data}", SQLServer.cmdData);
                                 String data_count = getOneDataByUnionOrError(SQLServer.error_value.Replace("{data}", SQLServer.cmdDataCount));
 
-                                this.Invoke(new showLogDelegate(log), "报告大侠，正在获取CMD命令执行结果！", LogLevel.info);
+                                this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，正在获取CMD命令执行结果！", LogLevel.info);
                                 int count = Tools.convertToInt(data_count);
                                 this.dataCount = count;
                                 //下标从1开始
@@ -8109,16 +8109,16 @@ namespace SuperSQLInjection
                                     String payload = SQLServer.cmdData.Replace("{index}", i.ToString());
                                     String result = getOneDataByUnionOrError(SQLServer.error_value.Replace("{data}", payload));
                                     this.cmd_txt_result.AppendText(HttpUtility.HtmlDecode(result) + "\r\n");
-                                    this.Invoke(new showLogDelegate(log), "报告大侠，获取到执行CMD命令第" + i + "行数据！", LogLevel.info);
+                                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，获取到执行CMD命令第" + i + "行数据！", LogLevel.info);
                                     this.currentDataCount = i;
                                 }
-                                this.Invoke(new showLogDelegate(log), "报告大侠，获取CMD执行结果完成！", LogLevel.info);
+                                this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，获取CMD执行结果完成！", LogLevel.info);
 
                             }
                             catch (Exception e)
                             {
 
-                                this.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message,LogLevel.error);
+                                this.txt_log.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message,LogLevel.error);
                             }
                             break;
                     }
@@ -8126,13 +8126,13 @@ namespace SuperSQLInjection
                 //删除表
 
                 HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, SQLServer.dropTable, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
-                this.Invoke(new showLogDelegate(log), "清除执行命令时创建的临时表完成！", LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "清除执行命令时创建的临时表完成！", LogLevel.info);
 
             }
             catch (Exception e)
             {
 
-                this.Invoke(new showLogDelegate(log), "执行命令获取结果发生异常：" + e.Message, LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "执行命令获取结果发生异常：" + e.Message, LogLevel.error);
             }
             this.cmd_btn_start.Enabled =true;
             status = 0;
@@ -8478,12 +8478,12 @@ namespace SuperSQLInjection
             //如果为空反过来查找
             if (String.IsNullOrEmpty(key))
             {
-                this.Invoke(new showLogDelegate(log), "Body响应内容中正向查找未发现盲注判断值！", LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "Body响应内容中正向查找未发现盲注判断值！", LogLevel.info);
                 this.chk_inject_reverseKey.Checked = true;
                 key = Tools.findKeyByStr(falseServer.body, trueServer.body, oldServer.body);
                 if (String.IsNullOrEmpty(key))
                 {
-                    this.Invoke(new showLogDelegate(log), "Body响应内容中反向查找未发现盲注判断值！", LogLevel.info);
+                    this.txt_log.Invoke(new showLogDelegate(log), "Body响应内容中反向查找未发现盲注判断值！", LogLevel.info);
                     this.chk_inject_reverseKey.Checked = false;
                 }
             }
@@ -8491,7 +8491,7 @@ namespace SuperSQLInjection
             {
                 this.cbox_inject_type.SelectedIndex = 0;
                 this.txt_inject_key.Text = key;
-                this.Invoke(new showLogDelegate(log), "发现盲注判断值！" + key, LogLevel.success);
+                this.txt_log.Invoke(new showLogDelegate(log), "发现盲注判断值！" + key, LogLevel.success);
                 return;
             }
 
@@ -8499,14 +8499,14 @@ namespace SuperSQLInjection
             int code = Tools.findKeyByCode(trueServer.code, falseServer.code);
             if (code == 0)
             {
-                this.Invoke(new showLogDelegate(log), "响应状态码不能作为盲注判断条件！", LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "响应状态码不能作为盲注判断条件！", LogLevel.info);
 
             }
             else
             {
                 this.cbox_inject_type.SelectedIndex = 1;
                 this.txt_inject_key.Text = key;
-                this.Invoke(new showLogDelegate(log), "响应状态码可以作为盲注判断条件！", LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "响应状态码可以作为盲注判断条件！", LogLevel.info);
                 return;
             }
 
@@ -8516,7 +8516,7 @@ namespace SuperSQLInjection
             {
                 this.cbox_inject_type.SelectedIndex = 2;
                 this.txt_inject_key.Text = config.maxTime.ToString();
-                this.Invoke(new showLogDelegate(log), "逻辑为真的响应时间可以作为盲注判断条件！", LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "逻辑为真的响应时间可以作为盲注判断条件！", LogLevel.info);
                 return;
             }
             if (falseServer.runTime < config.maxTime && trueServer.runTime < config.maxTime)
@@ -8524,10 +8524,10 @@ namespace SuperSQLInjection
                 this.cbox_inject_type.SelectedIndex = 2;
                 this.txt_inject_key.Text = config.maxTime.ToString();
                 this.chk_inject_reverseKey.Checked = true;
-                this.Invoke(new showLogDelegate(log), "逻辑为假的响应时间可以作为盲注判断条件！", LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "逻辑为假的响应时间可以作为盲注判断条件！", LogLevel.info);
                 return;
             }
-            this.Invoke(new showLogDelegate(log), "没有发现盲注判断条件，请检查注入标记、编码等基础配置是否正确！", LogLevel.info);
+            this.txt_log.Invoke(new showLogDelegate(log), "没有发现盲注判断条件，请检查注入标记、编码等基础配置是否正确！", LogLevel.info);
         }
 
         private void inject_btn_autoFindKey_Click(object sender, EventArgs e)
@@ -8550,12 +8550,12 @@ namespace SuperSQLInjection
                 ServerInfo trueServer = HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, Comm.truePayload, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
                 ServerInfo falseServer = HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, Comm.falsePayload, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
                 checkTheKey(trueServer, falseServer, trueServer);
-                this.Invoke(new showLogDelegate(log), "自动查找判断值完成！", LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "自动查找判断值完成！", LogLevel.info);
 
             }
             catch (Exception ep)
             {
-                this.Invoke(new showLogDelegate(log), "自动查找判断值发生异常！" + ep.Message, LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "自动查找判断值发生异常！" + ep.Message, LogLevel.error);
             }
             this.inject_btn_autoFindKey.Enabled = true;
         }
@@ -8649,7 +8649,7 @@ namespace SuperSQLInjection
                     }
                     else
                     {
-                        this.Invoke(new showLogDelegate(log), url + "----此URL以检测过了，自动跳过！", LogLevel.waring);
+                        this.txt_log.Invoke(new showLogDelegate(log), url + "----此URL以检测过了，自动跳过！", LogLevel.waring);
                     }
                 }
             }
@@ -8725,7 +8725,7 @@ namespace SuperSQLInjection
             }
             catch (Exception e)
             {
-                this.Invoke(new showLogDelegate(log), "发生异常----" + e.Message,LogLevel.error);
+                this.txt_log.Invoke(new showLogDelegate(log), "发生异常----" + e.Message,LogLevel.error);
             }
             Interlocked.Increment(ref this.scanedDomain);
 
@@ -8737,7 +8737,7 @@ namespace SuperSQLInjection
             Injection injection = InjectionTools.testInjection(ourl.ToString(), this.config, this.scanInect_chk_scanError.Checked);
             if (injection.isInjection)
             {
-                this.Invoke(new showLogDelegate(log), ourl + "存在注入点！", LogLevel.success);
+                this.txt_log.Invoke(new showLogDelegate(log), ourl + "存在注入点！", LogLevel.success);
                 injectionURLCount++;
                 injection.url = ourl.ToString();
                 injection.index = injectionURLCount;
@@ -8745,7 +8745,7 @@ namespace SuperSQLInjection
             }
             else
             {
-                this.Invoke(new showLogDelegate(log), ourl + "不存在注入点！", LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), ourl + "不存在注入点！", LogLevel.info);
             }
             Interlocked.Increment(ref this.scanedURLSCount);
 
@@ -10045,7 +10045,7 @@ namespace SuperSQLInjection
                 this.proxy_List = list;
             }
             this.proxy_btn_importProxy.Enabled = true;
-            this.Invoke(new showLogDelegate(log), "导入代理成功，发现代理：" + i + "个！", LogLevel.success);
+            this.txt_log.Invoke(new showLogDelegate(log), "导入代理成功，发现代理：" + i + "个！", LogLevel.success);
 
         }
 
@@ -10255,6 +10255,25 @@ namespace SuperSQLInjection
         private void proxy_ts_btn_proxy_checkNoCheckProxy_Click(object sender, EventArgs e)
         {
             checkNoCheckProxy();
+        }
+
+        private void Main_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop)) {
+                e.Effect = DragDropEffects.All;
+            }
+            else{
+                e.Effect = DragDropEffects.None;
+            }
+    
+        }
+
+        private void Main_DragDrop(object sender, DragEventArgs e)
+        {
+            String path = ((System.Array)e.Data.GetData(DataFormats.FileDrop)).GetValue(0).ToString();
+            this.config = XML.readConfig(path);
+            reloadConfig(this.config);
+            MessageBox.Show("导入配置成功！");
         }
     }
 } 

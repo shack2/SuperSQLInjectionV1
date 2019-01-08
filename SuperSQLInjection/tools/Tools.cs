@@ -820,6 +820,21 @@ namespace tools
             }
             return p;
         }
+         
+        public static decimal getLike2(String body1, String body2)
+        {
+
+            String[] keys1 = Regex.Split(body1, "[^\\u0080-\\uFFFF\\w\\-\\d]+");
+            String[] keys2 = Regex.Split(body2, "[^\\u0080-\\uFFFF\\w\\-\\d]+");
+
+            decimal p = 0;
+            if (keys1.Length > 0)
+            {
+                decimal cc = (decimal)((float)keys2.Length * 100 / keys1.Length);
+                p = decimal.Round(cc, 2);
+            }
+            return p;
+        }
 
         public static String findKeyByStr(String trueString, String falseString, String oldString)
         {

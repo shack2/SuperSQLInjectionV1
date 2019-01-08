@@ -1337,18 +1337,18 @@
             this.data_dbs_tsl_getDBS,
             this.data_dbs_tsl_getTables,
             this.data_dbs_tsl_getColumns});
+            this.data_dbs_ts.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
             this.data_dbs_ts.Location = new System.Drawing.Point(0, 387);
             this.data_dbs_ts.Name = "data_dbs_ts";
             this.data_dbs_ts.Padding = new System.Windows.Forms.Padding(5, 0, 0, 0);
             this.data_dbs_ts.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+            this.data_dbs_ts.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.data_dbs_ts.Size = new System.Drawing.Size(233, 25);
             this.data_dbs_ts.TabIndex = 4;
-            this.data_dbs_ts.Text = "toolStrip1";
             // 
             // data_dbs_tsl_getDBS
             // 
             this.data_dbs_tsl_getDBS.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.data_dbs_tsl_getDBS.Image = ((System.Drawing.Image)(resources.GetObject("data_dbs_tsl_getDBS.Image")));
             this.data_dbs_tsl_getDBS.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.data_dbs_tsl_getDBS.Name = "data_dbs_tsl_getDBS";
             this.data_dbs_tsl_getDBS.Size = new System.Drawing.Size(56, 22);
@@ -1521,7 +1521,6 @@
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
             this.toolStrip1.Size = new System.Drawing.Size(576, 25);
             this.toolStrip1.TabIndex = 5;
-            this.toolStrip1.Text = "toolStrip1";
             this.toolStrip1.TextChanged += new System.EventHandler(this.toolStrip1_TextChanged);
             // 
             // toolStripLabel3
@@ -1597,7 +1596,7 @@
             this.groupBox4.Controls.Add(this.data_dbs_lvw_data);
             this.groupBox4.Location = new System.Drawing.Point(3, 6);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(584, 379);
+            this.groupBox4.Size = new System.Drawing.Size(587, 379);
             this.groupBox4.TabIndex = 1;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "获取数据";
@@ -1611,7 +1610,7 @@
             this.data_dbs_lvw_data.GridLines = true;
             this.data_dbs_lvw_data.Location = new System.Drawing.Point(3, 17);
             this.data_dbs_lvw_data.Name = "data_dbs_lvw_data";
-            this.data_dbs_lvw_data.Size = new System.Drawing.Size(578, 359);
+            this.data_dbs_lvw_data.Size = new System.Drawing.Size(581, 359);
             this.data_dbs_lvw_data.TabIndex = 1;
             this.data_dbs_lvw_data.UseCompatibleStateImageBehavior = false;
             this.data_dbs_lvw_data.View = System.Windows.Forms.View.Details;
@@ -3959,6 +3958,7 @@
             // 
             // Main
             // 
+            this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
@@ -3977,6 +3977,8 @@
             this.Text = "超级SQL注入工具 v1.0 正式版";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Main_FormClosing);
             this.Shown += new System.EventHandler(this.Main_Shown);
+            this.DragDrop += new System.Windows.Forms.DragEventHandler(this.Main_DragDrop);
+            this.DragEnter += new System.Windows.Forms.DragEventHandler(this.Main_DragEnter);
             this.gb_basic.ResumeLayout(false);
             this.gb_basic.PerformLayout();
             this.menuStrip_main.ResumeLayout(false);

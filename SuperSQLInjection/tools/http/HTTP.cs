@@ -271,11 +271,11 @@ namespace SuperSQLInjection.tools
             int sum = 0;
             Proxy cproxy = null;//当前使用代理
             Boolean isupdateEncoding = false;
+            MemoryStream body_data = new MemoryStream();
             try
             {
                 if (port > 0 && port <= 65556)
                 {
-
                     request = request.Replace(Main.setInjectStr, payload);
                     request = StringReplace.strReplaceCenter(main.config, request, main.replaceList);
                     //编码处理
@@ -343,8 +343,7 @@ namespace SuperSQLInjection.tools
 
                         clientSocket.Client.Send(Encoding.UTF8.GetBytes(server.reuqestHeader + "\r\n\r\n"));
                         clientSocket.Client.Send(Encoding.UTF8.GetBytes(server.reuqestBody));
-                        
-                        byte[] responseBody = new byte[1024 * 1000];
+                       
                         int len = 0;
                         //获取header头
                         String tmp = "";
@@ -407,13 +406,17 @@ namespace SuperSQLInjection.tools
                             if (server.headers.ContainsKey(Content_Length))
                             {
                                 int length = int.Parse(server.headers[Content_Length]);
-                                responseBody = new byte[length];
                                 while (sum < length && sw.ElapsedMilliseconds <= timeout)
                                 {
-                                    int readsize = length - sum;
-                                    len = clientSocket.Client.Receive(responseBody, sum, readsize, SocketFlags.None);
+                                    byte[] response_data = new byte[1024];
+                                    int read = (length-sum);
+                                    if (read > 1024) {
+                                        read = 1024;
+                                    }
+                                    len = clientSocket.Client.Receive(response_data, 0, read, SocketFlags.None);
                                     if (len > 0)
                                     {
+                                        body_data.Write(response_data, 0,len);
                                         sum += len;
                                     }
                                     if(len<=0&& sum < length) {
@@ -457,9 +460,16 @@ namespace SuperSQLInjection.tools
                                     int onechunkLen = 0;
                                     while (onechunkLen < chunkedSize && sw.ElapsedMilliseconds <= timeout)
                                     {
-                                        len = clientSocket.Client.Receive(responseBody, sum, chunkedSize - onechunkLen, SocketFlags.None);
+                                        byte[] response_data = new byte[1024];
+                                        int read = chunkedSize - onechunkLen;
+                                        if (read > 1024)
+                                        {
+                                            read = 1024;
+                                        }
+                                        len = clientSocket.Client.Receive(response_data, 0, response_data.Length, SocketFlags.None);
                                         if (len > 0)
                                         {
+                                            body_data.Write(response_data,0, len);
                                             onechunkLen += len;
                                             sum += len;
                                         }
@@ -475,26 +485,30 @@ namespace SuperSQLInjection.tools
                             //connection close方式或未知body长度
                             else
                             {
-                                while (sw.ElapsedMilliseconds <= timeout)
+                                int failed = 0;
+                                while (sw.ElapsedMilliseconds <= timeout && failed <= 3)
                                 {
-                                    if (clientSocket.Client.Poll(timeout, SelectMode.SelectRead))
+                                    bool isok = clientSocket.Client.Poll(timeout, SelectMode.SelectRead);
+                                    if (!isok)
                                     {
-                                        if (clientSocket.Available > 0)
+                                        break;
+                                    }
+                                    int read = clientSocket.Available;
+                                    if (read > 0)
+                                    {
+                                        byte[] response_data = new byte[read];
+                                        len = clientSocket.Client.Receive(response_data, 0, read,SocketFlags.None);
+                                        if (len > 0)
                                         {
-                                            len = clientSocket.Client.Receive(responseBody, sum, (1024 * 200) - sum, SocketFlags.None);
-                                            if (len > 0)
-                                            {
-                                                sum += len;
-                                            }
-                                            else
-                                            {
-                                                Thread.Sleep(WaitTime);
-                                            }
+                                            sum += len;
+                                            body_data.Write(response_data, 0, len);
                                         }
-                                        else
-                                        {
-                                            break;
-                                        }
+
+                                    }
+                                    else
+                                    {
+                                        failed++;
+                                        Thread.Sleep(WaitTime);
                                     }
                                 }
                             }
@@ -511,7 +525,7 @@ namespace SuperSQLInjection.tools
                                     isupdateEncoding = true;//body找编码
                                 }
                                 Encoding encod = Encoding.GetEncoding(encoding);
-                                getBody(ref server, ref responseBody, ref sum, ref encod, ref index);
+                                getBody(ref server, ref body_data, ref encod, ref index);
                                 //修正编码
                                 if (isupdateEncoding)
                                 {
@@ -519,7 +533,7 @@ namespace SuperSQLInjection.tools
                                     if (!String.IsNullOrEmpty(cEncoding))
                                     {
                                         server.encoding = cEncoding;//body找到编码
-                                        getBody(ref server, ref responseBody, ref sum, ref encod, ref index);
+                                        getBody(ref server, ref body_data, ref encod, ref index);
                                     }
 
                                 }
@@ -527,7 +541,7 @@ namespace SuperSQLInjection.tools
                             else {
                                 //指定编码
                                 Encoding encod = Encoding.GetEncoding(encoding);
-                                getBody(ref server, ref responseBody, ref sum, ref encod, ref index);
+                                getBody(ref server, ref body_data, ref encod, ref index);
                             }
                             
                         }
@@ -545,7 +559,7 @@ namespace SuperSQLInjection.tools
                 sw.Stop();
                 server.length = sum;
                 server.runTime = sw.ElapsedMilliseconds;
-
+                body_data.Close();
                 if (clientSocket != null)
                 {
                     clientSocket.Close();
@@ -605,25 +619,25 @@ namespace SuperSQLInjection.tools
             return null;
         }
 
-        private static void getBody(ref ServerInfo server, ref byte[] responseBody, ref int sum, ref Encoding encod, ref String index) {
+        private static void getBody(ref ServerInfo server, ref MemoryStream body_data, ref Encoding encod, ref String index) {
             if (server.headers.ContainsKey(Content_Encoding))
             {
                 if (server.headers[Content_Encoding].IndexOf("gzip") != -1)
                 {
-                    server.body = unGzip(responseBody, sum, encod, index);
+                    server.body = unGzip(ref body_data, encod, index);
                 }
                 else if (server.headers[Content_Encoding].IndexOf("deflate") != -1)
                 {
-                    server.body = unDeflate(responseBody, sum, encod, index);
+                    server.body = unDeflate(ref body_data, encod, index);
                 }
                 else {
-                    server.body = encod.GetString(responseBody, 0,sum);
+                    server.body = encod.GetString(body_data.GetBuffer());
                 }
 
             }
             else
             {
-                server.body = encod.GetString(responseBody, 0, sum);
+                server.body = encod.GetString(body_data.GetBuffer());
             }
         }
 
@@ -645,7 +659,7 @@ namespace SuperSQLInjection.tools
             int sum = 0;
             Proxy cproxy = null;//当前使用代理
             TcpClient clientSocket = null; ;
-
+            MemoryStream body_data = new MemoryStream();
             try
             {
 
@@ -730,13 +744,12 @@ namespace SuperSQLInjection.tools
                         }
                     }
                     server.request = request;
-                    byte[] responseBody = new byte[1024 * 1024 * 10];
                     int len = 0;
                     //获取header头
                     String tmp = "";
 
                     StringBuilder sb = new StringBuilder();
-                    StringBuilder bulider = new StringBuilder();
+                   
                     clientSocket.ReceiveTimeout = timeout - (int)sw.ElapsedMilliseconds;
                     do
                     {
@@ -788,8 +801,6 @@ namespace SuperSQLInjection.tools
                         }
 
 
-
-
                     }
 
 
@@ -797,15 +808,20 @@ namespace SuperSQLInjection.tools
                     if (server.headers.ContainsKey(Content_Length))
                     {
                         int length = int.Parse(server.headers[Content_Length]);
-                        //根据长度申请byte
-                        responseBody = new byte[length];
-
+                        
                         while (sum < length && sw.ElapsedMilliseconds <= timeout)
                         {
-                            len = ssl.Read(responseBody, sum, length - sum);
+                            byte[] response_data = new byte[1024];
+                            int read = length - sum;
+                            if (read > 1024)
+                            {
+                                read = 1024;
+                            }
+                            len = ssl.Read(response_data, sum, read);
                             if (len > 0)
                             {
                                 sum += len;
+                                body_data.Write(response_data, 0, len);
                             }
                             if (len <= 0 && sum < length)
                             {
@@ -851,11 +867,18 @@ namespace SuperSQLInjection.tools
 
                             while (onechunkLen < chunkedSize && sw.ElapsedMilliseconds <= timeout)
                             {
-                                len = ssl.Read(responseBody, sum, chunkedSize - onechunkLen);
+                                byte[] response_data = new byte[1024];
+                                int read = chunkedSize - onechunkLen;
+                                if (read > 1024)
+                                {
+                                    read = 1024;
+                                }
+                                len = ssl.Read(response_data,0, read);
                                 if (len > 0)
                                 {
                                     onechunkLen += len;
                                     sum += len;
+                                    body_data.Write(response_data, 0, len);
                                 }
                                 if (len <= 0 && onechunkLen < chunkedSize)
                                 {
@@ -869,26 +892,29 @@ namespace SuperSQLInjection.tools
                     //connection close方式或未知body长度
                     else
                     {
-                        while (sw.ElapsedMilliseconds <= timeout)
+                        int failed = 0;
+                        while (sw.ElapsedMilliseconds <= timeout&&failed<=3)
                         {
-                            if (clientSocket.Client.Poll(timeout, SelectMode.SelectRead))
+                            bool isok = clientSocket.Client.Poll(timeout, SelectMode.SelectRead);
+                            if (!isok) {
+                                break;
+                            }
+                            int read = clientSocket.Available;
+                            if (read > 0)
                             {
-                                if (clientSocket.Available > 0)
+                                byte[] response_data = new byte[read];
+                                len = ssl.Read(response_data, 0, read);
+                                if (len > 0)
                                 {
-                                    len = ssl.Read(responseBody, sum, (1024 * 200) - sum);
-                                    if (len > 0)
-                                    {
-                                        sum += len;
-                                    }
-                                    else
-                                    {
-                                        Thread.Sleep(WaitTime);
-                                    }
+                                    sum += len;
+                                    body_data.Write(response_data, 0, len);
                                 }
-                                else
-                                {
-                                    break;
-                                }
+                                
+                            }
+                            else
+                            {
+                                failed++;
+                                Thread.Sleep(WaitTime);
                             }
                         }
                     }
@@ -904,7 +930,7 @@ namespace SuperSQLInjection.tools
                             isupdateEncoding = true;//body找编码
                         }
                         Encoding encod = Encoding.GetEncoding(encoding);
-                        getBody(ref server, ref responseBody, ref sum, ref encod, ref index);
+                        getBody(ref server, ref body_data, ref encod, ref index);
                         //修正编码
                         if (isupdateEncoding)
                         {
@@ -912,7 +938,7 @@ namespace SuperSQLInjection.tools
                             if (!String.IsNullOrEmpty(cEncoding))
                             {
                                 server.encoding = cEncoding;//body找到编码
-                                getBody(ref server, ref responseBody, ref sum, ref encod, ref index);
+                                getBody(ref server, ref body_data, ref encod, ref index);
                             }
 
                         }
@@ -920,7 +946,7 @@ namespace SuperSQLInjection.tools
                     else {
                         //指定编码
                         Encoding encod = Encoding.GetEncoding(encoding);
-                        getBody(ref server, ref responseBody, ref sum, ref encod, ref index);
+                        getBody(ref server, ref body_data, ref encod, ref index);
                     }
                 }
 
@@ -935,7 +961,7 @@ namespace SuperSQLInjection.tools
                 sw.Stop();
                 server.length = sum;
                 server.runTime = sw.ElapsedMilliseconds;
-
+                body_data.Close();
                 if (clientSocket != null)
                 {
                     clientSocket.Close();
@@ -961,12 +987,12 @@ namespace SuperSQLInjection.tools
 
         }
 
-        public static String unGzip(byte[] data, int len, Encoding encoding,String index)
+        public static String unGzip(ref MemoryStream ms, Encoding encoding,String index)
         {
 
             String str = "";
-            MemoryStream ms = new MemoryStream(data, 0, len);
-            GZipStream gs = new GZipStream(ms, CompressionMode.Decompress);
+            MemoryStream input = new MemoryStream(ms.GetBuffer());
+            GZipStream gs = new GZipStream(input, CompressionMode.Decompress);
             MemoryStream outbuf = new MemoryStream();
             byte[] block = new byte[1024];
             
@@ -995,19 +1021,20 @@ namespace SuperSQLInjection.tools
             {
                 outbuf.Close();
                 gs.Close();
+                input.Close();
                 ms.Close();
-
+               
             }
             return str;
 
         }
 
-        public static String unDeflate(byte[] data, int len, Encoding encoding, String index)
+        public static String unDeflate(ref MemoryStream ms, Encoding encoding, String index)
         {
 
             String str = "";
-            MemoryStream ms = new MemoryStream(data, 0, len);
-            DeflateStream ds = new DeflateStream(ms, CompressionMode.Decompress);
+            MemoryStream input = new MemoryStream(ms.GetBuffer());
+            DeflateStream ds = new DeflateStream(input, CompressionMode.Decompress);
             MemoryStream outbuf = new MemoryStream();
             byte[] block = new byte[1024];
 
@@ -1036,6 +1063,7 @@ namespace SuperSQLInjection.tools
             {
                 outbuf.Close();
                 ds.Close();
+                input.Close();
                 ms.Close();
 
             }
