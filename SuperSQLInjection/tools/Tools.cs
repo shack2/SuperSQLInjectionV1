@@ -47,6 +47,7 @@ namespace tools
         {
             FileTool.AppendLogToFile("logs/" + DateTime.Now.ToLongDateString() + ".log.txt", log + "----" + DateTime.Now);
         }
+        
         /// <summary>
         /// 随机生成小写字母
         /// </summary>
@@ -58,6 +59,23 @@ namespace tools
             Random rd = new Random();
             for (int i=0;i<len;i++) {
                 char c=(char)rd.Next(97, 122);
+                str.Append(c);
+            }
+            return str.ToString();
+        }
+
+        /// <summary>
+        /// 随机生成小写字母
+        /// </summary>
+        /// <param name="len"></param>
+        /// <returns></returns>
+        public static String RandNum(int len)
+        {
+            StringBuilder str = new StringBuilder();
+            Random rd = new Random();
+            for (int i = 0; i < len; i++)
+            {
+                char c = (char)rd.Next(49, 58);
                 str.Append(c);
             }
             return str.ToString();

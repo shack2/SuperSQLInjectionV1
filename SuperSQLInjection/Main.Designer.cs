@@ -1596,7 +1596,7 @@
             this.groupBox4.Controls.Add(this.data_dbs_lvw_data);
             this.groupBox4.Location = new System.Drawing.Point(3, 6);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(587, 379);
+            this.groupBox4.Size = new System.Drawing.Size(589, 379);
             this.groupBox4.TabIndex = 1;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "获取数据";
@@ -1610,7 +1610,7 @@
             this.data_dbs_lvw_data.GridLines = true;
             this.data_dbs_lvw_data.Location = new System.Drawing.Point(3, 17);
             this.data_dbs_lvw_data.Name = "data_dbs_lvw_data";
-            this.data_dbs_lvw_data.Size = new System.Drawing.Size(581, 359);
+            this.data_dbs_lvw_data.Size = new System.Drawing.Size(583, 359);
             this.data_dbs_lvw_data.TabIndex = 1;
             this.data_dbs_lvw_data.UseCompatibleStateImageBehavior = false;
             this.data_dbs_lvw_data.View = System.Windows.Forms.View.Details;
@@ -2985,8 +2985,6 @@
             // 
             // bypass_txt_replaceTo
             // 
-            this.bypass_txt_replaceTo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.bypass_txt_replaceTo.Location = new System.Drawing.Point(547, 26);
             this.bypass_txt_replaceTo.MaxLength = 500;
             this.bypass_txt_replaceTo.Name = "bypass_txt_replaceTo";
@@ -2996,8 +2994,6 @@
             // bypass_txt_replace
             // 
             this.bypass_txt_replace.AcceptsReturn = true;
-            this.bypass_txt_replace.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.bypass_txt_replace.Location = new System.Drawing.Point(328, 26);
             this.bypass_txt_replace.MaxLength = 500;
             this.bypass_txt_replace.Name = "bypass_txt_replace";
@@ -3176,7 +3172,7 @@
             "",
             "X-Forwarded-For",
             "Remote-Addr",
-            "Client_Ip"});
+            "Client-Ip"});
             this.bypass_cbox_randIPToHeader.Location = new System.Drawing.Point(649, 54);
             this.bypass_cbox_randIPToHeader.Name = "bypass_cbox_randIPToHeader";
             this.bypass_cbox_randIPToHeader.Size = new System.Drawing.Size(156, 20);
