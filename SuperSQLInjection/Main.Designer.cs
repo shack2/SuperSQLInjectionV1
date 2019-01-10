@@ -381,6 +381,7 @@
             this.lbl_info = new System.Windows.Forms.ToolStripStatusLabel();
             this.timer_status = new System.Windows.Forms.Timer(this.components);
             this.timer_scanInjection = new System.Windows.Forms.Timer(this.components);
+            this.data_dbs_tsl_stopGetDatas = new System.Windows.Forms.ToolStripLabel();
             this.gb_basic.SuspendLayout();
             this.menuStrip_main.SuspendLayout();
             this.gb_logo.SuspendLayout();
@@ -1551,7 +1552,8 @@
             this.data_dbs_tsl_getDatas,
             this.data_dbs_tsl_exportDatas,
             this.toolStripLabel2,
-            this.data_dbs_cob_db_encoding});
+            this.data_dbs_cob_db_encoding,
+            this.data_dbs_tsl_stopGetDatas});
             this.toolStrip1.Location = new System.Drawing.Point(0, 387);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
@@ -3989,6 +3991,14 @@
             this.timer_scanInjection.Interval = 1000;
             this.timer_scanInjection.Tick += new System.EventHandler(this.timer_scanInjection_Tick);
             // 
+            // data_dbs_tsl_stopGetDatas
+            // 
+            this.data_dbs_tsl_stopGetDatas.Margin = new System.Windows.Forms.Padding(10, 0, 0, 2);
+            this.data_dbs_tsl_stopGetDatas.Name = "data_dbs_tsl_stopGetDatas";
+            this.data_dbs_tsl_stopGetDatas.Size = new System.Drawing.Size(56, 23);
+            this.data_dbs_tsl_stopGetDatas.Text = "停止获取";
+            this.data_dbs_tsl_stopGetDatas.Click += new System.EventHandler(this.data_dbs_tsl_stopGetDatas_Click);
+            // 
             // Main
             // 
             this.AllowDrop = true;
@@ -4482,6 +4492,7 @@
         private System.Windows.Forms.ToolStrip toolStrip_getVers;
         private System.Windows.Forms.ToolStripButton toolStrip_vers_btn_getVariable;
         private System.Windows.Forms.ToolStripButton toolStrip_vers_btn_stopGetVariable;
+        private System.Windows.Forms.ToolStripLabel data_dbs_tsl_stopGetDatas;
     }
 }
 

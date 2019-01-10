@@ -10292,5 +10292,10 @@ namespace SuperSQLInjection
         {
             StopThread();
         }
+
+        private void data_dbs_tsl_stopGetDatas_Click(object sender, EventArgs e)
+        {
+            StopThread();
+        }
     }
 } 
