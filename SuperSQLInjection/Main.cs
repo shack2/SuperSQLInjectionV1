@@ -298,7 +298,7 @@ namespace SuperSQLInjection
             return sid;
         }
 
-        public static int version = 20190110;
+        public static int version = 20190111;
         public static string versionURL = "http://www.shack2.org/soft/getNewVersion?ENNAME=SSuperSQLInjection&NO=" + URLEncode.UrlEncode(getSid()) + "&VERSION=" + version;
         //检查更新
         public void checkUpdate()
@@ -324,7 +324,7 @@ namespace SuperSQLInjection
                                 filename = versionUpdateURL.Substring(index);
                             }
                             HttpDownloadFile(versionUpdateURL, AppDomain.CurrentDomain.BaseDirectory + filename);
-                            MessageBox.Show("更新成功，请将解压后运行！");
+                            MessageBox.Show("更新成功，请将压缩包解压后运行！");
                         }
 
                         catch (Exception other)
@@ -340,7 +340,7 @@ namespace SuperSQLInjection
             }
             catch (Exception e)
             {
-                this.txt_log.Invoke(new showLogDelegate(log), "更新异常！" + e.Message, LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "无法连接更新服务器！" + e.Message, LogLevel.info);
             }
         }
 
@@ -937,8 +937,8 @@ namespace SuperSQLInjection
 
         }
         public Thread currentThread = null;
-        private void data_cms_tsmi_getVariable_Click(object sender, EventArgs e)
-        {
+
+        private void getVariable() {
             if (stp.InUseThreads == 0)
             {
                 stp.Start();
@@ -951,6 +951,10 @@ namespace SuperSQLInjection
 
                 MessageBox.Show("还有线程未结束，请稍后...");
             }
+        }
+        private void data_cms_tsmi_getVariable_Click(object sender, EventArgs e)
+        {
+            getVariable();
         }
 
         public delegate void setVariableDelegate(String name, String value);
@@ -4503,7 +4507,7 @@ namespace SuperSQLInjection
                 foreach (String columnName in gp.columns)
                 {
                     //取每一列的值
-                    String data_payload = MySQL.getBoolDataPayLoad(columnName, gp.columns[0],gp.dbname,gp.table,gp.limit);
+                    String data_payload = MySQL.getBoolDataPayLoad(columnName,gp.columns,gp.dbname,gp.table,gp.limit);
 
                     String payload_len = MySQL.ver_length.Replace("{data}", data_payload);
 
@@ -4597,7 +4601,7 @@ namespace SuperSQLInjection
                 foreach (String columnName in gp.columns)
                 {
                     //取每一列的值
-                    String data_payload = PostgreSQL.getBoolDataPayLoad(columnName, gp.columns[0], gp.dbname, gp.table, gp.limit);
+                    String data_payload = PostgreSQL.getBoolDataPayLoad(columnName, gp.columns,gp.dbname, gp.table, gp.limit);
 
                     String payload_len = PostgreSQL.ver_length.Replace("{data}", data_payload);
 
@@ -10277,6 +10281,16 @@ namespace SuperSQLInjection
             this.config = XML.readConfig(path);
             reloadConfig(this.config);
             MessageBox.Show("导入配置成功！");
+        }
+
+        private void toolStrip_vers_btn_getVariable_Click(object sender, EventArgs e)
+        {
+            getVariable();
+        }
+
+        private void toolStrip_vers_btn_stopGetVariable_Click(object sender, EventArgs e)
+        {
+            StopThread();
         }
     }
 } 

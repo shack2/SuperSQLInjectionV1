@@ -104,6 +104,9 @@
             this.tab_dataCenter = new System.Windows.Forms.TabPage();
             this.tabC_dataCenter = new System.Windows.Forms.TabControl();
             this.tab_vers = new System.Windows.Forms.TabPage();
+            this.toolStrip_getVers = new System.Windows.Forms.ToolStrip();
+            this.toolStrip_vers_btn_getVariable = new System.Windows.Forms.ToolStripButton();
+            this.toolStrip_vers_btn_stopGetVariable = new System.Windows.Forms.ToolStripButton();
             this.data_lvw_ver = new System.Windows.Forms.ListView();
             this.data_lvw_ver_verName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.data_lvw_ver_val = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -398,6 +401,7 @@
             this.tab_dataCenter.SuspendLayout();
             this.tabC_dataCenter.SuspendLayout();
             this.tab_vers.SuspendLayout();
+            this.toolStrip_getVers.SuspendLayout();
             this.data_cms_vers.SuspendLayout();
             this.tab_dbs.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.spc_dbs)).BeginInit();
@@ -1217,7 +1221,9 @@
             // 
             // tab_vers
             // 
+            this.tab_vers.Controls.Add(this.toolStrip_getVers);
             this.tab_vers.Controls.Add(this.data_lvw_ver);
+            this.tab_vers.ImageKey = "(无)";
             this.tab_vers.Location = new System.Drawing.Point(4, 23);
             this.tab_vers.Name = "tab_vers";
             this.tab_vers.Padding = new System.Windows.Forms.Padding(3);
@@ -1226,6 +1232,36 @@
             this.tab_vers.Text = "环境变量";
             this.tab_vers.UseVisualStyleBackColor = true;
             // 
+            // toolStrip_getVers
+            // 
+            this.toolStrip_getVers.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.toolStrip_getVers.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStrip_vers_btn_getVariable,
+            this.toolStrip_vers_btn_stopGetVariable});
+            this.toolStrip_getVers.Location = new System.Drawing.Point(3, 3);
+            this.toolStrip_getVers.Name = "toolStrip_getVers";
+            this.toolStrip_getVers.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+            this.toolStrip_getVers.Size = new System.Drawing.Size(812, 25);
+            this.toolStrip_getVers.TabIndex = 1;
+            // 
+            // toolStrip_vers_btn_getVariable
+            // 
+            this.toolStrip_vers_btn_getVariable.Image = ((System.Drawing.Image)(resources.GetObject("toolStrip_vers_btn_getVariable.Image")));
+            this.toolStrip_vers_btn_getVariable.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStrip_vers_btn_getVariable.Name = "toolStrip_vers_btn_getVariable";
+            this.toolStrip_vers_btn_getVariable.Size = new System.Drawing.Size(100, 22);
+            this.toolStrip_vers_btn_getVariable.Text = "获取环境变量";
+            this.toolStrip_vers_btn_getVariable.Click += new System.EventHandler(this.toolStrip_vers_btn_getVariable_Click);
+            // 
+            // toolStrip_vers_btn_stopGetVariable
+            // 
+            this.toolStrip_vers_btn_stopGetVariable.Image = global::SuperSQLInjection.Properties.Resources.stop;
+            this.toolStrip_vers_btn_stopGetVariable.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStrip_vers_btn_stopGetVariable.Name = "toolStrip_vers_btn_stopGetVariable";
+            this.toolStrip_vers_btn_stopGetVariable.Size = new System.Drawing.Size(76, 22);
+            this.toolStrip_vers_btn_stopGetVariable.Text = "停止获取";
+            this.toolStrip_vers_btn_stopGetVariable.Click += new System.EventHandler(this.toolStrip_vers_btn_stopGetVariable_Click);
+            // 
             // data_lvw_ver
             // 
             this.data_lvw_ver.CheckBoxes = true;
@@ -1233,11 +1269,11 @@
             this.data_lvw_ver_verName,
             this.data_lvw_ver_val});
             this.data_lvw_ver.ContextMenuStrip = this.data_cms_vers;
-            this.data_lvw_ver.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.data_lvw_ver.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.data_lvw_ver.FullRowSelect = true;
-            this.data_lvw_ver.Location = new System.Drawing.Point(3, 3);
+            this.data_lvw_ver.Location = new System.Drawing.Point(3, 31);
             this.data_lvw_ver.Name = "data_lvw_ver";
-            this.data_lvw_ver.Size = new System.Drawing.Size(812, 412);
+            this.data_lvw_ver.Size = new System.Drawing.Size(812, 384);
             this.data_lvw_ver.TabIndex = 0;
             this.data_lvw_ver.UseCompatibleStateImageBehavior = false;
             this.data_lvw_ver.View = System.Windows.Forms.View.Details;
@@ -1255,10 +1291,10 @@
             // data_cms_vers
             // 
             this.data_cms_vers.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.data_cms_tsmi_getVariable,
-            this.data_cms_tsmi_copyVerValue,
             this.data_cms_tsmi_selectAllVers,
             this.data_cms_tsmi_selectReversVers,
+            this.data_cms_tsmi_getVariable,
+            this.data_cms_tsmi_copyVerValue,
             this.data_cms_tsmi_stopGetVariable});
             this.data_cms_vers.Name = "data_cms_getVariable";
             this.data_cms_vers.Size = new System.Drawing.Size(149, 114);
@@ -1596,7 +1632,7 @@
             this.groupBox4.Controls.Add(this.data_dbs_lvw_data);
             this.groupBox4.Location = new System.Drawing.Point(3, 6);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(589, 379);
+            this.groupBox4.Size = new System.Drawing.Size(591, 379);
             this.groupBox4.TabIndex = 1;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "获取数据";
@@ -1610,7 +1646,7 @@
             this.data_dbs_lvw_data.GridLines = true;
             this.data_dbs_lvw_data.Location = new System.Drawing.Point(3, 17);
             this.data_dbs_lvw_data.Name = "data_dbs_lvw_data";
-            this.data_dbs_lvw_data.Size = new System.Drawing.Size(583, 359);
+            this.data_dbs_lvw_data.Size = new System.Drawing.Size(585, 359);
             this.data_dbs_lvw_data.TabIndex = 1;
             this.data_dbs_lvw_data.UseCompatibleStateImageBehavior = false;
             this.data_dbs_lvw_data.View = System.Windows.Forms.View.Details;
@@ -1662,6 +1698,7 @@
             this.myicon_list.Images.SetKeyName(9, "scan.png");
             this.myicon_list.Images.SetKeyName(10, "Ilog.png");
             this.myicon_list.Images.SetKeyName(11, "proxy.png");
+            this.myicon_list.Images.SetKeyName(12, "vers.png");
             // 
             // tab_injectCenter
             // 
@@ -4001,6 +4038,9 @@
             this.tab_dataCenter.ResumeLayout(false);
             this.tabC_dataCenter.ResumeLayout(false);
             this.tab_vers.ResumeLayout(false);
+            this.tab_vers.PerformLayout();
+            this.toolStrip_getVers.ResumeLayout(false);
+            this.toolStrip_getVers.PerformLayout();
             this.data_cms_vers.ResumeLayout(false);
             this.tab_dbs.ResumeLayout(false);
             this.spc_dbs.Panel1.ResumeLayout(false);
@@ -4439,6 +4479,9 @@
         private System.Windows.Forms.ColumnHeader col_proxy;
         private System.Windows.Forms.ToolStripMenuItem proxy_checkNoCheckProxy;
         private System.Windows.Forms.ToolStripLabel proxy_ts_btn_proxy_checkNoCheckProxy;
+        private System.Windows.Forms.ToolStrip toolStrip_getVers;
+        private System.Windows.Forms.ToolStripButton toolStrip_vers_btn_getVariable;
+        private System.Windows.Forms.ToolStripButton toolStrip_vers_btn_stopGetVariable;
     }
 }
 
