@@ -215,7 +215,7 @@ namespace SuperSQLInjection
             foreach (String path in clist)
             {
                 Config config = XML.readConfig(path);
-                this.Invoke(new delegatelogInject(logInjectTolvw), config);
+                this.lvw_injectLog.Invoke(new delegatelogInject(logInjectTolvw), config);
             }
         }
 
@@ -303,7 +303,7 @@ namespace SuperSQLInjection
             return sid;
         }
 
-        public static int version = 20190112;
+        public static int version = 20190113;
         public static string versionURL = "http://www.shack2.org/soft/getNewVersion?ENNAME=SSuperSQLInjection&NO=" + URLEncode.UrlEncode(getSid()) + "&VERSION=" + version;
         //检查更新
         public void checkUpdate()
@@ -647,7 +647,7 @@ namespace SuperSQLInjection
             String columns = MySQL.creatMySQLColumnsStrByUnion(config.columnsCount, config.showColumn, config.unionFill, column_list, null, null, -1);
             String pay_load = MySQL.union_value.Replace("{data}", columns);
             String result = getOneDataByUnionOrError(pay_load);
-            this.Invoke(new setVariableDelegate(setVariable), sv[0], result);
+            this.data_lvw_ver.Invoke(new setVariableDelegate(setVariable), sv[0], result);
             Interlocked.Increment(ref this.currentDataCount);
         }
 
@@ -657,7 +657,7 @@ namespace SuperSQLInjection
             String[] sv = v.ToString().Split(':');
             String pay_load = SQLServer.getUnionDataValue(config.columnsCount, config.showColumn, config.unionFill, sv[1]);
             String result = getOneDataByUnionOrError(pay_load);
-            this.Invoke(new setVariableDelegate(setVariable), sv[0], result);
+            this.data_lvw_ver.Invoke(new setVariableDelegate(setVariable), sv[0], result);
             Interlocked.Increment(ref this.currentDataCount);
         }
 
@@ -669,7 +669,7 @@ namespace SuperSQLInjection
             column_list.Add(sv[1]);
             String pay_load = PostgreSQL.getUnionDataValue(config.columnsCount, config.showColumn, sv[1], "", "", "");
             String result = getOneDataByUnionOrError(pay_load);
-            this.Invoke(new setVariableDelegate(setVariable), sv[0], result);
+            this.data_lvw_ver.Invoke(new setVariableDelegate(setVariable), sv[0], result);
             Interlocked.Increment(ref this.currentDataCount);
         }
 
@@ -679,7 +679,7 @@ namespace SuperSQLInjection
             String[] sv = v.ToString().Split(':');
             String pay_load = Oracle.getUnionDataValue(config.columnsCount, config.showColumn, sv[1], "", "", "");
             String result = getOneDataByUnionOrError(pay_load);
-            this.Invoke(new setVariableDelegate(setVariable), sv[0], result);
+            this.data_lvw_ver.Invoke(new setVariableDelegate(setVariable), sv[0], result);
             Interlocked.Increment(ref this.currentDataCount);
         }
         public void getVariablesByUnionByDB2(Object v)
@@ -687,7 +687,7 @@ namespace SuperSQLInjection
             String[] sv = v.ToString().Split(':');
             String pay_load = DB2.getUnionDataValue(config.unionFillTemplate, sv[1], "", "", "");
             String result = getOneDataByUnionOrError(pay_load);
-            this.Invoke(new setVariableDelegate(setVariable), sv[0], result);
+            this.data_lvw_ver.Invoke(new setVariableDelegate(setVariable), sv[0], result);
             Interlocked.Increment(ref this.currentDataCount);
         }
 
@@ -696,7 +696,7 @@ namespace SuperSQLInjection
             String[] sv = v.ToString().Split(':');
             String pay_load = SQLite.getUnionDataValue(config.columnsCount, config.showColumn, config.unionFill, sv[1]);
             String result = getOneDataByUnionOrError(pay_load);
-            this.Invoke(new setVariableDelegate(setVariable), sv[0], result);
+            this.data_lvw_ver.Invoke(new setVariableDelegate(setVariable), sv[0], result);
             Interlocked.Increment(ref this.currentDataCount);
         }
 
@@ -709,7 +709,7 @@ namespace SuperSQLInjection
             String pay_load = MySQL.error_value.Replace("{data}", columns);
             String result = getOneDataByUnionOrError(pay_load);
             result = HttpUtility.HtmlDecode(result);
-            this.Invoke(new setVariableDelegate(setVariable), sv[0], result);
+            this.data_lvw_ver.Invoke(new setVariableDelegate(setVariable), sv[0], result);
             Interlocked.Increment(ref this.currentDataCount);
         }
 
@@ -721,7 +721,7 @@ namespace SuperSQLInjection
             String pay_load = PostgreSQL.error_value.Replace("{data}", sv[1]);
             String result = getOneDataByUnionOrError(pay_load);
             result = HttpUtility.HtmlDecode(result);
-            this.Invoke(new setVariableDelegate(setVariable), sv[0], result);
+            this.data_lvw_ver.Invoke(new setVariableDelegate(setVariable), sv[0], result);
             Interlocked.Increment(ref this.currentDataCount);
         }
 
@@ -734,7 +734,7 @@ namespace SuperSQLInjection
             String result = getOneDataByUnionOrError(pay_load);
             //错误显示会HTML编码，所以需要HTML解码
             result = HttpUtility.HtmlDecode(result);
-            this.Invoke(new setVariableDelegate(setVariable), sv[0], result);
+            this.data_lvw_ver.Invoke(new setVariableDelegate(setVariable), sv[0], result);
             Interlocked.Increment(ref this.currentDataCount);
         }
 
@@ -746,7 +746,7 @@ namespace SuperSQLInjection
             String pay_load = Oracle.getErrorDataValue(sv[1], "", "", "");
             String result = getOneHexDataByUnionOrError(pay_load);
             result = HttpUtility.HtmlDecode(result);
-            this.Invoke(new setVariableDelegate(setVariable), sv[0], result);
+            this.data_lvw_ver.Invoke(new setVariableDelegate(setVariable), sv[0], result);
             Interlocked.Increment(ref this.currentDataCount);
         }
 
@@ -1006,7 +1006,7 @@ namespace SuperSQLInjection
                     String tmp_va_payload = va_payload.Replace("{index}", i + "");
                     int ascii = getValue(tmp_va_payload, 32, 126);
                     value += ((char)ascii).ToString();
-                    this.Invoke(new setVariableDelegate(setVariable), vs[0], value);
+                    this.data_lvw_ver.Invoke(new setVariableDelegate(setVariable), vs[0], value);
                 }
                 this.txt_log.Invoke(new showLogDelegate(log), vs[0] + "值为：" + value, LogLevel.info);
 
@@ -1038,7 +1038,7 @@ namespace SuperSQLInjection
                     String tmp_va_payload = va_payload.Replace("{index}", i + "");
                     int ascii = getValue(tmp_va_payload, 32, 126);
                     value += ((char)ascii).ToString();
-                    this.Invoke(new setVariableDelegate(setVariable), vs[0], value);
+                    this.data_lvw_ver.Invoke(new setVariableDelegate(setVariable), vs[0], value);
                 }
                 this.txt_log.Invoke(new showLogDelegate(log), vs[0] + "值为：" + value, LogLevel.info);
 
@@ -1071,7 +1071,7 @@ namespace SuperSQLInjection
                     String tmp_va_payload = va_payload.Replace("{index}", i + "");
                     int ascii = getValue(tmp_va_payload, 32, 126);
                     value += ((char)ascii).ToString();
-                    this.Invoke(new setVariableDelegate(setVariable), vs[0], value);
+                    this.data_lvw_ver.Invoke(new setVariableDelegate(setVariable), vs[0], value);
                 }
                 this.txt_log.Invoke(new showLogDelegate(log), vs[0] + "值为：" + value, LogLevel.info);
 
@@ -1106,7 +1106,7 @@ namespace SuperSQLInjection
                     String tmp_va_payload = va_payload.Replace("{index}", i + "");
                     int ascii = getValue(tmp_va_payload, 32, 126);
                     value += ((char)ascii).ToString();
-                    this.Invoke(new setVariableDelegate(setVariable), vs[0], value);
+                    this.data_lvw_ver.Invoke(new setVariableDelegate(setVariable), vs[0], value);
                 }
                 this.txt_log.Invoke(new showLogDelegate(log), vs[0] + "值为：" + value, LogLevel.info);
 
@@ -1144,7 +1144,7 @@ namespace SuperSQLInjection
                     int unicode = getValue(SQLServer.getBoolDataBySleep(SQLServer.bool_value.Replace("{data}", unicode_data_payload), config.maxTime), 32, 126);
                     //设置值,这里由于是unicode值，需要转换 
                     value += Tools.unHexByUnicode(unicode, config.db_encoding);
-                    this.Invoke(new setVariableDelegate(setVariable), vs[0], value);
+                    this.data_lvw_ver.Invoke(new setVariableDelegate(setVariable), vs[0], value);
 
                 }
                 this.txt_log.Invoke(new showLogDelegate(log), vs[0] + "值为：" + value, LogLevel.info);
@@ -1182,7 +1182,7 @@ namespace SuperSQLInjection
                     //设置值,这里由于是unicode值，需要转换 
                     value += Tools.unHexByUnicode(unicode, config.db_encoding);
 
-                    this.Invoke(new setVariableDelegate(setVariable), vs[0], value);
+                    this.data_lvw_ver.Invoke(new setVariableDelegate(setVariable), vs[0], value);
                 }
 
                 this.txt_log.Invoke(new showLogDelegate(log), vs[0] + "值为：" + value, LogLevel.info);
@@ -1218,7 +1218,7 @@ namespace SuperSQLInjection
                     String dp = va_payload.Replace("{index}", i.ToString());
                     int ascii = getValue(dp, 32, 126);
                     value += (char)ascii;
-                    this.Invoke(new setVariableDelegate(setVariable), vs[0], value);
+                    this.data_lvw_ver.Invoke(new setVariableDelegate(setVariable), vs[0], value);
                 }
                 this.txt_log.Invoke(new showLogDelegate(log), vs[0] + "值为：" + value, LogLevel.info);
 
@@ -1253,7 +1253,7 @@ namespace SuperSQLInjection
                     String dp = va_payload.Replace("{index}", i.ToString());
                     int ascii = getValue(dp, 32, 126);
                     value += (char)ascii;
-                    this.Invoke(new setVariableDelegate(setVariable), vs[0], value);
+                    this.data_lvw_ver.Invoke(new setVariableDelegate(setVariable), vs[0], value);
                 }
                 this.txt_log.Invoke(new showLogDelegate(log), vs[0] + "值为：" + value, LogLevel.info);
 
@@ -1288,7 +1288,7 @@ namespace SuperSQLInjection
                     String dp = va_payload.Replace("{index}", i.ToString());
                     int ascii = getValue(dp, 32, 126);
                     value += (char)ascii;
-                    this.Invoke(new setVariableDelegate(setVariable), vs[0], value);
+                    this.data_lvw_ver.Invoke(new setVariableDelegate(setVariable), vs[0], value);
                 }
                 this.txt_log.Invoke(new showLogDelegate(log), vs[0] + "值为：" + value, LogLevel.info);
 
@@ -1368,9 +1368,10 @@ namespace SuperSQLInjection
                     String tmp_va_payload = va_payload.Replace("{index}", i + "");
                     int ascii = getValue(tmp_va_payload, 32, 126);
                     value += ((char)ascii).ToString();
+                    this.Invoke(new setDBToTreeListDelegate(setDBToTreeList),db_index,value);
                 }
                 this.txt_log.Invoke(new showLogDelegate(log), "数据库" + db_index + "的名称为：" + value, LogLevel.info);
-                this.Invoke(new addDBToTreeListDelegate(addDBToTreeList), value);
+                
 
             }
             catch (Exception e)
@@ -1421,9 +1422,10 @@ namespace SuperSQLInjection
                     String tmp_va_payload = va_payload.Replace("{index}", i + "");
                     int ascii = getValue(tmp_va_payload, 32, 126);
                     value += ((char)ascii).ToString();
+                    this.Invoke(new setDBToTreeListDelegate(setDBToTreeList), db_index, value);
                 }
                 this.txt_log.Invoke(new showLogDelegate(log), "数据库" + db_index + "的名称为：" + value, LogLevel.info);
-                this.Invoke(new addDBToTreeListDelegate(addDBToTreeList), value);
+                
 
             }
             catch (Exception e)
@@ -1478,9 +1480,10 @@ namespace SuperSQLInjection
                             break;
                         }
                     }
+                    this.Invoke(new setDBToTreeListDelegate(setDBToTreeList), db_index-1, value);
                 }
                 this.txt_log.Invoke(new showLogDelegate(log), "数据库" + db_index + "的名称为：" + value, LogLevel.info);
-                this.Invoke(new addDBToTreeListDelegate(addDBToTreeList), value);
+               
 
             }
             catch (Exception e)
@@ -1543,9 +1546,9 @@ namespace SuperSQLInjection
                     {
                         value += (char)Tools.convertToInt(unicodes.ToString());
                     }
+                    this.Invoke(new setDBToTreeListDelegate(setDBToTreeList), db_index-1, value);
                 }
                 this.txt_log.Invoke(new showLogDelegate(log), "数据库" + db_index + "的名称为：" + value, LogLevel.info);
-                this.Invoke(new addDBToTreeListDelegate(addDBToTreeList), value);
 
             }
             catch (Exception e)
@@ -1586,9 +1589,10 @@ namespace SuperSQLInjection
                     String tmp_va_payload = va_payload.Replace("{index}", i + "");
                     int ascii = getValue(tmp_va_payload, 32, 126);
                     value += ((char)ascii).ToString();
+                    this.Invoke(new setDBToTreeListDelegate(setDBToTreeList), db_index-1,value);
                 }
                 this.txt_log.Invoke(new showLogDelegate(log), "数据库" + db_index + "的名称为：" + value, LogLevel.info);
-                this.Invoke(new addDBToTreeListDelegate(addDBToTreeList), value);
+                
 
             }
             catch (Exception e)
@@ -1629,9 +1633,10 @@ namespace SuperSQLInjection
                     String tmp_va_payload = va_payload.Replace("{index}", i + "");
                     int ascii = getValue(tmp_va_payload, 32, 126);
                     value += ((char)ascii).ToString();
+                    this.Invoke(new setDBToTreeListDelegate(setDBToTreeList), db_index-1, value);
                 }
                 this.txt_log.Invoke(new showLogDelegate(log), "数据库" + db_index + "的名称为：" + value, LogLevel.info);
-                this.Invoke(new addDBToTreeListDelegate(addDBToTreeList), value);
+              
 
             }
             catch (Exception e)
@@ -1882,9 +1887,10 @@ namespace SuperSQLInjection
                     String tmp_va_payload = va_payload.Replace("{index}", i + "");
                     int ascii = getValue(tmp_va_payload, 0, 128);
                     value += ((char)ascii).ToString();
+                    this.data_tvw_dbs.Invoke(new setNodeToTreeListDelegate(setNodeToTreeList), sn.tn, sn.limit,value);
                 }
                 this.txt_log.Invoke(new showLogDelegate(log), "数据库" + sn.dbname + "发现表：" + value, LogLevel.info);
-                this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, value, "table");
+                
 
             }
             catch (Exception e)
@@ -1934,9 +1940,10 @@ namespace SuperSQLInjection
                     String tmp_va_payload = va_payload.Replace("{index}", i + "");
                     int ascii = getValue(tmp_va_payload, 0, 128);
                     value += ((char)ascii).ToString();
+                    this.data_tvw_dbs.Invoke(new setNodeToTreeListDelegate(setNodeToTreeList), sn.tn, sn.limit, value);
                 }
                 this.txt_log.Invoke(new showLogDelegate(log), "数据库" + sn.dbname + "发现表：" + value, LogLevel.info);
-                this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, value, "table");
+              
 
             }
             catch (Exception e)
@@ -1972,10 +1979,10 @@ namespace SuperSQLInjection
                     String tmp_va_payload = va_payload.Replace("{index}", i + "");
                     int ascii = getValue(tmp_va_payload, 0, 128);
                     value += ((char)ascii).ToString();
+                    this.data_tvw_dbs.Invoke(new setNodeToTreeListDelegate(setNodeToTreeList), sn.tn, sn.limit-1, value);
                 }
                 this.txt_log.Invoke(new showLogDelegate(log), "数据库" + sn.dbname + "发现表：" + value, LogLevel.info);
-                this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, value, "table");
-
+               
             }
             catch (Exception e)
             {
@@ -2009,9 +2016,9 @@ namespace SuperSQLInjection
                     String tmp_va_payload = va_payload.Replace("{index}", i + "");
                     int ascii = getValue(tmp_va_payload, 0, 128);
                     value += ((char)ascii).ToString();
+                    this.data_tvw_dbs.Invoke(new setNodeToTreeListDelegate(setNodeToTreeList), sn.tn, sn.limit - 1, value);
                 }
                 this.txt_log.Invoke(new showLogDelegate(log), "数据库" + sn.dbname + "发现表：" + value, LogLevel.info);
-                this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, value, "table");
 
             }
             catch (Exception e)
@@ -2046,9 +2053,9 @@ namespace SuperSQLInjection
                     String tmp_va_payload = va_payload.Replace("{index}", i + "");
                     int ascii = getValue(tmp_va_payload, 0, 128);
                     value += ((char)ascii).ToString();
+                    this.data_tvw_dbs.Invoke(new setNodeToTreeListDelegate(setNodeToTreeList), sn.tn, sn.limit, value);
                 }
                 this.txt_log.Invoke(new showLogDelegate(log), "数据库" + sn.dbname + "发现表：" + value, LogLevel.info);
-                this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, value, "table");
 
             }
             catch (Exception e)
@@ -2103,9 +2110,9 @@ namespace SuperSQLInjection
                     {
                         value += (char)Tools.convertToInt(unicodes.ToString());
                     }
+                    this.data_tvw_dbs.Invoke(new setNodeToTreeListDelegate(setNodeToTreeList), sn.tn, sn.limit, value);
                 }
                 this.txt_log.Invoke(new showLogDelegate(log), "数据库" + sn.dbname + "发现表：" + value, LogLevel.info);
-                this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, value, "table");
 
             }
             catch (Exception e)
@@ -2147,12 +2154,10 @@ namespace SuperSQLInjection
                             break;
                         }
                     }
-
+                    this.data_tvw_dbs.Invoke(new setNodeToTreeListDelegate(setNodeToTreeList), sn.tn, sn.limit, value);
 
                 }
                 this.txt_log.Invoke(new showLogDelegate(log), "数据库" + sn.dbname + "发现表：" + value, LogLevel.info);
-                this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, value, "table");
-
             }
             catch (Exception e)
             {
@@ -2313,6 +2318,14 @@ namespace SuperSQLInjection
             Interlocked.Increment(ref this.currentTableCount);
         }
 
+        delegate void setNodeToTreeListDelegate(TreeNode tn, int index, String text);
+
+        public void setNodeToTreeList(TreeNode tn,int index,String text)
+        {
+            TreeNode stn = tn.Nodes[index];
+            stn.Text = text;
+        }
+
 
         delegate void addNodeToTreeListDelegate(TreeNode tn, String text, String type);
 
@@ -2437,6 +2450,13 @@ namespace SuperSQLInjection
             Boolean exists = Tools.isTrue(server, config.key, config.reverseKey, config.keyType, config.injectHTTPCode);
             return exists;
 
+        }
+        
+        delegate void setDBToTreeListDelegate(int index,String dbname);
+        public void setDBToTreeList(int index, String dbname)
+        {
+            TreeNode tn=this.data_tvw_dbs.Nodes[index];
+            tn.Text = dbname;
         }
 
         delegate void addDBToTreeListDelegate(String dbName);
@@ -2886,11 +2906,13 @@ namespace SuperSQLInjection
 
                     this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，我发现了" + db_len + "个数据库！", LogLevel.info);
                     this.dbsCount = db_len;
+
                     if (db_len > 0)
                     {
                         for (int j = 0; j < db_len; j++)
                         {
                             //获取对应的数据库
+                            this.data_tvw_dbs.Invoke(new addDBToTreeListDelegate(addDBToTreeList), "");
                             stp.QueueWorkItem<object>(getDBNameByBoolByMySQL, j);
                         }
                         stp.WaitForIdle();
@@ -2917,6 +2939,7 @@ namespace SuperSQLInjection
                     {
                         for (int j = 1; j <= db_len; j++)
                         {
+                            this.data_tvw_dbs.Invoke(new addDBToTreeListDelegate(addDBToTreeList), "");
                             //获取对应的数据库
                             if (KeyType.Time.Equals(config.keyType))
                             {
@@ -2946,6 +2969,7 @@ namespace SuperSQLInjection
                         for (int j = 1; j <= db_len; j++)
                         {
                             //获取对应的数据库
+                            this.data_tvw_dbs.Invoke(new addDBToTreeListDelegate(addDBToTreeList), "");
                             stp.QueueWorkItem<object>(getDBNameByBoolByOracle, j);
                         }
                         stp.WaitForIdle();
@@ -2974,6 +2998,7 @@ namespace SuperSQLInjection
                         for (int j = 0; j < db_len; j++)
                         {
                             //获取对应的数据库
+                            this.data_tvw_dbs.Invoke(new addDBToTreeListDelegate(addDBToTreeList), "");
                             stp.QueueWorkItem<object>(getDBNameByBoolByPostgreSQL, j);
                         }
                         stp.WaitForIdle();
@@ -2995,6 +3020,7 @@ namespace SuperSQLInjection
                         for (int j = 1; j <= db_len; j++)
                         {
                             //获取对应的数据库
+                            this.data_tvw_dbs.Invoke(new addDBToTreeListDelegate(addDBToTreeList), "");
                             stp.QueueWorkItem<object>(getDBNameByBoolByDB2, j);
                         }
                         stp.WaitForIdle();
@@ -3121,6 +3147,7 @@ namespace SuperSQLInjection
                         sn.tn = tn;
                         sn.limit = i;
                         sn.dbname = dbname;
+                        this.data_tvw_dbs.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), tn, "", "table");
                         stp.QueueWorkItem<SelectNode>(getTableNameValueByBoolByMySQL, sn);
                     }
                     stp.WaitForIdle();
@@ -3142,6 +3169,7 @@ namespace SuperSQLInjection
                         sn.tn = tn;
                         sn.limit = i;
                         sn.dbname = dbname;
+                        this.data_tvw_dbs.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), tn, "", "table");
                         if (config.keyType.Equals(KeyType.Time))
                         {
                             stp.QueueWorkItem<SelectNode>(getTableNameValueByBoolBySQLServerSleep, sn);
@@ -3164,6 +3192,7 @@ namespace SuperSQLInjection
                         sn.tn = tn;
                         sn.limit = i;
                         sn.dbname = dbname;
+                        this.data_tvw_dbs.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), tn, "", "table");
                         stp.QueueWorkItem<SelectNode>(getTableNameValueByBoolByOracle, sn);
                     }
                     stp.WaitForIdle();
@@ -3187,6 +3216,7 @@ namespace SuperSQLInjection
                         sn.tn = tn;
                         sn.limit = i;
                         sn.dbname = dbname;
+                        this.data_tvw_dbs.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), tn, "", "table");
                         stp.QueueWorkItem<SelectNode>(getTableNameValueByBoolByPostgreSQL, sn);
                     }
                     stp.WaitForIdle();
@@ -3201,6 +3231,7 @@ namespace SuperSQLInjection
                         sn.tn = tn;
                         sn.limit = i;
                         sn.dbname = dbname;
+                        this.data_tvw_dbs.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), tn, "", "table");
                         stp.QueueWorkItem<SelectNode>(getTableNameValueByBoolByDB2, sn);
                     }
                     stp.WaitForIdle();
@@ -3214,6 +3245,7 @@ namespace SuperSQLInjection
                         SelectNode sn = new SelectNode();
                         sn.tn = tn;
                         sn.limit = i;
+                        this.data_tvw_dbs.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), tn, "", "table");
                         stp.QueueWorkItem<SelectNode>(getTableNameValueByBoolBySQLite, sn);
                     }
                     stp.WaitForIdle();
@@ -3596,9 +3628,9 @@ namespace SuperSQLInjection
                     String tmp_va_payload = va_payload.Replace("{index}", i + "");
                     int ascii = getValue(tmp_va_payload, 0, 128);
                     value += ((char)ascii).ToString();
+                    this.data_tvw_dbs.Invoke(new setNodeToTreeListDelegate(setNodeToTreeList), sn.tn, sn.limit, value);
                 }
                 this.txt_log.Invoke(new showLogDelegate(log), "表" + sn.tableName + "发现列：" + value, LogLevel.info);
-                this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, value, "column");
 
             }
             catch (Exception e)
@@ -3645,9 +3677,9 @@ namespace SuperSQLInjection
                     String tmp_va_payload = va_payload.Replace("{index}", i + "");
                     int ascii = getValue(tmp_va_payload, 0, 128);
                     value += ((char)ascii).ToString();
+                    this.data_tvw_dbs.Invoke(new setNodeToTreeListDelegate(setNodeToTreeList), sn.tn, sn.limit, value);
                 }
                 this.txt_log.Invoke(new showLogDelegate(log), "表" + sn.tableName + "发现列：" + value, LogLevel.info);
-                this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, value, "column");
 
             }
             catch (Exception e)
@@ -3690,10 +3722,10 @@ namespace SuperSQLInjection
                             break;
                         }
                     }
-
+                    this.data_tvw_dbs.Invoke(new setNodeToTreeListDelegate(setNodeToTreeList), sn.tn, sn.limit, value);
                 }
                 this.txt_log.Invoke(new showLogDelegate(log), "表" + sn.tableName + "发现列：" + value, LogLevel.info);
-                this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, value, "column");
+               
 
             }
             catch (Exception e)
@@ -3748,9 +3780,9 @@ namespace SuperSQLInjection
                     {
                         value += (char)Tools.convertToInt(unicodes.ToString());
                     }
+                    this.data_tvw_dbs.Invoke(new setNodeToTreeListDelegate(setNodeToTreeList), sn.tn, sn.limit, value);
                 }
                 this.txt_log.Invoke(new showLogDelegate(log), "表" + sn.tableName + "发现列：" + value, LogLevel.info);
-                this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, value, "column");
 
             }
             catch (Exception e)
@@ -3785,9 +3817,9 @@ namespace SuperSQLInjection
                     String tmp_va_payload = va_payload.Replace("{index}", i + "");
                     int ascii = getValue(tmp_va_payload, 0, 128);
                     value += ((char)ascii).ToString();
+                    this.data_tvw_dbs.Invoke(new setNodeToTreeListDelegate(setNodeToTreeList), sn.tn, sn.limit - 1, value);
                 }
                 this.txt_log.Invoke(new showLogDelegate(log), "表" + sn.tableName + "发现列：" + value, LogLevel.info);
-                this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, value, "column");
 
             }
             catch (Exception e)
@@ -3821,9 +3853,9 @@ namespace SuperSQLInjection
                     String tmp_va_payload = va_payload.Replace("{index}", i + "");
                     int ascii = getValue(tmp_va_payload, 0, 128);
                     value += ((char)ascii).ToString();
+                    this.data_tvw_dbs.Invoke(new setNodeToTreeListDelegate(setNodeToTreeList), sn.tn, sn.limit - 1, value);
                 }
                 this.txt_log.Invoke(new showLogDelegate(log), "表" + sn.tableName + "发现列：" + value, LogLevel.info);
-                this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, value, "column");
 
             }
             catch (Exception e)
@@ -3862,7 +3894,6 @@ namespace SuperSQLInjection
                 this.txt_log.Invoke(new showLogDelegate(log), "表" + sn.tableName + "发现列：" + String.Join(",", columns), LogLevel.info);
                 foreach (String column in columns)
                 {
-
                     this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, column, "column");
                 }
 
@@ -4126,6 +4157,7 @@ namespace SuperSQLInjection
                                     sn.limit = i;
                                     sn.tableName = tableName;
                                     sn.dbname = dbName;
+                                    this.data_tvw_dbs.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), ctn, "", "column");
                                     stp.QueueWorkItem<SelectNode>(getColumnNameByBoolByMySQL, sn);
                                 }
                                 stp.WaitForIdle();
@@ -4148,6 +4180,7 @@ namespace SuperSQLInjection
                                     sn.limit = i;
                                     sn.tableName = tableName;
                                     sn.dbname = dbName;
+                                    this.data_tvw_dbs.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), ctn, "", "column");
                                     if (KeyType.Time.Equals(config.keyType))
                                     {
                                         stp.QueueWorkItem<SelectNode>(getColumnNameByBoolBySQLServerSleep, sn);
@@ -4170,6 +4203,7 @@ namespace SuperSQLInjection
                                     sn.limit = i;
                                     sn.tableName = tableName;
                                     sn.dbname = dbName;
+                                    this.data_tvw_dbs.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), ctn, "", "column");
                                     stp.QueueWorkItem<SelectNode>(getColumnNameByBoolByOracle, sn);
                                 }
                                 stp.WaitForIdle();
@@ -4193,6 +4227,7 @@ namespace SuperSQLInjection
                                     sn.limit = i;
                                     sn.tableName = tableName;
                                     sn.dbname = dbName;
+                                    this.data_tvw_dbs.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), ctn, "", "column");
                                     stp.QueueWorkItem<SelectNode>(getColumnNameByBoolByPostgreSQL, sn);
                                 }
                                 stp.WaitForIdle();
@@ -4207,6 +4242,7 @@ namespace SuperSQLInjection
                                     sn.limit = i;
                                     sn.tableName = tableName;
                                     sn.dbname = dbName;
+                                    this.data_tvw_dbs.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), ctn, "", "column");
                                     stp.QueueWorkItem<SelectNode>(getColumnNameByBoolByDB2, sn);
                                 }
                                 stp.WaitForIdle();
@@ -4215,6 +4251,7 @@ namespace SuperSQLInjection
                                 SelectNode csn = new SelectNode();
                                 csn.tn = ctn;
                                 csn.tableName = tableName;
+                                this.data_tvw_dbs.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), ctn, "", "column");
                                 stp.QueueWorkItem<SelectNode>(getColumnNameByBoolBySQLite, csn);
                                 stp.WaitForIdle();
                                 break;
@@ -4589,7 +4626,7 @@ namespace SuperSQLInjection
                     this.txt_log.Invoke(new showLogDelegate(log), "获取到第" + (gp.limit + 1) + "行," + columnName + "的值:" + colvalue, LogLevel.info);
 
                 }
-                this.Invoke(new addItemToListViewDelegate(addItemToListView), lvi);
+                this.data_dbs_lvw_data.Invoke(new addItemToListViewDelegate(addItemToListView), lvi);
                 this.txt_log.Invoke(new showLogDelegate(log), "获取到第" + (gp.limit + 1) + "行的值！", LogLevel.info);
 
             }
@@ -4684,7 +4721,7 @@ namespace SuperSQLInjection
                     this.txt_log.Invoke(new showLogDelegate(log), "获取到第" + (gp.limit + 1) + "行," + columnName + "的值:" + colvalue, LogLevel.info);
 
                 }
-                this.Invoke(new addItemToListViewDelegate(addItemToListView), lvi);
+                this.data_dbs_lvw_data.Invoke(new addItemToListViewDelegate(addItemToListView), lvi);
                 this.txt_log.Invoke(new showLogDelegate(log), "获取到第" + (gp.limit + 1) + "行的值！", LogLevel.info);
 
             }
@@ -4749,7 +4786,7 @@ namespace SuperSQLInjection
                     }
 
                 }
-                this.Invoke(new addItemToListViewDelegate(addItemToListView), lvi);
+                this.data_dbs_lvw_data.Invoke(new addItemToListViewDelegate(addItemToListView), lvi);
                 this.txt_log.Invoke(new showLogDelegate(log), "获取到第" + gp.limit + "行的值！", LogLevel.info);
 
             }
@@ -4812,7 +4849,7 @@ namespace SuperSQLInjection
                     this.txt_log.Invoke(new showLogDelegate(log), "获取到第" + (gp.limit + 1) + "行," + columnName + "的值:" + value, LogLevel.info);
 
                 }
-                this.Invoke(new addItemToListViewDelegate(addItemToListView), lvi);
+                this.data_dbs_lvw_data.Invoke(new addItemToListViewDelegate(addItemToListView), lvi);
                 this.txt_log.Invoke(new showLogDelegate(log), "获取到第" + (gp.limit + 1) + "行的值！", LogLevel.info);
 
             }
@@ -4890,7 +4927,7 @@ namespace SuperSQLInjection
                     this.txt_log.Invoke(new showLogDelegate(log), "获取到" + columnName + "列的值！" + value, LogLevel.info);
 
                 }
-                this.Invoke(new addItemToListViewDelegate(addItemToListView), lvi);
+                this.data_dbs_lvw_data.Invoke(new addItemToListViewDelegate(addItemToListView), lvi);
                 this.txt_log.Invoke(new showLogDelegate(log), "获取到第" + gp.limit + "行的值！", LogLevel.info);
 
             }
@@ -4970,7 +5007,7 @@ namespace SuperSQLInjection
                     }
 
                 }
-                this.Invoke(new addItemToListViewDelegate(addItemToListView), lvi);
+                this.data_dbs_lvw_data.Invoke(new addItemToListViewDelegate(addItemToListView), lvi);
                 this.txt_log.Invoke(new showLogDelegate(log), "获取到第" + gp.limit + "行的值！", LogLevel.info);
 
             }
@@ -5037,7 +5074,7 @@ namespace SuperSQLInjection
                     }
 
                 }
-                this.Invoke(new addItemToListViewDelegate(addItemToListView), lvi);
+                this.data_dbs_lvw_data.Invoke(new addItemToListViewDelegate(addItemToListView), lvi);
                 this.txt_log.Invoke(new showLogDelegate(log), "获取到第" + gp.limit + "行的值！", LogLevel.info);
 
             }
@@ -5091,7 +5128,7 @@ namespace SuperSQLInjection
                     }
 
                 }
-                this.Invoke(new addItemToListViewDelegate(addItemToListView), lvi);
+                this.data_dbs_lvw_data.Invoke(new addItemToListViewDelegate(addItemToListView), lvi);
                 this.txt_log.Invoke(new showLogDelegate(log), "获取到第" + gp.limit + "行的值！", LogLevel.info);
 
             }
@@ -5279,7 +5316,7 @@ namespace SuperSQLInjection
             }
             if (lvi != null)
             {
-                this.Invoke(new addItemToListViewDelegate(addItemToListView), lvi);
+                this.data_dbs_lvw_data.Invoke(new addItemToListViewDelegate(addItemToListView), lvi);
             }
         }
 
@@ -5333,7 +5370,7 @@ namespace SuperSQLInjection
                         lvi.SubItems.Add(item);
                     }
                 }
-                this.Invoke(new addItemToListViewDelegate(addItemToListView), lvi);
+                this.data_dbs_lvw_data.Invoke(new addItemToListViewDelegate(addItemToListView), lvi);
                 this.txt_log.Invoke(new showLogDelegate(log), "获取到第" + (gp.limit + 1) + "行的值！", LogLevel.info);
             }
             catch (Exception e)
@@ -9623,6 +9660,15 @@ namespace SuperSQLInjection
                 Tools.SysLog("加载模板发生异常！" + e.Message);
                 MessageBox.Show("加载模板发生异常！");
             }
+        }
+
+
+        public void showHTTPLog(String index,ServerInfo server,String payload, String proxyInfo) {
+            this.txt_log.Invoke(new sendHTTPLogDelegate(sendHTTPLog), index, server, payload, proxyInfo);
+        }
+        public void showLog(String msg, LogLevel level)
+        {
+            this.txt_log.Invoke(new showLogDelegate(log), msg, level);
         }
 
         private void bypass_cbox_loadTemplate_TextChanged(object sender, EventArgs e)

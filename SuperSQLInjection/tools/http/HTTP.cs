@@ -102,7 +102,7 @@ namespace SuperSQLInjection.tools
                 catch (Exception e)
                 {
                     Tools.SysLog(e.Message);
-                    main.Invoke(new Main.showLogDelegate(main.log),e.Message, LogLevel.waring);
+                    main.showLog(e.Message, LogLevel.waring);
                     server.timeout = true;
                     continue;
                 }
@@ -144,7 +144,7 @@ namespace SuperSQLInjection.tools
                 catch (Exception e)
                 {
                     Tools.SysLog(e.Message);
-                    main.Invoke(new Main.showLogDelegate(main.log), e.Message, LogLevel.waring);
+                    main.showLog(e.Message, LogLevel.waring);
                     server.timeout = true;
                     continue;
                 }
@@ -417,11 +417,11 @@ namespace SuperSQLInjection.tools
                                 int length = int.Parse(server.headers[Content_Length]);
                                 while (sum < length && sw.ElapsedMilliseconds <= timeout)
                                 {
-                                    byte[] response_data = new byte[1024];
                                     int read = (length-sum);
                                     if (read > 1024) {
                                         read = 1024;
                                     }
+                                    byte[] response_data = new byte[read];
                                     len = clientSocket.Client.Receive(response_data, 0, read, SocketFlags.None);
                                     if (len > 0)
                                     {
@@ -469,13 +469,14 @@ namespace SuperSQLInjection.tools
                                     int onechunkLen = 0;
                                     while (onechunkLen < chunkedSize && sw.ElapsedMilliseconds <= timeout)
                                     {
-                                        byte[] response_data = new byte[1024];
+                                      
                                         int read = chunkedSize - onechunkLen;
                                         if (read > 1024)
                                         {
                                             read = 1024;
                                         }
-                                        len = clientSocket.Client.Receive(response_data, 0, response_data.Length, SocketFlags.None);
+                                        byte[] response_data = new byte[read];
+                                        len = clientSocket.Client.Receive(response_data, 0, read, SocketFlags.None);
                                         if (len > 0)
                                         {
                                             body_data.Write(response_data,0, len);
@@ -584,7 +585,8 @@ namespace SuperSQLInjection.tools
                     if (cproxy != null) {
                         proxyInfo = cproxy.host + ":" + cproxy.port;
                     }
-                    main.Invoke(new Main.sendHTTPLogDelegate(main.sendHTTPLog), index, server, payload, proxyInfo);
+                    main.showHTTPLog(index, server, payload, proxyInfo);
+                   
                 }
                 if (main.config.sendHTTPSleepTime > 0)
                 {
@@ -739,6 +741,7 @@ namespace SuperSQLInjection.tools
                     if (clientSocket.Connected)
                     {
                         ssl = new SslStream(clientSocket.GetStream(), false, new RemoteCertificateValidationCallback(ValidateServerCertificate));
+                       
                         //增加支持TLS1.1和TLS1.2支持3072，768
                         SslProtocols protocol = (SslProtocols)3072|(SslProtocols)768|SslProtocols.Tls|SslProtocols.Ssl3;
                         ssl.AuthenticateAsClient(host, null, protocol, false);
@@ -829,13 +832,15 @@ namespace SuperSQLInjection.tools
                         
                         while (sum < length && sw.ElapsedMilliseconds <= timeout)
                         {
-                            byte[] response_data = new byte[1024];
                             int read = length - sum;
                             if (read > 1024)
                             {
                                 read = 1024;
                             }
-                            len = ssl.Read(response_data, sum, read);
+                            byte[] response_data = new byte[read];
+                            
+                            len = ssl.Read(response_data, 0, read);
+                           
                             if (len > 0)
                             {
                                 sum += len;
@@ -885,13 +890,16 @@ namespace SuperSQLInjection.tools
 
                             while (onechunkLen < chunkedSize && sw.ElapsedMilliseconds <= timeout)
                             {
-                                byte[] response_data = new byte[1024];
+                               
                                 int read = chunkedSize - onechunkLen;
                                 if (read > 1024)
                                 {
                                     read = 1024;
                                 }
-                                len = ssl.Read(response_data,0, read);
+                                byte[] response_data = new byte[read];
+                                
+                                len = ssl.Read(response_data, 0, read);
+             
                                 if (len > 0)
                                 {
                                     onechunkLen += len;
@@ -972,7 +980,6 @@ namespace SuperSQLInjection.tools
             }catch (Exception e)
             {
                 Exception ee = new Exception("HTTPS发包错误！错误消息：" + e.Message + "----发包编号：" + index);
-                
                 throw ee;
             }
             finally
@@ -995,7 +1002,7 @@ namespace SuperSQLInjection.tools
                     {
                         proxyInfo = cproxy.host + ":" + cproxy.port;
                     }
-                    main.Invoke(new Main.sendHTTPLogDelegate(main.sendHTTPLog), index, server, payload, proxyInfo);
+                    main.showHTTPLog(index, server, payload, proxyInfo);
                 }
                 if (main.config.sendHTTPSleepTime > 0)
                 {
@@ -1033,8 +1040,7 @@ namespace SuperSQLInjection.tools
             }
             catch (Exception e)
             {
-                Tools.SysLog("解压Gzip发生异常----" + e.Message+"----"+ index);
-                
+                Tools.SysLog("解压Gzip发生异常----" + e.Message); 
             }
             finally
             {
