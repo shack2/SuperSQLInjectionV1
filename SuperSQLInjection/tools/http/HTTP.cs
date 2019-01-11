@@ -34,6 +34,8 @@ namespace SuperSQLInjection.tools
         public const String Content_Encoding = "content-encoding";
         public const String Transfer_Encoding = "transfer-encoding";
         public const String Connection = "connection";
+
+        public const String ConnectionClose = "connection: close";
         public const int WaitTime =5;
         public static Main main = null;
         public static long index = 0;
@@ -337,12 +339,19 @@ namespace SuperSQLInjection.tools
                     {
                         checkContentLength(ref server, ref request);
                         server.request = request;
-                        //分开发送header和body，可以绕过某些情况下的安全防护
-                        server.reuqestHeader = Regex.Split(request,"\r\n\r\n")[0];
-                        server.reuqestBody = Regex.Split(request, "\r\n\r\n")[1];
-
-                        clientSocket.Client.Send(Encoding.UTF8.GetBytes(server.reuqestHeader + "\r\n\r\n"));
-                        clientSocket.Client.Send(Encoding.UTF8.GetBytes(server.reuqestBody));
+                        //分开发送header和body，可以绕过某些情况下的安全防护Connection: close,不能使用这种方式
+                        if (!server.reuqestHeader.ToLower().Contains(ConnectionClose))
+                        {
+                            String[] reqs = Regex.Split(request, "\r\n\r\n");
+                            server.reuqestHeader = reqs[0];
+                            server.reuqestBody = reqs[1];
+                            clientSocket.Client.Send(Encoding.UTF8.GetBytes(server.reuqestHeader + "\r\n\r\n"));
+                            clientSocket.Client.Send(Encoding.UTF8.GetBytes(server.reuqestBody));
+                        }
+                        else
+                        {
+                            clientSocket.Client.Send(Encoding.UTF8.GetBytes(request));
+                        }
                        
                         int len = 0;
                         //获取header头
@@ -485,31 +494,32 @@ namespace SuperSQLInjection.tools
                             //connection close方式或未知body长度
                             else
                             {
-                                int failed = 0;
-                                while (sw.ElapsedMilliseconds <= timeout && failed <= 3)
+                                while (sw.ElapsedMilliseconds <= timeout)
                                 {
                                     bool isok = clientSocket.Client.Poll(timeout, SelectMode.SelectRead);
-                                    if (!isok)
+                                    if (!isok || clientSocket.Available <= 0)
                                     {
                                         break;
                                     }
-                                    int read = clientSocket.Available;
-                                    if (read > 0)
-                                    {
-                                        byte[] response_data = new byte[read];
-                                        len = clientSocket.Client.Receive(response_data, 0, read,SocketFlags.None);
-                                        if (len > 0)
-                                        {
-                                            sum += len;
-                                            body_data.Write(response_data, 0, len);
-                                        }
-
-                                    }
                                     else
                                     {
-                                        failed++;
-                                        Thread.Sleep(WaitTime);
+                                        int read = clientSocket.Available;
+                                        if (read > 0)
+                                        {
+                                            byte[] response_data = new byte[read];
+                                            len = clientSocket.Client.Receive(response_data, 0, read,SocketFlags.None);
+                                            if (len > 0)
+                                            {
+                                                sum += len;
+                                                body_data.Write(response_data, 0, len);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            Thread.Sleep(WaitTime);
+                                        }
                                     }
+
                                 }
                             }
 
@@ -525,6 +535,7 @@ namespace SuperSQLInjection.tools
                                     isupdateEncoding = true;//body找编码
                                 }
                                 Encoding encod = Encoding.GetEncoding(encoding);
+                               
                                 getBody(ref server, ref body_data, ref encod, ref index);
                                 //修正编码
                                 if (isupdateEncoding)
@@ -551,7 +562,7 @@ namespace SuperSQLInjection.tools
             }
             catch (Exception e)
             {
-                Exception ee = new Exception("HTTP发包错误！错误消息：" + e.Message + e.TargetSite.Name + "----发包编号：" + index);
+                Exception ee = new Exception("HTTP发包错误,错误消息：" + e.Message + e.TargetSite.Name + "----发包编号：" + index);
                 throw ee;
             }
             finally
@@ -735,11 +746,18 @@ namespace SuperSQLInjection.tools
                         {
                             checkContentLength(ref server, ref request);
                             server.request = request;
-                            //分开发送header和body，可以绕过某些情况下的安全防护
-                            server.reuqestHeader = Regex.Split(request, "\r\n\r\n")[0];
-                            server.reuqestBody = Regex.Split(request, "\r\n\r\n")[1];
-                            ssl.Write(Encoding.UTF8.GetBytes(server.reuqestHeader + "\r\n\r\n"));
-                            ssl.Write(Encoding.UTF8.GetBytes(server.reuqestBody));
+                            //分开发送header和body，可以绕过某些情况下的安全防护Connection: close,不能使用这种方式
+                            if (!server.reuqestHeader.ToLower().Contains(ConnectionClose))
+                            {
+                                String[] reqs = Regex.Split(request, "\r\n\r\n");
+                                server.reuqestHeader = reqs[0];
+                                server.reuqestBody = reqs[1];
+                                ssl.Write(Encoding.UTF8.GetBytes(server.reuqestHeader + "\r\n\r\n"));
+                                ssl.Write(Encoding.UTF8.GetBytes(server.reuqestBody));
+                            }
+                            else {
+                                ssl.Write(Encoding.UTF8.GetBytes(request));
+                            }
                             ssl.Flush();
                         }
                     }
@@ -892,30 +910,31 @@ namespace SuperSQLInjection.tools
                     //connection close方式或未知body长度
                     else
                     {
-                        int failed = 0;
-                        while (sw.ElapsedMilliseconds <= timeout&&failed<=3)
+                        while (sw.ElapsedMilliseconds <= timeout)
                         {
                             bool isok = clientSocket.Client.Poll(timeout, SelectMode.SelectRead);
-                            if (!isok) {
+                            if (!isok || clientSocket.Available <= 0)
+                            {
                                 break;
                             }
-                            int read = clientSocket.Available;
-                            if (read > 0)
-                            {
-                                byte[] response_data = new byte[read];
-                                len = ssl.Read(response_data, 0, read);
-                                if (len > 0)
+                            else {
+                                int read = clientSocket.Available;
+                                if (read > 0)
                                 {
-                                    sum += len;
-                                    body_data.Write(response_data, 0, len);
+                                    byte[] response_data = new byte[read];
+                                    len = ssl.Read(response_data, 0, read);
+                                    if (len > 0)
+                                    {
+                                        sum += len;
+                                        body_data.Write(response_data, 0, len);
+                                    }
                                 }
-                                
+                                else
+                                {
+                                    Thread.Sleep(WaitTime);
+                                }
                             }
-                            else
-                            {
-                                failed++;
-                                Thread.Sleep(WaitTime);
-                            }
+                            
                         }
                     }
                     //自动识别编码
@@ -991,7 +1010,7 @@ namespace SuperSQLInjection.tools
         {
 
             String str = "";
-            MemoryStream input = new MemoryStream(ms.GetBuffer());
+            MemoryStream input = new MemoryStream(ms.ToArray());
             GZipStream gs = new GZipStream(input, CompressionMode.Decompress);
             MemoryStream outbuf = new MemoryStream();
             byte[] block = new byte[1024];
@@ -1023,7 +1042,6 @@ namespace SuperSQLInjection.tools
                 gs.Close();
                 input.Close();
                 ms.Close();
-               
             }
             return str;
 
@@ -1031,13 +1049,11 @@ namespace SuperSQLInjection.tools
 
         public static String unDeflate(ref MemoryStream ms, Encoding encoding, String index)
         {
-
             String str = "";
-            MemoryStream input = new MemoryStream(ms.GetBuffer());
+            MemoryStream input = new MemoryStream(ms.ToArray());
             DeflateStream ds = new DeflateStream(input, CompressionMode.Decompress);
             MemoryStream outbuf = new MemoryStream();
             byte[] block = new byte[1024];
-
             try
             {
                 while (true)
@@ -1071,88 +1087,12 @@ namespace SuperSQLInjection.tools
 
         }
 
-
-        public String SetCookies(string sHtml, String sCookies)
-        {
-
-            //Set-Cookie: b_110128=0; domain=.qidian.com; expires=Fri, 15-Sep-2023 15:48:41 GMT; path=/
-
-            string sName = "";
-
-            string sValue = "";
-
-            MatchCollection mc;
-
-            Match m;
-
-            Regex r;
-
-            if (!sCookies.EndsWith(";") && sCookies != "")
-            {
-
-                sCookies += ";";
-
-            }
-
-            r = new Regex("Set-Cookie:\\s*(?<sName>.*?)=(?<sValue>.*?);", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase);
-
-            mc = r.Matches(sHtml);
-
-            for (int i = 0; i < mc.Count; i++)
-            {
-
-                sName = mc[i].Groups["sName"].Value.Trim();
-
-                sValue = mc[i].Groups["sValue"].Value.Trim();
-
-                r = new Regex(sName + "\\s*=\\s*.*?;", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase);
-
-                m = r.Match(sCookies);
-
-                if (m.Success)
-                {
-
-                    sCookies = sCookies.Replace(m.Value, sName + "=" + sValue + ";");
-
-                }
-
-                else
-                {
-
-                    sCookies += sName + "=" + sValue + ";";
-
-                }
-
-            }
-
-            try
-            {
-
-                if (sCookies.StartsWith(";"))
-                {
-
-                    sCookies = sCookies.Substring(1, sCookies.Length - 1);
-
-                }
-
-            }
-
-            catch
-            {
-
-            }
-            return sCookies;
-
-        }
-
         public static String getHTMLEncoding(String header, String body)
         {
             if (String.IsNullOrEmpty(header)&& String.IsNullOrEmpty(body))
             {
                 return "";
             }
-            body = body.ToUpper();
-
             String encode = "";
             Match m = Regex.Match(header, @"charset=(?<charset>[\w\-]+)", RegexOptions.IgnoreCase);
             if (m.Success)
@@ -1174,7 +1114,7 @@ namespace SuperSQLInjection.tools
             if ("UTF8".Equals(encode)) {
                 encode = "UTF-8";
             }
-            return encode;
+            return encode.ToUpper();
 
 
         }
