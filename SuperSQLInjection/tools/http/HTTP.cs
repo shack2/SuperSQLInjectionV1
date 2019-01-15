@@ -644,13 +644,13 @@ namespace SuperSQLInjection.tools
                     server.body = unDeflate(ref body_data, encod, index);
                 }
                 else {
-                    server.body = encod.GetString(body_data.GetBuffer());
+                    server.body = encod.GetString(body_data.ToArray());
                 }
 
             }
             else
             {
-                server.body = encod.GetString(body_data.GetBuffer());
+                server.body = encod.GetString(body_data.ToArray());
             }
         }
 
