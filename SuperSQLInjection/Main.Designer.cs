@@ -1274,11 +1274,10 @@
             this.data_lvw_ver_verName,
             this.data_lvw_ver_val});
             this.data_lvw_ver.ContextMenuStrip = this.data_cms_vers;
-            this.data_lvw_ver.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.data_lvw_ver.FullRowSelect = true;
-            this.data_lvw_ver.Location = new System.Drawing.Point(3, 24);
+            this.data_lvw_ver.Location = new System.Drawing.Point(3, 31);
             this.data_lvw_ver.Name = "data_lvw_ver";
-            this.data_lvw_ver.Size = new System.Drawing.Size(812, 384);
+            this.data_lvw_ver.Size = new System.Drawing.Size(812, 377);
             this.data_lvw_ver.TabIndex = 0;
             this.data_lvw_ver.UseCompatibleStateImageBehavior = false;
             this.data_lvw_ver.View = System.Windows.Forms.View.Details;

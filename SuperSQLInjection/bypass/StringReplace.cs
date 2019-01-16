@@ -212,54 +212,72 @@ namespace SuperSQLInjection.bypass
             }
             return sb.ToString();
         }
+
+
         public static String bypassUseBetweentAnd(Config config,String paylaod) {
 
-            String newpayload = "";
             if (config.useBetweenByPass)
             {
-                //判断是否存在16进制情况，有则跳出
-                bool m1 = Regex.IsMatch(paylaod, @"[\>\<\=]+0x");
-                if (m1) {
+                
+
+                MatchCollection mc=Regex.Matches(paylaod, @"(?<str>[\>\<\=]+)(?<len>\d+)"); ;
+                if (mc.Count <= 0) {
                     return paylaod;
                 }
+                int offset = 0;
+                foreach (Match mt in mc)
+                {
+                    String mstr = mt.Groups["str"].Value;
+                    int findex = mt.Index;
+                    String is16 = "";
+                    if (findex!=0&&findex < paylaod.Length- mt.Length- offset) {
+                        is16 = paylaod.Substring(findex + offset, mt.Length + 1);
+                    }
+                    if (is16.Contains("0x"))
+                    {
+                        //判断是否存在16进制情况，有则跳出
+                        continue;
+                    }
+                    else
+                    {
+                        int len = Tools.convertToInt(mt.Groups["len"].Value);
+                      
+                        if (mstr.Contains(">="))
+                        {
+                            String rp = " not between 0 and " + (len - 1);
+                            paylaod =paylaod.Remove(findex+offset, mt.Length).Insert(findex+offset, rp);
+                            offset += rp.Length- mt.Length;
+                        }
+                        else if (mstr.Equals("<="))
+                        {
+                            String rp = " between 0 and " + len;
+                            paylaod =paylaod.Remove(findex, mt.Length).Insert(findex, rp);
+                           
+                        }
+                        else if (mstr.Equals(">"))
+                        {
+                            String rp = " not between 0 and " + len;
+                            paylaod =paylaod.Remove(findex+ offset, mt.Length).Insert(findex+ offset, rp);
+                            offset += rp.Length - mt.Length;
+                        }
+                        else if (mstr.Equals("="))
+                        {
+                            String rp = " between " + len + " and " + len;
+                            paylaod =paylaod.Remove(findex + offset, mt.Length).Insert(findex + offset, rp);
+                            offset += rp.Length - mt.Length;
+                        }
 
-                //替换
-                Match m = Regex.Match(paylaod, @"(?<str>[\>\<\=]+)(?<len>\d+)");
-                String str = m.Groups["str"].Value;
-                String replaceReg = @"[\>\=]+\d+";
-                if (String.IsNullOrEmpty(m.Groups["len"].Value))
-                {
-                    return paylaod;
-                }
-                int len = Tools.convertToInt(m.Groups["len"].Value);
-                if (str.Equals(">="))
-                {
-                    newpayload = Regex.Replace(paylaod, replaceReg, " not between 0 and " + (len - 1));
+                        else if (mstr.Equals("<"))
+                        {
+                            String rp = " between 0 and " + (len - 1);
+                            paylaod =paylaod.Remove(findex, mt.Length).Insert(findex, rp);
+                            offset += rp.Length - mt.Length;
+                        }
+                    }
 
-                }
-                else if (str.Equals(">"))
-                {
-
-                    newpayload = Regex.Replace(paylaod, replaceReg, " not between 0 and " + len);
-                }
-                else if (str.Equals("="))
-                {
-                    newpayload = Regex.Replace(paylaod, replaceReg, " between " + len + " and " + len);
-                }
-                else if (str.Equals("<="))
-                {
-                    newpayload = Regex.Replace(paylaod, replaceReg, " between 0 and " + len);
-                }
-                else if (str.Equals("<"))
-                {
-                    newpayload = Regex.Replace(paylaod, replaceReg, " between 0 and " + (len - 1));
                 }
             }
-            else {
-                newpayload = paylaod;
-            }
-      
-            return newpayload;
+            return paylaod;
         }
    
         public static String toLowerOrUpperCase(String oldStr, String split,int changeType)
