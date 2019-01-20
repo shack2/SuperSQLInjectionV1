@@ -17,9 +17,9 @@ namespace SuperSQLInjection.tools.http
         public static int ConectProxyUseTime = 0;
         public static bool checkConnection(Config config,Proxy proxy) {
             String crequest = request.Replace("{host}", config.proxy_check_host).Replace("{port}", config.proxy_check_port.ToString());
-            ServerInfo server=HTTP.sendRequestRetry(false,config.reTry,proxy.host, proxy.port, "", request, config.timeOut, config.encoding, true, false);
+            ServerInfo server=HTTP.sendRequestRetry(false,config.reTry,proxy.host, proxy.port, "", crequest, config.timeOut, config.encoding, true, false);
             
-            if (!String.IsNullOrEmpty(server.body)&& server.body.IndexOf(config.proxy_check_Keys)!=-1)
+            if ((!String.IsNullOrEmpty(server.body)&& server.body.IndexOf(config.proxy_check_Keys)!=-1)||server.header.IndexOf("domain=.baidu.com")!=-1)
             {
                 ConectProxyUseTime = (int)server.runTime;
                 return true;

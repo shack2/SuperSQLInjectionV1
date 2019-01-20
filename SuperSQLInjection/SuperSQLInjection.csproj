@@ -162,6 +162,11 @@
     <Compile Include="payload\Oracle.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="scan\Spider.cs" />
     <Compile Include="Seting.cs">
       <SubType>Form</SubType>
@@ -240,14 +245,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <EmbeddedResource Include="Seting.resx">
       <DependentUpon>Seting.cs</DependentUpon>
     </EmbeddedResource>
@@ -284,6 +284,21 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="favicon.ico" />
+    <None Include="Properties\images\bug.png" />
+    <None Include="Properties\images\版本.png" />
+    <None Include="Properties\images\声明.png" />
+    <None Include="Properties\images\更新.png" />
+    <None Include="Properties\images\关于.png" />
+    <None Include="Properties\images\手册.png" />
+    <None Include="Properties\images\保存.png" />
+    <None Include="Properties\images\导出.png" />
+    <None Include="Properties\images\导入.png" />
+    <None Include="Properties\images\set.png" />
+    <None Include="Properties\images\lang.png" />
+    <None Include="Properties\images\m_bg.png" />
+    <None Include="Properties\images\btn.png" />
+    <None Include="Properties\images\btn.jpg" />
+    <None Include="Properties\images\getvers.png" />
     <None Include="Properties\images\help.png" />
     <None Include="Properties\images\tool.png" />
     <None Include="Properties\images\config.png" />
@@ -291,6 +306,9 @@
     <None Include="Properties\images\stop_red.png" />
     <None Include="Properties\images\stop.png" />
     <None Include="Properties\images\vers.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

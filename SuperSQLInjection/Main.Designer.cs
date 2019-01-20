@@ -50,23 +50,6 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.menuStrip_main = new System.Windows.Forms.MenuStrip();
-            this.tsmi_menu = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmi_openConfig = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmi_saveConfig = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmi_tools = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmi_seting = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmi_lang = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmi_zh_cn = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmi_en_us = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmi_help = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmi_readme = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmi_about = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmi_update = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmi_mustRead = new System.Windows.Forms.ToolStripMenuItem();
-            this.版本ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmi_bugReport = new System.Windows.Forms.ToolStripMenuItem();
             this.gb_logo = new System.Windows.Forms.GroupBox();
             this.txt_log = new System.Windows.Forms.RichTextBox();
             this.tab_logCenter = new System.Windows.Forms.TabPage();
@@ -105,8 +88,6 @@
             this.tabC_dataCenter = new System.Windows.Forms.TabControl();
             this.tab_vers = new System.Windows.Forms.TabPage();
             this.toolStrip_getVers = new System.Windows.Forms.ToolStrip();
-            this.toolStrip_vers_btn_getVariable = new System.Windows.Forms.ToolStripButton();
-            this.toolStrip_vers_btn_stopGetVariable = new System.Windows.Forms.ToolStripButton();
             this.data_lvw_ver = new System.Windows.Forms.ListView();
             this.data_lvw_ver_verName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.data_lvw_ver_val = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -120,8 +101,6 @@
             this.spc_dbs = new System.Windows.Forms.SplitContainer();
             this.data_dbs_ts = new System.Windows.Forms.ToolStrip();
             this.data_dbs_tsl_getDBS = new System.Windows.Forms.ToolStripButton();
-            this.data_dbs_tsl_getTables = new System.Windows.Forms.ToolStripButton();
-            this.data_dbs_tsl_getColumns = new System.Windows.Forms.ToolStripButton();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.data_tvw_dbs = new System.Windows.Forms.TreeView();
             this.data_cms_dbs = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -141,11 +120,8 @@
             this.data_dbs_txt_start = new System.Windows.Forms.ToolStripTextBox();
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.data_dbs_txt_count = new System.Windows.Forms.ToolStripTextBox();
-            this.data_dbs_tsl_getDatas = new System.Windows.Forms.ToolStripButton();
-            this.data_dbs_tsl_exportDatas = new System.Windows.Forms.ToolStripButton();
             this.toolStripLabel2 = new System.Windows.Forms.ToolStripLabel();
             this.data_dbs_cob_db_encoding = new System.Windows.Forms.ToolStripComboBox();
-            this.data_dbs_tsl_stopGetDatas = new System.Windows.Forms.ToolStripLabel();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.data_dbs_lvw_data = new System.Windows.Forms.ListView();
             this.cms_data_dbs_lvw_data = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -382,8 +358,31 @@
             this.lbl_info = new System.Windows.Forms.ToolStripStatusLabel();
             this.timer_status = new System.Windows.Forms.Timer(this.components);
             this.timer_scanInjection = new System.Windows.Forms.Timer(this.components);
+            this.menuStrip_main = new System.Windows.Forms.MenuStrip();
+            this.toolStrip_vers_btn_getVariable = new System.Windows.Forms.ToolStripButton();
+            this.toolStrip_vers_btn_stopGetVariable = new System.Windows.Forms.ToolStripButton();
+            this.data_dbs_tsl_getTables = new System.Windows.Forms.ToolStripButton();
+            this.data_dbs_tsl_getColumns = new System.Windows.Forms.ToolStripButton();
+            this.data_dbs_tsl_getDatas = new System.Windows.Forms.ToolStripButton();
+            this.data_dbs_tsl_exportDatas = new System.Windows.Forms.ToolStripButton();
+            this.data_dbs_tsl_stopGetDatas = new System.Windows.Forms.ToolStripLabel();
+            this.tsmi_menu = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmi_openConfig = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmi_saveConfig = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmi_tools = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmi_seting = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmi_lang = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmi_zh_cn = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmi_en_us = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmi_help = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmi_readme = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmi_about = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmi_update = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmi_mustRead = new System.Windows.Forms.ToolStripMenuItem();
+            this.版本ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmi_bugReport = new System.Windows.Forms.ToolStripMenuItem();
             this.gb_basic.SuspendLayout();
-            this.menuStrip_main.SuspendLayout();
             this.gb_logo.SuspendLayout();
             this.tab_logCenter.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -460,6 +459,7 @@
             this.tab_injectLog.SuspendLayout();
             this.injectLog_cm.SuspendLayout();
             this.statusStrip1.SuspendLayout();
+            this.menuStrip_main.SuspendLayout();
             this.SuspendLayout();
             // 
             // gb_basic
@@ -505,6 +505,7 @@
             // 
             // btn_exportConfig
             // 
+            this.btn_exportConfig.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btn_exportConfig.Location = new System.Drawing.Point(717, 50);
             this.btn_exportConfig.Name = "btn_exportConfig";
             this.btn_exportConfig.Size = new System.Drawing.Size(99, 23);
@@ -617,6 +618,7 @@
             // 
             // btn_autoInject
             // 
+            this.btn_autoInject.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btn_autoInject.ImageKey = "(无)";
             this.btn_autoInject.Location = new System.Drawing.Point(717, 18);
             this.btn_autoInject.Name = "btn_autoInject";
@@ -723,154 +725,14 @@
             this.label1.TabIndex = 1;
             this.label1.Text = "域名或IP：";
             // 
-            // menuStrip_main
-            // 
-            this.menuStrip_main.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tsmi_menu,
-            this.tsmi_tools,
-            this.toolStripMenuItem1,
-            this.tsmi_help});
-            this.menuStrip_main.Location = new System.Drawing.Point(0, 0);
-            this.menuStrip_main.Name = "menuStrip_main";
-            this.menuStrip_main.Size = new System.Drawing.Size(861, 25);
-            this.menuStrip_main.TabIndex = 2;
-            this.menuStrip_main.Text = "menuStrip1";
-            // 
-            // tsmi_menu
-            // 
-            this.tsmi_menu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tsmi_openConfig,
-            this.tsmi_saveConfig});
-            this.tsmi_menu.Image = global::SuperSQLInjection.Properties.Resources.menu;
-            this.tsmi_menu.Name = "tsmi_menu";
-            this.tsmi_menu.Size = new System.Drawing.Size(64, 21);
-            this.tsmi_menu.Text = "菜 单";
-            // 
-            // tsmi_openConfig
-            // 
-            this.tsmi_openConfig.Name = "tsmi_openConfig";
-            this.tsmi_openConfig.Size = new System.Drawing.Size(124, 22);
-            this.tsmi_openConfig.Text = "导入配置";
-            this.tsmi_openConfig.Click += new System.EventHandler(this.tsmi_openConfig_Click);
-            // 
-            // tsmi_saveConfig
-            // 
-            this.tsmi_saveConfig.Name = "tsmi_saveConfig";
-            this.tsmi_saveConfig.Size = new System.Drawing.Size(124, 22);
-            this.tsmi_saveConfig.Text = "保存配置";
-            this.tsmi_saveConfig.Click += new System.EventHandler(this.tsmi_saveConfig_Click);
-            // 
-            // tsmi_tools
-            // 
-            this.tsmi_tools.Image = global::SuperSQLInjection.Properties.Resources.tool;
-            this.tsmi_tools.Name = "tsmi_tools";
-            this.tsmi_tools.Size = new System.Drawing.Size(64, 21);
-            this.tsmi_tools.Text = "工 具";
-            // 
-            // toolStripMenuItem1
-            // 
-            this.toolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tsmi_seting,
-            this.tsmi_lang});
-            this.toolStripMenuItem1.Image = global::SuperSQLInjection.Properties.Resources.config;
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(84, 21);
-            this.toolStripMenuItem1.Text = "系统设置";
-            // 
-            // tsmi_seting
-            // 
-            this.tsmi_seting.Name = "tsmi_seting";
-            this.tsmi_seting.Size = new System.Drawing.Size(124, 22);
-            this.tsmi_seting.Text = "系统设置";
-            this.tsmi_seting.Click += new System.EventHandler(this.tsmi_seting_Click);
-            // 
-            // tsmi_lang
-            // 
-            this.tsmi_lang.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tsmi_zh_cn,
-            this.tsmi_en_us});
-            this.tsmi_lang.Name = "tsmi_lang";
-            this.tsmi_lang.Size = new System.Drawing.Size(124, 22);
-            this.tsmi_lang.Text = "语 言";
-            // 
-            // tsmi_zh_cn
-            // 
-            this.tsmi_zh_cn.Checked = true;
-            this.tsmi_zh_cn.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.tsmi_zh_cn.Name = "tsmi_zh_cn";
-            this.tsmi_zh_cn.Size = new System.Drawing.Size(117, 22);
-            this.tsmi_zh_cn.Text = "中文";
-            // 
-            // tsmi_en_us
-            // 
-            this.tsmi_en_us.Name = "tsmi_en_us";
-            this.tsmi_en_us.Size = new System.Drawing.Size(117, 22);
-            this.tsmi_en_us.Text = "English";
-            // 
-            // tsmi_help
-            // 
-            this.tsmi_help.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tsmi_readme,
-            this.tsmi_about,
-            this.tsmi_update,
-            this.tsmi_mustRead,
-            this.版本ToolStripMenuItem,
-            this.tsmi_bugReport});
-            this.tsmi_help.Image = global::SuperSQLInjection.Properties.Resources.help;
-            this.tsmi_help.Name = "tsmi_help";
-            this.tsmi_help.Size = new System.Drawing.Size(64, 21);
-            this.tsmi_help.Text = "帮 助";
-            // 
-            // tsmi_readme
-            // 
-            this.tsmi_readme.Name = "tsmi_readme";
-            this.tsmi_readme.Size = new System.Drawing.Size(124, 22);
-            this.tsmi_readme.Text = "使用手册";
-            this.tsmi_readme.Click += new System.EventHandler(this.tsmi_readme_Click);
-            // 
-            // tsmi_about
-            // 
-            this.tsmi_about.Name = "tsmi_about";
-            this.tsmi_about.Size = new System.Drawing.Size(124, 22);
-            this.tsmi_about.Text = "关 于";
-            this.tsmi_about.Click += new System.EventHandler(this.tsmi_about_Click);
-            // 
-            // tsmi_update
-            // 
-            this.tsmi_update.Name = "tsmi_update";
-            this.tsmi_update.Size = new System.Drawing.Size(124, 22);
-            this.tsmi_update.Text = "在线更新";
-            this.tsmi_update.Click += new System.EventHandler(this.tsmi_update_Click);
-            // 
-            // tsmi_mustRead
-            // 
-            this.tsmi_mustRead.Name = "tsmi_mustRead";
-            this.tsmi_mustRead.Size = new System.Drawing.Size(124, 22);
-            this.tsmi_mustRead.Text = "声 明";
-            this.tsmi_mustRead.Click += new System.EventHandler(this.tsmi_mustRead_Click);
-            // 
-            // 版本ToolStripMenuItem
-            // 
-            this.版本ToolStripMenuItem.Name = "版本ToolStripMenuItem";
-            this.版本ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
-            this.版本ToolStripMenuItem.Text = "版本";
-            this.版本ToolStripMenuItem.Click += new System.EventHandler(this.版本ToolStripMenuItem_Click);
-            // 
-            // tsmi_bugReport
-            // 
-            this.tsmi_bugReport.Name = "tsmi_bugReport";
-            this.tsmi_bugReport.Size = new System.Drawing.Size(124, 22);
-            this.tsmi_bugReport.Text = "Bug反馈";
-            this.tsmi_bugReport.Click += new System.EventHandler(this.tsmi_bugReport_Click);
-            // 
             // gb_logo
             // 
             this.gb_logo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.gb_logo.Controls.Add(this.txt_log);
-            this.gb_logo.Location = new System.Drawing.Point(9, 597);
+            this.gb_logo.Location = new System.Drawing.Point(9, 607);
             this.gb_logo.Name = "gb_logo";
-            this.gb_logo.Size = new System.Drawing.Size(839, 135);
+            this.gb_logo.Size = new System.Drawing.Size(839, 125);
             this.gb_logo.TabIndex = 3;
             this.gb_logo.TabStop = false;
             this.gb_logo.Text = "日志";
@@ -882,7 +744,7 @@
             this.txt_log.Location = new System.Drawing.Point(3, 17);
             this.txt_log.Name = "txt_log";
             this.txt_log.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedVertical;
-            this.txt_log.Size = new System.Drawing.Size(833, 115);
+            this.txt_log.Size = new System.Drawing.Size(833, 105);
             this.txt_log.TabIndex = 0;
             this.txt_log.Text = "";
             // 
@@ -890,7 +752,7 @@
             // 
             this.tab_logCenter.Controls.Add(this.splitContainer1);
             this.tab_logCenter.ImageKey = "log.png";
-            this.tab_logCenter.Location = new System.Drawing.Point(4, 23);
+            this.tab_logCenter.Location = new System.Drawing.Point(4, 33);
             this.tab_logCenter.Name = "tab_logCenter";
             this.tab_logCenter.Size = new System.Drawing.Size(832, 444);
             this.tab_logCenter.TabIndex = 3;
@@ -1094,7 +956,7 @@
             this.tab_file.Controls.Add(this.file_txt_result);
             this.tab_file.Controls.Add(this.groupBox7);
             this.tab_file.ImageKey = "editFile.png";
-            this.tab_file.Location = new System.Drawing.Point(4, 23);
+            this.tab_file.Location = new System.Drawing.Point(4, 33);
             this.tab_file.Name = "tab_file";
             this.tab_file.Size = new System.Drawing.Size(832, 444);
             this.tab_file.TabIndex = 4;
@@ -1133,6 +995,7 @@
             // 
             // file_btn_stop
             // 
+            this.file_btn_stop.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.file_btn_stop.Location = new System.Drawing.Point(747, 30);
             this.file_btn_stop.Name = "file_btn_stop";
             this.file_btn_stop.Size = new System.Drawing.Size(69, 23);
@@ -1143,6 +1006,7 @@
             // 
             // file_btn_start
             // 
+            this.file_btn_start.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.file_btn_start.Location = new System.Drawing.Point(659, 30);
             this.file_btn_start.Name = "file_btn_start";
             this.file_btn_start.Size = new System.Drawing.Size(69, 23);
@@ -1204,7 +1068,7 @@
             // 
             this.tab_dataCenter.Controls.Add(this.tabC_dataCenter);
             this.tab_dataCenter.ImageKey = "db.png";
-            this.tab_dataCenter.Location = new System.Drawing.Point(4, 23);
+            this.tab_dataCenter.Location = new System.Drawing.Point(4, 33);
             this.tab_dataCenter.Name = "tab_dataCenter";
             this.tab_dataCenter.Padding = new System.Windows.Forms.Padding(3);
             this.tab_dataCenter.Size = new System.Drawing.Size(832, 444);
@@ -1220,6 +1084,7 @@
             this.tabC_dataCenter.ImageList = this.myicon_list;
             this.tabC_dataCenter.Location = new System.Drawing.Point(3, 3);
             this.tabC_dataCenter.Name = "tabC_dataCenter";
+            this.tabC_dataCenter.Padding = new System.Drawing.Point(6, 6);
             this.tabC_dataCenter.SelectedIndex = 0;
             this.tabC_dataCenter.Size = new System.Drawing.Size(826, 438);
             this.tabC_dataCenter.TabIndex = 2;
@@ -1228,56 +1093,42 @@
             // 
             this.tab_vers.Controls.Add(this.toolStrip_getVers);
             this.tab_vers.Controls.Add(this.data_lvw_ver);
-            this.tab_vers.ImageKey = "(无)";
-            this.tab_vers.Location = new System.Drawing.Point(4, 23);
+            this.tab_vers.ImageIndex = 12;
+            this.tab_vers.Location = new System.Drawing.Point(4, 29);
             this.tab_vers.Name = "tab_vers";
             this.tab_vers.Padding = new System.Windows.Forms.Padding(3);
-            this.tab_vers.Size = new System.Drawing.Size(818, 411);
+            this.tab_vers.Size = new System.Drawing.Size(818, 405);
             this.tab_vers.TabIndex = 0;
             this.tab_vers.Text = "环境变量";
             this.tab_vers.UseVisualStyleBackColor = true;
             // 
             // toolStrip_getVers
             // 
+            this.toolStrip_getVers.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.toolStrip_getVers.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStrip_getVers.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStrip_vers_btn_getVariable,
             this.toolStrip_vers_btn_stopGetVariable});
-            this.toolStrip_getVers.Location = new System.Drawing.Point(3, 3);
+            this.toolStrip_getVers.Location = new System.Drawing.Point(3, 377);
             this.toolStrip_getVers.Name = "toolStrip_getVers";
             this.toolStrip_getVers.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
             this.toolStrip_getVers.Size = new System.Drawing.Size(812, 25);
             this.toolStrip_getVers.TabIndex = 1;
             // 
-            // toolStrip_vers_btn_getVariable
-            // 
-            this.toolStrip_vers_btn_getVariable.Image = ((System.Drawing.Image)(resources.GetObject("toolStrip_vers_btn_getVariable.Image")));
-            this.toolStrip_vers_btn_getVariable.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStrip_vers_btn_getVariable.Name = "toolStrip_vers_btn_getVariable";
-            this.toolStrip_vers_btn_getVariable.Size = new System.Drawing.Size(100, 22);
-            this.toolStrip_vers_btn_getVariable.Text = "获取环境变量";
-            this.toolStrip_vers_btn_getVariable.Click += new System.EventHandler(this.toolStrip_vers_btn_getVariable_Click);
-            // 
-            // toolStrip_vers_btn_stopGetVariable
-            // 
-            this.toolStrip_vers_btn_stopGetVariable.Image = global::SuperSQLInjection.Properties.Resources.stop_red;
-            this.toolStrip_vers_btn_stopGetVariable.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStrip_vers_btn_stopGetVariable.Name = "toolStrip_vers_btn_stopGetVariable";
-            this.toolStrip_vers_btn_stopGetVariable.Size = new System.Drawing.Size(76, 22);
-            this.toolStrip_vers_btn_stopGetVariable.Text = "停止获取";
-            this.toolStrip_vers_btn_stopGetVariable.Click += new System.EventHandler(this.toolStrip_vers_btn_stopGetVariable_Click);
-            // 
             // data_lvw_ver
             // 
+            this.data_lvw_ver.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.data_lvw_ver.CheckBoxes = true;
             this.data_lvw_ver.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.data_lvw_ver_verName,
             this.data_lvw_ver_val});
             this.data_lvw_ver.ContextMenuStrip = this.data_cms_vers;
             this.data_lvw_ver.FullRowSelect = true;
-            this.data_lvw_ver.Location = new System.Drawing.Point(3, 31);
+            this.data_lvw_ver.Location = new System.Drawing.Point(3, 3);
             this.data_lvw_ver.Name = "data_lvw_ver";
-            this.data_lvw_ver.Size = new System.Drawing.Size(812, 377);
+            this.data_lvw_ver.Size = new System.Drawing.Size(812, 371);
             this.data_lvw_ver.TabIndex = 0;
             this.data_lvw_ver.UseCompatibleStateImageBehavior = false;
             this.data_lvw_ver.View = System.Windows.Forms.View.Details;
@@ -1341,10 +1192,11 @@
             // tab_dbs
             // 
             this.tab_dbs.Controls.Add(this.spc_dbs);
-            this.tab_dbs.Location = new System.Drawing.Point(4, 23);
+            this.tab_dbs.ImageIndex = 13;
+            this.tab_dbs.Location = new System.Drawing.Point(4, 29);
             this.tab_dbs.Name = "tab_dbs";
             this.tab_dbs.Padding = new System.Windows.Forms.Padding(3);
-            this.tab_dbs.Size = new System.Drawing.Size(818, 411);
+            this.tab_dbs.Size = new System.Drawing.Size(818, 405);
             this.tab_dbs.TabIndex = 1;
             this.tab_dbs.Text = "数据库信息";
             this.tab_dbs.UseVisualStyleBackColor = true;
@@ -1364,8 +1216,8 @@
             // 
             this.spc_dbs.Panel2.Controls.Add(this.toolStrip1);
             this.spc_dbs.Panel2.Controls.Add(this.groupBox4);
-            this.spc_dbs.Size = new System.Drawing.Size(812, 405);
-            this.spc_dbs.SplitterDistance = 232;
+            this.spc_dbs.Size = new System.Drawing.Size(812, 399);
+            this.spc_dbs.SplitterDistance = 240;
             this.spc_dbs.SplitterWidth = 3;
             this.spc_dbs.TabIndex = 5;
             // 
@@ -1378,42 +1230,22 @@
             this.data_dbs_tsl_getTables,
             this.data_dbs_tsl_getColumns});
             this.data_dbs_ts.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
-            this.data_dbs_ts.Location = new System.Drawing.Point(0, 380);
+            this.data_dbs_ts.Location = new System.Drawing.Point(0, 374);
             this.data_dbs_ts.Name = "data_dbs_ts";
             this.data_dbs_ts.Padding = new System.Windows.Forms.Padding(5, 0, 0, 0);
             this.data_dbs_ts.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
             this.data_dbs_ts.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.data_dbs_ts.Size = new System.Drawing.Size(232, 25);
+            this.data_dbs_ts.Size = new System.Drawing.Size(240, 25);
             this.data_dbs_ts.TabIndex = 4;
             // 
             // data_dbs_tsl_getDBS
             // 
-            this.data_dbs_tsl_getDBS.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.data_dbs_tsl_getDBS.Image = global::SuperSQLInjection.Properties.Resources.getvers;
             this.data_dbs_tsl_getDBS.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.data_dbs_tsl_getDBS.Name = "data_dbs_tsl_getDBS";
-            this.data_dbs_tsl_getDBS.Size = new System.Drawing.Size(56, 22);
+            this.data_dbs_tsl_getDBS.Size = new System.Drawing.Size(72, 22);
             this.data_dbs_tsl_getDBS.Text = "获 取 库";
             this.data_dbs_tsl_getDBS.Click += new System.EventHandler(this.data_dbs_tsl_getDBS_Click);
-            // 
-            // data_dbs_tsl_getTables
-            // 
-            this.data_dbs_tsl_getTables.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.data_dbs_tsl_getTables.Image = ((System.Drawing.Image)(resources.GetObject("data_dbs_tsl_getTables.Image")));
-            this.data_dbs_tsl_getTables.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.data_dbs_tsl_getTables.Name = "data_dbs_tsl_getTables";
-            this.data_dbs_tsl_getTables.Size = new System.Drawing.Size(56, 22);
-            this.data_dbs_tsl_getTables.Text = "获 取 表";
-            this.data_dbs_tsl_getTables.Click += new System.EventHandler(this.data_dbs_tsl_getTables_Click);
-            // 
-            // data_dbs_tsl_getColumns
-            // 
-            this.data_dbs_tsl_getColumns.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.data_dbs_tsl_getColumns.Image = ((System.Drawing.Image)(resources.GetObject("data_dbs_tsl_getColumns.Image")));
-            this.data_dbs_tsl_getColumns.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.data_dbs_tsl_getColumns.Name = "data_dbs_tsl_getColumns";
-            this.data_dbs_tsl_getColumns.Size = new System.Drawing.Size(56, 22);
-            this.data_dbs_tsl_getColumns.Text = "获 取 列";
-            this.data_dbs_tsl_getColumns.Click += new System.EventHandler(this.data_dbs_tsl_getColumns_Click);
             // 
             // groupBox2
             // 
@@ -1423,7 +1255,7 @@
             this.groupBox2.Controls.Add(this.data_tvw_dbs);
             this.groupBox2.Location = new System.Drawing.Point(5, 6);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(227, 373);
+            this.groupBox2.Size = new System.Drawing.Size(235, 367);
             this.groupBox2.TabIndex = 0;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "数据库信息";
@@ -1440,7 +1272,7 @@
             this.data_tvw_dbs.Location = new System.Drawing.Point(3, 17);
             this.data_tvw_dbs.Name = "data_tvw_dbs";
             this.data_tvw_dbs.SelectedImageIndex = 6;
-            this.data_tvw_dbs.Size = new System.Drawing.Size(221, 353);
+            this.data_tvw_dbs.Size = new System.Drawing.Size(229, 347);
             this.data_tvw_dbs.TabIndex = 0;
             this.data_tvw_dbs.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.data_tvw_dbs_AfterCheck);
             this.data_tvw_dbs.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.data_tvw_dbs_AfterSelect);
@@ -1557,10 +1389,10 @@
             this.toolStripLabel2,
             this.data_dbs_cob_db_encoding,
             this.data_dbs_tsl_stopGetDatas});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 380);
+            this.toolStrip1.Location = new System.Drawing.Point(0, 374);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip1.Size = new System.Drawing.Size(577, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(569, 25);
             this.toolStrip1.TabIndex = 5;
             this.toolStrip1.TextChanged += new System.EventHandler(this.toolStrip1_TextChanged);
             // 
@@ -1591,26 +1423,6 @@
             this.data_dbs_txt_count.Size = new System.Drawing.Size(49, 25);
             this.data_dbs_txt_count.Text = "1";
             // 
-            // data_dbs_tsl_getDatas
-            // 
-            this.data_dbs_tsl_getDatas.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.data_dbs_tsl_getDatas.Image = ((System.Drawing.Image)(resources.GetObject("data_dbs_tsl_getDatas.Image")));
-            this.data_dbs_tsl_getDatas.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.data_dbs_tsl_getDatas.Name = "data_dbs_tsl_getDatas";
-            this.data_dbs_tsl_getDatas.Size = new System.Drawing.Size(60, 22);
-            this.data_dbs_tsl_getDatas.Text = "获取数据";
-            this.data_dbs_tsl_getDatas.Click += new System.EventHandler(this.data_dbs_tsl_getDatas_Click);
-            // 
-            // data_dbs_tsl_exportDatas
-            // 
-            this.data_dbs_tsl_exportDatas.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.data_dbs_tsl_exportDatas.Image = ((System.Drawing.Image)(resources.GetObject("data_dbs_tsl_exportDatas.Image")));
-            this.data_dbs_tsl_exportDatas.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.data_dbs_tsl_exportDatas.Name = "data_dbs_tsl_exportDatas";
-            this.data_dbs_tsl_exportDatas.Size = new System.Drawing.Size(60, 22);
-            this.data_dbs_tsl_exportDatas.Text = "导出数据";
-            this.data_dbs_tsl_exportDatas.Click += new System.EventHandler(this.data_dbs_tsl_exportDatas_Click);
-            // 
             // toolStripLabel2
             // 
             this.toolStripLabel2.Name = "toolStripLabel2";
@@ -1629,21 +1441,13 @@
             this.data_dbs_cob_db_encoding.Size = new System.Drawing.Size(89, 25);
             this.data_dbs_cob_db_encoding.TextChanged += new System.EventHandler(this.data_dbs_cob_db_encoding_TextChanged);
             // 
-            // data_dbs_tsl_stopGetDatas
-            // 
-            this.data_dbs_tsl_stopGetDatas.Margin = new System.Windows.Forms.Padding(10, 0, 0, 2);
-            this.data_dbs_tsl_stopGetDatas.Name = "data_dbs_tsl_stopGetDatas";
-            this.data_dbs_tsl_stopGetDatas.Size = new System.Drawing.Size(56, 23);
-            this.data_dbs_tsl_stopGetDatas.Text = "停止获取";
-            this.data_dbs_tsl_stopGetDatas.Click += new System.EventHandler(this.data_dbs_tsl_stopGetDatas_Click);
-            // 
             // groupBox4
             // 
             this.groupBox4.Controls.Add(this.data_dbs_lvw_data);
             this.groupBox4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox4.Location = new System.Drawing.Point(0, 0);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(577, 405);
+            this.groupBox4.Size = new System.Drawing.Size(569, 399);
             this.groupBox4.TabIndex = 1;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "获取数据";
@@ -1657,7 +1461,7 @@
             this.data_dbs_lvw_data.GridLines = true;
             this.data_dbs_lvw_data.Location = new System.Drawing.Point(3, 17);
             this.data_dbs_lvw_data.Name = "data_dbs_lvw_data";
-            this.data_dbs_lvw_data.Size = new System.Drawing.Size(571, 385);
+            this.data_dbs_lvw_data.Size = new System.Drawing.Size(563, 379);
             this.data_dbs_lvw_data.TabIndex = 1;
             this.data_dbs_lvw_data.UseCompatibleStateImageBehavior = false;
             this.data_dbs_lvw_data.View = System.Windows.Forms.View.Details;
@@ -1710,12 +1514,15 @@
             this.myicon_list.Images.SetKeyName(10, "Ilog.png");
             this.myicon_list.Images.SetKeyName(11, "proxy.png");
             this.myicon_list.Images.SetKeyName(12, "vers.png");
+            this.myicon_list.Images.SetKeyName(13, "dbinfo.png");
+            this.myicon_list.Images.SetKeyName(14, "HTTP.png");
             // 
             // tab_injectCenter
             // 
+            this.tab_injectCenter.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.tab_injectCenter.Controls.Add(this.groupBox1);
             this.tab_injectCenter.ImageKey = "config.png";
-            this.tab_injectCenter.Location = new System.Drawing.Point(4, 23);
+            this.tab_injectCenter.Location = new System.Drawing.Point(4, 33);
             this.tab_injectCenter.Name = "tab_injectCenter";
             this.tab_injectCenter.Padding = new System.Windows.Forms.Padding(3);
             this.tab_injectCenter.Size = new System.Drawing.Size(832, 444);
@@ -1742,8 +1549,10 @@
             this.tabControl1.Controls.Add(this.tab_datapack);
             this.tabControl1.Controls.Add(this.tab_tokenset);
             this.tabControl1.Controls.Add(this.tab_sencond_inject);
+            this.tabControl1.ImageList = this.myicon_list;
             this.tabControl1.Location = new System.Drawing.Point(6, 13);
             this.tabControl1.Name = "tabControl1";
+            this.tabControl1.Padding = new System.Drawing.Point(6, 6);
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(565, 418);
             this.tabControl1.TabIndex = 14;
@@ -1751,10 +1560,11 @@
             // tab_datapack
             // 
             this.tab_datapack.Controls.Add(this.txt_inject_request);
-            this.tab_datapack.Location = new System.Drawing.Point(4, 22);
+            this.tab_datapack.ImageKey = "HTTP.png";
+            this.tab_datapack.Location = new System.Drawing.Point(4, 29);
             this.tab_datapack.Name = "tab_datapack";
             this.tab_datapack.Padding = new System.Windows.Forms.Padding(3);
-            this.tab_datapack.Size = new System.Drawing.Size(557, 392);
+            this.tab_datapack.Size = new System.Drawing.Size(557, 385);
             this.tab_datapack.TabIndex = 0;
             this.tab_datapack.Text = "HTTP请求数据包";
             this.tab_datapack.UseVisualStyleBackColor = true;
@@ -1768,7 +1578,7 @@
             this.txt_inject_request.Multiline = true;
             this.txt_inject_request.Name = "txt_inject_request";
             this.txt_inject_request.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txt_inject_request.Size = new System.Drawing.Size(551, 386);
+            this.txt_inject_request.Size = new System.Drawing.Size(551, 379);
             this.txt_inject_request.TabIndex = 13;
             this.txt_inject_request.Text = resources.GetString("txt_inject_request.Text");
             this.txt_inject_request.TextChanged += new System.EventHandler(this.txt_inject_request_TextChanged);
@@ -1817,10 +1627,10 @@
             // 
             this.tab_tokenset.Controls.Add(this.groupBox17);
             this.tab_tokenset.Controls.Add(this.groupBox19);
-            this.tab_tokenset.Location = new System.Drawing.Point(4, 22);
+            this.tab_tokenset.Location = new System.Drawing.Point(4, 29);
             this.tab_tokenset.Name = "tab_tokenset";
             this.tab_tokenset.Padding = new System.Windows.Forms.Padding(3);
-            this.tab_tokenset.Size = new System.Drawing.Size(557, 392);
+            this.tab_tokenset.Size = new System.Drawing.Size(557, 385);
             this.tab_tokenset.TabIndex = 1;
             this.tab_tokenset.Text = "Token/随机值/验证码处理";
             this.tab_tokenset.UseVisualStyleBackColor = true;
@@ -1831,7 +1641,7 @@
             this.groupBox17.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox17.Location = new System.Drawing.Point(3, 3);
             this.groupBox17.Name = "groupBox17";
-            this.groupBox17.Size = new System.Drawing.Size(551, 322);
+            this.groupBox17.Size = new System.Drawing.Size(551, 315);
             this.groupBox17.TabIndex = 25;
             this.groupBox17.TabStop = false;
             this.groupBox17.Text = "获取Token的HTTP请求包";
@@ -1845,7 +1655,7 @@
             this.token_txt_http_request.Multiline = true;
             this.token_txt_http_request.Name = "token_txt_http_request";
             this.token_txt_http_request.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.token_txt_http_request.Size = new System.Drawing.Size(545, 302);
+            this.token_txt_http_request.Size = new System.Drawing.Size(545, 295);
             this.token_txt_http_request.TabIndex = 8;
             this.token_txt_http_request.TextChanged += new System.EventHandler(this.token_txt_http_request_TextChanged);
             this.token_txt_http_request.KeyDown += new System.Windows.Forms.KeyEventHandler(this.token_txt_http_request_KeyDown);
@@ -1858,7 +1668,7 @@
             this.groupBox19.Controls.Add(this.token_txt_startStr);
             this.groupBox19.Controls.Add(this.token_btn_testGetToken);
             this.groupBox19.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.groupBox19.Location = new System.Drawing.Point(3, 325);
+            this.groupBox19.Location = new System.Drawing.Point(3, 318);
             this.groupBox19.Name = "groupBox19";
             this.groupBox19.Size = new System.Drawing.Size(551, 64);
             this.groupBox19.TabIndex = 25;
@@ -1916,9 +1726,9 @@
             // tab_sencond_inject
             // 
             this.tab_sencond_inject.Controls.Add(this.groupBox20);
-            this.tab_sencond_inject.Location = new System.Drawing.Point(4, 22);
+            this.tab_sencond_inject.Location = new System.Drawing.Point(4, 29);
             this.tab_sencond_inject.Name = "tab_sencond_inject";
-            this.tab_sencond_inject.Size = new System.Drawing.Size(557, 392);
+            this.tab_sencond_inject.Size = new System.Drawing.Size(557, 385);
             this.tab_sencond_inject.TabIndex = 2;
             this.tab_sencond_inject.Text = "二次注入";
             this.tab_sencond_inject.UseVisualStyleBackColor = true;
@@ -1932,7 +1742,7 @@
             this.groupBox20.Controls.Add(this.txt_sencond_request);
             this.groupBox20.Location = new System.Drawing.Point(0, 3);
             this.groupBox20.Name = "groupBox20";
-            this.groupBox20.Size = new System.Drawing.Size(557, 388);
+            this.groupBox20.Size = new System.Drawing.Size(557, 381);
             this.groupBox20.TabIndex = 26;
             this.groupBox20.TabStop = false;
             this.groupBox20.Text = "二次注入请求包";
@@ -1942,7 +1752,7 @@
             this.groupBox21.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox21.Controls.Add(this.label28);
-            this.groupBox21.Location = new System.Drawing.Point(6, 333);
+            this.groupBox21.Location = new System.Drawing.Point(6, 326);
             this.groupBox21.Name = "groupBox21";
             this.groupBox21.Size = new System.Drawing.Size(543, 50);
             this.groupBox21.TabIndex = 10;
@@ -1969,7 +1779,7 @@
             this.txt_sencond_request.Multiline = true;
             this.txt_sencond_request.Name = "txt_sencond_request";
             this.txt_sencond_request.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txt_sencond_request.Size = new System.Drawing.Size(551, 309);
+            this.txt_sencond_request.Size = new System.Drawing.Size(551, 302);
             this.txt_sencond_request.TabIndex = 8;
             this.txt_sencond_request.TextChanged += new System.EventHandler(this.txt_sencond_request_TextChanged);
             this.txt_sencond_request.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txt_sencond_request_KeyDown);
@@ -2075,6 +1885,7 @@
             // 
             // btn_inject_sendData
             // 
+            this.btn_inject_sendData.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btn_inject_sendData.Location = new System.Drawing.Point(13, 122);
             this.btn_inject_sendData.Name = "btn_inject_sendData";
             this.btn_inject_sendData.Size = new System.Drawing.Size(99, 23);
@@ -2085,6 +1896,7 @@
             // 
             // btn_inject_clearRequest
             // 
+            this.btn_inject_clearRequest.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btn_inject_clearRequest.Location = new System.Drawing.Point(138, 122);
             this.btn_inject_clearRequest.Name = "btn_inject_clearRequest";
             this.btn_inject_clearRequest.Size = new System.Drawing.Size(99, 23);
@@ -2150,6 +1962,7 @@
             // 
             // inject_btn_autoFindKey
             // 
+            this.inject_btn_autoFindKey.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.inject_btn_autoFindKey.Location = new System.Drawing.Point(11, 126);
             this.inject_btn_autoFindKey.Name = "inject_btn_autoFindKey";
             this.inject_btn_autoFindKey.Size = new System.Drawing.Size(99, 23);
@@ -2160,6 +1973,7 @@
             // 
             // injectConfig_btn_checkKey
             // 
+            this.injectConfig_btn_checkKey.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.injectConfig_btn_checkKey.Location = new System.Drawing.Point(138, 126);
             this.injectConfig_btn_checkKey.Name = "injectConfig_btn_checkKey";
             this.injectConfig_btn_checkKey.Size = new System.Drawing.Size(99, 23);
@@ -2204,6 +2018,7 @@
             // 
             // btn_inject_setEncodingRange
             // 
+            this.btn_inject_setEncodingRange.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btn_inject_setEncodingRange.Location = new System.Drawing.Point(138, 51);
             this.btn_inject_setEncodingRange.Name = "btn_inject_setEncodingRange";
             this.btn_inject_setEncodingRange.Size = new System.Drawing.Size(99, 23);
@@ -2230,6 +2045,7 @@
             // 
             // btn_inject_randStr
             // 
+            this.btn_inject_randStr.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btn_inject_randStr.Location = new System.Drawing.Point(138, 87);
             this.btn_inject_randStr.Name = "btn_inject_randStr";
             this.btn_inject_randStr.Size = new System.Drawing.Size(99, 23);
@@ -2240,6 +2056,7 @@
             // 
             // btn_inject_setTokenLocation
             // 
+            this.btn_inject_setTokenLocation.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btn_inject_setTokenLocation.Location = new System.Drawing.Point(12, 87);
             this.btn_inject_setTokenLocation.Name = "btn_inject_setTokenLocation";
             this.btn_inject_setTokenLocation.Size = new System.Drawing.Size(99, 23);
@@ -2272,6 +2089,7 @@
             // 
             // btn_inject_setInject
             // 
+            this.btn_inject_setInject.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btn_inject_setInject.Location = new System.Drawing.Point(12, 51);
             this.btn_inject_setInject.Name = "btn_inject_setInject";
             this.btn_inject_setInject.Size = new System.Drawing.Size(99, 23);
@@ -2298,8 +2116,9 @@
             this.mytab.ImageList = this.myicon_list;
             this.mytab.Location = new System.Drawing.Point(9, 120);
             this.mytab.Name = "mytab";
+            this.mytab.Padding = new System.Drawing.Point(6, 8);
             this.mytab.SelectedIndex = 0;
-            this.mytab.Size = new System.Drawing.Size(840, 471);
+            this.mytab.Size = new System.Drawing.Size(840, 481);
             this.mytab.TabIndex = 1;
             // 
             // tab_proxy
@@ -2307,7 +2126,7 @@
             this.tab_proxy.Controls.Add(this.groupBox25);
             this.tab_proxy.Controls.Add(this.groupBox24);
             this.tab_proxy.ImageKey = "proxy.png";
-            this.tab_proxy.Location = new System.Drawing.Point(4, 23);
+            this.tab_proxy.Location = new System.Drawing.Point(4, 33);
             this.tab_proxy.Name = "tab_proxy";
             this.tab_proxy.Padding = new System.Windows.Forms.Padding(3);
             this.tab_proxy.Size = new System.Drawing.Size(832, 444);
@@ -2526,6 +2345,7 @@
             // 
             // proxy_btn_importProxy
             // 
+            this.proxy_btn_importProxy.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.proxy_btn_importProxy.ImageKey = "(无)";
             this.proxy_btn_importProxy.Location = new System.Drawing.Point(737, 21);
             this.proxy_btn_importProxy.Name = "proxy_btn_importProxy";
@@ -2537,6 +2357,7 @@
             // 
             // proxy_btn_addProxy
             // 
+            this.proxy_btn_addProxy.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.proxy_btn_addProxy.ImageKey = "(无)";
             this.proxy_btn_addProxy.Location = new System.Drawing.Point(665, 21);
             this.proxy_btn_addProxy.Name = "proxy_btn_addProxy";
@@ -2611,7 +2432,7 @@
             this.proxy_txt_addProxyType.FormattingEnabled = true;
             this.proxy_txt_addProxyType.Items.AddRange(new object[] {
             "Socks5",
-            "HTTP/HTTPS"});
+            "HTTP"});
             this.proxy_txt_addProxyType.Location = new System.Drawing.Point(321, 23);
             this.proxy_txt_addProxyType.Name = "proxy_txt_addProxyType";
             this.proxy_txt_addProxyType.Size = new System.Drawing.Size(88, 20);
@@ -2772,7 +2593,7 @@
             this.tab_cmd.Controls.Add(this.cmd_txt_result);
             this.tab_cmd.Controls.Add(this.groupBox8);
             this.tab_cmd.ImageKey = "cmd.png";
-            this.tab_cmd.Location = new System.Drawing.Point(4, 23);
+            this.tab_cmd.Location = new System.Drawing.Point(4, 33);
             this.tab_cmd.Name = "tab_cmd";
             this.tab_cmd.Size = new System.Drawing.Size(832, 444);
             this.tab_cmd.TabIndex = 6;
@@ -2822,6 +2643,7 @@
             // 
             // cmd_btn_stop
             // 
+            this.cmd_btn_stop.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmd_btn_stop.Location = new System.Drawing.Point(591, 28);
             this.cmd_btn_stop.Name = "cmd_btn_stop";
             this.cmd_btn_stop.Size = new System.Drawing.Size(75, 23);
@@ -2832,6 +2654,7 @@
             // 
             // cmd_btn_start
             // 
+            this.cmd_btn_start.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmd_btn_start.Location = new System.Drawing.Point(495, 28);
             this.cmd_btn_start.Name = "cmd_btn_start";
             this.cmd_btn_start.Size = new System.Drawing.Size(75, 23);
@@ -2861,7 +2684,7 @@
             // 
             this.tab_bypass.Controls.Add(this.groupBox9);
             this.tab_bypass.ImageKey = "codeChange.png";
-            this.tab_bypass.Location = new System.Drawing.Point(4, 23);
+            this.tab_bypass.Location = new System.Drawing.Point(4, 33);
             this.tab_bypass.Name = "tab_bypass";
             this.tab_bypass.Size = new System.Drawing.Size(832, 444);
             this.tab_bypass.TabIndex = 7;
@@ -2896,6 +2719,7 @@
             // 
             // bypass_btn_saveTemplate
             // 
+            this.bypass_btn_saveTemplate.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.bypass_btn_saveTemplate.Location = new System.Drawing.Point(679, 15);
             this.bypass_btn_saveTemplate.Name = "bypass_btn_saveTemplate";
             this.bypass_btn_saveTemplate.Size = new System.Drawing.Size(125, 23);
@@ -2965,6 +2789,7 @@
             // 
             // bypass_btn_addReplaceStr
             // 
+            this.bypass_btn_addReplaceStr.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.bypass_btn_addReplaceStr.Location = new System.Drawing.Point(727, 24);
             this.bypass_btn_addReplaceStr.Name = "bypass_btn_addReplaceStr";
             this.bypass_btn_addReplaceStr.Size = new System.Drawing.Size(78, 23);
@@ -3255,7 +3080,7 @@
             this.tab_encoding.Controls.Add(this.groupBox11);
             this.tab_encoding.Controls.Add(this.groupBox10);
             this.tab_encoding.ImageKey = "convert.png";
-            this.tab_encoding.Location = new System.Drawing.Point(4, 23);
+            this.tab_encoding.Location = new System.Drawing.Point(4, 33);
             this.tab_encoding.Name = "tab_encoding";
             this.tab_encoding.Size = new System.Drawing.Size(832, 444);
             this.tab_encoding.TabIndex = 5;
@@ -3394,7 +3219,7 @@
             this.tab_scanInjection.Controls.Add(this.groupBox14);
             this.tab_scanInjection.Controls.Add(this.groupBox12);
             this.tab_scanInjection.ImageKey = "scan.png";
-            this.tab_scanInjection.Location = new System.Drawing.Point(4, 23);
+            this.tab_scanInjection.Location = new System.Drawing.Point(4, 33);
             this.tab_scanInjection.Name = "tab_scanInjection";
             this.tab_scanInjection.Size = new System.Drawing.Size(832, 444);
             this.tab_scanInjection.TabIndex = 8;
@@ -3638,6 +3463,7 @@
             // 
             // scanInjection_btn_spider
             // 
+            this.scanInjection_btn_spider.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.scanInjection_btn_spider.Location = new System.Drawing.Point(703, 16);
             this.scanInjection_btn_spider.Name = "scanInjection_btn_spider";
             this.scanInjection_btn_spider.Size = new System.Drawing.Size(75, 23);
@@ -3648,6 +3474,7 @@
             // 
             // scanInjection_btn_scan
             // 
+            this.scanInjection_btn_scan.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.scanInjection_btn_scan.Location = new System.Drawing.Point(703, 57);
             this.scanInjection_btn_scan.Name = "scanInjection_btn_scan";
             this.scanInjection_btn_scan.Size = new System.Drawing.Size(75, 23);
@@ -3658,6 +3485,7 @@
             // 
             // scanInjection_importDomains
             // 
+            this.scanInjection_importDomains.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.scanInjection_importDomains.Location = new System.Drawing.Point(183, 22);
             this.scanInjection_importDomains.Name = "scanInjection_importDomains";
             this.scanInjection_importDomains.Size = new System.Drawing.Size(61, 23);
@@ -3758,7 +3586,7 @@
             // 
             this.tab_injectLog.Controls.Add(this.lvw_injectLog);
             this.tab_injectLog.ImageKey = "Ilog.png";
-            this.tab_injectLog.Location = new System.Drawing.Point(4, 23);
+            this.tab_injectLog.Location = new System.Drawing.Point(4, 33);
             this.tab_injectLog.Name = "tab_injectLog";
             this.tab_injectLog.Padding = new System.Windows.Forms.Padding(3);
             this.tab_injectLog.Size = new System.Drawing.Size(832, 444);
@@ -4000,6 +3828,223 @@
             this.timer_scanInjection.Interval = 1000;
             this.timer_scanInjection.Tick += new System.EventHandler(this.timer_scanInjection_Tick);
             // 
+            // menuStrip_main
+            // 
+            this.menuStrip_main.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.menuStrip_main.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsmi_menu,
+            this.tsmi_tools,
+            this.toolStripMenuItem1,
+            this.tsmi_help});
+            this.menuStrip_main.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip_main.Name = "menuStrip_main";
+            this.menuStrip_main.Size = new System.Drawing.Size(861, 25);
+            this.menuStrip_main.TabIndex = 2;
+            this.menuStrip_main.Text = "menuStrip1";
+            // 
+            // toolStrip_vers_btn_getVariable
+            // 
+            this.toolStrip_vers_btn_getVariable.Image = global::SuperSQLInjection.Properties.Resources.getvers;
+            this.toolStrip_vers_btn_getVariable.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStrip_vers_btn_getVariable.Name = "toolStrip_vers_btn_getVariable";
+            this.toolStrip_vers_btn_getVariable.Size = new System.Drawing.Size(100, 22);
+            this.toolStrip_vers_btn_getVariable.Text = "获取环境变量";
+            this.toolStrip_vers_btn_getVariable.Click += new System.EventHandler(this.toolStrip_vers_btn_getVariable_Click);
+            // 
+            // toolStrip_vers_btn_stopGetVariable
+            // 
+            this.toolStrip_vers_btn_stopGetVariable.Image = global::SuperSQLInjection.Properties.Resources.stop;
+            this.toolStrip_vers_btn_stopGetVariable.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStrip_vers_btn_stopGetVariable.Name = "toolStrip_vers_btn_stopGetVariable";
+            this.toolStrip_vers_btn_stopGetVariable.Size = new System.Drawing.Size(76, 22);
+            this.toolStrip_vers_btn_stopGetVariable.Text = "停止获取";
+            this.toolStrip_vers_btn_stopGetVariable.Click += new System.EventHandler(this.toolStrip_vers_btn_stopGetVariable_Click);
+            // 
+            // data_dbs_tsl_getTables
+            // 
+            this.data_dbs_tsl_getTables.Image = global::SuperSQLInjection.Properties.Resources.getvers;
+            this.data_dbs_tsl_getTables.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.data_dbs_tsl_getTables.Name = "data_dbs_tsl_getTables";
+            this.data_dbs_tsl_getTables.Size = new System.Drawing.Size(72, 22);
+            this.data_dbs_tsl_getTables.Text = "获 取 表";
+            this.data_dbs_tsl_getTables.Click += new System.EventHandler(this.data_dbs_tsl_getTables_Click);
+            // 
+            // data_dbs_tsl_getColumns
+            // 
+            this.data_dbs_tsl_getColumns.Image = global::SuperSQLInjection.Properties.Resources.getvers;
+            this.data_dbs_tsl_getColumns.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.data_dbs_tsl_getColumns.Name = "data_dbs_tsl_getColumns";
+            this.data_dbs_tsl_getColumns.Size = new System.Drawing.Size(72, 21);
+            this.data_dbs_tsl_getColumns.Text = "获 取 列";
+            this.data_dbs_tsl_getColumns.Click += new System.EventHandler(this.data_dbs_tsl_getColumns_Click);
+            // 
+            // data_dbs_tsl_getDatas
+            // 
+            this.data_dbs_tsl_getDatas.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.data_dbs_tsl_getDatas.Image = ((System.Drawing.Image)(resources.GetObject("data_dbs_tsl_getDatas.Image")));
+            this.data_dbs_tsl_getDatas.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.data_dbs_tsl_getDatas.Name = "data_dbs_tsl_getDatas";
+            this.data_dbs_tsl_getDatas.Size = new System.Drawing.Size(60, 22);
+            this.data_dbs_tsl_getDatas.Text = "获取数据";
+            this.data_dbs_tsl_getDatas.Click += new System.EventHandler(this.data_dbs_tsl_getDatas_Click);
+            // 
+            // data_dbs_tsl_exportDatas
+            // 
+            this.data_dbs_tsl_exportDatas.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.data_dbs_tsl_exportDatas.Image = ((System.Drawing.Image)(resources.GetObject("data_dbs_tsl_exportDatas.Image")));
+            this.data_dbs_tsl_exportDatas.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.data_dbs_tsl_exportDatas.Name = "data_dbs_tsl_exportDatas";
+            this.data_dbs_tsl_exportDatas.Size = new System.Drawing.Size(60, 22);
+            this.data_dbs_tsl_exportDatas.Text = "导出数据";
+            this.data_dbs_tsl_exportDatas.Click += new System.EventHandler(this.data_dbs_tsl_exportDatas_Click);
+            // 
+            // data_dbs_tsl_stopGetDatas
+            // 
+            this.data_dbs_tsl_stopGetDatas.Image = global::SuperSQLInjection.Properties.Resources.stop;
+            this.data_dbs_tsl_stopGetDatas.Margin = new System.Windows.Forms.Padding(10, 0, 0, 2);
+            this.data_dbs_tsl_stopGetDatas.Name = "data_dbs_tsl_stopGetDatas";
+            this.data_dbs_tsl_stopGetDatas.Size = new System.Drawing.Size(72, 23);
+            this.data_dbs_tsl_stopGetDatas.Text = "停止获取";
+            this.data_dbs_tsl_stopGetDatas.Click += new System.EventHandler(this.data_dbs_tsl_stopGetDatas_Click);
+            // 
+            // tsmi_menu
+            // 
+            this.tsmi_menu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsmi_openConfig,
+            this.tsmi_saveConfig});
+            this.tsmi_menu.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.tsmi_menu.Image = global::SuperSQLInjection.Properties.Resources.menu;
+            this.tsmi_menu.Name = "tsmi_menu";
+            this.tsmi_menu.Size = new System.Drawing.Size(64, 21);
+            this.tsmi_menu.Text = "菜 单";
+            // 
+            // tsmi_openConfig
+            // 
+            this.tsmi_openConfig.Image = global::SuperSQLInjection.Properties.Resources.导入;
+            this.tsmi_openConfig.Name = "tsmi_openConfig";
+            this.tsmi_openConfig.Size = new System.Drawing.Size(124, 22);
+            this.tsmi_openConfig.Text = "导入配置";
+            this.tsmi_openConfig.Click += new System.EventHandler(this.tsmi_openConfig_Click);
+            // 
+            // tsmi_saveConfig
+            // 
+            this.tsmi_saveConfig.Image = global::SuperSQLInjection.Properties.Resources.保存;
+            this.tsmi_saveConfig.Name = "tsmi_saveConfig";
+            this.tsmi_saveConfig.Size = new System.Drawing.Size(124, 22);
+            this.tsmi_saveConfig.Text = "保存配置";
+            this.tsmi_saveConfig.Click += new System.EventHandler(this.tsmi_saveConfig_Click);
+            // 
+            // tsmi_tools
+            // 
+            this.tsmi_tools.Image = global::SuperSQLInjection.Properties.Resources.tool;
+            this.tsmi_tools.Name = "tsmi_tools";
+            this.tsmi_tools.Size = new System.Drawing.Size(64, 21);
+            this.tsmi_tools.Text = "工 具";
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsmi_seting,
+            this.tsmi_lang});
+            this.toolStripMenuItem1.Image = global::SuperSQLInjection.Properties.Resources.config;
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(84, 21);
+            this.toolStripMenuItem1.Text = "系统设置";
+            // 
+            // tsmi_seting
+            // 
+            this.tsmi_seting.Image = global::SuperSQLInjection.Properties.Resources.set;
+            this.tsmi_seting.Name = "tsmi_seting";
+            this.tsmi_seting.Size = new System.Drawing.Size(124, 22);
+            this.tsmi_seting.Text = "系统设置";
+            this.tsmi_seting.Click += new System.EventHandler(this.tsmi_seting_Click);
+            // 
+            // tsmi_lang
+            // 
+            this.tsmi_lang.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsmi_zh_cn,
+            this.tsmi_en_us});
+            this.tsmi_lang.Image = global::SuperSQLInjection.Properties.Resources.lang;
+            this.tsmi_lang.Name = "tsmi_lang";
+            this.tsmi_lang.Size = new System.Drawing.Size(124, 22);
+            this.tsmi_lang.Text = "语 言";
+            // 
+            // tsmi_zh_cn
+            // 
+            this.tsmi_zh_cn.Checked = true;
+            this.tsmi_zh_cn.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.tsmi_zh_cn.Name = "tsmi_zh_cn";
+            this.tsmi_zh_cn.Size = new System.Drawing.Size(117, 22);
+            this.tsmi_zh_cn.Text = "中文";
+            // 
+            // tsmi_en_us
+            // 
+            this.tsmi_en_us.Name = "tsmi_en_us";
+            this.tsmi_en_us.Size = new System.Drawing.Size(117, 22);
+            this.tsmi_en_us.Text = "English";
+            // 
+            // tsmi_help
+            // 
+            this.tsmi_help.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsmi_readme,
+            this.tsmi_about,
+            this.tsmi_update,
+            this.tsmi_mustRead,
+            this.版本ToolStripMenuItem,
+            this.tsmi_bugReport});
+            this.tsmi_help.Image = global::SuperSQLInjection.Properties.Resources.help;
+            this.tsmi_help.Name = "tsmi_help";
+            this.tsmi_help.Size = new System.Drawing.Size(64, 21);
+            this.tsmi_help.Text = "帮 助";
+            // 
+            // tsmi_readme
+            // 
+            this.tsmi_readme.Image = global::SuperSQLInjection.Properties.Resources.手册;
+            this.tsmi_readme.Name = "tsmi_readme";
+            this.tsmi_readme.Size = new System.Drawing.Size(124, 22);
+            this.tsmi_readme.Text = "使用手册";
+            this.tsmi_readme.Click += new System.EventHandler(this.tsmi_readme_Click);
+            // 
+            // tsmi_about
+            // 
+            this.tsmi_about.Image = global::SuperSQLInjection.Properties.Resources.关于;
+            this.tsmi_about.Name = "tsmi_about";
+            this.tsmi_about.Size = new System.Drawing.Size(124, 22);
+            this.tsmi_about.Text = "关 于";
+            this.tsmi_about.Click += new System.EventHandler(this.tsmi_about_Click);
+            // 
+            // tsmi_update
+            // 
+            this.tsmi_update.Image = global::SuperSQLInjection.Properties.Resources.更新;
+            this.tsmi_update.Name = "tsmi_update";
+            this.tsmi_update.Size = new System.Drawing.Size(124, 22);
+            this.tsmi_update.Text = "在线更新";
+            this.tsmi_update.Click += new System.EventHandler(this.tsmi_update_Click);
+            // 
+            // tsmi_mustRead
+            // 
+            this.tsmi_mustRead.Image = global::SuperSQLInjection.Properties.Resources.声明;
+            this.tsmi_mustRead.Name = "tsmi_mustRead";
+            this.tsmi_mustRead.Size = new System.Drawing.Size(124, 22);
+            this.tsmi_mustRead.Text = "声 明";
+            this.tsmi_mustRead.Click += new System.EventHandler(this.tsmi_mustRead_Click);
+            // 
+            // 版本ToolStripMenuItem
+            // 
+            this.版本ToolStripMenuItem.Image = global::SuperSQLInjection.Properties.Resources.版本;
+            this.版本ToolStripMenuItem.Name = "版本ToolStripMenuItem";
+            this.版本ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.版本ToolStripMenuItem.Text = "版本";
+            this.版本ToolStripMenuItem.Click += new System.EventHandler(this.版本ToolStripMenuItem_Click);
+            // 
+            // tsmi_bugReport
+            // 
+            this.tsmi_bugReport.Image = global::SuperSQLInjection.Properties.Resources.bug;
+            this.tsmi_bugReport.Name = "tsmi_bugReport";
+            this.tsmi_bugReport.Size = new System.Drawing.Size(124, 22);
+            this.tsmi_bugReport.Text = "Bug反馈";
+            this.tsmi_bugReport.Click += new System.EventHandler(this.tsmi_bugReport_Click);
+            // 
             // Main
             // 
             this.AllowDrop = true;
@@ -4025,8 +4070,6 @@
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.Main_DragEnter);
             this.gb_basic.ResumeLayout(false);
             this.gb_basic.PerformLayout();
-            this.menuStrip_main.ResumeLayout(false);
-            this.menuStrip_main.PerformLayout();
             this.gb_logo.ResumeLayout(false);
             this.tab_logCenter.ResumeLayout(false);
             this.splitContainer1.Panel1.ResumeLayout(false);
@@ -4135,6 +4178,8 @@
             this.injectLog_cm.ResumeLayout(false);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
+            this.menuStrip_main.ResumeLayout(false);
+            this.menuStrip_main.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 

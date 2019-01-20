@@ -13,7 +13,7 @@ namespace SuperSQLInjection.model
         }
         public String host = "";
         public int port = 0;
-        public String proxyType = "";//socks5，或HTTP/HTTPS
+        public String proxyType = "HTTP";//socks5，或HTTP
         public String username = "";//代理账户
         public String password = "";//代理密码
         public String isOk ="未验证";//未验证,是，否

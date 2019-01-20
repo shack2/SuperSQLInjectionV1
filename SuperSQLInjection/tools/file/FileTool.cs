@@ -273,11 +273,37 @@ namespace tools
                     if (!lineStr.Equals(""))
                     {
                         String[] strs = lineStr.Split('\t');
-                        if (strs.Length == 8) {
+                        if (strs.Length == 2)
+                        {
                             Proxy proxy = new Proxy();
                             proxy.host = strs[0];
-                            proxy.port= Tools.convertToInt(strs[1]);
-                            proxy.proxyType= strs[2];
+                            proxy.port = Tools.convertToInt(strs[1]);
+                            list.Add(proxy.host + proxy.port, proxy);
+                        }
+                        else if (strs.Length == 3)
+                        {
+                            Proxy proxy = new Proxy();
+                            proxy.host = strs[0];
+                            proxy.port = Tools.convertToInt(strs[1]);
+                            proxy.proxyType = strs[2];
+                            list.Add(proxy.host + proxy.port, proxy);
+                        }
+                        else if (strs.Length == 5)
+                        {
+                                Proxy proxy = new Proxy();
+                                proxy.host = strs[0];
+                                proxy.port = Tools.convertToInt(strs[1]);
+                                proxy.proxyType = strs[2];
+                                proxy.username = strs[3];
+                                proxy.password = strs[4];
+                                list.Add(proxy.host + proxy.port, proxy);
+                        }
+                        else if (strs.Length == 8)
+                        {
+                            Proxy proxy = new Proxy();
+                            proxy.host = strs[0];
+                            proxy.port = Tools.convertToInt(strs[1]);
+                            proxy.proxyType = strs[2];
                             proxy.username = strs[3];
                             proxy.password = strs[4];
                             proxy.isOk = strs[5];

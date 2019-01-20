@@ -282,6 +282,7 @@ namespace SuperSQLInjection.tools
                     request = StringReplace.strReplaceCenter(main.config, request, main.replaceList);
                     //编码处理
                     server.request = request;
+
                     TimeOutSocket tos = new TimeOutSocket();
                     if (main.config.proxy_mode == 1 || main.config.proxy_mode == 2)
                     {
@@ -298,7 +299,14 @@ namespace SuperSQLInjection.tools
                         if (cproxy == null)
                         {
                             //不使用代理
-                            clientSocket = tos.Connect(host, port, timeout);
+                            try
+                            {
+                                clientSocket = tos.Connect(host, port, timeout);
+                            }
+                            catch (Exception)
+                            {
+                                Tools.SysLog(host + ":" + port + "无法连接！");
+                            }
                         }
                         else {
                             if (Socks5ProxyType.Equals(cproxy.proxyType))
@@ -327,16 +335,24 @@ namespace SuperSQLInjection.tools
                     else
                     {
                         //不使用代理
-                        clientSocket = tos.Connect(host, port, timeout);
+                        try
+                        {
+                            clientSocket = tos.Connect(host, port, timeout);
+                        }
+                        catch (Exception) {
+                            Tools.SysLog(host+":"+ port+"无法连接！");
+                        }
+                       
                     }
                  
                     if (sw.ElapsedMilliseconds > timeout)
                     {
                         return server;
                     }
-                    clientSocket.SendTimeout = timeout - tos.useTime;
-                    if (clientSocket.Connected)
+                    
+                    if (clientSocket!=null&&clientSocket.Connected)
                     {
+                        clientSocket.SendTimeout = timeout - tos.useTime;
                         checkContentLength(ref server, ref request);
                         server.request = request;
                         //分开发送header和body，可以绕过某些情况下的安全防护Connection: close,不能使用这种方式
@@ -698,7 +714,14 @@ namespace SuperSQLInjection.tools
                         if (cproxy == null)
                         {
                             //不使用代理
-                            clientSocket = tos.Connect(host, port, timeout);
+                            try
+                            {
+                                clientSocket = tos.Connect(host, port, timeout);
+                            }
+                            catch (Exception)
+                            {
+                                Tools.SysLog(host + ":" + port + "无法连接！");
+                            }
                         }
                         else
                         {
@@ -727,19 +750,26 @@ namespace SuperSQLInjection.tools
 
                     else
                     {
-                        //不使用代理
-                        clientSocket = tos.Connect(host, port, timeout);
+                        try
+                        {
+                            clientSocket = tos.Connect(host, port, timeout);
+                        }
+                        catch (Exception)
+                        {
+                            Tools.SysLog(host + ":" + port + "无法连接！");
+                        }
                     }
 
                     if (sw.ElapsedMilliseconds >= timeout)
                     {
                         return server;
                     }
-                    clientSocket.SendTimeout = timeout - tos.useTime;
+                   
 
                     SslStream ssl = null;
-                    if (clientSocket.Connected)
+                    if (clientSocket!=null&&clientSocket.Connected)
                     {
+                        clientSocket.SendTimeout = timeout - tos.useTime;
                         ssl = new SslStream(clientSocket.GetStream(), false, new RemoteCertificateValidationCallback(ValidateServerCertificate));
                        
                         //增加支持TLS1.1和TLS1.2支持3072，768
