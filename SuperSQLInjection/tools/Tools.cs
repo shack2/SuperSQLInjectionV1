@@ -711,6 +711,10 @@ namespace tools
         {
             return strToChrOrChar(str, "chr", joinStr, encode);
         }
+        public static String informixStrToChr(String randstr)
+        {
+            return "to_char("+ randstr + ")";
+        }
 
         /// <summary>
         /// 转换chr供SQLServer替换库名，防止单引号被拦截或过滤
@@ -1195,15 +1199,27 @@ namespace tools
         }
 
         //DB2的每列是数字或者字符的穷举
-        private static String[] fillStr = { "1", "chr(32)"};
+        private static String[] DB2_fillStr = { "1", "chr(32)"};
 
 
-        /// <summary>
-        /// 获得DB2的每列是数字或者字符的穷举
-        /// </summary>
-        /// <param name="n">总列数</param>
-        /// <returns></returns>
+        private static String[] Infomix_fillStr = { "1", "''" };
+
+
+       
+        // 获得DB2的每列是数字或者字符的穷举
+ 
         public static List<String> getDB2UnionTemplates(int sumCount, int showIndex)
+        {
+            return getUnionTemplates(DB2_fillStr, sumCount, showIndex);
+        }
+        // 获得informix的每列是数字或者字符的穷举
+        public static List<String> getInformixUnionTemplates(int sumCount, int showIndex)
+        {
+            return getUnionTemplates(Infomix_fillStr, sumCount, showIndex);
+        }
+
+        // 获得数据库的每列是数字或者字符的穷举
+        private static List<String> getUnionTemplates(String[] fillStr,int sumCount, int showIndex)
         {
             List < String > list= new List<String>();
             if (sumCount == 1)
@@ -1214,10 +1230,10 @@ namespace tools
             else {
                 int n = sumCount - 1;
                 String[] codes = new String[2 << (n - 1)];
-                createGrayCode(codes, n);
+                createGrayCode(fillStr,codes, n);
                 foreach(String code in codes)
                 {
-                    String cp = insertDB2ShowTemplate(code,showIndex);
+                    String cp = insertShowTemplate(code, showIndex);
                     list.Add(cp);
                     //插入,显示列
                 }
@@ -1225,14 +1241,14 @@ namespace tools
             return list;
         }
 
-        private static String insertDB2ShowTemplate(String temlate,int showIndex) {
+        private static String insertShowTemplate(String temlate,int showIndex) {
             List<String> list = new List<String>(temlate.Split(','));
             list.Insert(showIndex,"{data}");
             return String.Join(",", list);
 
         }
 
-        private static void createGrayCode(String[] codes, int n)
+        private static void createGrayCode(String[] fillStr, String[] codes, int n)
         {
             if (n == 1)
             {
@@ -1241,7 +1257,7 @@ namespace tools
             }
             else
             {
-                createGrayCode(codes, n - 1);
+                createGrayCode(fillStr,codes, n - 1);
                 int len = 2 << (n - 1);
                 int half = len >> 1;
                 for (int i = len - 1, j = 0; i >= 0; i--)

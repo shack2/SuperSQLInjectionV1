@@ -14,6 +14,7 @@ namespace SuperSQLInjection.model
         Oracle = 4,
         PostgreSQL=5,
         DB2 = 6,
-        SQLite=7
+        SQLite=7,
+        Informix=8
     }
 }
