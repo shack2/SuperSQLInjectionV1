@@ -1286,6 +1286,43 @@ namespace tools
             }
             return list;
         }
+
+        public static int getAvg(List<int> nums) {
+            int sum = 0;
+            if (nums.Count > 0) {
+                for (int j = 0; j < nums.Count; j++)
+                {
+                    sum += nums[j];
+                }
+                double c = sum / (double)nums.Count;
+                int avg = (int)(Math.Ceiling(c));
+                return avg;
+            }
+            return 0;
+        }
+
+        public static int getMaxSecondByMillisecond(int longMillisecond)
+        {
+            double c = longMillisecond / (double)1000;
+            return (int)(Math.Ceiling(c));
+        }
+
+
+        public static String getUnionStartStrByBoolSleep(String payload)
+        {
+            String[] sstr ={"and","or"};
+            int index = 0;
+            foreach (String str in sstr) {
+                index=payload.ToLower().IndexOf(str);
+                if (index != -1) {
+                    break;
+                }
+            }
+            if (index != -1) {
+                payload.Substring(0, index);
+            }
+            return "";
+        }
     }
 
 

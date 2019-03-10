@@ -22,6 +22,7 @@ using System.Reflection;
 using static System.Windows.Forms.ListView;
 using SuperSQLInjection.tools.http;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
 
 namespace SuperSQLInjection
 {
@@ -310,7 +311,7 @@ namespace SuperSQLInjection
             return sid;
         }
 
-        public static int version = 20190303;
+        public static int version = 20190310;
         public static string versionURL = "http://www.shack2.org/soft/getNewVersion?ENNAME=SSuperSQLInjection&NO=" + URLEncode.UrlEncode(getSid()) + "&VERSION=" + version;
         //检查更新
         public void checkUpdate()
@@ -1003,7 +1004,7 @@ namespace SuperSQLInjection
                     this.currentDataCount = 0;
                     switch (config.injectType)
                     {
-                        case InjectType.Bool:
+                        case InjectType.Blind:
                             getVariablesByBool(config.dbType);
                             break;
                         case InjectType.Union:
@@ -3865,7 +3866,7 @@ namespace SuperSQLInjection
             this.currentDbsCount = 0;
             switch (config.injectType)
             {
-                case InjectType.Bool:
+                case InjectType.Blind:
                     getDBSByBool(config.dbType);
                     break;
 
@@ -3925,7 +3926,7 @@ namespace SuperSQLInjection
                     this.currentTableCount = 0;
                     switch (config.injectType)
                     {
-                        case InjectType.Bool:
+                        case InjectType.Blind:
                             getTableNameByBool(config.dbType, (TreeNode)otn);
                             break;
                         case InjectType.Union:
@@ -4990,7 +4991,7 @@ namespace SuperSQLInjection
                 {
                     switch (config.injectType)
                     {
-                        case InjectType.Bool:
+                        case InjectType.Blind:
                             getColumnsByBool(config.dbType);
                             break;
                         case InjectType.Union:
@@ -6691,7 +6692,7 @@ namespace SuperSQLInjection
             {
                 switch (config.injectType)
                 {
-                    case InjectType.Bool:
+                    case InjectType.Blind:
                         getDatasByBool(config.dbType, col_list, start, count);
                         break;
                     case InjectType.Union:
@@ -6847,11 +6848,89 @@ namespace SuperSQLInjection
 
                     //判断存在bool盲注
                     bool boolInject = false;
+                    bool sleepInject = false;
                     bool errorInject = false;
                     bool unionInject = false;
 
                     if (list != null && list.Count > 0)
                     {
+
+                        //延时注入
+                        //读取payload
+                        List<String> sleep_list = FileTool.readFileToList("config/injection/sleep_injection.txt");
+
+                        //测试平均时间5次
+                        int n = 5;
+                        int index = 0;
+                        List<int> time_list = new List<int>();
+                        while (index < n)
+                        {
+                            ServerInfo TimeServer = HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, "", payload_request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
+                            if (TimeServer.runTime != 0)
+                            {
+                                time_list.Add((int)TimeServer.runTime);
+                            };
+                            index++;
+                        }
+                        int avg = Tools.getMaxSecondByMillisecond(Tools.getAvg(time_list));
+                        if (avg != 0)
+                        {
+                            int time = avg + 2;
+
+                            if (config.timeOut < time)
+                            {
+                                config.timeOut += 5;
+                            }
+
+                            //检测
+                            
+                            foreach (String cpal in sleep_list)
+                            {
+                                //Informix不能设定时间，默认5秒
+                                if (DBType.Informix.ToString().Equals(cpal[2])) {
+                                    time = 5;
+                                    if (avg > time) {
+                                        continue;
+                                    }
+                                    if (config.timeOut < time)
+                                    {
+                                        config.timeOut += 5;
+                                    }
+                                }
+                                    String[] pals = cpal.Split(DBVers_Splite_Str);
+                                String cpayload = pals[0].Replace("{time}", time.ToString());
+                                this.txt_log.Invoke(new showLogDelegate(log), "正在测试PayLoad:" + cpayload, LogLevel.info);
+                                ServerInfo sleepServer = HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, cpayload, payload_request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
+                                if (sleepServer.runTime > time * 1000)
+                                {
+                                    this.cbox_inject_type.SelectedIndex = Convert.ToInt32(KeyType.Time);
+                                    this.chk_inject_reverseKey.Checked = false;
+                                    config.injectType = InjectType.Blind;
+                                    sleepInject = true;
+                                    selectInjectType(InjectType.Blind);
+                                    newParam = strparam.Replace(param, param + "<Encode>" + cpayload.Replace(pals[3], setInjectStr) + "</Encode>");
+                                    config.request = request.Replace(strparam, newParam);
+                                    this.txt_inject_request.Text = request.Replace(strparam, newParam);
+                                    currentDB = pals[2];
+                                    selectDB(currentDB);
+                                    config.testPayload = cpayload;
+                                    config.dbType = Tools.caseDBType(currentDB);
+                                    this.txt_inject_key.Text = time.ToString();
+                                    config.pname = param.Split('=')[0];
+                                    config.uri = Tools.getRequestURI(request);
+                                    logInject(config);
+                                    this.txt_log.Invoke(new showLogDelegate(log), "测试存在延时注入:" + cpayload, LogLevel.success);
+                                    //设置Union前缀字符
+                                    unionStartPayLoad = Tools.getUnionStartStrByBoolSleep(cpayload);
+                                    break;
+
+                                }
+
+                            }
+                        }
+
+
+                        //bool盲注
                         foreach (String pal in list)
                         {
                             this.txt_log.Invoke(new showLogDelegate(log), "正在测试PayLoad:" + pal, LogLevel.info);
@@ -6890,6 +6969,8 @@ namespace SuperSQLInjection
                                             //根据相似度判断
                                             this.txt_log.Invoke(new showLogDelegate(log), "根据相似度判断存在SQL注入！固定长度,相似度--false|true1|true2--" + pfalse + "|" + ptrue + "%", LogLevel.success);
                                             boolInject = true;
+                                            this.cbox_inject_type.SelectedIndex = Convert.ToInt32(KeyType.Code);
+                                            this.chk_inject_reverseKey.Checked = false;
                                             //判断关键字
                                             checkTheKey(trueServer, falseServer, oserver);
                                         }
@@ -6923,7 +7004,7 @@ namespace SuperSQLInjection
 
                                 this.txt_log.Invoke(new showLogDelegate(log), "存在" + pals[2] + "payload:" + pals[0], LogLevel.success);
                                 config.testPayload = pals[0];
-                                selectInjectType(InjectType.Bool);
+                                selectInjectType(InjectType.Blind);
                                 //识别数据库
                                 List<String> database_lsit = FileTool.readAllDic("config/database/");
 
@@ -6953,6 +7034,7 @@ namespace SuperSQLInjection
                                 }
                                 //用于标记注入的新字符
                                 newParam = strparam.Replace(param, param + "<Encode>" + pals[0].Replace(pals[3], setInjectStr) + "</Encode>");
+                                //设置Union前缀字符
                                 unionStartPayLoad = pals[0].Substring(0, pals[0].IndexOf(pals[3]));
 
                                 if (!String.IsNullOrEmpty(currentDB))
@@ -7007,7 +7089,8 @@ namespace SuperSQLInjection
                     //记录注入日志
                     if (boolInject)
                     {
-                        config.injectType = InjectType.Bool;
+                        config.injectType = InjectType.Blind;
+
                         config.request = request.Replace(strparam, newParam);
                         this.txt_inject_request.Text = request.Replace(strparam, newParam);
                         config.dbType = Tools.caseDBType(currentDB);
@@ -7016,6 +7099,7 @@ namespace SuperSQLInjection
                         logInject(config);
                     }
 
+     
                     //错误注入测试
                     this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，盲注测试完成，正在进行错误显示注入测试！", LogLevel.info);
 
@@ -7081,6 +7165,11 @@ namespace SuperSQLInjection
 
                     //union注入
                     String payload = "";
+
+                    //前缀字符为空，通常不会有Union注入，所以跳过检测
+                    if (String.IsNullOrEmpty(unionStartPayLoad)) {
+                        continue;
+                    }
                     if (DBType.MySQL.ToString().Equals(currentDB))
                     {
                         payload = unionStartPayLoad + "{payload}#";
@@ -7298,7 +7387,14 @@ namespace SuperSQLInjection
                 String savePath = AppDomain.CurrentDomain.BaseDirectory + "/logs/injection/" + config.domain + "/" + config.port + config.uri;
                 DirectoryInfo dc = new DirectoryInfo(savePath);
                 dc.Create();
-                config.saveConfigpath = dc.FullName + "/" + config.pname + "_" + config.injectType.ToString() + ".xml";
+                if (InjectType.Blind.Equals(config.injectType))
+                {
+                    config.saveConfigpath = dc.FullName + "/" + config.pname + "_" + config.injectType.ToString()+"-"+config.keyType.ToString()+ ".xml";
+                }
+                else
+                {
+                    config.saveConfigpath = dc.FullName + "/" + config.pname + "_" + config.injectType.ToString() + ".xml";
+                }
                 this.Invoke(new delegatelogInject(logInjectTolvw), config);
                 XML.saveConfig(config.saveConfigpath, config);
             }
@@ -7316,7 +7412,14 @@ namespace SuperSQLInjection
             lvw.SubItems.Add(config.port + "");
             lvw.SubItems.Add(config.uri);
             lvw.SubItems.Add(config.pname);
-            lvw.SubItems.Add(config.injectType.ToString());
+            if (InjectType.Blind.Equals(config.injectType))
+            {
+                lvw.SubItems.Add(config.injectType.ToString() +"-"+ config.keyType.ToString());
+            }
+            else {
+                lvw.SubItems.Add(config.injectType.ToString());
+            }
+           
             lvw.SubItems.Add(config.dbType.ToString());
             lvw.SubItems.Add(config.testPayload);
             lvw.SubItems.Add(DateTime.Now.ToString());
@@ -7439,7 +7542,7 @@ namespace SuperSQLInjection
                     break;
 
                 case 1:
-                    config.injectType = InjectType.Bool;
+                    config.injectType = InjectType.Blind;
                     break;
                 case 2:
                     config.injectType = InjectType.Error;
@@ -8113,7 +8216,7 @@ namespace SuperSQLInjection
                         data_payload = MySQL.hex.Replace("{data}", "load_file(" + path_16 + ")");
                         switch (config.injectType)
                         {
-                            case InjectType.Bool:
+                            case InjectType.Blind:
                                 try
                                 {
                                     if (String.IsNullOrEmpty(config.key))
@@ -8309,7 +8412,7 @@ namespace SuperSQLInjection
                         HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, payload, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
                         switch (config.injectType)
                         {
-                            case InjectType.Bool:
+                            case InjectType.Blind:
 
                                 //取每一列的值
                                 data_payload = SQLServer.file_content;
@@ -8389,7 +8492,7 @@ namespace SuperSQLInjection
                         HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, payload, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
                         switch (config.injectType)
                         {
-                            case InjectType.Bool:
+                            case InjectType.Blind:
 
                                 try
                                 {
@@ -8772,7 +8875,7 @@ namespace SuperSQLInjection
                     switch (config.injectType)
                     {
 
-                        case InjectType.Bool:
+                        case InjectType.Blind:
                             try
                             {
                                 if (String.IsNullOrEmpty(config.key))
@@ -11128,6 +11231,8 @@ namespace SuperSQLInjection
         private void data_dbs_tsl_stopGetDatas_Click(object sender, EventArgs e)
         {
             StopThread();
-        }    
+        }
+
+       
     }
 }

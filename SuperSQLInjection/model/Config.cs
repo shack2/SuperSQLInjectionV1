@@ -18,7 +18,7 @@ namespace SuperSQLInjection.model
         public String pname = "";//当前注入参数
         public String testPayload = "";//注入测试payload
         public int port = 80;
-        public int maxTime = 10;//延时注入判断阀值
+        public int maxTime = 5     ;//延时注入判断阀值
         public InjectType injectType=new InjectType();
         public DBType dbType = new DBType();
         public int timeOut = 10;//秒

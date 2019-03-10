@@ -765,7 +765,7 @@
             // 
             this.splitContainer1.Panel2.Controls.Add(this.groupBox6);
             this.splitContainer1.Size = new System.Drawing.Size(832, 450);
-            this.splitContainer1.SplitterDistance = 222;
+            this.splitContainer1.SplitterDistance = 221;
             this.splitContainer1.TabIndex = 2;
             // 
             // groupBox5
@@ -774,7 +774,7 @@
             this.groupBox5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox5.Location = new System.Drawing.Point(0, 0);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(832, 222);
+            this.groupBox5.Size = new System.Drawing.Size(832, 221);
             this.groupBox5.TabIndex = 0;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "数据包历史记录";
@@ -794,7 +794,7 @@
             this.log_lvw_httpLog.FullRowSelect = true;
             this.log_lvw_httpLog.Location = new System.Drawing.Point(3, 17);
             this.log_lvw_httpLog.Name = "log_lvw_httpLog";
-            this.log_lvw_httpLog.Size = new System.Drawing.Size(826, 202);
+            this.log_lvw_httpLog.Size = new System.Drawing.Size(826, 201);
             this.log_lvw_httpLog.TabIndex = 1;
             this.log_lvw_httpLog.UseCompatibleStateImageBehavior = false;
             this.log_lvw_httpLog.View = System.Windows.Forms.View.Details;
@@ -863,7 +863,7 @@
             this.groupBox6.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox6.Location = new System.Drawing.Point(0, 0);
             this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(832, 224);
+            this.groupBox6.Size = new System.Drawing.Size(832, 225);
             this.groupBox6.TabIndex = 1;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "数据包详情";
@@ -877,7 +877,7 @@
             this.tabControl2.Location = new System.Drawing.Point(3, 17);
             this.tabControl2.Name = "tabControl2";
             this.tabControl2.SelectedIndex = 0;
-            this.tabControl2.Size = new System.Drawing.Size(826, 204);
+            this.tabControl2.Size = new System.Drawing.Size(826, 205);
             this.tabControl2.TabIndex = 0;
             // 
             // tabPage3
@@ -886,7 +886,7 @@
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(818, 178);
+            this.tabPage3.Size = new System.Drawing.Size(818, 179);
             this.tabPage3.TabIndex = 0;
             this.tabPage3.Text = "请 求";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -898,7 +898,7 @@
             this.log_txt_request.Multiline = true;
             this.log_txt_request.Name = "log_txt_request";
             this.log_txt_request.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.log_txt_request.Size = new System.Drawing.Size(812, 172);
+            this.log_txt_request.Size = new System.Drawing.Size(812, 173);
             this.log_txt_request.TabIndex = 0;
             // 
             // tabPage4
@@ -1982,7 +1982,7 @@
             this.groupBox15.Size = new System.Drawing.Size(249, 165);
             this.groupBox15.TabIndex = 14;
             this.groupBox15.TabStop = false;
-            this.groupBox15.Text = "Bool盲注取数据配置";
+            this.groupBox15.Text = "盲注取数据配置";
             // 
             // cbox_inject_type
             // 
@@ -3706,7 +3706,7 @@
             // injectlog_col_injectType
             // 
             this.injectlog_col_injectType.Text = "注入类型";
-            this.injectlog_col_injectType.Width = 71;
+            this.injectlog_col_injectType.Width = 96;
             // 
             // injectlog_col_dbType
             // 

