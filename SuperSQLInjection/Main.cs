@@ -311,7 +311,7 @@ namespace SuperSQLInjection
             return sid;
         }
 
-        public static int version = 20190310;
+        public static int version = 20190319;
         public static string versionURL = "http://www.shack2.org/soft/getNewVersion?ENNAME=SSuperSQLInjection&NO=" + URLEncode.UrlEncode(getSid()) + "&VERSION=" + version;
         //检查更新
         public void checkUpdate()
@@ -5901,7 +5901,7 @@ namespace SuperSQLInjection
                 GetDataPam gp = (GetDataPam)opam;
                 //获取数据长度
 
-                String datas_payload_columns = MySQL.hex_value.Replace("{data}", MySQL.creatMySQLColumnsNoConcatStr(gp.columns, gp.table, gp.dbname, gp.limit));
+                String datas_payload_columns = MySQL.hex_value.Replace("{data}", MySQL.creatMySQLColumnsStr(gp.columns, gp.table, gp.dbname, gp.limit));
                 String datas_payload_length = MySQL.concatMySQLColumn(MySQL.char_length.Replace("{data}", datas_payload_columns));
 
                 String datas_payload_length_error = MySQL.error_value.Replace("{data}", datas_payload_length);
@@ -7748,13 +7748,13 @@ namespace SuperSQLInjection
         {
             try
             {
-                if (this.proxy_lvw_proxyList.SelectedItems.Count > 0)
+                if (this.data_lvw_ver.SelectedItems.Count > 0)
                 {
                     StringBuilder sb = new StringBuilder();
 
-                    for (int i = 0; i < this.proxy_lvw_proxyList.SelectedItems[0].SubItems.Count; i++)
+                    for (int i = 0; i < this.data_lvw_ver.SelectedItems[0].SubItems.Count; i++)
                     {
-                        sb.Append(this.proxy_lvw_proxyList.SelectedItems[0].SubItems[i].Text + "\t");
+                        sb.Append(this.data_lvw_ver.SelectedItems[0].SubItems[i].Text + "\t");
                     }
                     if (sb.Length > 1)
                     {
@@ -8299,7 +8299,7 @@ namespace SuperSQLInjection
                                     while (start < sumlen)
                                     {
                                         //hex编码，防止中文等乱码
-                                        String datas_value_tmp = ByPassForBetween(MySQL.creatMySQLColumnCastStr(MySQL.substr_value.Replace("{data}", data_payload).Replace("{start}", start.ToString())), count);
+                                        String datas_value_tmp = ByPassForBetween(MySQL.concatMySQLColumn(MySQL.substr_value.Replace("{data}", data_payload).Replace("{start}", start.ToString())), count);
                                         String c_datas_value_payload = MySQL.error_value.Replace("{data}", datas_value_tmp);
                                         result += getOneDataByUnionOrError(c_datas_value_payload);
                                         start += count;

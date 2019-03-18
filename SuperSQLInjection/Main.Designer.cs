@@ -563,7 +563,8 @@
             "UTF-8",
             "GB2312",
             "GBK",
-            "ISO-8859-1"});
+            "ISO-8859-1",
+            "EUC-KR"});
             this.cbox_basic_encoding.Location = new System.Drawing.Point(329, 52);
             this.cbox_basic_encoding.Name = "cbox_basic_encoding";
             this.cbox_basic_encoding.Size = new System.Drawing.Size(79, 20);

