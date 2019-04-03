@@ -29,7 +29,7 @@ namespace SuperSQLInjection.model
         public String sencondRequest = "";
         public String key = "";
         public int injectHTTPCode = 0;//注入逻辑为真的时候页面的状态码
-        public String db_encoding = "";
+        public String db_encoding = "UTF-8";
         public Boolean useCode = false;
         public int columnsCount = 0;
 

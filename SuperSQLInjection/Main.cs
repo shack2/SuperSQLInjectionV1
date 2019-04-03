@@ -311,7 +311,7 @@ namespace SuperSQLInjection
             return sid;
         }
 
-        public static int version = 20190319;
+        public static int version = 20190403;
         public static string versionURL = "http://www.shack2.org/soft/getNewVersion?ENNAME=SSuperSQLInjection&NO=" + URLEncode.UrlEncode(getSid()) + "&VERSION=" + version;
         //检查更新
         public void checkUpdate()
@@ -7956,6 +7956,13 @@ namespace SuperSQLInjection
             this.cbox_basic_injectType.SelectedIndex = (int)config.injectType;
             this.cbox_basic_dbType.SelectedIndex = (int)(config.dbType);
 
+            if (String.IsNullOrEmpty(config.db_encoding)) {
+                config.db_encoding = "UTF-8";
+            }
+            if (String.IsNullOrEmpty(config.encoding))
+            {
+                config.encoding = "UTF-8";
+            }
             this.data_dbs_cob_db_encoding.Text = config.db_encoding;
             this.cbox_basic_threadSize.Text = config.threadSize + "";
             this.cbox_basic_reTryCount.Text = config.reTry + "";
