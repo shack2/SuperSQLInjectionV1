@@ -311,7 +311,7 @@ namespace SuperSQLInjection
             return sid;
         }
 
-        public static int version = 20190403;
+        public static int version = 20190404;
         public static string versionURL = "http://www.shack2.org/soft/getNewVersion?ENNAME=SSuperSQLInjection&NO=" + URLEncode.UrlEncode(getSid()) + "&VERSION=" + version;
         //检查更新
         public void checkUpdate()
@@ -6859,8 +6859,8 @@ namespace SuperSQLInjection
                         //读取payload
                         List<String> sleep_list = FileTool.readFileToList("config/injection/sleep_injection.txt");
 
-                        //测试平均时间5次
-                        int n = 5;
+                        //测试平均时间3次
+                        int n = 3;
                         int index = 0;
                         List<int> time_list = new List<int>();
                         while (index < n)
@@ -6875,7 +6875,7 @@ namespace SuperSQLInjection
                         int avg = Tools.getMaxSecondByMillisecond(Tools.getAvg(time_list));
                         if (avg != 0)
                         {
-                            int time = avg + 2;
+                            int time = avg + 1;
 
                             if (config.timeOut < time)
                             {
@@ -6897,18 +6897,18 @@ namespace SuperSQLInjection
                                         config.timeOut += 5;
                                     }
                                 }
-                                    String[] pals = cpal.Split(DBVers_Splite_Str);
+                                String[] pals = cpal.Split(DBVers_Splite_Str);
                                 String cpayload = pals[0].Replace("{time}", time.ToString());
                                 this.txt_log.Invoke(new showLogDelegate(log), "正在测试PayLoad:" + cpayload, LogLevel.info);
                                 ServerInfo sleepServer = HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, cpayload, payload_request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
-                                if (sleepServer.runTime > time * 1000)
+                                if (sleepServer.runTime > time * 1000-Tools.deviation)
                                 {
                                     this.cbox_inject_type.SelectedIndex = Convert.ToInt32(KeyType.Time);
                                     this.chk_inject_reverseKey.Checked = false;
                                     config.injectType = InjectType.Blind;
                                     sleepInject = true;
                                     selectInjectType(InjectType.Blind);
-                                    newParam = strparam.Replace(param, param + "<Encode>" + cpayload.Replace(pals[3], setInjectStr) + "</Encode>");
+                                    newParam = strparam.Replace(param, param + "<Encode>" + pals[0].Replace(pals[3], setInjectStr) + "</Encode>");
                                     config.request = request.Replace(strparam, newParam);
                                     this.txt_inject_request.Text = request.Replace(strparam, newParam);
                                     currentDB = pals[2];
