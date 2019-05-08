@@ -35,6 +35,8 @@ namespace SuperSQLInjection.tools
         public const String Transfer_Encoding = "transfer-encoding";
         public const String Connection = "connection";
 
+        public const String Content_Length_Zero= "Content-Length: 0";
+
         public const String ConnectionClose = "connection: close";
         public const int WaitTime =5;
         public static Main main = null;
@@ -428,7 +430,7 @@ namespace SuperSQLInjection.tools
 
 
                             //根据请求头解析
-                            if (server.headers.ContainsKey(Content_Length))
+                            if (server.headers.ContainsKey(Content_Length)&& server.header.IndexOf(Content_Length_Zero) ==-1)
                             {
                                 int length = int.Parse(server.headers[Content_Length]);
                                 while (sum < length && sw.ElapsedMilliseconds <= timeout)
@@ -511,10 +513,14 @@ namespace SuperSQLInjection.tools
                             //connection close方式或未知body长度
                             else
                             {
+                                //等待数据可读
+                                while (sw.ElapsedMilliseconds <= timeout&&!clientSocket.Client.Poll(timeout, SelectMode.SelectRead))
+                                {
+
+                                }
                                 while (sw.ElapsedMilliseconds <= timeout)
                                 {
-                                    bool isok = clientSocket.Client.Poll(timeout, SelectMode.SelectRead);
-                                    if (!isok || clientSocket.Available <= 0)
+                                    if (clientSocket.Available <= 0)
                                     {
                                         break;
                                     }
@@ -856,7 +862,7 @@ namespace SuperSQLInjection.tools
 
 
                     //根据请求头解析
-                    if (server.headers.ContainsKey(Content_Length))
+                    if (server.headers.ContainsKey(Content_Length) && server.header.IndexOf(Content_Length_Zero) == -1)
                     {
                         int length = int.Parse(server.headers[Content_Length]);
                         
