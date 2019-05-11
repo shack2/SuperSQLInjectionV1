@@ -311,7 +311,7 @@ namespace SuperSQLInjection
             return sid;
         }
 
-        public static int version = 20190508;
+        public static int version = 20190511;
         public static string versionURL = "http://www.shack2.org/soft/getNewVersion?ENNAME=SSuperSQLInjection&NO=" + URLEncode.UrlEncode(getSid()) + "&VERSION=" + version;
         //检查更新
         public void checkUpdate()
@@ -7689,7 +7689,8 @@ namespace SuperSQLInjection
 
             try
             {
-                XML.saveObject(AppDomain.CurrentDomain.BaseDirectory + "/proxy/proxy.xml", proxy);
+                String proxypath = AppDomain.CurrentDomain.BaseDirectory + "/proxy/proxy.xml";
+                XML.saveObject(proxypath, proxy);
             }
             catch (Exception ex)
             {
@@ -7698,14 +7699,16 @@ namespace SuperSQLInjection
 
             try
             {
-                FileTool.SaveProxyList(AppDomain.CurrentDomain.BaseDirectory + "/proxy/proxylist.txt", this.proxy_List.Values);
+                String proxypath = AppDomain.CurrentDomain.BaseDirectory + "/proxy/proxylist.txt";
+                File.Delete(proxypath);
+                FileTool.SaveProxyList(proxypath, this.proxy_List.Values);
             }
             catch (Exception ex)
             {
                 Tools.SysLog("保存代理池发生错误！" + ex.Message);
             }
 
-            System.Environment.Exit(0);
+            Application.Exit();
         }
 
         private void tsmi_about_Click(object sender, EventArgs e)
