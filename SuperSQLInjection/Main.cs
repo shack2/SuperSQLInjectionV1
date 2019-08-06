@@ -258,61 +258,8 @@ namespace SuperSQLInjection
             responseStream.Close();
         }
 
-        public static String getSid()
-        {
-
-            String sid = "";
-            try
-            {
-                //获得系统名称
-                RegistryKey rk = Registry.LocalMachine.OpenSubKey("Software\\Microsoft\\Windows NT\\CurrentVersion");
-                sid = rk.GetValue("ProductName").ToString();
-                rk.Close();
-                //获得系统唯一号，系统安装id和mac组合
-                sid += "_";
-
-                var officeSoftware = new ManagementObjectSearcher("SELECT ID, ApplicationId, PartialProductKey, LicenseIsAddon, Description, Name, OfflineInstallationId FROM SoftwareLicensingProduct where PartialProductKey <> null");
-                var result = officeSoftware.Get();
-                foreach (var item in result)
-                {
-                    String c = item.GetPropertyValue("name").ToString();
-
-                    if (item.GetPropertyValue("name").ToString().StartsWith("Windows"))
-                    {
-
-                        sid += item.GetPropertyValue("OfflineInstallationId").ToString() + "_";
-                        break;
-                    }
-                }
-
-            }
-            catch (Exception e)
-            {
-                sid += "ex_";
-            }
-            try
-            {
-
-                ManagementClass mc = new ManagementClass("Win32_NetworkAdapterConfiguration");
-                ManagementObjectCollection moc = mc.GetInstances();
-                foreach (ManagementObject mo in moc)
-                {
-                    if ((bool)mo["IPEnabled"] == true)
-                    {
-                        sid += mo["MacAddress"].ToString().Replace(":", "-");
-                        break;
-                    }
-                }
-            }
-            catch
-            {
-                sid += "ex_" + System.Guid.NewGuid();
-            }
-            return sid;
-        }
-
-        public static int version = 20190511;
-        public static string versionURL = "http://www.shack2.org/soft/getNewVersion?ENNAME=SSuperSQLInjection&NO=" + URLEncode.UrlEncode(getSid()) + "&VERSION=" + version;
+        public static int version = 20190806;
+        public static string versionURL = "http://www.shack2.org/soft/getNewVersion?ENNAME=SSuperSQLInjection&NO=" + URLEncode.UrlEncode(Tools.getSystemSid()) + "&VERSION=" + version;
         //检查更新
         public void checkUpdate()
         {
@@ -6842,7 +6789,46 @@ namespace SuperSQLInjection
                     String newParam = "";//标记注入
                     String payload_location = strparam.Replace(param, param + "<Encode>" + setInjectStr + "</Encode>");
                     String payload_request = request.Replace(strparam, payload_location);
-                    String currentDB = "UnKnow";
+                    String currentDB = DBType.UnKnow.ToString();
+                    //通过错误显示识别数据库类型
+
+                  
+                    //通过错误显示判断
+                    ServerInfo errorDBServer = HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, "'test", payload_request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
+
+                    String basePath = "config/injection/error/";
+                    List<String> errorDBList = FileTool.readAllDic(basePath);
+                    //将错误信息，延时判断出来的数据库类型存放在这里，方便bool盲注测试在一次确认数据库类型
+                    List<String> list_Find_Database = new List<String>();
+                    String cdb = "";
+                    foreach (String ep in errorDBList)
+                    {
+                        if (!String.IsNullOrEmpty(cdb)) break;
+                        List<String> errorKeys = FileTool.readFileToList(basePath + ep);
+
+                        foreach (String key in errorKeys)
+                        {
+
+                            bool find = Regex.IsMatch(errorDBServer.body, key, RegexOptions.IgnoreCase);
+                            if (find)
+                            {
+                                currentDB = ep.Replace(".txt", "");
+                                break;
+                            }
+                        }
+
+                    }
+                    if (!String.IsNullOrEmpty(currentDB))
+                    {
+                        selectDB(currentDB);
+                        list_Find_Database.Add(currentDB);
+                        this.txt_log.Invoke(new showLogDelegate(log), "通过错误显示信息，发现数据库为" + currentDB + "！", LogLevel.success);
+                    }
+                    else
+                    {
+                        this.txt_log.Invoke(new showLogDelegate(log), "通过错误显示信息，没有发现发现数据库类型！", LogLevel.waring);
+                    }
+
                     //读取payload
                     List<String> list = FileTool.readFileToList("config/injection/injection.txt");
 
@@ -6852,6 +6838,8 @@ namespace SuperSQLInjection
                     bool errorInject = false;
                     bool unionInject = false;
 
+                    
+
                     if (list != null && list.Count > 0)
                     {
 
@@ -6859,8 +6847,8 @@ namespace SuperSQLInjection
                         //读取payload
                         List<String> sleep_list = FileTool.readFileToList("config/injection/sleep_injection.txt");
 
-                        //测试平均时间3次
-                        int n = 3;
+                        //测试平均时间5次
+                        int n = 5;
                         int index = 0;
                         List<int> time_list = new List<int>();
                         while (index < n)
@@ -6872,7 +6860,7 @@ namespace SuperSQLInjection
                             };
                             index++;
                         }
-                        int avg = Tools.getMaxSecondByMillisecond(Tools.getAvg(time_list));
+                        int avg = Tools.getMaxSecondByMillisecond(Tools.getMax(time_list));
                         if (avg != 0)
                         {
                             int time = avg + 1;
@@ -6903,27 +6891,40 @@ namespace SuperSQLInjection
                                 ServerInfo sleepServer = HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, cpayload, payload_request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
                                 if (sleepServer.runTime > time * 1000-Tools.deviation)
                                 {
-                                    this.cbox_inject_type.SelectedIndex = Convert.ToInt32(KeyType.Time);
-                                    this.chk_inject_reverseKey.Checked = false;
-                                    config.injectType = InjectType.Blind;
-                                    sleepInject = true;
-                                    selectInjectType(InjectType.Blind);
-                                    newParam = strparam.Replace(param, param + "<Encode>" + pals[0].Replace(pals[3], setInjectStr) + "</Encode>");
-                                    config.request = request.Replace(strparam, newParam);
-                                    this.txt_inject_request.Text = request.Replace(strparam, newParam);
-                                    currentDB = pals[2];
-                                    selectDB(currentDB);
-                                    config.testPayload = cpayload;
-                                    config.dbType = Tools.caseDBType(currentDB);
-                                    this.txt_inject_key.Text = time.ToString();
-                                    config.pname = param.Split('=')[0];
-                                    config.uri = Tools.getRequestURI(request);
-                                    logInject(config);
-                                    this.txt_log.Invoke(new showLogDelegate(log), "测试存在延时注入:" + cpayload, LogLevel.success);
-                                    //设置Union前缀字符
-                                    unionStartPayLoad = Tools.getUnionStartStrByBoolSleep(cpayload);
-                                    break;
-
+                                    //再次发包测试，降低误报
+                                    sleepServer = HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, cpayload, payload_request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
+                                    if (sleepServer.runTime > time * 1000 - Tools.deviation)
+                                    {
+                                        this.cbox_inject_type.SelectedIndex = Convert.ToInt32(KeyType.Time);
+                                        this.chk_inject_reverseKey.Checked = false;
+                                        config.injectType = InjectType.Blind;
+                                        sleepInject = true;
+                                        selectInjectType(InjectType.Blind);
+                                        newParam = strparam.Replace(param, param + "<Encode>" + pals[0].Replace(pals[3], setInjectStr) + "</Encode>");
+                                        config.request = request.Replace(strparam, newParam);
+                                        this.txt_inject_request.Text = request.Replace(strparam, newParam);
+                                        //如果延时判断的数据库类型和错误显示判断的数据库类型不一致，红色提示
+                                        if (!currentDB.Equals(pals[2]) && !DBType.UnKnow.ToString().Equals(currentDB))
+                                        {
+                                            list_Find_Database.Add(pals[2]);
+                                            this.txt_log.Invoke(new showLogDelegate(log), "通过延时判断的数据库类型为:" + pals[2] + "，而错误显示信息判断数据库为：" + currentDB, LogLevel.error);
+                                        }
+                                        else
+                                        {
+                                            currentDB = pals[2];
+                                        }
+                                        selectDB(currentDB);
+                                        config.testPayload = cpayload;
+                                        config.dbType = Tools.caseDBType(currentDB);
+                                        this.txt_inject_key.Text = time.ToString();
+                                        config.pname = param.Split('=')[0];
+                                        config.uri = Tools.getRequestURI(request);
+                                        logInject(config);
+                                        this.txt_log.Invoke(new showLogDelegate(log), "测试可能存在延时注入:" + cpayload + "----数据库类型：" + currentDB, LogLevel.success);
+                                        //设置Union前缀字符
+                                        unionStartPayLoad = Tools.getUnionStartStrByBoolSleep(cpayload);
+                                        break;
+                                    }
                                 }
 
                             }
@@ -7010,11 +7011,15 @@ namespace SuperSQLInjection
 
                                 foreach (String d in database_lsit)
                                 {
-                                    if (!DBType.UnKnow.ToString().Equals(currentDB))
-                                    {
-                                        break;
-                                    }
+                                    
                                     String db = d.Replace(".txt", "");
+
+                                    //为了更准确，这里再一次通过bool方式确认数据库类型
+                                    if(!list_Find_Database.Contains(db)&&!DBType.UnKnow.ToString().Equals(currentDB))
+                                    {
+                                        continue;
+                                    }
+
                                     this.txt_log.Invoke(new showLogDelegate(log), "正在判断是否是" + db + "数据库", LogLevel.info);
 
                                     List<String> dbpayload_list = FileTool.readFileToList("config/database/" + d);
@@ -7044,38 +7049,9 @@ namespace SuperSQLInjection
                                 }
                                 else
                                 {
-                                    //通过错误显示判断
-                                    ServerInfo errorDBServer = HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, "'test", payload_request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
-
-                                    String basePath = "config/injection/error/";
-                                    List<String> errorDBList = FileTool.readAllDic(basePath);
-                                    String cdb = "";
-                                    foreach (String ep in errorDBList)
-                                    {
-                                        if (!String.IsNullOrEmpty(cdb)) break;
-                                        List<String> errorKeys = FileTool.readFileToList(basePath + ep);
-
-                                        foreach (String key in errorKeys)
-                                        {
-
-                                            bool find = Regex.IsMatch(errorDBServer.body, key, RegexOptions.IgnoreCase);
-                                            if (find)
-                                            {
-                                                currentDB = ep.Replace(".txt", "");
-                                                break;
-                                            }
-                                        }
-
-                                    }
-                                    if (!String.IsNullOrEmpty(currentDB))
-                                    {
-                                        selectDB(currentDB);
-                                        this.txt_log.Invoke(new showLogDelegate(log), "通过错误显示发现数据库为" + currentDB + "！", LogLevel.success);
-                                    }
-                                    else
-                                    {
-                                        this.txt_log.Invoke(new showLogDelegate(log), "没有发现发现数据库类型，可能是其他数据库，请人工判断！", LogLevel.waring);
-                                    }
+                                    
+                                 this.txt_log.Invoke(new showLogDelegate(log), "没有发现发现数据库类型，可能是其他数据库，请人工判断！", LogLevel.waring);
+                                   
                                 }
 
                                 break;
@@ -7708,7 +7684,7 @@ namespace SuperSQLInjection
                 Tools.SysLog("保存代理池发生错误！" + ex.Message);
             }
 
-            Application.Exit();
+            Environment.Exit(0);
         }
 
         private void tsmi_about_Click(object sender, EventArgs e)
@@ -10963,28 +10939,20 @@ namespace SuperSQLInjection
 
             Dictionary<String, Proxy> list = FileTool.ReadProxyList(path.ToString());
             int i = 0;
-            if (this.proxy_List.Count > 0)
+            foreach (String key in list.Keys)
             {
-
-                foreach (String key in list.Keys)
+                if (!this.proxy_List.ContainsKey(key))
                 {
-                    if (!this.proxy_List.ContainsKey(key))
-                    {
 
-                        Proxy cproxy = null;
-                        bool istrue = list.TryGetValue(key, out cproxy);
-                        if (istrue && cproxy != null)
-                        {
-                            i++;
-                            this.proxy_lvw_proxyList.Invoke(new DelegateAddItemToProxy(addItemsToProxy_lvw), proxy);
-                            this.proxy_List.Add(cproxy.host + cproxy.port, cproxy);
-                        }
+                    Proxy cproxy = null;
+                    bool istrue = list.TryGetValue(key, out cproxy);
+                    if (istrue && cproxy != null)
+                    {
+                        i++;
+                        this.proxy_lvw_proxyList.Invoke(new DelegateAddItemToProxy(addItemsToProxy_lvw), proxy);
+                        this.proxy_List.Add(cproxy.host + cproxy.port, cproxy);
                     }
                 }
-            }
-            else
-            {
-                this.proxy_List = list;
             }
             this.proxy_btn_importProxy.Enabled = true;
             this.txt_log.Invoke(new showLogDelegate(log), "导入代理成功，发现代理：" + i + "个！", LogLevel.success);

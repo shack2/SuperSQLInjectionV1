@@ -793,6 +793,7 @@
             this.log_lvw_httpLog.ContextMenuStrip = this.log_cms_dataifo;
             this.log_lvw_httpLog.Dock = System.Windows.Forms.DockStyle.Fill;
             this.log_lvw_httpLog.FullRowSelect = true;
+            this.log_lvw_httpLog.HideSelection = false;
             this.log_lvw_httpLog.Location = new System.Drawing.Point(3, 17);
             this.log_lvw_httpLog.Name = "log_lvw_httpLog";
             this.log_lvw_httpLog.Size = new System.Drawing.Size(826, 201);
@@ -1139,6 +1140,7 @@
             this.data_lvw_ver_val});
             this.data_lvw_ver.ContextMenuStrip = this.data_cms_vers;
             this.data_lvw_ver.FullRowSelect = true;
+            this.data_lvw_ver.HideSelection = false;
             this.data_lvw_ver.Location = new System.Drawing.Point(3, 3);
             this.data_lvw_ver.Name = "data_lvw_ver";
             this.data_lvw_ver.Size = new System.Drawing.Size(812, 372);
@@ -1519,6 +1521,7 @@
             this.data_dbs_lvw_data.Dock = System.Windows.Forms.DockStyle.Fill;
             this.data_dbs_lvw_data.FullRowSelect = true;
             this.data_dbs_lvw_data.GridLines = true;
+            this.data_dbs_lvw_data.HideSelection = false;
             this.data_dbs_lvw_data.Location = new System.Drawing.Point(3, 17);
             this.data_dbs_lvw_data.Name = "data_dbs_lvw_data";
             this.data_dbs_lvw_data.Size = new System.Drawing.Size(563, 385);
@@ -2517,6 +2520,7 @@
             this.col_checkTime});
             this.proxy_lvw_proxyList.ContextMenuStrip = this.proxy_cms;
             this.proxy_lvw_proxyList.FullRowSelect = true;
+            this.proxy_lvw_proxyList.HideSelection = false;
             this.proxy_lvw_proxyList.Location = new System.Drawing.Point(6, 83);
             this.proxy_lvw_proxyList.Name = "proxy_lvw_proxyList";
             this.proxy_lvw_proxyList.Size = new System.Drawing.Size(808, 263);
@@ -2884,6 +2888,7 @@
             this.col_replaceTo});
             this.bypass_lvw_replaceString.ContextMenuStrip = this.bypass_lvw_replaceString_cms;
             this.bypass_lvw_replaceString.FullRowSelect = true;
+            this.bypass_lvw_replaceString.HideSelection = false;
             this.bypass_lvw_replaceString.Location = new System.Drawing.Point(7, 64);
             this.bypass_lvw_replaceString.Name = "bypass_lvw_replaceString";
             this.bypass_lvw_replaceString.Size = new System.Drawing.Size(798, 191);
@@ -3373,6 +3378,7 @@
             this.scanInjection_lvw_result.Dock = System.Windows.Forms.DockStyle.Fill;
             this.scanInjection_lvw_result.FullRowSelect = true;
             this.scanInjection_lvw_result.GridLines = true;
+            this.scanInjection_lvw_result.HideSelection = false;
             this.scanInjection_lvw_result.Location = new System.Drawing.Point(0, 0);
             this.scanInjection_lvw_result.Name = "scanInjection_lvw_result";
             this.scanInjection_lvw_result.Size = new System.Drawing.Size(571, 329);
@@ -3680,6 +3686,7 @@
             this.lvw_injectLog.ContextMenuStrip = this.injectLog_cm;
             this.lvw_injectLog.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lvw_injectLog.FullRowSelect = true;
+            this.lvw_injectLog.HideSelection = false;
             this.lvw_injectLog.Location = new System.Drawing.Point(3, 3);
             this.lvw_injectLog.Name = "lvw_injectLog";
             this.lvw_injectLog.Size = new System.Drawing.Size(826, 444);
