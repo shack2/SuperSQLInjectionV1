@@ -16,7 +16,7 @@ namespace SuperSQLInjection
             InitializeComponent();
         }
         public int searchPoint = 0;
-        public TextBox txtbox = null;
+        public RichTextBox txtbox = null;
         private void btn_find_Click(object sender, EventArgs e)
         {
             //查找下一个
@@ -40,9 +40,11 @@ namespace SuperSQLInjection
                 {
                     //找到了，选中文本
                     txtbox.Focus();
-                    txtbox.Select(searchPoint, this.txt_key.Text.Length);
+                    txtbox.SelectionStart = searchPoint;
+                    txtbox.SelectionLength = this.txt_key.Text.Length;
+                    //txtbox.Select(searchPoint, this.txt_key.Text.Length);
                     searchPoint = searchPoint + this.txt_key.Text.Length;
-                    this.Hide();
+                    //this.Focus();
 
                 }
             }

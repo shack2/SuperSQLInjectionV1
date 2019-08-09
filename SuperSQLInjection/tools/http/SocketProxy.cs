@@ -147,10 +147,10 @@ namespace SuperSQLInjection.tools.http
             }
             catch (Exception e)
             {
-                sProxyServer.Close();
                 Tools.SysLog("Socks5代理发生异常！" + e.Message);
             }
             finally {
+                sProxyServer.Close();
                 sw.Stop();
                 ConectProxyUseTime = (int)sw.ElapsedMilliseconds;
                 sw.Reset();

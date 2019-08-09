@@ -286,7 +286,7 @@ namespace SuperSQLInjection.bypass
             StringBuilder sb = new StringBuilder();
             try
             {
-                MatchCollection mc = Regex.Matches(oldStr, "([a-zA-Z_\\.]+|\\@+[a-zA-Z_]+|[a-zA-Z_]\\(\\)+)");
+                MatchCollection mc = Regex.Matches(oldStr, "([a-zA-Z_\\.]+|\\@+[a-zA-Z_]+|[a-zA-Z_]\\(\\)+|\\'[a-zA-Z_\\-]+\\')");
                 foreach (Match m in mc) {
 
                     String keyStr =m.Groups[0].Value;

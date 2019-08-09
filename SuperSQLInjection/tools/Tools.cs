@@ -349,7 +349,7 @@ namespace tools
             {
                 return Convert.ToInt32(str,16);
             }
-            catch (Exception e)
+            catch
             {
                 
             }
@@ -1128,7 +1128,7 @@ namespace tools
 
                 }
             }
-            catch (Exception e)
+            catch
             {
                 SysLog("截取字符发生异常！Tools.substr");
             }
@@ -1357,7 +1357,7 @@ namespace tools
                 }
 
             }
-            catch (Exception e)
+            catch
             {
                 sid += "ex_";
             }

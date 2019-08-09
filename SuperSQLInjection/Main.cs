@@ -86,7 +86,7 @@ namespace SuperSQLInjection
             this.btn_inject_sendData.Enabled = true;
             if (server.timeout)
             {
-                MessageBox.Show("连接超时！");
+                this.txt_log.Invoke(new showLogDelegate(log), "连接超时！", LogLevel.error);
             }
             else
             {
@@ -97,10 +97,36 @@ namespace SuperSQLInjection
             }
 
         }
-
-        public void sendRequestAndShowResponseInvoke()
+        public void sendRequest()
         {
-            this.Invoke(new delegateVoid(sendRequestAndShowResponse));
+            if (this.sr != null)
+            {
+                this.sr.Close();
+            }
+
+            if (Thread.CurrentThread.Name == null)
+            {
+                Thread.CurrentThread.Name = "SendThread-";
+            }
+            ServerInfo server = HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, "", this.txt_inject_request.Text, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
+            this.btn_inject_sendData.Enabled = true;
+            if (server.timeout)
+            {
+                this.txt_log.Invoke(new showLogDelegate(log), "连接超时！", LogLevel.error);
+            }
+            else
+            {
+                this.Invoke(new delegateVoidShowResponse(ShowResponse),server);
+            }
+        }
+
+        private delegate void delegateVoidShowResponse(ServerInfo server);
+
+        private void ShowResponse(ServerInfo server){
+            ShowResponse sr = new ShowResponse();
+            sr.server = server;
+            this.sr = sr;
+            sr.ShowDialog();
         }
 
         delegate void delegateVoid();
@@ -110,7 +136,7 @@ namespace SuperSQLInjection
             if (checkSendDataConfig())
             {
                 this.btn_inject_sendData.Enabled = false;
-                Thread t = new Thread(sendRequestAndShowResponseInvoke);
+                Thread t = new Thread(sendRequest);
                 t.Start();
             }
         }
@@ -258,7 +284,7 @@ namespace SuperSQLInjection
             responseStream.Close();
         }
 
-        public static int version = 20190806;
+        public static int version = 20190810;
         public static string versionURL = "http://www.shack2.org/soft/getNewVersion?ENNAME=SSuperSQLInjection&NO=" + URLEncode.UrlEncode(Tools.getSystemSid()) + "&VERSION=" + version;
         //检查更新
         public void checkUpdate()
@@ -324,7 +350,7 @@ namespace SuperSQLInjection
             {
                 config.port = int.Parse(this.txt_basic_port.Text);
             }
-            catch (Exception e)
+            catch
             {
                 MessageBox.Show("把目标端口写上吧！");
 
@@ -351,7 +377,7 @@ namespace SuperSQLInjection
             {
                 config.timeOut = int.Parse(this.cbox_basic_timeOut.Text);
             }
-            catch (Exception e)
+            catch
             {
                 MessageBox.Show("每次请求多少时间？没响应我就放弃啦！");
                 return false;
@@ -369,7 +395,7 @@ namespace SuperSQLInjection
             {
                 config.threadSize = int.Parse(this.cbox_basic_threadSize.Text);
             }
-            catch (Exception e)
+            catch
             {
                 MessageBox.Show("大侠，同时启动多少个线程呢！");
                 return false;
@@ -379,7 +405,7 @@ namespace SuperSQLInjection
             {
                 config.reTry = int.Parse(this.cbox_basic_reTryCount.Text);
             }
-            catch (Exception e)
+            catch
             {
                 MessageBox.Show("失败了不能放弃，我能试几次？");
                 return false;
@@ -454,7 +480,7 @@ namespace SuperSQLInjection
             {
                 config.port = int.Parse(this.txt_basic_port.Text);
             }
-            catch (Exception e)
+            catch
             {
                 MessageBox.Show("把目标端口写上吧！");
                 return false;
@@ -464,7 +490,7 @@ namespace SuperSQLInjection
             {
                 config.timeOut = int.Parse(this.cbox_basic_timeOut.Text);
             }
-            catch (Exception e)
+            catch
             {
                 MessageBox.Show("每次请求多少时间？没响应我就放弃啦！");
                 return false;
@@ -482,7 +508,7 @@ namespace SuperSQLInjection
             {
                 config.threadSize = int.Parse(this.cbox_basic_threadSize.Text);
             }
-            catch (Exception e)
+            catch
             {
                 MessageBox.Show("每次请求多少时间？没响应我就放弃啦！");
                 return false;
@@ -758,7 +784,6 @@ namespace SuperSQLInjection
         //立即结束线程池
         private void StopThread()
         {
-
             status = -1;
             if (this.currentThread != null)
             {
@@ -6693,6 +6718,58 @@ namespace SuperSQLInjection
             }
         }
 
+        public String setInject(Dictionary<String,String> paramDatas,String injectParamName, String injectParamData) {
+
+            StringBuilder sb = new StringBuilder();
+            foreach (KeyValuePair<String, String> kv in paramDatas)
+            {
+                if (injectParamName.Equals(kv.Key))
+                {
+                    sb.Append(kv.Key + "=" + injectParamData+"&");
+                }
+                else {
+                    sb.Append(kv.Key + "=" + kv.Value+"&");
+                }
+            }
+            if (sb.Length > 0) {
+                sb.Remove(sb.Length - 1, 1);
+            }
+            return sb.ToString();
+        }
+
+        public String setInjectToRequest(String oldRequest,String newParamDatas)
+        {
+
+            if (oldRequest.StartsWith("GET"))
+            {
+                int start = oldRequest.IndexOf('?');
+                if (start == -1)
+                {
+                    return oldRequest;
+                }
+                int end = oldRequest.IndexOf(' ', start);
+                if (end > start)
+                {
+                    oldRequest=oldRequest.Remove(start + 1, end - start-1);
+                    oldRequest=oldRequest.Insert(start+1, newParamDatas);
+                    return oldRequest;
+                }
+                else
+                {
+                    return oldRequest;
+                }
+               
+            }
+            else
+            {
+                //POST替换参数
+                String header = Regex.Split(oldRequest, "\r\n\r\n")[0];
+                return header + "\r\n\r\n" + newParamDatas;
+
+            }
+        }
+
+
         public void checkInject()
         {
             try
@@ -6734,7 +6811,8 @@ namespace SuperSQLInjection
                 //获取原始的页面信息
                 String request = config.request.Replace(data, strparam);
                 ServerInfo oserver = HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, "获取原始页面", request, config.timeOut, HTTP.AutoGetEncoding, config.is_foward_302, config.redirectDoGet);
-
+               
+                //判断是否有编码设置
                 if (!HTTP.AutoGetEncoding.Equals(config.encoding))
                 {
                     //自定义
@@ -6762,33 +6840,51 @@ namespace SuperSQLInjection
                     }
                     else
                     {
-                        MessageBox.Show("自动识别网页编码为：“" + oserver.encoding + "”");
+                        this.txt_log.Invoke(new showLogDelegate(log), "自动识别网页编码为：“" + oserver.encoding + "”", LogLevel.waring);
                     }
                 }
-                //判断是否有编码设置
-
-
-
-                //拆分参数
+                //拆分参数,存放到集合，方便后面从新拼接组合参数
                 String[] strparams = strparam.Split('&');
+
+                Dictionary<String, String> pdatas = new Dictionary<String, String>();
+                
                 this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，发现" + strparams.Length + "个参数，请稍候正在对每一个参数进行注入测试！", LogLevel.info);
+
                 foreach (String param in strparams)
                 {
-
-                    String unionStartPayLoad = "";
                     if (String.IsNullOrEmpty(param))
                     {
                         continue;
                     }
-                    if (param.IndexOf("<Token>") != -1)
+                    //参数拆分存放到集合
+                    String[] pv = param.Split('=');
+                    if (pv.Length == 2)
                     {
-                        this.txt_log.Invoke(new showLogDelegate(log), "跳过Token参数检测！" + param, LogLevel.info);
+                        if (!pdatas.ContainsKey(pv[0]))
+                        {
+                            pdatas.Add(pv[0], pv[1]);
+                        }
+                    }
+                }
+
+                foreach (KeyValuePair<String,String> paramNameAndData in pdatas)
+                {
+
+                    String paramName = paramNameAndData.Key;
+                    String paramData = paramNameAndData.Value;
+
+                    String unionStartPayLoad = "";
+                   
+                    if (paramData.IndexOf("<Token>") != -1)
+                    {
+                        this.txt_log.Invoke(new showLogDelegate(log), "跳过Token参数检测！" + paramName, LogLevel.info);
                         continue;
                     }
-                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，正在对参数参数" + param + "进行盲注测试！", LogLevel.info);
-                    String newParam = "";//标记注入
-                    String payload_location = strparam.Replace(param, param + "<Encode>" + setInjectStr + "</Encode>");
-                    String payload_request = request.Replace(strparam, payload_location);
+                    this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，正在对参数" + paramName + "进行盲注测试！", LogLevel.info);
+                    String injectParamData = "";//标记注入
+                    String payload_paramData = paramData + "<Encode>" + setInjectStr + "</Encode>";
+                    String payload_request = setInjectToRequest(request, setInject(pdatas, paramName,payload_paramData));
+
                     String currentDB = DBType.UnKnow.ToString();
                     //通过错误显示识别数据库类型
 
@@ -6834,7 +6930,6 @@ namespace SuperSQLInjection
 
                     //判断存在bool盲注
                     bool boolInject = false;
-                    bool sleepInject = false;
                     bool errorInject = false;
                     bool unionInject = false;
 
@@ -6897,12 +6992,12 @@ namespace SuperSQLInjection
                                     {
                                         this.cbox_inject_type.SelectedIndex = Convert.ToInt32(KeyType.Time);
                                         this.chk_inject_reverseKey.Checked = false;
-                                        config.injectType = InjectType.Blind;
-                                        sleepInject = true;
+                                        this.txt_inject_key.Text = time.ToString();
+
                                         selectInjectType(InjectType.Blind);
-                                        newParam = strparam.Replace(param, param + "<Encode>" + pals[0].Replace(pals[3], setInjectStr) + "</Encode>");
-                                        config.request = request.Replace(strparam, newParam);
-                                        this.txt_inject_request.Text = request.Replace(strparam, newParam);
+                                        injectParamData = paramData + "<Encode>" + pals[0].Replace(pals[3], setInjectStr) + "</Encode>";
+                                        String new_request = setInjectToRequest(request, setInject(pdatas, paramName, injectParamData));
+                                        config.request = new_request;
                                         //如果延时判断的数据库类型和错误显示判断的数据库类型不一致，红色提示
                                         if (!currentDB.Equals(pals[2]) && !DBType.UnKnow.ToString().Equals(currentDB))
                                         {
@@ -6914,10 +7009,11 @@ namespace SuperSQLInjection
                                             currentDB = pals[2];
                                         }
                                         selectDB(currentDB);
+                                        config.injectType = InjectType.Blind;
                                         config.testPayload = cpayload;
                                         config.dbType = Tools.caseDBType(currentDB);
-                                        this.txt_inject_key.Text = time.ToString();
-                                        config.pname = param.Split('=')[0];
+                                      
+                                        config.pname = paramName;
                                         config.uri = Tools.getRequestURI(request);
                                         logInject(config);
                                         this.txt_log.Invoke(new showLogDelegate(log), "测试可能存在延时注入:" + cpayload + "----数据库类型：" + currentDB, LogLevel.success);
@@ -7038,7 +7134,8 @@ namespace SuperSQLInjection
                                     }
                                 }
                                 //用于标记注入的新字符
-                                newParam = strparam.Replace(param, param + "<Encode>" + pals[0].Replace(pals[3], setInjectStr) + "</Encode>");
+                                injectParamData = paramData + "<Encode>" + pals[0].Replace(pals[3], setInjectStr) + "</Encode>";
+
                                 //设置Union前缀字符
                                 unionStartPayLoad = pals[0].Substring(0, pals[0].IndexOf(pals[3]));
 
@@ -7066,11 +7163,11 @@ namespace SuperSQLInjection
                     if (boolInject)
                     {
                         config.injectType = InjectType.Blind;
-
-                        config.request = request.Replace(strparam, newParam);
-                        this.txt_inject_request.Text = request.Replace(strparam, newParam);
+                        String new_request = setInjectToRequest(request, setInject(pdatas, paramName, injectParamData));
+                        config.request = new_request;
+                        this.txt_inject_request.Text = new_request;
                         config.dbType = Tools.caseDBType(currentDB);
-                        config.pname = param.Split('=')[0];
+                        config.pname = paramName;
                         config.uri = Tools.getRequestURI(request);
                         logInject(config);
                     }
@@ -7110,7 +7207,7 @@ namespace SuperSQLInjection
                                     //标记注入
                                     selectInjectType(InjectType.Error);
                                     errorInject = true;
-                                    newParam = strparam.Replace(param, param + "<Encode>" + pals[0].Replace(pals[4], setInjectStr) + "</Encode>");
+                                    injectParamData =paramData + "<Encode>" + pals[0].Replace(pals[4], setInjectStr) + "</Encode>";
                                     config.testPayload = pals[0];
                                     unionStartPayLoad = pals[0].Substring(0, pals[0].IndexOf(pals[4])).Replace(" or", " and");
                                     this.txt_log.Invoke(new showLogDelegate(log), "自动标记错误显示注入完成！", LogLevel.info);
@@ -7131,10 +7228,10 @@ namespace SuperSQLInjection
                     if (errorInject)
                     {
                         config.injectType = InjectType.Error;
-                        config.request = request.Replace(strparam, newParam);
-                        this.txt_inject_request.Text = request.Replace(strparam, newParam);
+                        String new_request = setInjectToRequest(request, setInject(pdatas, paramName, injectParamData));
+                        config.request = new_request;
                         config.dbType = (DBType)Tools.caseDBType(currentDB);
-                        config.pname = param.Split('=')[0];
+                        config.pname = paramName;
                         config.uri = Tools.getRequestURI(request);
                         logInject(config);
                     }
@@ -7207,7 +7304,8 @@ namespace SuperSQLInjection
                         if (DBType.Access.ToString().Equals(currentDB))
                         {
                             //%16不能被URL编码
-                            payload_request = request.Replace(strparam, payload_location + "%16");
+                            injectParamData = payload_paramData + "%16";
+                            payload_request = setInjectToRequest(request, setInject(pdatas, paramName, payload_paramData));
                             unionPayload = payload.Replace("{payload}", Comm.unionColumnCountTest(i, rand + "") + " from MSysAccessObjects");
                         }
 
@@ -7231,7 +7329,7 @@ namespace SuperSQLInjection
                                         if (cunionServer.code == 200 && cunionServer.body.IndexOf(rand) != -1)
                                         {
                                             isFind = true;
-                                            newParam = strparam.Replace(param, param + "<Encode>" + payload.Replace("{payload}", setInjectStr) + "</Encode>");
+                                            injectParamData =paramData + "<Encode>" + payload.Replace("{payload}", setInjectStr) + "</Encode>";
                                             unionInject = true;
                                             selectInjectType(InjectType.Union);
                                             this.txt_inject_unionTemplate.Text = tp;
@@ -7256,7 +7354,7 @@ namespace SuperSQLInjection
                                         if (cunionServer.code == 200 && cunionServer.body.IndexOf(rand) != -1)
                                         {
                                             isFind = true;
-                                            newParam = strparam.Replace(param, param + "<Encode>" + payload.Replace("{payload}", setInjectStr) + "</Encode>");
+                                            injectParamData = paramData + "<Encode>" + payload.Replace("{payload}", setInjectStr) + "</Encode>";
                                             unionInject = true;
                                             selectInjectType(InjectType.Union);
                                             this.txt_inject_unionTemplate.Text = tp;
@@ -7282,7 +7380,7 @@ namespace SuperSQLInjection
                                     if (unionServer.code == 200 && unionServer.body.IndexOf(rand) != -1)
                                     {
                                         isFind = true;
-                                        newParam = strparam.Replace(param, param + "<Encode>" + payload.Replace("{payload}", setInjectStr) + "</Encode>");
+                                        injectParamData = paramData + "<Encode>" + payload.Replace("{payload}", setInjectStr) + "</Encode>";
                                         unionInject = true;
                                         selectInjectType(InjectType.Union);
                                         this.txt_inject_unionColumnsCount.Text = i + "";
@@ -7302,11 +7400,11 @@ namespace SuperSQLInjection
                                 if (unionServer.code == 200 && unionServer.body.IndexOf((basecolumn)) != -1)
                                 {
                                     isFind = true;
-                                    newParam = strparam.Replace(param, param + "<Encode>" + payload.Replace("{payload}", setInjectStr) + "</Encode>");
+                                    injectParamData = paramData + "<Encode>" + payload.Replace("{payload}", setInjectStr) + "</Encode>";
                                     if ("Access".Equals(currentDB))
                                     {
                                         //%16不能被URL编码
-                                        newParam = strparam.Replace(param, param + "<Encode>" + payload.Replace("{payload}", setInjectStr) + "</Encode>%16");
+                                        injectParamData = paramData + "<Encode>" + payload.Replace("{payload}", setInjectStr) + "</Encode>%16";
                                     }
                                     selectInjectType(InjectType.Union);
                                     unionInject = true;
@@ -7328,17 +7426,17 @@ namespace SuperSQLInjection
                     if (unionInject)
                     {
                         config.injectType = InjectType.Union;
-                        config.request = request.Replace(strparam, newParam);
-                        this.txt_inject_request.Text = request.Replace(strparam, newParam);
+                        String new_request = setInjectToRequest(request, setInject(pdatas, paramName, injectParamData));
+                        config.request = new_request;
                         config.dbType = (DBType)Tools.caseDBType(currentDB);
-                        config.pname = param.Split('=')[0];
+                        config.pname = paramName;
                         config.uri = Tools.getRequestURI(request);
                         logInject(config);
                     }
                     if (boolInject || errorInject || unionInject)
                     {
                         //替换注入位置-标记注入
-                        this.txt_inject_request.Text = request.Replace(strparam, newParam);
+                        this.txt_inject_request.Text = setInjectToRequest(request, setInject(pdatas, paramName, injectParamData));
                     }
 
                 }
@@ -7707,15 +7805,7 @@ namespace SuperSQLInjection
 
         private void btn_exportConfig_Click(object sender, EventArgs e)
         {
-            SaveFileDialog saveFileDialog = new SaveFileDialog();
-            saveFileDialog.Filter = "XML文件|*.xml";
-            if (saveFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                XML.saveConfig(saveFileDialog.FileName, config);
-                MessageBox.Show("导出成功！");
-            }
-
-
+            
         }
 
         private void chk_openURLEncoding_CheckedChanged(object sender, EventArgs e)
@@ -7743,7 +7833,7 @@ namespace SuperSQLInjection
                     MessageBox.Show("复制成功！");
                 }
             }
-            catch (Exception ee)
+            catch
             {
                 MessageBox.Show("复制失败，可能粘贴板被其他软件占用！");
             }
@@ -8023,13 +8113,14 @@ namespace SuperSQLInjection
         }
 
         public FindString fs = null;
-        public void showFindString(object sender, KeyEventArgs e, TextBox textBox)
+        public void showFindString(object sender, KeyEventArgs e, RichTextBox textBox)
         {
             if (e.Control && e.KeyCode == Keys.F)
             {
                 if (fs == null || fs.IsDisposed)
                 {
                     fs = new FindString();
+                    fs.TopMost = true;
                     fs.Show();
                     fs.txtbox = textBox;
                 }
@@ -8047,7 +8138,7 @@ namespace SuperSQLInjection
             showFindString(sender, e, this.log_txt_response);
             if (e.Modifiers == Keys.Control && e.KeyCode == Keys.A)
             {
-                ((TextBox)sender).SelectAll();
+                ((RichTextBox)sender).SelectAll();
             }
         }
         public void selectAll(object sender, KeyEventArgs e)
@@ -8055,7 +8146,7 @@ namespace SuperSQLInjection
 
             if (e.Modifiers == Keys.Control && e.KeyCode == Keys.A)
             {
-                ((TextBox)sender).SelectAll();
+                ((RichTextBox)sender).SelectAll();
             }
         }
         private void txt_inject_request_KeyDown(object sender, KeyEventArgs e)
@@ -8087,7 +8178,7 @@ namespace SuperSQLInjection
 
                 }
             }
-            catch (Exception ee)
+            catch
             {
                 MessageBox.Show("复制失败，可能粘贴板被其他软件占用！");
             }
@@ -9526,7 +9617,7 @@ namespace SuperSQLInjection
                     return mylist[index];
                 }
             }
-            catch (Exception e)
+            catch
             {
 
             }
@@ -9751,7 +9842,7 @@ namespace SuperSQLInjection
                 Clipboard.SetText(this.scanInjection_lvw_result.SelectedItems[0].SubItems[1].Text);
                 MessageBox.Show("复制成功！");
             }
-            catch (Exception ee)
+            catch
             {
                 MessageBox.Show("复制失败，可能粘贴板被其他软件占用！");
             }
@@ -9940,7 +10031,7 @@ namespace SuperSQLInjection
         {
             if (e.Modifiers == Keys.Control && e.KeyCode == Keys.A)
             {
-                ((TextBox)sender).SelectAll();
+                ((RichTextBox)sender).SelectAll();
             }
         }
 
@@ -9948,7 +10039,7 @@ namespace SuperSQLInjection
         {
             if (e.Modifiers == Keys.Control && e.KeyCode == Keys.A)
             {
-                ((TextBox)sender).SelectAll();
+                ((RichTextBox)sender).SelectAll();
             }
         }
 
@@ -9956,7 +10047,7 @@ namespace SuperSQLInjection
         {
             if (e.Modifiers == Keys.Control && e.KeyCode == Keys.A)
             {
-                ((TextBox)sender).SelectAll();
+                ((RichTextBox)sender).SelectAll();
             }
         }
 
@@ -10147,7 +10238,7 @@ namespace SuperSQLInjection
         {
             if (e.Modifiers == Keys.Control && e.KeyCode == Keys.A)
             {
-                ((TextBox)sender).SelectAll();
+                ((RichTextBox)sender).SelectAll();
             }
         }
 
@@ -10333,7 +10424,7 @@ namespace SuperSQLInjection
                 this.txt_basic_port.Text = url.Port.ToString();
 
             }
-            catch (Exception ee)
+            catch
             {
                 MessageBox.Show("请在数据包中输入正确的URL地址，如：http://www.baidu.com/index.php?id=1");
             }
@@ -10707,7 +10798,7 @@ namespace SuperSQLInjection
                 Clipboard.SetText(text);
                 MessageBox.Show("复制成功！");
             }
-            catch (Exception ee)
+            catch
             {
                 MessageBox.Show("复制失败，可能粘贴板被其他软件占用！");
             }
@@ -10745,7 +10836,7 @@ namespace SuperSQLInjection
                 Clipboard.SetText(this.bypass_lvw_replaceString.SelectedItems[0].SubItems[0].Text + "\t" + this.bypass_lvw_replaceString.SelectedItems[0].SubItems[1].Text);
                 MessageBox.Show("复制成功！");
             }
-            catch (Exception ee)
+            catch
             {
                 MessageBox.Show("复制失败，可能粘贴板被其他软件占用！");
             }
@@ -10925,7 +11016,7 @@ namespace SuperSQLInjection
                     MessageBox.Show("复制成功！");
                 }
             }
-            catch (Exception ee)
+            catch
             {
                 MessageBox.Show("复制失败，可能粘贴板被其他软件占用！");
             }
@@ -11211,6 +11302,9 @@ namespace SuperSQLInjection
             StopThread();
         }
 
-       
+        private void btn_stop_Click(object sender, EventArgs e)
+        {
+            StopThread();
+        }
     }
 }

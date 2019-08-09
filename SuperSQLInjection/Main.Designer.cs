@@ -32,7 +32,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
             this.gb_basic = new System.Windows.Forms.GroupBox();
             this.chk_useSSL = new System.Windows.Forms.CheckBox();
-            this.btn_exportConfig = new System.Windows.Forms.Button();
+            this.btn_stop = new System.Windows.Forms.Button();
             this.cbox_basic_threadSize = new System.Windows.Forms.ComboBox();
             this.cbox_basic_reTryCount = new System.Windows.Forms.ComboBox();
             this.cbox_basic_encoding = new System.Windows.Forms.ComboBox();
@@ -69,9 +69,9 @@
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.tabControl2 = new System.Windows.Forms.TabControl();
             this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.log_txt_request = new System.Windows.Forms.TextBox();
+            this.log_txt_request = new System.Windows.Forms.RichTextBox();
             this.tabPage4 = new System.Windows.Forms.TabPage();
-            this.log_txt_response = new System.Windows.Forms.TextBox();
+            this.log_txt_response = new System.Windows.Forms.RichTextBox();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.webBro_log = new System.Windows.Forms.WebBrowser();
             this.tab_file = new System.Windows.Forms.TabPage();
@@ -140,15 +140,10 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tab_datapack = new System.Windows.Forms.TabPage();
-            this.txt_inject_request = new System.Windows.Forms.TextBox();
-            this.cms_dataPacks = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.tsmi_createGetTemplate = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmi_createPOSTTemplate = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmi_changeRequestMethod = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmi_createPackByURL = new System.Windows.Forms.ToolStripMenuItem();
+            this.txt_inject_request = new System.Windows.Forms.RichTextBox();
             this.tab_tokenset = new System.Windows.Forms.TabPage();
             this.groupBox17 = new System.Windows.Forms.GroupBox();
-            this.token_txt_http_request = new System.Windows.Forms.TextBox();
+            this.token_txt_http_request = new System.Windows.Forms.RichTextBox();
             this.groupBox19 = new System.Windows.Forms.GroupBox();
             this.label36 = new System.Windows.Forms.Label();
             this.label37 = new System.Windows.Forms.Label();
@@ -157,9 +152,9 @@
             this.token_btn_testGetToken = new System.Windows.Forms.Button();
             this.tab_sencond_inject = new System.Windows.Forms.TabPage();
             this.groupBox20 = new System.Windows.Forms.GroupBox();
+            this.txt_sencond_request = new System.Windows.Forms.RichTextBox();
             this.groupBox21 = new System.Windows.Forms.GroupBox();
             this.label28 = new System.Windows.Forms.Label();
-            this.txt_sencond_request = new System.Windows.Forms.TextBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.groupBox16 = new System.Windows.Forms.GroupBox();
             this.label34 = new System.Windows.Forms.Label();
@@ -187,6 +182,11 @@
             this.chk_sencondInject = new System.Windows.Forms.CheckBox();
             this.chk_inject_foward_302 = new System.Windows.Forms.CheckBox();
             this.btn_inject_setInject = new System.Windows.Forms.Button();
+            this.cms_dataPacks = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.tsmi_createGetTemplate = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmi_createPOSTTemplate = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmi_changeRequestMethod = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmi_createPackByURL = new System.Windows.Forms.ToolStripMenuItem();
             this.mytab = new System.Windows.Forms.TabControl();
             this.tab_proxy = new System.Windows.Forms.TabPage();
             this.groupBox25 = new System.Windows.Forms.GroupBox();
@@ -418,7 +418,6 @@
             this.groupBox1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tab_datapack.SuspendLayout();
-            this.cms_dataPacks.SuspendLayout();
             this.tab_tokenset.SuspendLayout();
             this.groupBox17.SuspendLayout();
             this.groupBox19.SuspendLayout();
@@ -428,6 +427,7 @@
             this.groupBox3.SuspendLayout();
             this.groupBox16.SuspendLayout();
             this.groupBox15.SuspendLayout();
+            this.cms_dataPacks.SuspendLayout();
             this.mytab.SuspendLayout();
             this.tab_proxy.SuspendLayout();
             this.groupBox25.SuspendLayout();
@@ -467,7 +467,7 @@
             this.gb_basic.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.gb_basic.Controls.Add(this.chk_useSSL);
-            this.gb_basic.Controls.Add(this.btn_exportConfig);
+            this.gb_basic.Controls.Add(this.btn_stop);
             this.gb_basic.Controls.Add(this.cbox_basic_threadSize);
             this.gb_basic.Controls.Add(this.cbox_basic_reTryCount);
             this.gb_basic.Controls.Add(this.cbox_basic_encoding);
@@ -503,16 +503,17 @@
             this.chk_useSSL.UseVisualStyleBackColor = true;
             this.chk_useSSL.CheckedChanged += new System.EventHandler(this.chk_useSSL_CheckedChanged);
             // 
-            // btn_exportConfig
+            // btn_stop
             // 
-            this.btn_exportConfig.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btn_exportConfig.Location = new System.Drawing.Point(717, 50);
-            this.btn_exportConfig.Name = "btn_exportConfig";
-            this.btn_exportConfig.Size = new System.Drawing.Size(99, 23);
-            this.btn_exportConfig.TabIndex = 11;
-            this.btn_exportConfig.Text = "导出配置";
-            this.btn_exportConfig.UseVisualStyleBackColor = true;
-            this.btn_exportConfig.Click += new System.EventHandler(this.btn_exportConfig_Click);
+            this.btn_stop.BackColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.btn_stop.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btn_stop.Location = new System.Drawing.Point(717, 50);
+            this.btn_stop.Name = "btn_stop";
+            this.btn_stop.Size = new System.Drawing.Size(99, 23);
+            this.btn_stop.TabIndex = 11;
+            this.btn_stop.Text = "停止线程";
+            this.btn_stop.UseVisualStyleBackColor = false;
+            this.btn_stop.Click += new System.EventHandler(this.btn_stop_Click);
             // 
             // cbox_basic_threadSize
             // 
@@ -619,6 +620,7 @@
             // 
             // btn_autoInject
             // 
+            this.btn_autoInject.BackColor = System.Drawing.SystemColors.ButtonHighlight;
             this.btn_autoInject.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btn_autoInject.ImageKey = "(无)";
             this.btn_autoInject.Location = new System.Drawing.Point(717, 18);
@@ -626,7 +628,7 @@
             this.btn_autoInject.Size = new System.Drawing.Size(99, 23);
             this.btn_autoInject.TabIndex = 5;
             this.btn_autoInject.Text = "识别注入";
-            this.btn_autoInject.UseVisualStyleBackColor = true;
+            this.btn_autoInject.UseVisualStyleBackColor = false;
             this.btn_autoInject.Click += new System.EventHandler(this.btn_autoInject_Click);
             // 
             // cbox_basic_dbType
@@ -793,6 +795,7 @@
             this.log_lvw_httpLog.ContextMenuStrip = this.log_cms_dataifo;
             this.log_lvw_httpLog.Dock = System.Windows.Forms.DockStyle.Fill;
             this.log_lvw_httpLog.FullRowSelect = true;
+            this.log_lvw_httpLog.GridLines = true;
             this.log_lvw_httpLog.HideSelection = false;
             this.log_lvw_httpLog.Location = new System.Drawing.Point(3, 17);
             this.log_lvw_httpLog.Name = "log_lvw_httpLog";
@@ -895,13 +898,13 @@
             // 
             // log_txt_request
             // 
+            this.log_txt_request.DetectUrls = false;
             this.log_txt_request.Dock = System.Windows.Forms.DockStyle.Fill;
             this.log_txt_request.Location = new System.Drawing.Point(3, 3);
-            this.log_txt_request.Multiline = true;
             this.log_txt_request.Name = "log_txt_request";
-            this.log_txt_request.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.log_txt_request.Size = new System.Drawing.Size(812, 173);
             this.log_txt_request.TabIndex = 0;
+            this.log_txt_request.Text = "";
             // 
             // tabPage4
             // 
@@ -916,13 +919,13 @@
             // 
             // log_txt_response
             // 
+            this.log_txt_response.DetectUrls = false;
             this.log_txt_response.Dock = System.Windows.Forms.DockStyle.Fill;
             this.log_txt_response.Location = new System.Drawing.Point(3, 3);
-            this.log_txt_response.Multiline = true;
             this.log_txt_response.Name = "log_txt_response";
-            this.log_txt_response.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.log_txt_response.Size = new System.Drawing.Size(812, 173);
-            this.log_txt_response.TabIndex = 1;
+            this.log_txt_response.TabIndex = 0;
+            this.log_txt_response.Text = "";
             this.log_txt_response.KeyDown += new System.Windows.Forms.KeyEventHandler(this.log_txt_response_KeyDown);
             // 
             // tabPage1
@@ -1635,57 +1638,17 @@
             // 
             // txt_inject_request
             // 
+            this.txt_inject_request.BackColor = System.Drawing.SystemColors.Window;
             this.txt_inject_request.ContextMenuStrip = this.cms_dataPacks;
+            this.txt_inject_request.DetectUrls = false;
             this.txt_inject_request.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txt_inject_request.Location = new System.Drawing.Point(3, 3);
-            this.txt_inject_request.MaxLength = 1024000;
-            this.txt_inject_request.Multiline = true;
             this.txt_inject_request.Name = "txt_inject_request";
-            this.txt_inject_request.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.txt_inject_request.Size = new System.Drawing.Size(551, 385);
-            this.txt_inject_request.TabIndex = 13;
+            this.txt_inject_request.TabIndex = 14;
             this.txt_inject_request.Text = resources.GetString("txt_inject_request.Text");
             this.txt_inject_request.TextChanged += new System.EventHandler(this.txt_inject_request_TextChanged);
             this.txt_inject_request.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txt_inject_request_KeyDown);
-            // 
-            // cms_dataPacks
-            // 
-            this.cms_dataPacks.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tsmi_createGetTemplate,
-            this.tsmi_createPOSTTemplate,
-            this.tsmi_changeRequestMethod,
-            this.tsmi_createPackByURL});
-            this.cms_dataPacks.Name = "cms_dataPacks";
-            this.cms_dataPacks.Size = new System.Drawing.Size(184, 92);
-            this.cms_dataPacks.Text = "复制数据";
-            // 
-            // tsmi_createGetTemplate
-            // 
-            this.tsmi_createGetTemplate.Name = "tsmi_createGetTemplate";
-            this.tsmi_createGetTemplate.Size = new System.Drawing.Size(183, 22);
-            this.tsmi_createGetTemplate.Text = "生成GET模板";
-            this.tsmi_createGetTemplate.Click += new System.EventHandler(this.tsmi_createGetTemplate_Click);
-            // 
-            // tsmi_createPOSTTemplate
-            // 
-            this.tsmi_createPOSTTemplate.Name = "tsmi_createPOSTTemplate";
-            this.tsmi_createPOSTTemplate.Size = new System.Drawing.Size(183, 22);
-            this.tsmi_createPOSTTemplate.Text = "生成POST模板";
-            this.tsmi_createPOSTTemplate.Click += new System.EventHandler(this.tsmi_createPOSTTemplate_Click);
-            // 
-            // tsmi_changeRequestMethod
-            // 
-            this.tsmi_changeRequestMethod.Name = "tsmi_changeRequestMethod";
-            this.tsmi_changeRequestMethod.Size = new System.Drawing.Size(183, 22);
-            this.tsmi_changeRequestMethod.Text = "转换提交方式";
-            this.tsmi_changeRequestMethod.Click += new System.EventHandler(this.tsmi_changeRequestMethod_Click);
-            // 
-            // tsmi_createPackByURL
-            // 
-            this.tsmi_createPackByURL.Name = "tsmi_createPackByURL";
-            this.tsmi_createPackByURL.Size = new System.Drawing.Size(183, 22);
-            this.tsmi_createPackByURL.Text = "根据URL生成数据包";
-            this.tsmi_createPackByURL.Click += new System.EventHandler(this.tsmi_createPackByURL_Click);
             // 
             // tab_tokenset
             // 
@@ -1712,15 +1675,13 @@
             // 
             // token_txt_http_request
             // 
-            this.token_txt_http_request.AcceptsReturn = true;
+            this.token_txt_http_request.DetectUrls = false;
             this.token_txt_http_request.Dock = System.Windows.Forms.DockStyle.Fill;
             this.token_txt_http_request.Location = new System.Drawing.Point(3, 17);
-            this.token_txt_http_request.MaxLength = 65535;
-            this.token_txt_http_request.Multiline = true;
             this.token_txt_http_request.Name = "token_txt_http_request";
-            this.token_txt_http_request.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.token_txt_http_request.Size = new System.Drawing.Size(545, 301);
-            this.token_txt_http_request.TabIndex = 8;
+            this.token_txt_http_request.TabIndex = 0;
+            this.token_txt_http_request.Text = "";
             this.token_txt_http_request.TextChanged += new System.EventHandler(this.token_txt_http_request_TextChanged);
             this.token_txt_http_request.KeyDown += new System.Windows.Forms.KeyEventHandler(this.token_txt_http_request_KeyDown);
             // 
@@ -1802,14 +1763,28 @@
             this.groupBox20.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox20.Controls.Add(this.groupBox21);
             this.groupBox20.Controls.Add(this.txt_sencond_request);
+            this.groupBox20.Controls.Add(this.groupBox21);
             this.groupBox20.Location = new System.Drawing.Point(0, 3);
             this.groupBox20.Name = "groupBox20";
             this.groupBox20.Size = new System.Drawing.Size(557, 387);
             this.groupBox20.TabIndex = 26;
             this.groupBox20.TabStop = false;
             this.groupBox20.Text = "二次注入请求包";
+            // 
+            // txt_sencond_request
+            // 
+            this.txt_sencond_request.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txt_sencond_request.DetectUrls = false;
+            this.txt_sencond_request.Location = new System.Drawing.Point(6, 19);
+            this.txt_sencond_request.Name = "txt_sencond_request";
+            this.txt_sencond_request.Size = new System.Drawing.Size(543, 307);
+            this.txt_sencond_request.TabIndex = 11;
+            this.txt_sencond_request.Text = "";
+            this.txt_sencond_request.TextChanged += new System.EventHandler(this.txt_sencond_request_TextChanged);
+            this.txt_sencond_request.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txt_sencond_request_KeyDown);
             // 
             // groupBox21
             // 
@@ -1831,22 +1806,6 @@
             this.label28.Size = new System.Drawing.Size(425, 12);
             this.label28.TabIndex = 9;
             this.label28.Text = "此处可以放二次注入时第二次请求获取注入结果的页面，用于对付一些二次注入";
-            // 
-            // txt_sencond_request
-            // 
-            this.txt_sencond_request.AcceptsReturn = true;
-            this.txt_sencond_request.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txt_sencond_request.Location = new System.Drawing.Point(3, 18);
-            this.txt_sencond_request.MaxLength = 65535;
-            this.txt_sencond_request.Multiline = true;
-            this.txt_sencond_request.Name = "txt_sencond_request";
-            this.txt_sencond_request.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txt_sencond_request.Size = new System.Drawing.Size(551, 308);
-            this.txt_sencond_request.TabIndex = 8;
-            this.txt_sencond_request.TextChanged += new System.EventHandler(this.txt_sencond_request_TextChanged);
-            this.txt_sencond_request.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txt_sencond_request_KeyDown);
             // 
             // groupBox3
             // 
@@ -2161,6 +2120,45 @@
             this.btn_inject_setInject.Text = "注入标记";
             this.btn_inject_setInject.UseVisualStyleBackColor = true;
             this.btn_inject_setInject.Click += new System.EventHandler(this.btn_inject_setInject_Click);
+            // 
+            // cms_dataPacks
+            // 
+            this.cms_dataPacks.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsmi_createGetTemplate,
+            this.tsmi_createPOSTTemplate,
+            this.tsmi_changeRequestMethod,
+            this.tsmi_createPackByURL});
+            this.cms_dataPacks.Name = "cms_dataPacks";
+            this.cms_dataPacks.Size = new System.Drawing.Size(184, 92);
+            this.cms_dataPacks.Text = "复制数据";
+            // 
+            // tsmi_createGetTemplate
+            // 
+            this.tsmi_createGetTemplate.Name = "tsmi_createGetTemplate";
+            this.tsmi_createGetTemplate.Size = new System.Drawing.Size(183, 22);
+            this.tsmi_createGetTemplate.Text = "生成GET模板";
+            this.tsmi_createGetTemplate.Click += new System.EventHandler(this.tsmi_createGetTemplate_Click);
+            // 
+            // tsmi_createPOSTTemplate
+            // 
+            this.tsmi_createPOSTTemplate.Name = "tsmi_createPOSTTemplate";
+            this.tsmi_createPOSTTemplate.Size = new System.Drawing.Size(183, 22);
+            this.tsmi_createPOSTTemplate.Text = "生成POST模板";
+            this.tsmi_createPOSTTemplate.Click += new System.EventHandler(this.tsmi_createPOSTTemplate_Click);
+            // 
+            // tsmi_changeRequestMethod
+            // 
+            this.tsmi_changeRequestMethod.Name = "tsmi_changeRequestMethod";
+            this.tsmi_changeRequestMethod.Size = new System.Drawing.Size(183, 22);
+            this.tsmi_changeRequestMethod.Text = "转换提交方式";
+            this.tsmi_changeRequestMethod.Click += new System.EventHandler(this.tsmi_changeRequestMethod_Click);
+            // 
+            // tsmi_createPackByURL
+            // 
+            this.tsmi_createPackByURL.Name = "tsmi_createPackByURL";
+            this.tsmi_createPackByURL.Size = new System.Drawing.Size(183, 22);
+            this.tsmi_createPackByURL.Text = "根据URL生成数据包";
+            this.tsmi_createPackByURL.Click += new System.EventHandler(this.tsmi_createPackByURL_Click);
             // 
             // mytab
             // 
@@ -3686,6 +3684,7 @@
             this.lvw_injectLog.ContextMenuStrip = this.injectLog_cm;
             this.lvw_injectLog.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lvw_injectLog.FullRowSelect = true;
+            this.lvw_injectLog.GridLines = true;
             this.lvw_injectLog.HideSelection = false;
             this.lvw_injectLog.Location = new System.Drawing.Point(3, 3);
             this.lvw_injectLog.Name = "lvw_injectLog";
@@ -4095,9 +4094,7 @@
             this.groupBox6.ResumeLayout(false);
             this.tabControl2.ResumeLayout(false);
             this.tabPage3.ResumeLayout(false);
-            this.tabPage3.PerformLayout();
             this.tabPage4.ResumeLayout(false);
-            this.tabPage4.PerformLayout();
             this.tabPage1.ResumeLayout(false);
             this.tab_file.ResumeLayout(false);
             this.tab_file.PerformLayout();
@@ -4129,16 +4126,12 @@
             this.groupBox1.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
             this.tab_datapack.ResumeLayout(false);
-            this.tab_datapack.PerformLayout();
-            this.cms_dataPacks.ResumeLayout(false);
             this.tab_tokenset.ResumeLayout(false);
             this.groupBox17.ResumeLayout(false);
-            this.groupBox17.PerformLayout();
             this.groupBox19.ResumeLayout(false);
             this.groupBox19.PerformLayout();
             this.tab_sencond_inject.ResumeLayout(false);
             this.groupBox20.ResumeLayout(false);
-            this.groupBox20.PerformLayout();
             this.groupBox21.ResumeLayout(false);
             this.groupBox21.PerformLayout();
             this.groupBox3.ResumeLayout(false);
@@ -4147,6 +4140,7 @@
             this.groupBox16.PerformLayout();
             this.groupBox15.ResumeLayout(false);
             this.groupBox15.PerformLayout();
+            this.cms_dataPacks.ResumeLayout(false);
             this.mytab.ResumeLayout(false);
             this.tab_proxy.ResumeLayout(false);
             this.groupBox25.ResumeLayout(false);
@@ -4229,7 +4223,7 @@
         private System.Windows.Forms.ComboBox cbox_basic_timeOut;
         private System.Windows.Forms.ComboBox cbox_basic_reTryCount;
         private System.Windows.Forms.ComboBox cbox_basic_threadSize;
-        private System.Windows.Forms.Button btn_exportConfig;
+        private System.Windows.Forms.Button btn_stop;
         private System.Windows.Forms.TabPage tab_logCenter;
         private System.Windows.Forms.TabPage tab_file;
         private System.Windows.Forms.TabPage tab_dataCenter;
@@ -4281,10 +4275,7 @@
         private System.Windows.Forms.TreeView data_tvw_dbs;
         private System.Windows.Forms.ColumnHeader log_col_code;
         private System.Windows.Forms.ColumnHeader log_col_bodyLength;
-        private System.Windows.Forms.TextBox log_txt_request;
-        private System.Windows.Forms.TextBox log_txt_response;
         private System.Windows.Forms.ColumnHeader log_col_index;
-        private System.Windows.Forms.TextBox txt_inject_request;
         private System.Windows.Forms.ColumnHeader col_runtime;
         private System.Windows.Forms.ContextMenuStrip log_cms_dataifo;
         private System.Windows.Forms.ToolStripMenuItem data_cms_clearLog;
@@ -4452,12 +4443,10 @@
         private System.Windows.Forms.Button token_btn_testGetToken;
         private System.Windows.Forms.Label label29;
         private System.Windows.Forms.GroupBox groupBox17;
-        private System.Windows.Forms.TextBox token_txt_http_request;
         private System.Windows.Forms.Button btn_inject_setTokenLocation;
         private System.Windows.Forms.Button btn_inject_randStr;
         private System.Windows.Forms.TabPage tab_sencond_inject;
         private System.Windows.Forms.GroupBox groupBox20;
-        private System.Windows.Forms.TextBox txt_sencond_request;
         private System.Windows.Forms.CheckBox bypass_hex;
         private System.Windows.Forms.Label label28;
         private System.Windows.Forms.GroupBox groupBox21;
@@ -4553,6 +4542,11 @@
         private System.Windows.Forms.ToolStripButton toolStrip_vers_btn_getVariable;
         private System.Windows.Forms.ToolStripButton toolStrip_vers_btn_stopGetVariable;
         private System.Windows.Forms.ToolStripLabel data_dbs_tsl_stopGetDatas;
+        private System.Windows.Forms.RichTextBox txt_inject_request;
+        private System.Windows.Forms.RichTextBox log_txt_response;
+        private System.Windows.Forms.RichTextBox token_txt_http_request;
+        private System.Windows.Forms.RichTextBox txt_sencond_request;
+        private System.Windows.Forms.RichTextBox log_txt_request;
     }
 }
 
