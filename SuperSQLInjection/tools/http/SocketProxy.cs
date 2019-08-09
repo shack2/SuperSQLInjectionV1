@@ -104,13 +104,11 @@ namespace SuperSQLInjection.tools.http
                 readCount = sProxyServer.Client.Receive(bySock5Receive, bySock5Receive.Length, SocketFlags.None);
                 if (readCount < 2)
                 {
-                    sProxyServer.Close();
                     throw new Exception("不能获得代理服务器正确响应。");
                 }
 
                 else if (bySock5Receive[0] != 5 || (bySock5Receive[1] != 0 && bySock5Receive[1] != 2))
                 {
-                    sProxyServer.Close();
                     throw new Exception("代理服务其返回的响应错误。");
                 }
                 else
@@ -137,7 +135,6 @@ namespace SuperSQLInjection.tools.http
                         }
                         else
                         {
-                            sProxyServer.Close();
                             //利用Socks5代理连接目标出错。
                             return false;
                         }
@@ -150,7 +147,6 @@ namespace SuperSQLInjection.tools.http
                 Tools.SysLog("Socks5代理发生异常！" + e.Message);
             }
             finally {
-                sProxyServer.Close();
                 sw.Stop();
                 ConectProxyUseTime = (int)sw.ElapsedMilliseconds;
                 sw.Reset();

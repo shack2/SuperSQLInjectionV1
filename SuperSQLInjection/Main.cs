@@ -11076,9 +11076,19 @@ namespace SuperSQLInjection
                     TcpClient client = sp.creatProxySocket(proxy.host, proxy.port, config.timeOut);
                     if (client != null)
                     {
-                        istrue = sp.ConnectProxyServer(config.proxy_check_host, config.proxy_check_port, client, proxy.username, proxy.password, config.timeOut);
-                        client.Close();
-                        proxy.useTime = sp.ConectProxyUseTime;
+                        try
+                        {
+                            istrue = sp.ConnectProxyServer(config.proxy_check_host, config.proxy_check_port, client, proxy.username, proxy.password, config.timeOut);
+                            proxy.useTime = sp.ConectProxyUseTime;
+                        }
+                        catch (Exception e)
+                        {
+                            this.txt_log.Invoke(new showLogDelegate(log), "验证代理发生异常！"+e.Message, LogLevel.waring);
+                        }
+                        finally {
+                            client.Close();
+                        }
+                        
                     }
                 }
                 else
