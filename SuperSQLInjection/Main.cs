@@ -15,14 +15,12 @@ using SuperSQLInjection.scan;
 using System.Web;
 using System.Net;
 using Amib.Threading;
-using System.Management;
-using Microsoft.Win32;
 using System.Drawing;
 using System.Reflection;
 using static System.Windows.Forms.ListView;
 using SuperSQLInjection.tools.http;
 using System.Net.Sockets;
-using System.Runtime.InteropServices;
+using System.Xml;
 
 namespace SuperSQLInjection
 {
@@ -284,7 +282,7 @@ namespace SuperSQLInjection
             responseStream.Close();
         }
 
-        public static int version = 20190810;
+        public static int version = 20190811;
         public static string versionURL = "http://www.shack2.org/soft/getNewVersion?ENNAME=SSuperSQLInjection&NO=" + URLEncode.UrlEncode(Tools.getSystemSid()) + "&VERSION=" + version;
         //检查更新
         public void checkUpdate()
@@ -1421,6 +1419,36 @@ namespace SuperSQLInjection
         }
 
         delegate void addItemToListViewByColumnsDelegate(String colvs);
+
+        public void addItemToListViewBySQLServerXMLData(String xmldata,List<String> columns)
+        {
+            try {
+                ListViewItem lvi = new ListViewItem();
+                XmlDocument xml = new XmlDocument();
+                xml.LoadXml(xmldata);
+                XmlNodeList lines = xml.ChildNodes;
+                bool haveData = false;
+                for (int i=1; i< columns.Count;i++) {
+                    lvi.SubItems.Add("");
+                }
+                if (lines.Count == 1) {
+                    XmlAttributeCollection abs = lines[0].Attributes;
+                    foreach (XmlAttribute attr in abs) {
+                        int index = Tools.FindItemWithIgnoreCase(columns, attr.Name);
+                        if (index != -1) {
+                            haveData = true;
+                            lvi.SubItems[index].Text = HttpUtility.HtmlDecode(attr.Value);
+                        }
+                    }
+                }
+                if (haveData) {
+                    this.Invoke(new addItemToListViewDelegate(addItemToListView),lvi);
+                }
+            } catch (Exception e) {
+                this.txt_log.Invoke(new showLogDelegate(log), "解析SQLServer注入数据，并添加到ListView发生错误！" + e.Message, LogLevel.waring);
+            }
+           
+        }
 
         public void addItemToListViewByColumns(String colvs)
         {
@@ -5696,7 +5724,8 @@ namespace SuperSQLInjection
                 GetDataPam gp = (GetDataPam)opam;
                 ListViewItem lvi = new ListViewItem();
                 String result = getOneDataByUnionOrError(SQLServer.getUnionDataValue(config.columnsCount, config.showColumn, config.unionFill, gp.dbname, gp.table, gp.columns, gp.limit));
-                this.Invoke(new addItemToListViewByColumnsDelegate(addItemToListViewByColumns), result);
+                //数结果改成xml格式，单独解析
+                addItemToListViewBySQLServerXMLData(result, gp.columns);
                 this.txt_log.Invoke(new showLogDelegate(log), "获取到第" + gp.limit + "行的值！", LogLevel.info);
             }
             catch (Exception e)
@@ -10031,7 +10060,7 @@ namespace SuperSQLInjection
         {
             if (e.Modifiers == Keys.Control && e.KeyCode == Keys.A)
             {
-                ((RichTextBox)sender).SelectAll();
+                ((TextBox)sender).SelectAll();
             }
         }
 
@@ -10039,7 +10068,7 @@ namespace SuperSQLInjection
         {
             if (e.Modifiers == Keys.Control && e.KeyCode == Keys.A)
             {
-                ((RichTextBox)sender).SelectAll();
+                ((TextBox)sender).SelectAll();
             }
         }
 
@@ -10047,7 +10076,7 @@ namespace SuperSQLInjection
         {
             if (e.Modifiers == Keys.Control && e.KeyCode == Keys.A)
             {
-                ((RichTextBox)sender).SelectAll();
+                ((TextBox)sender).SelectAll();
             }
         }
 
@@ -10238,7 +10267,7 @@ namespace SuperSQLInjection
         {
             if (e.Modifiers == Keys.Control && e.KeyCode == Keys.A)
             {
-                ((RichTextBox)sender).SelectAll();
+                ((TextBox)sender).SelectAll();
             }
         }
 

@@ -270,11 +270,11 @@ namespace SuperSQLInjection.payload
                 if (columns.Count > 1)
                 {
 
-                    sb.Append(columns[i] + ",");
+                    sb.Append("ifnull("+columns[i] + ",0x20),");
                 }
                 else
                 {
-                    sb.Append(columns[i]);
+                    sb.Append("ifnull(" + columns[i]+ ",0x20)");
                 }
 
             }

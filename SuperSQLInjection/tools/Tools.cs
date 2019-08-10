@@ -1397,8 +1397,23 @@ namespace tools
             {
             }
             return sid + mac;
+            
 
         }
+
+
+        public static int FindItemWithIgnoreCase(List<String> list, String items) {
+            int index = -1;
+            foreach (String str in list) {
+                index++;
+                if (str.Equals(items, StringComparison.OrdinalIgnoreCase)){
+                    break;
+                }
+            }
+            return index;
+        }
+
+        
     }
 
 
