@@ -282,7 +282,7 @@ namespace SuperSQLInjection
             responseStream.Close();
         }
 
-        public static int version = 20190811;
+        public static int version = 20190812;
         public static string versionURL = "http://www.shack2.org/soft/getNewVersion?ENNAME=SSuperSQLInjection&NO=" + URLEncode.UrlEncode(Tools.getSystemSid()) + "&VERSION=" + version;
         //检查更新
         public void checkUpdate()
@@ -11344,6 +11344,16 @@ namespace SuperSQLInjection
         private void btn_stop_Click(object sender, EventArgs e)
         {
             StopThread();
+        }
+
+        private void toolStrip_vers_btn_selectAll_Click(object sender, EventArgs e)
+        {
+            SelectAllNodes(this.data_lvw_ver);
+        }
+
+        private void toolStrip_vers_btn_selectReverse_Click(object sender, EventArgs e)
+        {
+            SelectReversNodes(this.data_lvw_ver);
         }
     }
 }

@@ -221,7 +221,6 @@ namespace SuperSQLInjection.payload
 
             StringBuilder sb = new StringBuilder("(select concat_ws(0x242424,");
             foreach (String c in columns) {
-                // sb.Append(castMySQLColumn(c)+",");
                 sb.Append("ifnull("+c + ",0x20),");
             }
             if (columns.Count > 0)
