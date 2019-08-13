@@ -24,6 +24,7 @@ namespace SuperSQLInjection.tools
     {
         
         public const char T = '\n';
+        public const String ST = "\n";
         public const String CT = "\r\n";
         public const String AutoGetEncoding = "自动识别";
         public const String DefaultEncoding = "UTF-8";
@@ -266,6 +267,7 @@ namespace SuperSQLInjection.tools
 
         private static ServerInfo sendHTTPRequest(int count, String host, int port, String payload, String request, int timeout, String encoding, Boolean foward_302,Boolean redirectDoGet)
         {
+            request = request.Replace(CT, ST).Replace(ST, CT);
             Interlocked.Increment(ref HTTP.index);
             String index = Thread.CurrentThread.Name+ Interlocked.Read(ref HTTP.index);
             Stopwatch sw = new Stopwatch();
@@ -685,6 +687,7 @@ namespace SuperSQLInjection.tools
 
         private static ServerInfo sendHTTPSRequest(int count, String host, int port, String payload, String request, int timeout, String encoding, Boolean foward_302,Boolean redirectDoGet)
         {
+            request = request.Replace(CT, ST).Replace(ST, CT);
             Interlocked.Increment(ref HTTP.index);
             String index = Thread.CurrentThread.Name + Interlocked.Read(ref HTTP.index);
             Stopwatch sw = new Stopwatch();

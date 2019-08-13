@@ -50,7 +50,8 @@ namespace SuperSQLInjection
         public Hashtable replaceList = new Hashtable();
         public HashSet<String> scan_list = new HashSet<String>();
         public int loadListStatus = 0;//注入双击导入扫描URL
-
+        //自动识别注入跳过参数
+        public static List<String> jumpkeyList = FileTool.readFileToList("config/injection/jumpkey.txt");
         public static int comm_count = 0;//猜测的表数量
 
         public static int comm_currentCount = 0;//猜测的数量
@@ -111,6 +112,7 @@ namespace SuperSQLInjection
             if (server.timeout)
             {
                 this.txt_log.Invoke(new showLogDelegate(log), "连接超时！", LogLevel.error);
+                this.btn_inject_sendData.Enabled = true;
             }
             else
             {
@@ -282,7 +284,7 @@ namespace SuperSQLInjection
             responseStream.Close();
         }
 
-        public static int version = 20190812;
+        public static int version = 20190813;
         public static string versionURL = "http://www.shack2.org/soft/getNewVersion?ENNAME=SSuperSQLInjection&NO=" + URLEncode.UrlEncode(Tools.getSystemSid()) + "&VERSION=" + version;
         //检查更新
         public void checkUpdate()
@@ -6898,8 +6900,10 @@ namespace SuperSQLInjection
 
                 foreach (KeyValuePair<String,String> paramNameAndData in pdatas)
                 {
-
                     String paramName = paramNameAndData.Key;
+                    if (jumpkeyList.Contains(paramName)) {
+                        continue;
+                    }
                     String paramData = paramNameAndData.Value;
 
                     String unionStartPayLoad = "";
@@ -7458,6 +7462,7 @@ namespace SuperSQLInjection
                         String new_request = setInjectToRequest(request, setInject(pdatas, paramName, injectParamData));
                         config.request = new_request;
                         config.dbType = (DBType)Tools.caseDBType(currentDB);
+                        selectDB(currentDB);
                         config.pname = paramName;
                         config.uri = Tools.getRequestURI(request);
                         logInject(config);
@@ -8024,7 +8029,10 @@ namespace SuperSQLInjection
 
         private void txt_inject_request_TextChanged(object sender, EventArgs e)
         {
-            config.request = this.txt_inject_request.Text;
+            int s = this.txt_inject_request.SelectionStart;
+            config.request = this.txt_inject_request.Text.Replace(HTTP.CT, HTTP.ST).Replace(HTTP.ST, HTTP.CT);
+            this.txt_inject_request.Text = config.request;
+            this.txt_inject_request.SelectionStart = s;
         }
 
         private void chk_inject_reverseKey_CheckedChanged(object sender, EventArgs e)
