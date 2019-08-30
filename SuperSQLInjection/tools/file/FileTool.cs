@@ -225,9 +225,11 @@ namespace tools
                 {
                     fs_dir = new FileStream(path, FileMode.Create, FileAccess.Write);
                     sw = new StreamWriter(fs_dir, Encoding.UTF8);
-                    foreach(Proxy proxy in vals)
+                    String head = "域名或IP,代理端口,代理类型,代理账号,代理密码,是否可用,用时(毫秒),验证时间(毫秒)";
+                    sw.WriteLine(head);
+                    foreach (Proxy proxy in vals)
                     {
-                        String line = proxy.host + "\t" + proxy.port + "\t" + proxy.proxyType + "\t" + proxy.username + "\t" + proxy.password + "\t" + proxy.isOk + "\t" + proxy.useTime + "\t" + proxy.checkTime;
+                        String line = proxy.host + "," + proxy.port + "," + proxy.proxyType + "," + proxy.username + "," + proxy.password + "," + proxy.isOk + "," + proxy.useTime + "," + proxy.checkTime;
                         sw.WriteLine(line);
                     }
                 }
@@ -267,12 +269,17 @@ namespace tools
                 reader = new StreamReader(fs_dir);
 
                 String lineStr;
-
+                int line = 0;
                 while ((lineStr = reader.ReadLine()) != null)
                 {
+                    line++;
+                    if (line == 1) {
+                        continue;
+                    }
+                    
                     if (!lineStr.Equals(""))
                     {
-                        String[] strs = lineStr.Split('\t');
+                        String[] strs = lineStr.Split(',');
                         if (strs.Length == 2)
                         {
                             Proxy proxy = new Proxy();
@@ -312,6 +319,7 @@ namespace tools
                             list.Add(proxy.host + proxy.port, proxy);
                         }
                     }
+                   
                 }
             }
             catch (Exception e)

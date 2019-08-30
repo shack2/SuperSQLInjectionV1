@@ -285,6 +285,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="favicon.ico" />
+    <None Include="Resources\bg.png" />
+    <None Include="Resources\article_top_nav_bg.png" />
+    <None Include="Properties\images\bg.png" />
     <None Include="Properties\images\下载.png" />
     <None Include="Properties\images\bug.png" />
     <None Include="Properties\images\版本.png" />
@@ -309,9 +312,7 @@
     <None Include="Properties\images\stop.png" />
     <None Include="Properties\images\vers.png" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Resources\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

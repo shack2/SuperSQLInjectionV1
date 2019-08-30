@@ -116,13 +116,14 @@ namespace SuperSQLInjection
             }
             else
             {
-                this.Invoke(new delegateVoidShowResponse(ShowResponse),server);
+                this.Invoke(new delegateVoidShowResponse(ShowResponse), server);
             }
         }
 
         private delegate void delegateVoidShowResponse(ServerInfo server);
 
-        private void ShowResponse(ServerInfo server){
+        private void ShowResponse(ServerInfo server)
+        {
             ShowResponse sr = new ShowResponse();
             sr.server = server;
             this.sr = sr;
@@ -140,7 +141,8 @@ namespace SuperSQLInjection
                 t.Start();
             }
         }
-        private void addDBSToItems() {
+        private void addDBSToItems()
+        {
 
             string[] dbnames = Enum.GetNames(typeof(DBType));
             this.cbox_basic_dbType.Items.AddRange(dbnames);
@@ -284,7 +286,7 @@ namespace SuperSQLInjection
             responseStream.Close();
         }
 
-        public static int version = 20190823;
+        public static int version = 20190830;
         public static string versionURL = "http://www.shack2.org/soft/getNewVersion?ENNAME=SSuperSQLInjection&NO=" + URLEncode.UrlEncode(Tools.getSystemSid()) + "&VERSION=" + version;
         //检查更新
         public void checkUpdate()
@@ -570,7 +572,7 @@ namespace SuperSQLInjection
         /// </summary>
         /// <param name="opayload"></param>
         /// <returns></returns>
-        public String getOneDataByUnionOrError(String opayload,String start,String end)
+        public String getOneDataByUnionOrError(String opayload, String start, String end)
         {
 
             try
@@ -580,7 +582,7 @@ namespace SuperSQLInjection
                 if (server.body != null && server.body.Length > 0)
                 {
                     //查找格式^^!col$$$col!^^
-                    Match m = Regex.Match(server.body, "(?<=("+start+"))[.\\s\\S]*?(?=("+ end + "))");
+                    Match m = Regex.Match(server.body, "(?<=(" + start + "))[.\\s\\S]*?(?=(" + end + "))");
                     if (m.Success)
                     {
                         return m.Value;
@@ -716,7 +718,7 @@ namespace SuperSQLInjection
         public void getVariablesByUnionByInformix(Object v)
         {
             String[] sv = v.ToString().Split(DBVers_Splite_Str);
-            String pay_load = Informix.getUnionDataValue(config.unionFillTemplate, sv[1], "", "", "",Informix.cast_value);
+            String pay_load = Informix.getUnionDataValue(config.unionFillTemplate, sv[1], "", "", "", Informix.cast_value);
             String result = getOneDataByUnionOrErrorByInformix(pay_load);
             this.data_lvw_ver.Invoke(new setVariableDelegate(setVariable), sv[0], result);
             Interlocked.Increment(ref this.currentDataCount);
@@ -945,10 +947,11 @@ namespace SuperSQLInjection
                             {
                                 stp.QueueWorkItem<String>(getVariableByBoolByInformixSleep, v);
                             }
-                            else {
+                            else
+                            {
                                 stp.QueueWorkItem<String>(getVariableByBoolByInformix, v);
                             }
-                           
+
                             break;
                     }
                 }
@@ -1422,34 +1425,42 @@ namespace SuperSQLInjection
 
         delegate void addItemToListViewByColumnsDelegate(String colvs);
 
-        public void addItemToListViewBySQLServerXMLData(String xmldata,List<String> columns)
+        public void addItemToListViewBySQLServerXMLData(String xmldata, List<String> columns)
         {
-            try {
+            try
+            {
                 ListViewItem lvi = new ListViewItem();
                 XmlDocument xml = new XmlDocument();
                 xml.LoadXml(xmldata);
                 XmlNodeList lines = xml.ChildNodes;
                 bool haveData = false;
-                for (int i=1; i< columns.Count;i++) {
+                for (int i = 1; i < columns.Count; i++)
+                {
                     lvi.SubItems.Add("");
                 }
-                if (lines.Count == 1) {
+                if (lines.Count == 1)
+                {
                     XmlAttributeCollection abs = lines[0].Attributes;
-                    foreach (XmlAttribute attr in abs) {
+                    foreach (XmlAttribute attr in abs)
+                    {
                         int index = Tools.FindItemWithIgnoreCase(columns, attr.Name);
-                        if (index != -1) {
+                        if (index != -1)
+                        {
                             haveData = true;
                             lvi.SubItems[index].Text = HttpUtility.HtmlDecode(attr.Value);
                         }
                     }
                 }
-                if (haveData) {
-                    this.Invoke(new addItemToListViewDelegate(addItemToListView),lvi);
+                if (haveData)
+                {
+                    this.Invoke(new addItemToListViewDelegate(addItemToListView), lvi);
                 }
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 this.txt_log.Invoke(new showLogDelegate(log), "解析SQLServer注入数据，并添加到ListView发生错误！" + e.Message, LogLevel.waring);
             }
-           
+
         }
 
         public void addItemToListViewByColumns(String colvs)
@@ -1462,7 +1473,7 @@ namespace SuperSQLInjection
             addItemToListViewByColumns(colvs, Informix.mid);
         }
 
-        public void addItemToListViewByColumns(String colvs,String splitReg)
+        public void addItemToListViewByColumns(String colvs, String splitReg)
         {
             String[] colv = Regex.Split(colvs, splitReg);
             ListViewItem lvi = null;
@@ -1520,10 +1531,10 @@ namespace SuperSQLInjection
                     String tmp_va_payload = va_payload.Replace("{index}", i + "");
                     int ascii = getValue(tmp_va_payload, 32, 126);
                     value += ((char)ascii).ToString();
-                    this.Invoke(new setDBToTreeListDelegate(setDBToTreeList),db_index,value);
+                    this.Invoke(new setDBToTreeListDelegate(setDBToTreeList), db_index, value);
                 }
                 this.txt_log.Invoke(new showLogDelegate(log), "数据库" + db_index + "的名称为：" + value, LogLevel.info);
-                
+
 
             }
             catch (Exception e)
@@ -1577,7 +1588,7 @@ namespace SuperSQLInjection
                     this.Invoke(new setDBToTreeListDelegate(setDBToTreeList), db_index, value);
                 }
                 this.txt_log.Invoke(new showLogDelegate(log), "数据库" + db_index + "的名称为：" + value, LogLevel.info);
-                
+
 
             }
             catch (Exception e)
@@ -1632,10 +1643,10 @@ namespace SuperSQLInjection
                             break;
                         }
                     }
-                    this.Invoke(new setDBToTreeListDelegate(setDBToTreeList), db_index-1, value);
+                    this.Invoke(new setDBToTreeListDelegate(setDBToTreeList), db_index - 1, value);
                 }
                 this.txt_log.Invoke(new showLogDelegate(log), "数据库" + db_index + "的名称为：" + value, LogLevel.info);
-               
+
 
             }
             catch (Exception e)
@@ -1698,7 +1709,7 @@ namespace SuperSQLInjection
                     {
                         value += (char)Tools.convertToInt(unicodes.ToString());
                     }
-                    this.Invoke(new setDBToTreeListDelegate(setDBToTreeList), db_index-1, value);
+                    this.Invoke(new setDBToTreeListDelegate(setDBToTreeList), db_index - 1, value);
                 }
                 this.txt_log.Invoke(new showLogDelegate(log), "数据库" + db_index + "的名称为：" + value, LogLevel.info);
 
@@ -1741,10 +1752,10 @@ namespace SuperSQLInjection
                     String tmp_va_payload = va_payload.Replace("{index}", i + "");
                     int ascii = getValue(tmp_va_payload, 32, 126);
                     value += ((char)ascii).ToString();
-                    this.Invoke(new setDBToTreeListDelegate(setDBToTreeList), db_index-1,value);
+                    this.Invoke(new setDBToTreeListDelegate(setDBToTreeList), db_index - 1, value);
                 }
                 this.txt_log.Invoke(new showLogDelegate(log), "数据库" + db_index + "的名称为：" + value, LogLevel.info);
-                
+
 
             }
             catch (Exception e)
@@ -1785,10 +1796,10 @@ namespace SuperSQLInjection
                     String tmp_va_payload = va_payload.Replace("{index}", i + "");
                     int ascii = getValue(tmp_va_payload, 32, 126);
                     value += ((char)ascii).ToString();
-                    this.Invoke(new setDBToTreeListDelegate(setDBToTreeList), db_index-1, value);
+                    this.Invoke(new setDBToTreeListDelegate(setDBToTreeList), db_index - 1, value);
                 }
                 this.txt_log.Invoke(new showLogDelegate(log), "数据库" + db_index + "的名称为：" + value, LogLevel.info);
-              
+
 
             }
             catch (Exception e)
@@ -1821,7 +1832,7 @@ namespace SuperSQLInjection
 
                 //判断当前数据库长度限制1-50
                 int len = getValue(payload_len, 1, 50);
-                this.txt_log.Invoke(new showLogDelegate(log), "数据库" + (db_index+1) + "长度为：" + len, LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "数据库" + (db_index + 1) + "长度为：" + len, LogLevel.info);
 
                 String value = "";
                 //获取值
@@ -1862,7 +1873,7 @@ namespace SuperSQLInjection
                 data_list.Add(MySQL.db_value.Replace("{index}", oindex.ToString()));
                 String db_Name_data = MySQL.creatMySQLColumnsStrByUnion(config.columnsCount, config.showColumn, config.unionFill, data_list, null, null, -1);
                 String result = getOneDataByUnionOrError(MySQL.union_value.Replace("{data}", db_Name_data));
-                this.txt_log.Invoke(new showLogDelegate(log), "数据库" + (index+1) + "的名称为：" + result, LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "数据库" + (index + 1) + "的名称为：" + result, LogLevel.info);
                 this.Invoke(new addDBToTreeListDelegate(addDBToTreeList), result);
             }
             catch (Exception e)
@@ -1924,7 +1935,7 @@ namespace SuperSQLInjection
             try
             {
                 //获取数据库数量
-              
+
                 String result = getOneDataByUnionOrError(DB2.getUnionDataValue(config.unionFillTemplate, DB2.db_value, "", "", oindex.ToString()));
                 this.txt_log.Invoke(new showLogDelegate(log), "数据库表模式" + oindex + "的名称为：" + result, LogLevel.info);
                 this.Invoke(new addDBToTreeListDelegate(addDBToTreeList), result);
@@ -2111,10 +2122,10 @@ namespace SuperSQLInjection
                     String tmp_va_payload = va_payload.Replace("{index}", i + "");
                     int ascii = getValue(tmp_va_payload, 0, 128);
                     value += ((char)ascii).ToString();
-                    this.data_tvw_dbs.Invoke(new setNodeToTreeListDelegate(setNodeToTreeList), sn.tn, sn.limit,value);
+                    this.data_tvw_dbs.Invoke(new setNodeToTreeListDelegate(setNodeToTreeList), sn.tn, sn.limit, value);
                 }
                 this.txt_log.Invoke(new showLogDelegate(log), "数据库" + sn.dbname + "发现表：" + value, LogLevel.info);
-                
+
 
             }
             catch (Exception e)
@@ -2167,7 +2178,7 @@ namespace SuperSQLInjection
                     this.data_tvw_dbs.Invoke(new setNodeToTreeListDelegate(setNodeToTreeList), sn.tn, sn.limit, value);
                 }
                 this.txt_log.Invoke(new showLogDelegate(log), "数据库" + sn.dbname + "发现表：" + value, LogLevel.info);
-              
+
 
             }
             catch (Exception e)
@@ -2203,10 +2214,10 @@ namespace SuperSQLInjection
                     String tmp_va_payload = va_payload.Replace("{index}", i + "");
                     int ascii = getValue(tmp_va_payload, 0, 128);
                     value += ((char)ascii).ToString();
-                    this.data_tvw_dbs.Invoke(new setNodeToTreeListDelegate(setNodeToTreeList), sn.tn, sn.limit-1, value);
+                    this.data_tvw_dbs.Invoke(new setNodeToTreeListDelegate(setNodeToTreeList), sn.tn, sn.limit - 1, value);
                 }
                 this.txt_log.Invoke(new showLogDelegate(log), "数据库" + sn.dbname + "发现表：" + value, LogLevel.info);
-               
+
             }
             catch (Exception e)
             {
@@ -2275,7 +2286,8 @@ namespace SuperSQLInjection
                     va_payload = Informix.getBoolDataBySleep(Informix.bool_value).Replace("{data}", data_payload);
                     len = getValue(Informix.getBoolDataBySleep(Informix.bool_length.Replace("{data}", data_payload)), 1, 50);
                 }
-                else {
+                else
+                {
                     len = getValue(Informix.bool_length.Replace("{data}", data_payload), 1, 50);
                 }
 
@@ -2607,7 +2619,7 @@ namespace SuperSQLInjection
 
         delegate void setNodeToTreeListDelegate(TreeNode tn, int index, String text);
 
-        public void setNodeToTreeList(TreeNode tn,int index,String text)
+        public void setNodeToTreeList(TreeNode tn, int index, String text)
         {
             TreeNode stn = tn.Nodes[index];
             stn.Text = text;
@@ -2701,7 +2713,7 @@ namespace SuperSQLInjection
             {
                 //2分法获取中间数字
                 len = Tools.getLargeNum(start, end);
-                
+
                 payload = ByPassForBetween(payLoadStr, len);
                 ServerInfo server = HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, payload, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
                 Boolean exists = Tools.isTrue(server, config.key, config.reverseKey, config.keyType, config.injectHTTPCode);
@@ -2723,24 +2735,25 @@ namespace SuperSQLInjection
                     {
                         return end;
                     }
-                    else {
+                    else
+                    {
                         return start;
                     }
-                    
+
                 }
 
                 olen = len;
                 lastexists = exists;
                 if (exists)
                 {
-                    
+
                     start = len;
                 }
                 else
                 {
                     end = len;
                 }
-                
+
             }
             return len;
         }
@@ -2770,7 +2783,8 @@ namespace SuperSQLInjection
                 len = Tools.getLargeNum(start, end);
                 if (end - start == 1)
                 {
-                    if (lastexists) {
+                    if (lastexists)
+                    {
                         return end;
                     }
                     return start;
@@ -2821,11 +2835,11 @@ namespace SuperSQLInjection
             return exists;
 
         }
-        
-        delegate void setDBToTreeListDelegate(int index,String dbname);
+
+        delegate void setDBToTreeListDelegate(int index, String dbname);
         public void setDBToTreeList(int index, String dbname)
         {
-            TreeNode tn=this.data_tvw_dbs.Nodes[index];
+            TreeNode tn = this.data_tvw_dbs.Nodes[index];
             tn.Text = dbname;
         }
 
@@ -3433,7 +3447,7 @@ namespace SuperSQLInjection
                     {
                         db_len = getValueByStepUp(Informix.bool_db_count, 0, 10);
                     }
-                    
+
                     this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，我发现了" + db_len + "个数据库！", LogLevel.info);
                     this.dbsCount = db_len;
                     if (db_len > 0)
@@ -3683,7 +3697,7 @@ namespace SuperSQLInjection
                     {
                         this.tableCount = getValueByStepUp(Informix.bool_tables_count.Replace("{dbname}", dbname), 0, 50);
                     }
-                    
+
                     this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，数据库" + dbname + "发现" + this.tableCount + "个表！", LogLevel.info);
                     for (int i = 0; i < this.tableCount; i++)
                     {
@@ -4189,7 +4203,7 @@ namespace SuperSQLInjection
                     this.data_tvw_dbs.Invoke(new setNodeToTreeListDelegate(setNodeToTreeList), sn.tn, sn.limit, value);
                 }
                 this.txt_log.Invoke(new showLogDelegate(log), "表" + sn.tableName + "发现列：" + value, LogLevel.info);
-               
+
 
             }
             catch (Exception e)
@@ -4796,7 +4810,7 @@ namespace SuperSQLInjection
                                 {
                                     columns_count = getValueByStepUp(Informix.bool_columns_count.Replace("{dbname}", dbName).Replace("{table}", tableName), 0, 20);
                                 }
-                               
+
                                 this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，表" + tableName + "发现" + columns_count + "个列！", LogLevel.info);
                                 for (int i = 0; i < columns_count; i++)
                                 {
@@ -5746,7 +5760,7 @@ namespace SuperSQLInjection
                         {
                             substr_payload = Informix.getBoolDataBySleep(substr_payload);
                         }
-                        
+
                         //单个ascii值范围是数字或者大写字母，范围在0-127
                         int ascii = getValue(substr_payload, 0, 127);
                         result.Append((char)ascii);
@@ -5762,7 +5776,7 @@ namespace SuperSQLInjection
 
                 }
                 this.data_dbs_lvw_data.Invoke(new addItemToListViewDelegate(addItemToListView), lvi);
-                this.txt_log.Invoke(new showLogDelegate(log), "获取到第" + (gp.limit+1) + "行的值！", LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取到第" + (gp.limit + 1) + "行的值！", LogLevel.info);
 
             }
             catch (Exception e)
@@ -5923,7 +5937,7 @@ namespace SuperSQLInjection
                 ListViewItem lvi = new ListViewItem();
                 String result = getOneDataByUnionOrErrorByInformix(Informix.getUnionDataValue(config.unionFillTemplate, gp.columns, gp.dbname, gp.table, gp.limit.ToString()));
                 this.Invoke(new addItemToListViewByColumnsDelegate(addItemToListViewByColumnsInformix), result);
-                this.txt_log.Invoke(new showLogDelegate(log), "获取到第" + (gp.limit+1) + "行的值！", LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取到第" + (gp.limit + 1) + "行的值！", LogLevel.info);
             }
             catch (Exception e)
             {
@@ -5945,7 +5959,7 @@ namespace SuperSQLInjection
                 ListViewItem lvi = new ListViewItem();
                 String result = getOneDataByUnionOrError(PostgreSQL.getUnionDataValue(config.columnsCount, config.showColumn, gp.columns, gp.dbname, gp.table, gp.limit.ToString()));
                 this.Invoke(new addItemToListViewByColumnsDelegate(addItemToListViewByColumns), result);
-                this.txt_log.Invoke(new showLogDelegate(log), "获取到第" + (gp.limit+1) + "行的值！", LogLevel.info);
+                this.txt_log.Invoke(new showLogDelegate(log), "获取到第" + (gp.limit + 1) + "行的值！", LogLevel.info);
             }
             catch (Exception e)
             {
@@ -6353,10 +6367,11 @@ namespace SuperSQLInjection
                     {
                         isMax = findKeyInBody(Informix.getBoolCountBySleep(Informix.bool_datas_count.Replace("{dbname}", this.curren_db).Replace("{table}", this.curren_table)), (start + dataCount));
                     }
-                    else {
+                    else
+                    {
                         isMax = findKeyInBody(Informix.bool_datas_count.Replace("{dbname}", this.curren_db).Replace("{table}", this.curren_table), start + dataCount);
                     }
-                   
+
                     if (isMax)
                     {
                         for (int i = 0; i < dataCount; i++)
@@ -6832,26 +6847,29 @@ namespace SuperSQLInjection
             }
         }
 
-        public String setInject(Dictionary<String,String> paramDatas,String injectParamName, String injectParamData) {
+        public String setInject(Dictionary<String, String> paramDatas, String injectParamName, String injectParamData)
+        {
 
             StringBuilder sb = new StringBuilder();
             foreach (KeyValuePair<String, String> kv in paramDatas)
             {
                 if (injectParamName.Equals(kv.Key))
                 {
-                    sb.Append(kv.Key + "=" + injectParamData+"&");
+                    sb.Append(kv.Key + "=" + injectParamData + "&");
                 }
-                else {
-                    sb.Append(kv.Key + "=" + kv.Value+"&");
+                else
+                {
+                    sb.Append(kv.Key + "=" + kv.Value + "&");
                 }
             }
-            if (sb.Length > 0) {
+            if (sb.Length > 0)
+            {
                 sb.Remove(sb.Length - 1, 1);
             }
             return sb.ToString();
         }
 
-        public String setInjectToRequest(String oldRequest,String newParamDatas)
+        public String setInjectToRequest(String oldRequest, String newParamDatas)
         {
 
             if (oldRequest.StartsWith("GET"))
@@ -6864,15 +6882,15 @@ namespace SuperSQLInjection
                 int end = oldRequest.IndexOf(' ', start);
                 if (end > start)
                 {
-                    oldRequest=oldRequest.Remove(start + 1, end - start-1);
-                    oldRequest=oldRequest.Insert(start+1, newParamDatas);
+                    oldRequest = oldRequest.Remove(start + 1, end - start - 1);
+                    oldRequest = oldRequest.Insert(start + 1, newParamDatas);
                     return oldRequest;
                 }
                 else
                 {
                     return oldRequest;
                 }
-               
+
             }
             else
             {
@@ -6925,7 +6943,7 @@ namespace SuperSQLInjection
                 //获取原始的页面信息
                 String request = config.request.Replace(data, strparam);
                 ServerInfo oserver = HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, "获取原始页面", request, config.timeOut, HTTP.AutoGetEncoding, config.is_foward_302, config.redirectDoGet);
-               
+
                 //判断是否有编码设置
                 if (!HTTP.AutoGetEncoding.Equals(config.encoding))
                 {
@@ -6961,7 +6979,7 @@ namespace SuperSQLInjection
                 String[] strparams = strparam.Split('&');
 
                 Dictionary<String, String> pdatas = new Dictionary<String, String>();
-                
+
                 this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，发现" + strparams.Length + "个参数，请稍候正在对每一个参数进行注入测试！", LogLevel.info);
 
                 foreach (String param in strparams)
@@ -6981,16 +6999,17 @@ namespace SuperSQLInjection
                     }
                 }
 
-                foreach (KeyValuePair<String,String> paramNameAndData in pdatas)
+                foreach (KeyValuePair<String, String> paramNameAndData in pdatas)
                 {
                     String paramName = paramNameAndData.Key;
-                    if (jumpkeyList.Contains(paramName)) {
+                    if (jumpkeyList.Contains(paramName))
+                    {
                         continue;
                     }
                     String paramData = paramNameAndData.Value;
 
                     String unionStartPayLoad = "";
-                   
+
                     if (paramData.IndexOf("<Token>") != -1)
                     {
                         this.txt_log.Invoke(new showLogDelegate(log), "跳过Token参数检测！" + paramName, LogLevel.info);
@@ -6999,12 +7018,12 @@ namespace SuperSQLInjection
                     this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，正在对参数" + paramName + "进行盲注测试！", LogLevel.info);
                     String injectParamData = "";//标记注入
                     String payload_paramData = paramData + "<Encode>" + setInjectStr + "</Encode>";
-                    String payload_request = setInjectToRequest(request, setInject(pdatas, paramName,payload_paramData));
+                    String payload_request = setInjectToRequest(request, setInject(pdatas, paramName, payload_paramData));
 
                     String currentDB = DBType.UnKnow.ToString();
                     //通过错误显示识别数据库类型
 
-                  
+
                     //通过错误显示判断
                     ServerInfo errorDBServer = HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, "'test", payload_request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
 
@@ -7049,7 +7068,7 @@ namespace SuperSQLInjection
                     bool errorInject = false;
                     bool unionInject = false;
 
-                    
+
 
                     if (list != null && list.Count > 0)
                     {
@@ -7082,13 +7101,15 @@ namespace SuperSQLInjection
                             }
 
                             //检测
-                            
+
                             foreach (String cpal in sleep_list)
                             {
                                 //Informix不能设定时间，默认5秒
-                                if (DBType.Informix.ToString().Equals(cpal[2])) {
+                                if (DBType.Informix.ToString().Equals(cpal[2]))
+                                {
                                     time = 5;
-                                    if (avg > time) {
+                                    if (avg > time)
+                                    {
                                         continue;
                                     }
                                     if (config.timeOut < time)
@@ -7100,7 +7121,7 @@ namespace SuperSQLInjection
                                 String cpayload = pals[0].Replace("{time}", time.ToString());
                                 this.txt_log.Invoke(new showLogDelegate(log), "正在测试PayLoad:" + cpayload, LogLevel.info);
                                 ServerInfo sleepServer = HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, cpayload, payload_request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
-                                if (sleepServer.runTime > (time * 1000-Tools.deviation)&& sleepServer.runTime<config.timeOut*1000)
+                                if (sleepServer.runTime > (time * 1000 - Tools.deviation) && sleepServer.runTime < config.timeOut * 1000)
                                 {
                                     //再次发包测试，降低误报
                                     sleepServer = HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, cpayload, payload_request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
@@ -7128,7 +7149,7 @@ namespace SuperSQLInjection
                                         config.injectType = InjectType.Blind;
                                         config.testPayload = cpayload;
                                         config.dbType = Tools.caseDBType(currentDB);
-                                      
+
                                         config.pname = paramName;
                                         config.uri = Tools.getRequestURI(request);
                                         logInject(config);
@@ -7223,11 +7244,11 @@ namespace SuperSQLInjection
 
                                 foreach (String d in database_lsit)
                                 {
-                                    
+
                                     String db = d.Replace(".txt", "");
 
                                     //为了更准确，这里再一次通过bool方式确认数据库类型
-                                    if(!list_Find_Database.Contains(db)&&!DBType.UnKnow.ToString().Equals(currentDB))
+                                    if (!list_Find_Database.Contains(db) && !DBType.UnKnow.ToString().Equals(currentDB))
                                     {
                                         continue;
                                     }
@@ -7262,9 +7283,9 @@ namespace SuperSQLInjection
                                 }
                                 else
                                 {
-                                    
-                                 this.txt_log.Invoke(new showLogDelegate(log), "没有发现发现数据库类型，可能是其他数据库，请人工判断！", LogLevel.waring);
-                                   
+
+                                    this.txt_log.Invoke(new showLogDelegate(log), "没有发现发现数据库类型，可能是其他数据库，请人工判断！", LogLevel.waring);
+
                                 }
 
                                 break;
@@ -7288,7 +7309,7 @@ namespace SuperSQLInjection
                         logInject(config);
                     }
 
-     
+
                     //错误注入测试
                     this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，盲注测试完成，正在进行错误显示注入测试！", LogLevel.info);
 
@@ -7323,7 +7344,7 @@ namespace SuperSQLInjection
                                     //标记注入
                                     selectInjectType(InjectType.Error);
                                     errorInject = true;
-                                    injectParamData =paramData + "<Encode>" + pals[0].Replace(pals[4], setInjectStr) + "</Encode>";
+                                    injectParamData = paramData + "<Encode>" + pals[0].Replace(pals[4], setInjectStr) + "</Encode>";
                                     config.testPayload = pals[0];
                                     unionStartPayLoad = pals[0].Substring(0, pals[0].IndexOf(pals[4])).Replace(" or", " and");
                                     this.txt_log.Invoke(new showLogDelegate(log), "自动标记错误显示注入完成！", LogLevel.info);
@@ -7356,7 +7377,8 @@ namespace SuperSQLInjection
                     String payload = "";
 
                     //前缀字符为空，通常不会有Union注入，所以跳过检测
-                    if (String.IsNullOrEmpty(unionStartPayLoad)) {
+                    if (String.IsNullOrEmpty(unionStartPayLoad))
+                    {
                         continue;
                     }
                     if (DBType.MySQL.ToString().Equals(currentDB))
@@ -7426,7 +7448,7 @@ namespace SuperSQLInjection
                         }
 
 
-                        if (DBType.Oracle.ToString().Equals(currentDB) || DBType.PostgreSQL.ToString().Equals(currentDB) || DBType.DB2.ToString().Equals(currentDB)|| DBType.Informix.ToString().Equals(currentDB))
+                        if (DBType.Oracle.ToString().Equals(currentDB) || DBType.PostgreSQL.ToString().Equals(currentDB) || DBType.DB2.ToString().Equals(currentDB) || DBType.Informix.ToString().Equals(currentDB))
                         {
                             for (int j = 1; j <= i; j++)
                             {
@@ -7445,7 +7467,7 @@ namespace SuperSQLInjection
                                         if (cunionServer.code == 200 && cunionServer.body.IndexOf(rand) != -1)
                                         {
                                             isFind = true;
-                                            injectParamData =paramData + "<Encode>" + payload.Replace("{payload}", setInjectStr) + "</Encode>";
+                                            injectParamData = paramData + "<Encode>" + payload.Replace("{payload}", setInjectStr) + "</Encode>";
                                             unionInject = true;
                                             selectInjectType(InjectType.Union);
                                             this.txt_inject_unionTemplate.Text = tp;
@@ -7455,7 +7477,7 @@ namespace SuperSQLInjection
 
                                 }
 
-                                else if(DBType.Informix.ToString().Equals(currentDB))
+                                else if (DBType.Informix.ToString().Equals(currentDB))
                                 {
                                     if (isFind)
                                     {
@@ -7580,7 +7602,7 @@ namespace SuperSQLInjection
                 dc.Create();
                 if (InjectType.Blind.Equals(config.injectType))
                 {
-                    config.saveConfigpath = dc.FullName + "/" + config.pname + "_" + config.injectType.ToString()+"-"+config.keyType.ToString()+ ".xml";
+                    config.saveConfigpath = dc.FullName + "/" + config.pname + "_" + config.injectType.ToString() + "-" + config.keyType.ToString() + ".xml";
                 }
                 else
                 {
@@ -7605,12 +7627,13 @@ namespace SuperSQLInjection
             lvw.SubItems.Add(config.pname);
             if (InjectType.Blind.Equals(config.injectType))
             {
-                lvw.SubItems.Add(config.injectType.ToString() +"-"+ config.keyType.ToString());
+                lvw.SubItems.Add(config.injectType.ToString() + "-" + config.keyType.ToString());
             }
-            else {
+            else
+            {
                 lvw.SubItems.Add(config.injectType.ToString());
             }
-           
+
             lvw.SubItems.Add(config.dbType.ToString());
             lvw.SubItems.Add(config.testPayload);
             lvw.SubItems.Add(DateTime.Now.ToString());
@@ -7627,7 +7650,8 @@ namespace SuperSQLInjection
         {
             DBType dbtype = Tools.caseDBType(currentDB);
             int cdb = (int)dbtype;
-            if (cdb!=0) {
+            if (cdb != 0)
+            {
                 this.cbox_basic_dbType.SelectedIndex = (int)dbtype;
                 this.txt_log.Invoke(new showLogDelegate(log), "自动选择数据库类型完成！", LogLevel.info);
             }
@@ -7781,7 +7805,7 @@ namespace SuperSQLInjection
             loadVersToListView(config.dbType);
 
             //DB2/Informix填充模板显示是否运行设置
-            if (DBType.DB2.Equals(config.dbType)|| DBType.Informix.Equals(config.dbType))
+            if (DBType.DB2.Equals(config.dbType) || DBType.Informix.Equals(config.dbType))
             {
                 this.txt_inject_unionTemplate.Enabled = true;
                 this.txt_inject_unionColumnsCount.Enabled = false;
@@ -7925,7 +7949,7 @@ namespace SuperSQLInjection
 
         private void btn_exportConfig_Click(object sender, EventArgs e)
         {
-            
+
         }
 
         private void chk_openURLEncoding_CheckedChanged(object sender, EventArgs e)
@@ -8148,7 +8172,8 @@ namespace SuperSQLInjection
             this.cbox_basic_injectType.SelectedIndex = (int)config.injectType;
             this.cbox_basic_dbType.SelectedIndex = (int)(config.dbType);
 
-            if (String.IsNullOrEmpty(config.db_encoding)) {
+            if (String.IsNullOrEmpty(config.db_encoding))
+            {
                 config.db_encoding = "UTF-8";
             }
             if (String.IsNullOrEmpty(config.encoding))
@@ -10628,7 +10653,8 @@ namespace SuperSQLInjection
         }
 
 
-        public void showHTTPLog(String index,ServerInfo server,String payload, String proxyInfo) {
+        public void showHTTPLog(String index, ServerInfo server, String payload, String proxyInfo)
+        {
             this.txt_log.Invoke(new sendHTTPLogDelegate(sendHTTPLog), index, server, payload, proxyInfo);
         }
         public void showLog(String msg, LogLevel level)
@@ -11172,10 +11198,10 @@ namespace SuperSQLInjection
             this.txt_log.Invoke(new showLogDelegate(log), "导入代理成功，发现代理：" + i + "个！", LogLevel.success);
 
         }
-
-        private void proxy_btn_importProxy_Click(object sender, EventArgs e)
+        private void load_proxy()
         {
-            OpenFileDialog ofd = new OpenFileDialog { Filter = "文本文件(*.txt)|*.txt" };
+
+            OpenFileDialog ofd = new OpenFileDialog { Filter = "文本文件(*.csv)|*.csv" };
             if (ofd.ShowDialog() == DialogResult.OK)
             {
                 Thread th = new Thread(new ParameterizedThreadStart(loadAddProxyList));
@@ -11183,6 +11209,11 @@ namespace SuperSQLInjection
                 th.Start(ofd.FileName);
 
             }
+
+        }
+        private void proxy_btn_importProxy_Click(object sender, EventArgs e)
+        {
+            load_proxy();
         }
 
         private void checkOneProxy(ListViewItem lvi)
@@ -11206,12 +11237,13 @@ namespace SuperSQLInjection
                         }
                         catch (Exception e)
                         {
-                            this.txt_log.Invoke(new showLogDelegate(log), "验证代理发生异常！"+e.Message, LogLevel.waring);
+                            this.txt_log.Invoke(new showLogDelegate(log), "验证代理发生异常！" + e.Message, LogLevel.waring);
                         }
-                        finally {
+                        finally
+                        {
                             client.Close();
                         }
-                        
+
                     }
                 }
                 else
@@ -11303,12 +11335,7 @@ namespace SuperSQLInjection
 
         private void proxy_importProxy_Click(object sender, EventArgs e)
         {
-            OpenFileDialog ofd = new OpenFileDialog { Filter = "文本文件(*.txt)|*.txt" };
-            if (ofd.ShowDialog() == DialogResult.OK)
-            {
-                Thread th = new Thread(new ParameterizedThreadStart(loadAddProxyList));
-                th.Start(ofd.FileName);
-            }
+            load_proxy();
         }
 
         private void proxy_checkAllProxy_Click(object sender, EventArgs e)
@@ -11362,7 +11389,7 @@ namespace SuperSQLInjection
         private void proxy_exportProxy_Click(object sender, EventArgs e)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
-            saveFileDialog.Filter = "文本文件|*.txt";
+            saveFileDialog.Filter = "文本文件|*.csv";
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
                 FileTool.SaveProxyList(saveFileDialog.FileName, this.proxy_List.Values);
@@ -11449,5 +11476,6 @@ namespace SuperSQLInjection
         {
             SelectReversNodes(this.data_lvw_ver);
         }
-    }
+    } 
+    
 }

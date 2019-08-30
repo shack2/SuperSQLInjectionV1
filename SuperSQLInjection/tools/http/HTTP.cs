@@ -83,9 +83,17 @@ namespace SuperSQLInjection.tools
                     if (!isSSL)
                     {
                         server = sendHTTPRequest(count, host, port, payload, request, timeout, encoding, foward_302,redirectDoGet);
+                        if (server.code == 0)
+                        {
+                            continue;
+                        }
                         if (!String.IsNullOrEmpty(main.config.sencondRequest) && main.config.sencondInject)
                         {
                             server = sendHTTPRequest(count, host, port, "请求二次注入页面", main.config.sencondRequest, timeout, encoding, foward_302, redirectDoGet);
+                            if (server.code == 0)
+                            {
+                                continue;
+                            }
                         }
                         return server;
                     }
@@ -93,9 +101,17 @@ namespace SuperSQLInjection.tools
                     {
 
                         server = sendHTTPSRequest(count, host, port, payload, request, timeout, encoding, foward_302, redirectDoGet);
+                        if (server.code == 0)
+                        {
+                            continue;
+                        }
                         if (!String.IsNullOrEmpty(main.config.sencondRequest)&& main.config.sencondInject)
                         {
                             server = sendHTTPSRequest(count, host, port, "请求二次注入页面", main.config.sencondRequest, timeout, encoding, foward_302, redirectDoGet);
+                            if (server.code == 0)
+                            {
+                                continue;
+                            }
                         }
                         return server;
 
@@ -134,12 +150,19 @@ namespace SuperSQLInjection.tools
                     if (!isSSL)
                     {
                         server = sendHTTPRequest(count, host, port, payload, request, timeout, encoding, foward_302, redirectDoGet);
+                        if (server.code == 0) {
+                            continue;
+                        }
                         return server;
                     }
                     else
                     {
 
                         server = sendHTTPSRequest(count, host, port, payload, request, timeout, encoding, foward_302, redirectDoGet);
+                        if (server.code == 0)
+                        {
+                            continue;
+                        }
                         return server;
 
                     }
@@ -566,10 +589,13 @@ namespace SuperSQLInjection.tools
                                 if (isupdateEncoding)
                                 {
                                     String cEncoding = getHTMLEncoding("", server.body);
+                                   
+                                    
                                     if (!String.IsNullOrEmpty(cEncoding))
                                     {
+                                        Encoding cencoding = Encoding.GetEncoding(cEncoding);
                                         server.encoding = cEncoding;//body找到编码
-                                        getBody(ref server, ref body_data, ref encod, ref index);
+                                        getBody(ref server, ref body_data, ref cencoding, ref index);
                                     }
 
                                 }
@@ -1003,8 +1029,9 @@ namespace SuperSQLInjection.tools
                             String cEncoding = getHTMLEncoding("", server.body);
                             if (!String.IsNullOrEmpty(cEncoding))
                             {
+                                Encoding cencoding = Encoding.GetEncoding(cEncoding);
                                 server.encoding = cEncoding;//body找到编码
-                                getBody(ref server, ref body_data, ref encod, ref index);
+                                getBody(ref server, ref body_data, ref cencoding, ref index);
                             }
 
                         }
