@@ -286,7 +286,7 @@ namespace SuperSQLInjection
             responseStream.Close();
         }
 
-        public static int version = 20190901;
+        public static int version = 20190902;
         public static string versionURL = "http://www.shack2.org/soft/getNewVersion?ENNAME=SSuperSQLInjection&NO=" + URLEncode.UrlEncode(Tools.getSystemSid()) + "&VERSION=" + version;
         //检查更新
         public void checkUpdate()
@@ -9695,7 +9695,13 @@ namespace SuperSQLInjection
 
         public void stopScan()
         {
-            StopThread();
+            status = -1;
+            if (this.currentThread != null)
+            {
+                this.txt_log.Invoke(new showLogDelegate(log), "发出停止线程信号！", LogLevel.info);
+                stp.Cancel();
+            }
+           
             this.scanInjection_btn_scan.Enabled = false;
             this.scanInjection_btn_scan.Text = "正在停止...";
             while (stp.InUseThreads > 0)
@@ -9704,11 +9710,18 @@ namespace SuperSQLInjection
             }
             this.scanInjection_btn_scan.Text = "开始扫描";
             this.scanInjection_btn_scan.Enabled = true;
+            status = 0;
         }
 
         public void stopSpider()
         {
-            StopThread();
+            status = -1;
+            if (this.currentThread != null)
+            {
+                this.txt_log.Invoke(new showLogDelegate(log), "发出停止线程信号！", LogLevel.info);
+                stp.Cancel();
+            }
+          
             this.scanInjection_btn_spider.Enabled = false;
             this.scanInjection_btn_spider.Text = "正在停止...";
             while (stp.InUseThreads > 0)
@@ -9718,6 +9731,7 @@ namespace SuperSQLInjection
             this.scanInjection_btn_spider.Text = "爬行链接";
             this.scanInjection_domainsCount.Text = this.scanInject_lsb_links.Items.Count.ToString();
             this.scanInjection_btn_spider.Enabled = true;
+            status = 0;
         }
         public void spider()
         {

@@ -76,10 +76,7 @@ namespace SuperSQLInjection.scan
                                 {
                                     continue;
                                 }
-                                if (curl.Contains(".css") || curl.Contains(".js") || curl.Contains(".jpg") || curl.Contains(".png") || curl.Contains(".ico") || curl.Contains(".gif"))
-                                {
-                                    continue;
-                                }
+                               
                                 curl = curl.Replace("&amp;", "&");
                                 if (curl.StartsWith("//"))
                                 {
@@ -111,6 +108,11 @@ namespace SuperSQLInjection.scan
                                     try
                                     {
                                         Uri cu = new Uri(curl);
+                                        String cupath = cu.AbsolutePath;
+                                        if (cupath.EndsWith(".css") || cupath.EndsWith(".js") || cupath.EndsWith(".jpg") || cupath.EndsWith(".png") || cupath.EndsWith(".ico") || cupath.EndsWith(".gif"))
+                                        {
+                                            continue;
+                                        }
                                         if (!AllURL.Contains(curl) && !AllNoParamaValURL.Contains(noValURL)&&AllURL.Count<config.maxSpiderCount)
                                         {
                                             AllURL.Add(curl);

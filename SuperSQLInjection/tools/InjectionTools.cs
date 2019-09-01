@@ -80,8 +80,8 @@ namespace SuperSQLInjection.tools
                     String curl = uri.PathAndQuery.Replace(param, payload);
                     injection.testUrl = testUrl.Replace(param, payload);
                     injection.paramName = sprarm[0];
-                    String oldrequest = Spider.reqestGetTemplate.Replace("{url}", uri.PathAndQuery).Replace("{host}", uri.Host + ":" + uri.Port);
-                    String request = Spider.reqestGetTemplate.Replace("{url}", curl).Replace("{host}", uri.Host + ":" + uri.Port);
+                    String oldrequest = Spider.reqestGetTemplate.Replace("{url}", uri.PathAndQuery).Replace("{host}", uri.Host);
+                    String request = Spider.reqestGetTemplate.Replace("{url}", curl).Replace("{host}", uri.Host);
                     //通过错误显示判断
                     if (timeout >= 3)
                     {
@@ -129,7 +129,7 @@ namespace SuperSQLInjection.tools
 
                             foreach (String bool_payload in bool_payloads)
                             {
-                                String[] bool_ps = bool_payload.Split(':');
+                                String[] bool_ps = bool_payload.Split('：');
 
                                 String flasePayload = pramName + "=" + URLEncode.UrlEncode(pramValue + bool_ps[1]);
                                 String falseURL = uri.PathAndQuery.Replace(param, flasePayload);
@@ -139,7 +139,7 @@ namespace SuperSQLInjection.tools
                                 {
                                     break;//超时3次，认为此URL为坏死URL
                                 }
-                                String falserequest = Spider.reqestGetTemplate.Replace("{url}", falseURL).Replace("{host}", uri.Host + ":" + uri.Port);
+                                String falserequest = Spider.reqestGetTemplate.Replace("{url}", falseURL).Replace("{host}", uri.Host);
                                 ServerInfo falseServer = HTTP.sendRequestRetry(isSSL, config.reTry, uri.Host, uri.Port, flasePayload, falserequest, config.timeOut, HTTP.AutoGetEncoding, false, config.redirectDoGet);
                                 if (falseServer.runTime > config.timeOut * 1000) timeout++;
                                 decimal pfalse = Tools.getLike(oserver.body, falseServer.body);
@@ -151,7 +151,7 @@ namespace SuperSQLInjection.tools
 
                                 String truePayload = pramName + "=" + URLEncode.UrlEncode(pramValue + bool_ps[0]);
                                 String trueURL = uri.PathAndQuery.Replace(param, truePayload);
-                                String truerequest = Spider.reqestGetTemplate.Replace("{url}", trueURL).Replace("{host}", uri.Host + ":" + uri.Port);
+                                String truerequest = Spider.reqestGetTemplate.Replace("{url}", trueURL).Replace("{host}", uri.Host);
                                 if (timeout >= 3)
                                 {
                                     break;//超时3次，认为此URL为坏死URL
