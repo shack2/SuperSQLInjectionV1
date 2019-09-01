@@ -286,7 +286,7 @@ namespace SuperSQLInjection
             responseStream.Close();
         }
 
-        public static int version = 20190830;
+        public static int version = 20190901;
         public static string versionURL = "http://www.shack2.org/soft/getNewVersion?ENNAME=SSuperSQLInjection&NO=" + URLEncode.UrlEncode(Tools.getSystemSid()) + "&VERSION=" + version;
         //检查更新
         public void checkUpdate()
@@ -6908,7 +6908,7 @@ namespace SuperSQLInjection
             {
                 status = 1;
                 selectInjectType(InjectType.UnKnow);
-                selectDB("UnKnow");
+                this.cbox_basic_dbType.SelectedIndex = 0;
                 //判断提交数据内型
                 String data = "";
                 if (config.request.StartsWith("GET"))
@@ -11189,7 +11189,7 @@ namespace SuperSQLInjection
                     if (istrue && cproxy != null)
                     {
                         i++;
-                        this.proxy_lvw_proxyList.Invoke(new DelegateAddItemToProxy(addItemsToProxy_lvw), proxy);
+                        this.proxy_lvw_proxyList.Invoke(new DelegateAddItemToProxy(addItemsToProxy_lvw), cproxy);
                         this.proxy_List.Add(cproxy.host + cproxy.port, cproxy);
                     }
                 }
