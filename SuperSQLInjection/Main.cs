@@ -286,7 +286,7 @@ namespace SuperSQLInjection
             responseStream.Close();
         }
 
-        public static int version = 20190902;
+        public static int version = 20190903;
         public static string versionURL = "http://www.shack2.org/soft/getNewVersion?ENNAME=SSuperSQLInjection&NO=" + URLEncode.UrlEncode(Tools.getSystemSid()) + "&VERSION=" + version;
         //检查更新
         public void checkUpdate()
@@ -10581,7 +10581,7 @@ namespace SuperSQLInjection
                     this.chk_useSSL.Checked = false;
                 }
                 Uri url = new Uri(config.request);
-                this.txt_inject_request.Text = Spider.reqestGetTemplate.Replace("{url}", url.PathAndQuery).Replace("{host}", url.Host + ":" + url.Port);
+                this.txt_inject_request.Text = Spider.reqestGetTemplate.Replace("{url}", url.PathAndQuery).Replace("{host}", url.Host);
                 this.txt_basic_host.Text = url.Host;
                 this.txt_basic_port.Text = url.Port.ToString();
 
@@ -11204,7 +11204,6 @@ namespace SuperSQLInjection
                     {
                         i++;
                         this.proxy_lvw_proxyList.Invoke(new DelegateAddItemToProxy(addItemsToProxy_lvw), cproxy);
-                        this.proxy_List.Add(cproxy.host + cproxy.port, cproxy);
                     }
                 }
             }
