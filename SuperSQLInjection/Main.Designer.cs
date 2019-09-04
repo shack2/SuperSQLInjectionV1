@@ -931,7 +931,7 @@
             this.tabPage4.Location = new System.Drawing.Point(4, 22);
             this.tabPage4.Name = "tabPage4";
             this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage4.Size = new System.Drawing.Size(818, 171);
+            this.tabPage4.Size = new System.Drawing.Size(818, 164);
             this.tabPage4.TabIndex = 1;
             this.tabPage4.Text = "响 应";
             this.tabPage4.UseVisualStyleBackColor = true;
@@ -942,7 +942,7 @@
             this.log_txt_response.Dock = System.Windows.Forms.DockStyle.Fill;
             this.log_txt_response.Location = new System.Drawing.Point(3, 3);
             this.log_txt_response.Name = "log_txt_response";
-            this.log_txt_response.Size = new System.Drawing.Size(812, 165);
+            this.log_txt_response.Size = new System.Drawing.Size(812, 158);
             this.log_txt_response.TabIndex = 0;
             this.log_txt_response.Text = "";
             this.log_txt_response.KeyDown += new System.Windows.Forms.KeyEventHandler(this.log_txt_response_KeyDown);
@@ -952,7 +952,7 @@
             this.tabPage1.Controls.Add(this.webBro_log);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Size = new System.Drawing.Size(818, 171);
+            this.tabPage1.Size = new System.Drawing.Size(818, 164);
             this.tabPage1.TabIndex = 2;
             this.tabPage1.Text = "在浏览器中显示";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -963,7 +963,7 @@
             this.webBro_log.Location = new System.Drawing.Point(0, 0);
             this.webBro_log.MinimumSize = new System.Drawing.Size(21, 20);
             this.webBro_log.Name = "webBro_log";
-            this.webBro_log.Size = new System.Drawing.Size(818, 171);
+            this.webBro_log.Size = new System.Drawing.Size(818, 164);
             this.webBro_log.TabIndex = 1;
             // 
             // tab_file
@@ -988,7 +988,7 @@
             this.file_txt_result.Multiline = true;
             this.file_txt_result.Name = "file_txt_result";
             this.file_txt_result.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.file_txt_result.Size = new System.Drawing.Size(826, 340);
+            this.file_txt_result.Size = new System.Drawing.Size(826, 331);
             this.file_txt_result.TabIndex = 0;
             this.file_txt_result.TextChanged += new System.EventHandler(this.file_txt_result_TextChanged);
             this.file_txt_result.KeyDown += new System.Windows.Forms.KeyEventHandler(this.file_txt_result_KeyDown);
@@ -1255,7 +1255,7 @@
             this.tab_dbs.Location = new System.Drawing.Point(4, 29);
             this.tab_dbs.Name = "tab_dbs";
             this.tab_dbs.Padding = new System.Windows.Forms.Padding(3);
-            this.tab_dbs.Size = new System.Drawing.Size(818, 391);
+            this.tab_dbs.Size = new System.Drawing.Size(818, 377);
             this.tab_dbs.TabIndex = 1;
             this.tab_dbs.Text = "数据库信息";
             this.tab_dbs.UseVisualStyleBackColor = true;
@@ -1275,7 +1275,7 @@
             // 
             this.spc_dbs.Panel2.Controls.Add(this.toolStrip1);
             this.spc_dbs.Panel2.Controls.Add(this.groupBox4);
-            this.spc_dbs.Size = new System.Drawing.Size(812, 385);
+            this.spc_dbs.Size = new System.Drawing.Size(812, 371);
             this.spc_dbs.SplitterDistance = 240;
             this.spc_dbs.SplitterWidth = 3;
             this.spc_dbs.TabIndex = 5;
@@ -1289,7 +1289,7 @@
             this.data_dbs_tsl_getTables,
             this.data_dbs_tsl_getColumns});
             this.data_dbs_ts.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
-            this.data_dbs_ts.Location = new System.Drawing.Point(0, 360);
+            this.data_dbs_ts.Location = new System.Drawing.Point(0, 346);
             this.data_dbs_ts.Name = "data_dbs_ts";
             this.data_dbs_ts.Padding = new System.Windows.Forms.Padding(5, 0, 0, 0);
             this.data_dbs_ts.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
@@ -1332,7 +1332,7 @@
             this.groupBox2.Controls.Add(this.data_tvw_dbs);
             this.groupBox2.Location = new System.Drawing.Point(5, 6);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(235, 352);
+            this.groupBox2.Size = new System.Drawing.Size(235, 338);
             this.groupBox2.TabIndex = 0;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "数据库信息";
@@ -1349,7 +1349,7 @@
             this.data_tvw_dbs.Location = new System.Drawing.Point(3, 17);
             this.data_tvw_dbs.Name = "data_tvw_dbs";
             this.data_tvw_dbs.SelectedImageIndex = 6;
-            this.data_tvw_dbs.Size = new System.Drawing.Size(229, 332);
+            this.data_tvw_dbs.Size = new System.Drawing.Size(229, 318);
             this.data_tvw_dbs.TabIndex = 0;
             this.data_tvw_dbs.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.data_tvw_dbs_AfterCheck);
             this.data_tvw_dbs.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.data_tvw_dbs_AfterSelect);
@@ -1466,7 +1466,7 @@
             this.data_dbs_tsl_getDatas,
             this.data_dbs_tsl_exportDatas,
             this.data_dbs_tsl_stopGetDatas});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 360);
+            this.toolStrip1.Location = new System.Drawing.Point(0, 346);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
             this.toolStrip1.Size = new System.Drawing.Size(569, 25);
@@ -1552,7 +1552,7 @@
             this.groupBox4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox4.Location = new System.Drawing.Point(0, 0);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(569, 385);
+            this.groupBox4.Size = new System.Drawing.Size(569, 371);
             this.groupBox4.TabIndex = 1;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "获取数据";
@@ -1568,7 +1568,7 @@
             this.data_dbs_lvw_data.HideSelection = false;
             this.data_dbs_lvw_data.Location = new System.Drawing.Point(3, 17);
             this.data_dbs_lvw_data.Name = "data_dbs_lvw_data";
-            this.data_dbs_lvw_data.Size = new System.Drawing.Size(563, 365);
+            this.data_dbs_lvw_data.Size = new System.Drawing.Size(563, 351);
             this.data_dbs_lvw_data.SmallImageList = this.img_line;
             this.data_dbs_lvw_data.TabIndex = 1;
             this.data_dbs_lvw_data.UseCompatibleStateImageBehavior = false;
@@ -2726,7 +2726,7 @@
             this.cmd_txt_result.Multiline = true;
             this.cmd_txt_result.Name = "cmd_txt_result";
             this.cmd_txt_result.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.cmd_txt_result.Size = new System.Drawing.Size(826, 330);
+            this.cmd_txt_result.Size = new System.Drawing.Size(826, 321);
             this.cmd_txt_result.TabIndex = 2;
             this.cmd_txt_result.TextChanged += new System.EventHandler(this.cmd_txt_result_TextChanged);
             this.cmd_txt_result.KeyDown += new System.Windows.Forms.KeyEventHandler(this.cmd_txt_result_KeyDown);

