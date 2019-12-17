@@ -1,11 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using tools;
 
 namespace SuperSQLInjection.payload
 {
     class Comm
     {
+
+        public const String COLUMNS_SPLIT_STR = "$_$";
+        public const String COLUMNS_REG_SPLIT_STR = "\\$_\\$";
+
+        public static String COLUMNS_SPLIT_HEX_STR = Tools.strToHex(COLUMNS_SPLIT_STR, "UTF-8");
         public static String exists_table = " exists(select 1 from {0})";
         public static String exists_column = " exists(select {0} from {1})";
         public static String truePayload = " 1=1";
@@ -16,8 +22,7 @@ namespace SuperSQLInjection.payload
             StringBuilder sb = new StringBuilder();
             foreach (String column in columns)
             {
-
-                sb.Append(column + unionStr);
+                                sb.Append(column + unionStr);
             }
             sb.Remove(sb.Length - unionStr.Length, unionStr.Length);
             return sb.ToString();

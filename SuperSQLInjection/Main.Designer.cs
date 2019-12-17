@@ -385,6 +385,14 @@
             this.tsmi_mustRead = new System.Windows.Forms.ToolStripMenuItem();
             this.版本ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmi_bugReport = new System.Windows.Forms.ToolStripMenuItem();
+            this.tab_retrySendHTTP = new System.Windows.Forms.TabPage();
+            this.label47 = new System.Windows.Forms.Label();
+            this.txt_retry_key = new System.Windows.Forms.TextBox();
+            this.btn_retry_addKey = new System.Windows.Forms.Button();
+            this.label48 = new System.Windows.Forms.Label();
+            this.lbx_retry_sendKey = new System.Windows.Forms.ListBox();
+            this.retrySend_cm = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.cms_delRetryKey = new System.Windows.Forms.ToolStripMenuItem();
             this.gb_basic.SuspendLayout();
             this.gb_logo.SuspendLayout();
             this.tab_logCenter.SuspendLayout();
@@ -463,6 +471,8 @@
             this.injectLog_cm.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.menuStrip_main.SuspendLayout();
+            this.tab_retrySendHTTP.SuspendLayout();
+            this.retrySend_cm.SuspendLayout();
             this.SuspendLayout();
             // 
             // gb_basic
@@ -1559,16 +1569,18 @@
             // 
             // data_dbs_lvw_data
             // 
+            this.data_dbs_lvw_data.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.data_dbs_lvw_data.BackColor = System.Drawing.SystemColors.Window;
             this.data_dbs_lvw_data.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.data_dbs_lvw_data.ContextMenuStrip = this.cms_data_dbs_lvw_data;
-            this.data_dbs_lvw_data.Dock = System.Windows.Forms.DockStyle.Fill;
             this.data_dbs_lvw_data.FullRowSelect = true;
             this.data_dbs_lvw_data.GridLines = true;
             this.data_dbs_lvw_data.HideSelection = false;
             this.data_dbs_lvw_data.Location = new System.Drawing.Point(3, 17);
             this.data_dbs_lvw_data.Name = "data_dbs_lvw_data";
-            this.data_dbs_lvw_data.Size = new System.Drawing.Size(563, 351);
+            this.data_dbs_lvw_data.Size = new System.Drawing.Size(563, 324);
             this.data_dbs_lvw_data.SmallImageList = this.img_line;
             this.data_dbs_lvw_data.TabIndex = 1;
             this.data_dbs_lvw_data.UseCompatibleStateImageBehavior = false;
@@ -1657,6 +1669,7 @@
             this.tabControl1.Controls.Add(this.tab_datapack);
             this.tabControl1.Controls.Add(this.tab_tokenset);
             this.tabControl1.Controls.Add(this.tab_sencond_inject);
+            this.tabControl1.Controls.Add(this.tab_retrySendHTTP);
             this.tabControl1.ImageList = this.myicon_list;
             this.tabControl1.ItemSize = new System.Drawing.Size(118, 25);
             this.tabControl1.Location = new System.Drawing.Point(6, 13);
@@ -4024,7 +4037,7 @@
             // 
             this.tsmi_seting.Image = global::SuperSQLInjection.Properties.Resources.set;
             this.tsmi_seting.Name = "tsmi_seting";
-            this.tsmi_seting.Size = new System.Drawing.Size(124, 22);
+            this.tsmi_seting.Size = new System.Drawing.Size(180, 22);
             this.tsmi_seting.Text = "系统设置";
             this.tsmi_seting.Click += new System.EventHandler(this.tsmi_seting_Click);
             // 
@@ -4035,7 +4048,7 @@
             this.tsmi_en_us});
             this.tsmi_lang.Image = global::SuperSQLInjection.Properties.Resources.lang;
             this.tsmi_lang.Name = "tsmi_lang";
-            this.tsmi_lang.Size = new System.Drawing.Size(124, 22);
+            this.tsmi_lang.Size = new System.Drawing.Size(180, 22);
             this.tsmi_lang.Text = "语 言";
             // 
             // tsmi_zh_cn
@@ -4113,6 +4126,82 @@
             this.tsmi_bugReport.Size = new System.Drawing.Size(124, 22);
             this.tsmi_bugReport.Text = "Bug反馈";
             this.tsmi_bugReport.Click += new System.EventHandler(this.tsmi_bugReport_Click);
+            // 
+            // tab_retrySendHTTP
+            // 
+            this.tab_retrySendHTTP.Controls.Add(this.lbx_retry_sendKey);
+            this.tab_retrySendHTTP.Controls.Add(this.btn_retry_addKey);
+            this.tab_retrySendHTTP.Controls.Add(this.txt_retry_key);
+            this.tab_retrySendHTTP.Controls.Add(this.label48);
+            this.tab_retrySendHTTP.Controls.Add(this.label47);
+            this.tab_retrySendHTTP.Location = new System.Drawing.Point(4, 29);
+            this.tab_retrySendHTTP.Name = "tab_retrySendHTTP";
+            this.tab_retrySendHTTP.Size = new System.Drawing.Size(557, 358);
+            this.tab_retrySendHTTP.TabIndex = 3;
+            this.tab_retrySendHTTP.Text = "重发数据包设置";
+            this.tab_retrySendHTTP.UseVisualStyleBackColor = true;
+            // 
+            // label47
+            // 
+            this.label47.AutoSize = true;
+            this.label47.Location = new System.Drawing.Point(16, 56);
+            this.label47.Name = "label47";
+            this.label47.Size = new System.Drawing.Size(53, 12);
+            this.label47.TabIndex = 0;
+            this.label47.Text = "关键词：";
+            // 
+            // txt_retry_key
+            // 
+            this.txt_retry_key.Location = new System.Drawing.Point(72, 53);
+            this.txt_retry_key.Name = "txt_retry_key";
+            this.txt_retry_key.Size = new System.Drawing.Size(337, 21);
+            this.txt_retry_key.TabIndex = 1;
+            // 
+            // btn_retry_addKey
+            // 
+            this.btn_retry_addKey.Location = new System.Drawing.Point(433, 52);
+            this.btn_retry_addKey.Name = "btn_retry_addKey";
+            this.btn_retry_addKey.Size = new System.Drawing.Size(103, 23);
+            this.btn_retry_addKey.TabIndex = 2;
+            this.btn_retry_addKey.Text = "添加重试关键词";
+            this.btn_retry_addKey.UseVisualStyleBackColor = true;
+            this.btn_retry_addKey.Click += new System.EventHandler(this.btn_retry_addKey_Click);
+            // 
+            // label48
+            // 
+            this.label48.AutoSize = true;
+            this.label48.Location = new System.Drawing.Point(16, 19);
+            this.label48.Name = "label48";
+            this.label48.Size = new System.Drawing.Size(509, 12);
+            this.label48.TabIndex = 0;
+            this.label48.Text = "当发现HTTP请求包中存在指定的关键词时，重发数据包，解决部分情况数据查询不成功的问题。";
+            // 
+            // lbx_retry_sendKey
+            // 
+            this.lbx_retry_sendKey.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lbx_retry_sendKey.ContextMenuStrip = this.retrySend_cm;
+            this.lbx_retry_sendKey.FormattingEnabled = true;
+            this.lbx_retry_sendKey.ItemHeight = 12;
+            this.lbx_retry_sendKey.Location = new System.Drawing.Point(18, 97);
+            this.lbx_retry_sendKey.Name = "lbx_retry_sendKey";
+            this.lbx_retry_sendKey.Size = new System.Drawing.Size(518, 244);
+            this.lbx_retry_sendKey.TabIndex = 3;
+            // 
+            // retrySend_cm
+            // 
+            this.retrySend_cm.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.cms_delRetryKey});
+            this.retrySend_cm.Name = "retrySend_cm";
+            this.retrySend_cm.Size = new System.Drawing.Size(105, 26);
+            // 
+            // cms_delRetryKey
+            // 
+            this.cms_delRetryKey.Name = "cms_delRetryKey";
+            this.cms_delRetryKey.Size = new System.Drawing.Size(180, 22);
+            this.cms_delRetryKey.Text = "删 除";
+            this.cms_delRetryKey.Click += new System.EventHandler(this.cms_delRetryKey_Click);
             // 
             // Main
             // 
@@ -4244,6 +4333,9 @@
             this.statusStrip1.PerformLayout();
             this.menuStrip_main.ResumeLayout(false);
             this.menuStrip_main.PerformLayout();
+            this.tab_retrySendHTTP.ResumeLayout(false);
+            this.tab_retrySendHTTP.PerformLayout();
+            this.retrySend_cm.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -4606,6 +4698,14 @@
         private System.Windows.Forms.ToolStripButton toolStrip_vers_btn_selectAll;
         private System.Windows.Forms.ToolStripButton toolStrip_vers_btn_selectReverse;
         private System.Windows.Forms.ImageList img_line;
+        private System.Windows.Forms.TabPage tab_retrySendHTTP;
+        private System.Windows.Forms.Button btn_retry_addKey;
+        private System.Windows.Forms.TextBox txt_retry_key;
+        private System.Windows.Forms.Label label48;
+        private System.Windows.Forms.Label label47;
+        private System.Windows.Forms.ListBox lbx_retry_sendKey;
+        private System.Windows.Forms.ContextMenuStrip retrySend_cm;
+        private System.Windows.Forms.ToolStripMenuItem cms_delRetryKey;
     }
 }
 

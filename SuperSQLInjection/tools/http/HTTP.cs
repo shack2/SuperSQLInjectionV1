@@ -22,7 +22,7 @@ namespace SuperSQLInjection.tools
 {
     public class HTTP
     {
-        
+
         public const char T = '\n';
         public const String ST = "\n";
         public const String CT = "\r\n";
@@ -36,10 +36,10 @@ namespace SuperSQLInjection.tools
         public const String Transfer_Encoding = "transfer-encoding";
         public const String Connection = "connection";
 
-        public const String Content_Length_Zero= "Content-Length: 0";
+        public const String Content_Length_Zero = "Content-Length: 0";
 
         public const String ConnectionClose = "connection: close";
-        public const int WaitTime =5;
+        public const int WaitTime = 5;
         public static Main main = null;
         public static long index = 0;
 
@@ -50,6 +50,9 @@ namespace SuperSQLInjection.tools
         public static void initMain(Main m)
         {
             main = m;
+            if(main.config.retryKey != null) {
+                RetryKeys=main.config.retryKey.Split(',');
+            };
         }
 
         /**
@@ -57,6 +60,20 @@ namespace SuperSQLInjection.tools
          发生异常尝试重连  
          *
          */
+        public static String[] RetryKeys = null;
+        public static Boolean findRetryKey(String body) {
+            if (RetryKeys != null) {
+                foreach (String key in RetryKeys)
+                {
+                    if (!String.IsNullOrEmpty(key)&&body.IndexOf(key) != -1)
+                    {
+                        return true;
+                        break;
+                    }
+                }
+            }
+            return false;
+        }
         public static ServerInfo sendRequestRetry(Boolean isSSL, int tryCount, String host, int port, String payload, String request, int timeout, String encoding, Boolean foward_302,Boolean redirectDoGet)
         {
             if (request.IndexOf("<Token>") != -1) {
@@ -87,6 +104,10 @@ namespace SuperSQLInjection.tools
                         {
                             continue;
                         }
+                        else if (findRetryKey(server.body))
+                        {
+                            continue;
+                        }
                         if (!String.IsNullOrEmpty(main.config.sencondRequest) && main.config.sencondInject)
                         {
                             server = sendHTTPRequest(count, host, port, "请求二次注入页面", main.config.sencondRequest, timeout, encoding, foward_302, redirectDoGet);
@@ -102,6 +123,10 @@ namespace SuperSQLInjection.tools
 
                         server = sendHTTPSRequest(count, host, port, payload, request, timeout, encoding, foward_302, redirectDoGet);
                         if (server.code == 0)
+                        {
+                            continue;
+                        }
+                        else if (findRetryKey(server.body))
                         {
                             continue;
                         }
@@ -153,6 +178,10 @@ namespace SuperSQLInjection.tools
                         if (server.code == 0) {
                             continue;
                         }
+                        else if (findRetryKey(server.body))
+                        {
+                            continue;
+                        }
                         return server;
                     }
                     else
@@ -160,6 +189,10 @@ namespace SuperSQLInjection.tools
 
                         server = sendHTTPSRequest(count, host, port, payload, request, timeout, encoding, foward_302, redirectDoGet);
                         if (server.code == 0)
+                        {
+                            continue;
+                        }
+                        else if (findRetryKey(server.body))
                         {
                             continue;
                         }

@@ -74,7 +74,7 @@ namespace SuperSQLInjection.model
         public Boolean useBetweenByPass = false;//between绕过
         public Boolean usehex = false;//hex绕过
         public Boolean useUnicode = false;//uniocde绕过
-
+        public String retryKey = "";//重新发包的关键字
         //scan
         public int level = 0;
         public int linkCount = 1;

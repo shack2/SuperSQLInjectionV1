@@ -150,7 +150,7 @@ namespace SuperSQLInjection
 
         private void Main_Shown(object sender, EventArgs e)
         {
-            HTTP.initMain(this);
+            
             //添加支持注入的数据库列表
             addDBSToItems();
             //清空日志
@@ -209,7 +209,7 @@ namespace SuperSQLInjection
             {
                 Tools.SysLog("加载配置发生错误！" + ex.Message);
             }
-
+            HTTP.initMain(this);
             InjectionTools.addErrorCode();
             //读取模板
             List<String> templates = FileTool.readAllDic("/config/template/");
@@ -286,7 +286,7 @@ namespace SuperSQLInjection
             responseStream.Close();
         }
 
-        public static int version = 20190905;
+        public static int version = 20191212;
         public static string versionURL = "http://www.shack2.org/soft/getNewVersion?ENNAME=SSuperSQLInjection&NO=" + URLEncode.UrlEncode(Tools.getSystemSid()) + "&VERSION=" + version;
         //检查更新
         public void checkUpdate()
@@ -1465,7 +1465,7 @@ namespace SuperSQLInjection
 
         public void addItemToListViewByColumns(String colvs)
         {
-            addItemToListViewByColumns(colvs, "\\$\\$\\$");
+            addItemToListViewByColumns(colvs, Comm.COLUMNS_REG_SPLIT_STR);
         }
 
         public void addItemToListViewByColumnsInformix(String colvs)
@@ -5781,7 +5781,7 @@ namespace SuperSQLInjection
                 String result = getOneDataByUnionOrError(MySQL.union_value.Replace("{data}", datas_value_payload));
 
                 this.txt_log.Invoke(new showLogDelegate(log), "报告大侠，获取到第" + (gp.limit + 1) + "行数据", LogLevel.info);
-                String[] datas = Regex.Split(result, "\\$\\$\\$");
+                String[] datas = Regex.Split(result, Comm.COLUMNS_REG_SPLIT_STR);
                 addItemToListView(datas);
 
             }
@@ -6007,7 +6007,7 @@ namespace SuperSQLInjection
 
                 result = Tools.unHex(result, "UTF-8");
 
-                String[] items = Regex.Split(result, "\\$\\$\\$");
+                String[] items = Regex.Split(result, Comm.COLUMNS_REG_SPLIT_STR);
                 ListViewItem lvi = null;
                 foreach (String item in items)
                 {
@@ -8193,9 +8193,16 @@ namespace SuperSQLInjection
             //二次注入
             this.txt_sencond_request.Text = config.sencondRequest;
 
+            //加载重试发包key
+            if (config.retryKey != null) {
+                String[] keys = config.retryKey.Split(',');
+                foreach(String key in keys)
+                {
+                    this.lbx_retry_sendKey.Items.Add(key);
+                }
+            }
 
             //file
-
             this.cbox_file_readFileEncoding.Text = config.readFileEncoding;
 
             //cmd
@@ -8563,7 +8570,7 @@ namespace SuperSQLInjection
                         if (!String.IsNullOrEmpty(this.file_txt_result.Text))
                         {
                             String payload = SQLServer.witeFileByFileSystemObject.Replace("{path}", Tools.strToHex(path, "GB2312")).Replace("{data}", Tools.strToHex(this.file_txt_result.Text, "GB2312"));
-                            if (config.keyType.Equals(KeyType.Time))
+                            if (config.keyType.Equals(KeyType.Time) && config.injectType.Equals(InjectType.Blind))
                             {
                                 payload = payload.Replace(" 1=1;", ";");
                             }
@@ -8582,7 +8589,7 @@ namespace SuperSQLInjection
                         if (!String.IsNullOrEmpty(this.file_txt_result.Text))
                         {
                             String payload = SQLServer.witeFileBySP_MakeWebTask.Replace("{path}", Tools.strToHex(path, "GB2312")).Replace("{data}", Tools.strToHex(this.file_txt_result.Text, "GB2312"));
-                            if (config.keyType.Equals(KeyType.Time))
+                            if (config.keyType.Equals(KeyType.Time) && config.injectType.Equals(InjectType.Blind))
                             {
                                 payload = payload.Replace(" 1=1;", ";");
                             }
@@ -8605,7 +8612,7 @@ namespace SuperSQLInjection
                             String dropWriteFileBackUpTableAndDropDB = SQLServer.dropWriteFileBackUpTableAndDropDB;
                             String createWriteFileBackUpDB = SQLServer.createWriteFileBackUpDB;
                             String createWriteFileBackUpTable = SQLServer.createWriteFileBackUpTable;
-                            if (config.keyType.Equals(KeyType.Time))
+                            if (config.keyType.Equals(KeyType.Time) && config.injectType.Equals(InjectType.Blind))
                             {
                                 payload = payload.Replace(" 1=1;", ";");
                                 dropWriteFileBackUpTableAndDropDB = dropWriteFileBackUpTableAndDropDB.Replace(" 1=1;", ";");
@@ -8638,7 +8645,7 @@ namespace SuperSQLInjection
                         //filesystemobject读文件
                         String payload = SQLServer.readFileByFileSystemobject.Replace("{path}", path);
                         String dropTable = SQLServer.dropTable;
-                        if (config.keyType.Equals(KeyType.Time))
+                        if (config.keyType.Equals(KeyType.Time)&& config.injectType.Equals(InjectType.Blind))
                         {
                             payload= payload.Replace(" 1=1;", ";");
                             dropTable = dropTable.Replace(" 1=1;", ";");
@@ -10583,7 +10590,7 @@ namespace SuperSQLInjection
 
         private void tsmi_bugReport_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("邮箱反馈：1341413415@qq.com\r\nQQ群反馈：84978967");
+            MessageBox.Show("邮箱反馈：1341413415@qq.com");
         }
 
         private void data_dbs_cob_db_encoding_TextChanged(object sender, EventArgs e)
@@ -11521,6 +11528,45 @@ namespace SuperSQLInjection
         private void toolStrip_vers_btn_selectReverse_Click(object sender, EventArgs e)
         {
             SelectReversNodes(this.data_lvw_ver);
+        }
+
+        private void btn_retry_addKey_Click(object sender, EventArgs e)
+        {
+            String key = this.txt_retry_key.Text;
+            if (key.Length <= 0) {
+                MessageBox.Show("输入重试关键词！");
+                return;
+            }
+            if (this.lbx_retry_sendKey.Items.Contains(key)) {
+                MessageBox.Show("关键词已经在列表中！");
+                return;
+            }
+            this.lbx_retry_sendKey.Items.Add(key);
+            resetRetryKeys();
+        }
+
+        private void resetRetryKeys()
+        {
+
+            StringBuilder sb = new StringBuilder();
+            foreach (String ikey in this.lbx_retry_sendKey.Items)
+            {
+                sb.Append(ikey + ",");
+            }
+            if (this.lbx_retry_sendKey.Items.Count > 0)
+            {
+                String allkeys = sb.Remove(sb.Length - 1, 1).ToString();
+                config.retryKey = allkeys;
+            }
+        }
+
+        private void cms_delRetryKey_Click(object sender, EventArgs e)
+        {
+            if (this.lbx_retry_sendKey.SelectedItems.Count>0) {
+                this.lbx_retry_sendKey.Items.Remove(this.lbx_retry_sendKey.SelectedItems[0]);
+                resetRetryKeys();
+                MessageBox.Show("删除成功！");
+            }
         }
     } 
     
