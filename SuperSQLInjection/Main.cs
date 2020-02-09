@@ -286,7 +286,7 @@ namespace SuperSQLInjection
             responseStream.Close();
         }
 
-        public static int version = 20191212;
+        public static int version = 20200209;
         public static string versionURL = "http://www.shack2.org/soft/getNewVersion?ENNAME=SSuperSQLInjection&NO=" + URLEncode.UrlEncode(Tools.getSystemSid()) + "&VERSION=" + version;
         //检查更新
         public void checkUpdate()
@@ -2706,7 +2706,6 @@ namespace SuperSQLInjection
         {
             int mid = 0;
             String payload = "";
-            Boolean lastexists = false;
             while (start <= end)
             {
                 //2分法获取中间数字

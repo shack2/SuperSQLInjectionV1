@@ -68,7 +68,6 @@ namespace SuperSQLInjection.tools
                     if (!String.IsNullOrEmpty(key)&&body.IndexOf(key) != -1)
                     {
                         return true;
-                        break;
                     }
                 }
             }
