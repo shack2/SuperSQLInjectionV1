@@ -286,7 +286,7 @@ namespace SuperSQLInjection
             responseStream.Close();
         }
 
-        public static int version = 20200209;
+        public static int version = 20200527;
         public static string versionURL = "http://www.shack2.org/soft/getNewVersion?ENNAME=SSuperSQLInjection&NO=" + URLEncode.UrlEncode(Tools.getSystemSid()) + "&VERSION=" + version;
         //检查更新
         public void checkUpdate()
@@ -792,10 +792,8 @@ namespace SuperSQLInjection
                 this.txt_log.Invoke(new showLogDelegate(log), "发出停止线程信号！", LogLevel.info);
                 stp.Cancel();
                 this.currentThread.Abort();
-
             }
             status = 0;
-
         }
 
         public void getVariablesByUnion(DBType dbType)
@@ -2710,11 +2708,9 @@ namespace SuperSQLInjection
             {
                 //2分法获取中间数字
                 mid = Tools.getLargeNum(start, end);
-
                 payload = ByPassForBetween(payLoadStr, mid);
                 ServerInfo server = HTTP.sendRequestRetry(config.useSSL, config.reTry, config.domain, config.port, payload, config.request, config.timeOut, config.encoding, config.is_foward_302, config.redirectDoGet);
                 Boolean exists = Tools.isTrue(server, config.key, config.reverseKey, config.keyType, config.injectHTTPCode);
-
                 if (end == start)
                 {
                     if (exists)
@@ -2723,9 +2719,7 @@ namespace SuperSQLInjection
                     }
                     else
                     {
-
                         return end;
-
                     }
                 }
                 if (exists)
@@ -5141,47 +5135,21 @@ namespace SuperSQLInjection
                     String va_payload = MySQL.ver_value.Replace("{data}", data_payload);
                     String colvalue = "";
 
-                    //获取值
                     for (int i = 1; i <= len; i++)
                     {
-                        String tmp_va_payload = MySQL.ord_value.Replace("{data}", data_payload).Replace("{index}", i + "");
-                        String plen = MySQL.ver_length.Replace("{data}", tmp_va_payload);
-                        int mu_payload_len = 0;
-                        //MySQL多字节ord，先判断ord后的长度，在取每一个的值
+                        String tmp_va_payload = va_payload.Replace("{index}", i + "");
+                        int ascii = 0;
                         if (config.keyType.Equals(KeyType.Time))
                         {
-                            mu_payload_len = getValue(MySQL.getBoolDataBySleep(MySQL.char_len.Replace("{data}", tmp_va_payload), config.maxTime), 2, 8);
+                            ascii = getValue(tmp_va_payload, 0, 127);
                         }
                         else
                         {
-                            mu_payload_len = getValue(plen, 2, 8);
+                            ascii = getValue(tmp_va_payload, 0, 127);
                         }
-
-                        //判断ord转换后的字符长度
-
-                        int m_index = 1;
-                        String[] ver_tmp = new String[mu_payload_len];
-                        while (m_index <= mu_payload_len)
-                        {
-
-                            int ascii = 0;
-                            if (config.keyType.Equals(KeyType.Time))
-                            {
-                                ascii = getValue(MySQL.getBoolDataBySleep(MySQL.mid_value.Replace("{data}", tmp_va_payload).Replace("{index}", m_index + ""), config.maxTime), 0, 9);
-                            }
-                            else
-                            {
-                                ascii = getValue(MySQL.bool_ord_value.Replace("{data}", tmp_va_payload).Replace("{index}", m_index + ""), 0, 9);
-                            }
-                            ver_tmp[m_index - 1] = ascii + "";
-                            m_index++;
-                        }
-                        //设置值,这里由于是hex值，需要转换
-                        String hexstring = Tools.convertToString(ver_tmp);
-                        String hexvalue = Convert.ToString(int.Parse(hexstring), 16);
-                        colvalue += Tools.unHex(hexvalue, config.db_encoding);
-
+                        colvalue += ((char)ascii).ToString();
                     }
+                    
                     if (lvi == null)
                     {
                         lvi = new ListViewItem(colvalue);
@@ -6043,6 +6011,7 @@ namespace SuperSQLInjection
                 GetDataPam gp = (GetDataPam)opam;
                 ListViewItem lvi = new ListViewItem();
                 String result = getOneDataByUnionOrError(SQLServer.getErrorDataValue(gp.dbname, gp.table, gp.limit, gp.columns));
+                
                 result = HttpUtility.HtmlDecode(result);
                 //数结果改成xml格式，单独解析
                 addItemToListViewBySQLServerXMLData(result, gp.columns);
@@ -10804,7 +10773,15 @@ namespace SuperSQLInjection
 
         private void btn_inject_randStr_Click(object sender, EventArgs e)
         {
-            this.txt_inject_request.SelectedText = "<Rand>" + this.txt_inject_request.SelectedText + "</Rand>";
+            if (this.txt_inject_request.SelectedText.Length > 0)
+            {
+                this.txt_inject_request.SelectedText = "<Rand>" + this.txt_inject_request.SelectedText + "</Rand>";
+
+            }
+            if (this.txt_sencond_request.SelectedText.Length > 0)
+            {
+                this.txt_sencond_request.SelectedText = "<Rand>" + this.txt_sencond_request.SelectedText + "</Rand>";
+            }
         }
 
         private void txt_sencond_request_TextChanged(object sender, EventArgs e)

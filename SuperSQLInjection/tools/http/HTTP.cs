@@ -42,7 +42,7 @@ namespace SuperSQLInjection.tools
         public const int WaitTime = 5;
         public static Main main = null;
         public static long index = 0;
-
+        public static String LastToken ="";
         public const String Socks5ProxyType = "Socks5";
 
         public static String getTemplate = "GET /mysql.jsp?id=1 HTTP/1.1\r\nUser-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.10240\r\nAccept-Encoding: gzip, deflate\r\nHost: 127.0.0.1:8090\r\nConnection: Close\r\nCookie: JSESSIONID=2F6D5F1AC8C376FF0AB48A08282A6CED";
@@ -82,6 +82,7 @@ namespace SuperSQLInjection.tools
                 {
                     ServerInfo tserver = HTTP.sendRequestRetryNoToken(isSSL, tryCount, host, port, "获取Token", main.config.token_request, timeout, encoding, foward_302, redirectDoGet);
                     token = Tools.substr(tserver.body, main.config.token_startStr, main.config.token_endStr);
+
                 }
                 request = Regex.Replace(request, "(\\<Token\\>[.\\s\\S]*?\\<\\/Token\\>)", token);
             }
@@ -338,7 +339,7 @@ namespace SuperSQLInjection.tools
                 if (port > 0 && port <= 65556)
                 {
                     request = request.Replace(Main.setInjectStr, payload);
-                    request = StringReplace.strReplaceCenter(main.config, request, main.replaceList);
+                    request = StringReplace.strReplaceCenter(main.config, request, main.replaceList,payload);
                     //编码处理
                     server.request = request;
 
@@ -484,10 +485,14 @@ namespace SuperSQLInjection.tools
                                 }
 
                             }
+                            //超时
+                            if (server.code >501&&server.code <505)
+                            {
+                                throw new Exception("http访问异常-code:"+ server.code+"！");
+                            }
 
-
-                            //根据请求头解析
-                            if (server.headers.ContainsKey(Content_Length)&& server.header.IndexOf(Content_Length_Zero) ==-1)
+                                //根据请求头解析
+                                if (server.headers.ContainsKey(Content_Length)&& server.header.IndexOf(Content_Length_Zero) ==-1)
                             {
                                 int length = int.Parse(server.headers[Content_Length]);
                                 while (sum < length && sw.ElapsedMilliseconds <= timeout)
@@ -764,7 +769,7 @@ namespace SuperSQLInjection.tools
                     request = request.Replace(Main.setInjectStr, payload);
 
                     //编码处理
-                    request = StringReplace.strReplaceCenter(main.config, request, main.replaceList);
+                    request = StringReplace.strReplaceCenter(main.config, request, main.replaceList,payload);
                     TimeOutSocket tos = new TimeOutSocket();
                     if (main.config.proxy_mode == 1 || main.config.proxy_mode == 2)
                     {
@@ -920,7 +925,11 @@ namespace SuperSQLInjection.tools
 
 
                     }
-
+                    //超时
+                    if (server.code > 501 && server.code < 505)
+                    {
+                        throw new Exception("http访问异常-code:" + server.code + "！");
+                    }
 
                     //根据请求头解析
                     if (server.headers.ContainsKey(Content_Length) && server.header.IndexOf(Content_Length_Zero) == -1)

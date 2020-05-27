@@ -52,7 +52,7 @@ namespace SuperSQLInjection.payload
         public static String getUnionDataValue(int columnsLen, int showIndex, String Fill, List<String> columns, String table, String index)
         {
             StringBuilder sb = new StringBuilder();
-            String data = "char(94)||char(94)||char(33)||" + unionColumns(columns, "||char(36)||char(36)||char(36)||") + "||char(33)||char(94)||char(94)";
+            String data = "char(94)||char(94)||char(33)||" + unionColumns(columns, "||char(36)||char(9)||char(36)||") + "||char(33)||char(94)||char(94)";
             for (int i = 1; i <= columnsLen; i++)
             {
                 if (i == showIndex)

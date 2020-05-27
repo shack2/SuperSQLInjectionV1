@@ -498,7 +498,7 @@ namespace tools
                 
 
                 case KeyType.Time:
-                    //由于计数器有误差（可能客户端计数小于服务端，，如果页面正常响应时间非常快，可能导致返回时间可能提前，所以考虑设置一个误差值）
+                    //由于计数器有误差（可能客户端计数小于服务端，如果页面正常响应时间非常快，可能导致返回时间可能提前，所以考虑设置一个误差值）
                     int time = Tools.convertToInt(key);
                     if (server.runTime > (time*1000-(time*deviation)))
                     {

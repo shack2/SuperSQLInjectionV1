@@ -38,7 +38,7 @@ namespace SuperSQLInjection.payload
 
         public static String substr = "substr(({data})),{index},1)";
         //多字节
-        public static String hex_value = "ascii({data})";
+        //public static String hex_value = "ascii({data})";
         
         //bool方式字符长度判断
         public static String bool_length = " length(({data}))>{len}";

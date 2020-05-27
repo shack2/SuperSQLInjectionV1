@@ -11,10 +11,25 @@ namespace SuperSQLInjection.bypass
 {
     class StringReplace
     {
-        public static String strReplaceCenter(Config config, String request, Hashtable replaceList)
+        public static String lastRand = "";
+        public static String lastpayload = "";
+        public static String strReplaceCenter(Config config, String request, Hashtable replaceList,String payload)
         {
             //修改随机值
-            request = Regex.Replace(request, "(\\<Rand\\>[.\\s\\S]*?\\<\\/Rand\\>)", System.Guid.NewGuid().ToString("N"));
+            String rand = "";
+            if (payload.Equals(lastpayload)) {
+                rand = lastRand;
+            }
+            else {
+               rand = System.Guid.NewGuid().ToString("N");
+            }
+           
+            if (payload.Equals("请求二次注入页面")) {
+                rand = lastRand;
+            }
+            request = Regex.Replace(request, "(\\<Rand\\>[.\\s\\S]*?\\<\\/Rand\\>)", rand);
+            lastRand = rand;
+            lastpayload = payload;
             //找到需要处理的字符
             MatchCollection mc = Regex.Matches(request, "(?<=(\\<Encode\\>))[.\\s\\S]*?(?=(\\<\\/Encode\\>))");
             String str="";

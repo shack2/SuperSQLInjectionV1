@@ -82,7 +82,7 @@ namespace SuperSQLInjection.payload
 
         public static String getUnionDataValue(String unionFileTemplate, List<String> columns, String dbname, String table, String index)
         {
-           String data = "chr(94)||chr(94)||chr(33)||" + unionColumns(columns,"||chr(36)||chr(36)||chr(36)||") + "||chr(33)||chr(94)||chr(94)";
+           String data = "chr(94)||chr(94)||chr(33)||" + unionColumns(columns,"||chr(36)||chr(9)||chr(36)||") + "||chr(33)||chr(94)||chr(94)";
            String template= unionFileTemplate.Replace("{data}", (data_no_cast_value.Replace("{data}", data).Replace("{allcolumns}", Comm.unionColumns(columns, ",")).Replace("{dbname}", dbname).Replace("{table}", table).Replace("{index}", index)));  
             return union_value.Replace("{data}", template);
         }

