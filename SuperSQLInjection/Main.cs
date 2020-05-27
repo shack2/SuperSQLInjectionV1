@@ -5135,21 +5135,47 @@ namespace SuperSQLInjection
                     String va_payload = MySQL.ver_value.Replace("{data}", data_payload);
                     String colvalue = "";
 
+                    //获取值
                     for (int i = 1; i <= len; i++)
                     {
-                        String tmp_va_payload = va_payload.Replace("{index}", i + "");
-                        int ascii = 0;
+                        String tmp_va_payload = MySQL.ord_value.Replace("{data}", data_payload).Replace("{index}", i + "");
+                        String plen = MySQL.ver_length.Replace("{data}", tmp_va_payload);
+                        int mu_payload_len = 0;
+                        //MySQL多字节ord，先判断ord后的长度，在取每一个的值
                         if (config.keyType.Equals(KeyType.Time))
                         {
-                            ascii = getValue(tmp_va_payload, 0, 127);
+                            mu_payload_len = getValue(MySQL.getBoolDataBySleep(MySQL.char_len.Replace("{data}", tmp_va_payload), config.maxTime), 2, 8);
                         }
                         else
                         {
-                            ascii = getValue(tmp_va_payload, 0, 127);
+                            mu_payload_len = getValue(plen, 2, 8);
                         }
-                        colvalue += ((char)ascii).ToString();
+
+                        //判断ord转换后的字符长度
+
+                        int m_index = 1;
+                        String[] ver_tmp = new String[mu_payload_len];
+                        while (m_index <= mu_payload_len)
+                        {
+
+                            int ascii = 0;
+                            if (config.keyType.Equals(KeyType.Time))
+                            {
+                                ascii = getValue(MySQL.getBoolDataBySleep(MySQL.mid_value.Replace("{data}", tmp_va_payload).Replace("{index}", m_index + ""), config.maxTime), 0, 9);
+                            }
+                            else
+                            {
+                                ascii = getValue(MySQL.bool_ord_value.Replace("{data}", tmp_va_payload).Replace("{index}", m_index + ""), 0, 9);
+                            }
+                            ver_tmp[m_index - 1] = ascii + "";
+                            m_index++;
+                        }
+                        //设置值,这里由于是hex值，需要转换
+                        String hexstring = Tools.convertToString(ver_tmp);
+                        String hexvalue = Convert.ToString(int.Parse(hexstring), 16);
+                        colvalue += Tools.unHex(hexvalue, config.db_encoding);
+
                     }
-                    
                     if (lvi == null)
                     {
                         lvi = new ListViewItem(colvalue);
