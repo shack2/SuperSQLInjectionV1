@@ -163,6 +163,14 @@
             this.txt_sencond_request = new System.Windows.Forms.RichTextBox();
             this.groupBox21 = new System.Windows.Forms.GroupBox();
             this.label28 = new System.Windows.Forms.Label();
+            this.tab_retrySendHTTP = new System.Windows.Forms.TabPage();
+            this.lbx_retry_sendKey = new System.Windows.Forms.ListBox();
+            this.retrySend_cm = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.cms_delRetryKey = new System.Windows.Forms.ToolStripMenuItem();
+            this.btn_retry_addKey = new System.Windows.Forms.Button();
+            this.txt_retry_key = new System.Windows.Forms.TextBox();
+            this.label48 = new System.Windows.Forms.Label();
+            this.label47 = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.groupBox16 = new System.Windows.Forms.GroupBox();
             this.label34 = new System.Windows.Forms.Label();
@@ -385,14 +393,8 @@
             this.tsmi_mustRead = new System.Windows.Forms.ToolStripMenuItem();
             this.版本ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmi_bugReport = new System.Windows.Forms.ToolStripMenuItem();
-            this.tab_retrySendHTTP = new System.Windows.Forms.TabPage();
-            this.label47 = new System.Windows.Forms.Label();
-            this.txt_retry_key = new System.Windows.Forms.TextBox();
-            this.btn_retry_addKey = new System.Windows.Forms.Button();
-            this.label48 = new System.Windows.Forms.Label();
-            this.lbx_retry_sendKey = new System.Windows.Forms.ListBox();
-            this.retrySend_cm = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.cms_delRetryKey = new System.Windows.Forms.ToolStripMenuItem();
+            this.cbox_cmd_encoding = new System.Windows.Forms.ComboBox();
+            this.label49 = new System.Windows.Forms.Label();
             this.gb_basic.SuspendLayout();
             this.gb_logo.SuspendLayout();
             this.tab_logCenter.SuspendLayout();
@@ -436,6 +438,8 @@
             this.tab_sencond_inject.SuspendLayout();
             this.groupBox20.SuspendLayout();
             this.groupBox21.SuspendLayout();
+            this.tab_retrySendHTTP.SuspendLayout();
+            this.retrySend_cm.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox16.SuspendLayout();
             this.groupBox15.SuspendLayout();
@@ -471,8 +475,6 @@
             this.injectLog_cm.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.menuStrip_main.SuspendLayout();
-            this.tab_retrySendHTTP.SuspendLayout();
-            this.retrySend_cm.SuspendLayout();
             this.SuspendLayout();
             // 
             // gb_basic
@@ -1903,6 +1905,82 @@
             this.label28.TabIndex = 9;
             this.label28.Text = "此处可以放二次注入时第二次请求获取注入结果的页面，用于对付一些二次注入";
             // 
+            // tab_retrySendHTTP
+            // 
+            this.tab_retrySendHTTP.Controls.Add(this.lbx_retry_sendKey);
+            this.tab_retrySendHTTP.Controls.Add(this.btn_retry_addKey);
+            this.tab_retrySendHTTP.Controls.Add(this.txt_retry_key);
+            this.tab_retrySendHTTP.Controls.Add(this.label48);
+            this.tab_retrySendHTTP.Controls.Add(this.label47);
+            this.tab_retrySendHTTP.Location = new System.Drawing.Point(4, 29);
+            this.tab_retrySendHTTP.Name = "tab_retrySendHTTP";
+            this.tab_retrySendHTTP.Size = new System.Drawing.Size(557, 358);
+            this.tab_retrySendHTTP.TabIndex = 3;
+            this.tab_retrySendHTTP.Text = "重发数据包设置";
+            this.tab_retrySendHTTP.UseVisualStyleBackColor = true;
+            // 
+            // lbx_retry_sendKey
+            // 
+            this.lbx_retry_sendKey.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lbx_retry_sendKey.ContextMenuStrip = this.retrySend_cm;
+            this.lbx_retry_sendKey.FormattingEnabled = true;
+            this.lbx_retry_sendKey.ItemHeight = 12;
+            this.lbx_retry_sendKey.Location = new System.Drawing.Point(18, 97);
+            this.lbx_retry_sendKey.Name = "lbx_retry_sendKey";
+            this.lbx_retry_sendKey.Size = new System.Drawing.Size(518, 244);
+            this.lbx_retry_sendKey.TabIndex = 3;
+            // 
+            // retrySend_cm
+            // 
+            this.retrySend_cm.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.cms_delRetryKey});
+            this.retrySend_cm.Name = "retrySend_cm";
+            this.retrySend_cm.Size = new System.Drawing.Size(105, 26);
+            // 
+            // cms_delRetryKey
+            // 
+            this.cms_delRetryKey.Name = "cms_delRetryKey";
+            this.cms_delRetryKey.Size = new System.Drawing.Size(104, 22);
+            this.cms_delRetryKey.Text = "删 除";
+            this.cms_delRetryKey.Click += new System.EventHandler(this.cms_delRetryKey_Click);
+            // 
+            // btn_retry_addKey
+            // 
+            this.btn_retry_addKey.Location = new System.Drawing.Point(433, 52);
+            this.btn_retry_addKey.Name = "btn_retry_addKey";
+            this.btn_retry_addKey.Size = new System.Drawing.Size(103, 23);
+            this.btn_retry_addKey.TabIndex = 2;
+            this.btn_retry_addKey.Text = "添加重试关键词";
+            this.btn_retry_addKey.UseVisualStyleBackColor = true;
+            this.btn_retry_addKey.Click += new System.EventHandler(this.btn_retry_addKey_Click);
+            // 
+            // txt_retry_key
+            // 
+            this.txt_retry_key.Location = new System.Drawing.Point(72, 53);
+            this.txt_retry_key.Name = "txt_retry_key";
+            this.txt_retry_key.Size = new System.Drawing.Size(337, 21);
+            this.txt_retry_key.TabIndex = 1;
+            // 
+            // label48
+            // 
+            this.label48.AutoSize = true;
+            this.label48.Location = new System.Drawing.Point(16, 19);
+            this.label48.Name = "label48";
+            this.label48.Size = new System.Drawing.Size(509, 12);
+            this.label48.TabIndex = 0;
+            this.label48.Text = "当发现HTTP请求包中存在指定的关键词时，重发数据包，解决部分情况数据查询不成功的问题。";
+            // 
+            // label47
+            // 
+            this.label47.AutoSize = true;
+            this.label47.Location = new System.Drawing.Point(16, 56);
+            this.label47.Name = "label47";
+            this.label47.Size = new System.Drawing.Size(53, 12);
+            this.label47.TabIndex = 0;
+            this.label47.Text = "关键词：";
+            // 
             // groupBox3
             // 
             this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -2748,6 +2826,8 @@
             // 
             this.groupBox8.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox8.Controls.Add(this.cbox_cmd_encoding);
+            this.groupBox8.Controls.Add(this.label49);
             this.groupBox8.Controls.Add(this.cmd_chk_showCmdResult);
             this.groupBox8.Controls.Add(this.cmd_btn_stop);
             this.groupBox8.Controls.Add(this.cmd_btn_start);
@@ -2765,7 +2845,7 @@
             this.cmd_chk_showCmdResult.AutoSize = true;
             this.cmd_chk_showCmdResult.Checked = true;
             this.cmd_chk_showCmdResult.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cmd_chk_showCmdResult.Location = new System.Drawing.Point(502, 32);
+            this.cmd_chk_showCmdResult.Location = new System.Drawing.Point(404, 32);
             this.cmd_chk_showCmdResult.Name = "cmd_chk_showCmdResult";
             this.cmd_chk_showCmdResult.Size = new System.Drawing.Size(72, 16);
             this.cmd_chk_showCmdResult.TabIndex = 13;
@@ -2776,9 +2856,9 @@
             // cmd_btn_stop
             // 
             this.cmd_btn_stop.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmd_btn_stop.Location = new System.Drawing.Point(711, 28);
+            this.cmd_btn_stop.Location = new System.Drawing.Point(747, 28);
             this.cmd_btn_stop.Name = "cmd_btn_stop";
-            this.cmd_btn_stop.Size = new System.Drawing.Size(100, 23);
+            this.cmd_btn_stop.Size = new System.Drawing.Size(66, 23);
             this.cmd_btn_stop.TabIndex = 12;
             this.cmd_btn_stop.Text = "停止";
             this.cmd_btn_stop.UseVisualStyleBackColor = true;
@@ -2787,9 +2867,9 @@
             // cmd_btn_start
             // 
             this.cmd_btn_start.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmd_btn_start.Location = new System.Drawing.Point(580, 28);
+            this.cmd_btn_start.Location = new System.Drawing.Point(653, 27);
             this.cmd_btn_start.Name = "cmd_btn_start";
-            this.cmd_btn_start.Size = new System.Drawing.Size(100, 23);
+            this.cmd_btn_start.Size = new System.Drawing.Size(71, 23);
             this.cmd_btn_start.TabIndex = 12;
             this.cmd_btn_start.Text = "执行";
             this.cmd_btn_start.UseVisualStyleBackColor = true;
@@ -2800,7 +2880,7 @@
             this.cmd_txt_cmd.Location = new System.Drawing.Point(81, 30);
             this.cmd_txt_cmd.MaxLength = 8000;
             this.cmd_txt_cmd.Name = "cmd_txt_cmd";
-            this.cmd_txt_cmd.Size = new System.Drawing.Size(401, 21);
+            this.cmd_txt_cmd.Size = new System.Drawing.Size(317, 21);
             this.cmd_txt_cmd.TabIndex = 1;
             // 
             // label15
@@ -4037,7 +4117,7 @@
             // 
             this.tsmi_seting.Image = global::SuperSQLInjection.Properties.Resources.set;
             this.tsmi_seting.Name = "tsmi_seting";
-            this.tsmi_seting.Size = new System.Drawing.Size(180, 22);
+            this.tsmi_seting.Size = new System.Drawing.Size(124, 22);
             this.tsmi_seting.Text = "系统设置";
             this.tsmi_seting.Click += new System.EventHandler(this.tsmi_seting_Click);
             // 
@@ -4048,7 +4128,7 @@
             this.tsmi_en_us});
             this.tsmi_lang.Image = global::SuperSQLInjection.Properties.Resources.lang;
             this.tsmi_lang.Name = "tsmi_lang";
-            this.tsmi_lang.Size = new System.Drawing.Size(180, 22);
+            this.tsmi_lang.Size = new System.Drawing.Size(124, 22);
             this.tsmi_lang.Text = "语 言";
             // 
             // tsmi_zh_cn
@@ -4127,81 +4207,28 @@
             this.tsmi_bugReport.Text = "Bug反馈";
             this.tsmi_bugReport.Click += new System.EventHandler(this.tsmi_bugReport_Click);
             // 
-            // tab_retrySendHTTP
+            // cbox_cmd_encoding
             // 
-            this.tab_retrySendHTTP.Controls.Add(this.lbx_retry_sendKey);
-            this.tab_retrySendHTTP.Controls.Add(this.btn_retry_addKey);
-            this.tab_retrySendHTTP.Controls.Add(this.txt_retry_key);
-            this.tab_retrySendHTTP.Controls.Add(this.label48);
-            this.tab_retrySendHTTP.Controls.Add(this.label47);
-            this.tab_retrySendHTTP.Location = new System.Drawing.Point(4, 29);
-            this.tab_retrySendHTTP.Name = "tab_retrySendHTTP";
-            this.tab_retrySendHTTP.Size = new System.Drawing.Size(557, 358);
-            this.tab_retrySendHTTP.TabIndex = 3;
-            this.tab_retrySendHTTP.Text = "重发数据包设置";
-            this.tab_retrySendHTTP.UseVisualStyleBackColor = true;
+            this.cbox_cmd_encoding.FormattingEnabled = true;
+            this.cbox_cmd_encoding.Items.AddRange(new object[] {
+            "UTF-8",
+            "GB2312",
+            "GBK",
+            "ISO-8859-1"});
+            this.cbox_cmd_encoding.Location = new System.Drawing.Point(554, 29);
+            this.cbox_cmd_encoding.Name = "cbox_cmd_encoding";
+            this.cbox_cmd_encoding.Size = new System.Drawing.Size(79, 20);
+            this.cbox_cmd_encoding.TabIndex = 15;
+            this.cbox_cmd_encoding.TextChanged += new System.EventHandler(this.cbox_cmd_encoding_TextChanged);
             // 
-            // label47
+            // label49
             // 
-            this.label47.AutoSize = true;
-            this.label47.Location = new System.Drawing.Point(16, 56);
-            this.label47.Name = "label47";
-            this.label47.Size = new System.Drawing.Size(53, 12);
-            this.label47.TabIndex = 0;
-            this.label47.Text = "关键词：";
-            // 
-            // txt_retry_key
-            // 
-            this.txt_retry_key.Location = new System.Drawing.Point(72, 53);
-            this.txt_retry_key.Name = "txt_retry_key";
-            this.txt_retry_key.Size = new System.Drawing.Size(337, 21);
-            this.txt_retry_key.TabIndex = 1;
-            // 
-            // btn_retry_addKey
-            // 
-            this.btn_retry_addKey.Location = new System.Drawing.Point(433, 52);
-            this.btn_retry_addKey.Name = "btn_retry_addKey";
-            this.btn_retry_addKey.Size = new System.Drawing.Size(103, 23);
-            this.btn_retry_addKey.TabIndex = 2;
-            this.btn_retry_addKey.Text = "添加重试关键词";
-            this.btn_retry_addKey.UseVisualStyleBackColor = true;
-            this.btn_retry_addKey.Click += new System.EventHandler(this.btn_retry_addKey_Click);
-            // 
-            // label48
-            // 
-            this.label48.AutoSize = true;
-            this.label48.Location = new System.Drawing.Point(16, 19);
-            this.label48.Name = "label48";
-            this.label48.Size = new System.Drawing.Size(509, 12);
-            this.label48.TabIndex = 0;
-            this.label48.Text = "当发现HTTP请求包中存在指定的关键词时，重发数据包，解决部分情况数据查询不成功的问题。";
-            // 
-            // lbx_retry_sendKey
-            // 
-            this.lbx_retry_sendKey.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.lbx_retry_sendKey.ContextMenuStrip = this.retrySend_cm;
-            this.lbx_retry_sendKey.FormattingEnabled = true;
-            this.lbx_retry_sendKey.ItemHeight = 12;
-            this.lbx_retry_sendKey.Location = new System.Drawing.Point(18, 97);
-            this.lbx_retry_sendKey.Name = "lbx_retry_sendKey";
-            this.lbx_retry_sendKey.Size = new System.Drawing.Size(518, 244);
-            this.lbx_retry_sendKey.TabIndex = 3;
-            // 
-            // retrySend_cm
-            // 
-            this.retrySend_cm.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.cms_delRetryKey});
-            this.retrySend_cm.Name = "retrySend_cm";
-            this.retrySend_cm.Size = new System.Drawing.Size(105, 26);
-            // 
-            // cms_delRetryKey
-            // 
-            this.cms_delRetryKey.Name = "cms_delRetryKey";
-            this.cms_delRetryKey.Size = new System.Drawing.Size(180, 22);
-            this.cms_delRetryKey.Text = "删 除";
-            this.cms_delRetryKey.Click += new System.EventHandler(this.cms_delRetryKey_Click);
+            this.label49.AutoSize = true;
+            this.label49.Location = new System.Drawing.Point(482, 33);
+            this.label49.Name = "label49";
+            this.label49.Size = new System.Drawing.Size(65, 12);
+            this.label49.TabIndex = 14;
+            this.label49.Text = "内容编码：";
             // 
             // Main
             // 
@@ -4280,6 +4307,9 @@
             this.groupBox20.ResumeLayout(false);
             this.groupBox21.ResumeLayout(false);
             this.groupBox21.PerformLayout();
+            this.tab_retrySendHTTP.ResumeLayout(false);
+            this.tab_retrySendHTTP.PerformLayout();
+            this.retrySend_cm.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             this.groupBox16.ResumeLayout(false);
@@ -4333,9 +4363,6 @@
             this.statusStrip1.PerformLayout();
             this.menuStrip_main.ResumeLayout(false);
             this.menuStrip_main.PerformLayout();
-            this.tab_retrySendHTTP.ResumeLayout(false);
-            this.tab_retrySendHTTP.PerformLayout();
-            this.retrySend_cm.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -4706,6 +4733,8 @@
         private System.Windows.Forms.ListBox lbx_retry_sendKey;
         private System.Windows.Forms.ContextMenuStrip retrySend_cm;
         private System.Windows.Forms.ToolStripMenuItem cms_delRetryKey;
+        private System.Windows.Forms.ComboBox cbox_cmd_encoding;
+        private System.Windows.Forms.Label label49;
     }
 }
 

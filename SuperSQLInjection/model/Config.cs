@@ -25,6 +25,7 @@ namespace SuperSQLInjection.model
         public int threadSize = 1;
         public int reTry = 2;
         public String encoding = "UTF-8";
+        public String cmd_encoding = "UTF-8";
         public String request = "";
         public String sencondRequest = "";
         public String key = "";

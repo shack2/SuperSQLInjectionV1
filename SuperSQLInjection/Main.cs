@@ -286,7 +286,7 @@ namespace SuperSQLInjection
             responseStream.Close();
         }
 
-        public static int version = 20200527;
+        public static int version = 20201112;
         public static string versionURL = "http://www.shack2.org/soft/getNewVersion?ENNAME=SSuperSQLInjection&NO=" + URLEncode.UrlEncode(Tools.getSystemSid()) + "&VERSION=" + version;
         //检查更新
         public void checkUpdate()
@@ -9090,7 +9090,7 @@ namespace SuperSQLInjection
             }
             else
             {
-                value += Tools.unHexByUnicode(rstr, config.readFileEncoding);
+                value += Tools.unHexByUnicode(rstr, config.cmd_encoding);
             }
             ver_tmp[index - 1] = value;
             this.txt_log.Invoke(new showLogDelegate(log), "获取到CMD执行结果：" + HttpUtility.HtmlDecode(Tools.StringArrayToString(ver_tmp)), LogLevel.info);
@@ -11569,6 +11569,11 @@ namespace SuperSQLInjection
                 resetRetryKeys();
                 MessageBox.Show("删除成功！");
             }
+        }
+        
+        private void cbox_cmd_encoding_TextChanged(object sender, EventArgs e)
+        {
+            config.cmd_encoding = this.cbox_cmd_encoding.Text;
         }
     } 
     

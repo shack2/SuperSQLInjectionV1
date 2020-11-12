@@ -260,7 +260,7 @@ namespace SuperSQLInjection.payload
         /// <returns></returns>
         public static String concatMySQLColumnStr(List<String> columns)
         {
-            StringBuilder sb = new StringBuilder("concat(0x5e5e21,convert(concat_ws("+ Comm.COLUMNS_SPLIT_HEX_STR + ",");
+            StringBuilder sb = new StringBuilder("concat(0x5e5e21,concat_ws("+ Comm.COLUMNS_SPLIT_HEX_STR + ",");
             for (int i = 0; i < columns.Count; i++)
             {
                 if (columns.Count > 1)
@@ -278,7 +278,7 @@ namespace SuperSQLInjection.payload
             {
                 sb.Remove(sb.Length - 1, 1);
             }
-            sb.Append(") using UTF8),0x215e5e)");
+            sb.Append("),0x215e5e)");
 
             return sb.ToString();
 
