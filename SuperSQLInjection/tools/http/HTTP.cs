@@ -230,6 +230,7 @@ namespace SuperSQLInjection.tools
                 if (server.reuqestHeader.IndexOf("Transfer-Encoding: chunked")!=-1) {
                     return;
                 }
+
                 server.reuqestBody = request.Substring(sindex + 4, request.Length - sindex - 4);
                 int contentLength = Encoding.UTF8.GetBytes(server.reuqestBody).Length;
                 String newContentLength = Content_Length_Str_M + contentLength;
@@ -421,8 +422,9 @@ namespace SuperSQLInjection.tools
                             String[] reqs = Regex.Split(request, "\r\n\r\n");
                             server.reuqestHeader = reqs[0];
                             server.reuqestBody = reqs[1];
-                            clientSocket.Client.Send(Encoding.UTF8.GetBytes(server.reuqestHeader + "\r\n\r\n"));
-                            clientSocket.Client.Send(Encoding.UTF8.GetBytes(server.reuqestBody));
+                            //clientSocket.Client.Send(Encoding.UTF8.GetBytes(server.reuqestHeader));
+                            //clientSocket.Client.Send(Encoding.UTF8.GetBytes("\r\n\r\n"+server.reuqestBody));
+                            clientSocket.Client.Send(Encoding.UTF8.GetBytes(request));
                         }
                         else
                         {
@@ -857,8 +859,9 @@ namespace SuperSQLInjection.tools
                                 String[] reqs = Regex.Split(request, "\r\n\r\n");
                                 server.reuqestHeader = reqs[0];
                                 server.reuqestBody = reqs[1];
-                                ssl.Write(Encoding.UTF8.GetBytes(server.reuqestHeader + "\r\n\r\n"));
-                                ssl.Write(Encoding.UTF8.GetBytes(server.reuqestBody));
+                                //ssl.Write(Encoding.UTF8.GetBytes(server.reuqestHeader + "\r\n\r\n"));
+                                //ssl.Write(Encoding.UTF8.GetBytes(server.reuqestBody));
+                                ssl.Write(Encoding.UTF8.GetBytes(request));
                             }
                             else {
                                 ssl.Write(Encoding.UTF8.GetBytes(request));

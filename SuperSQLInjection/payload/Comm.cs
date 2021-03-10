@@ -9,7 +9,7 @@ namespace SuperSQLInjection.payload
     {
 
         public const String COLUMNS_SPLIT_STR = "$\t$";
-        public const String COLUMNS_REG_SPLIT_STR = "\\$\\t\\$";
+        public const String COLUMNS_REG_SPLIT_STR = "\\$\\t\\$|\\$\\\\t\\$";
 
         public static String COLUMNS_SPLIT_HEX_STR = Tools.strToHex(COLUMNS_SPLIT_STR, "UTF-8");
         public static String exists_table = " exists(select 1 from {0})";

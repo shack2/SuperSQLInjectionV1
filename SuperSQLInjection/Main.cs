@@ -286,7 +286,7 @@ namespace SuperSQLInjection
             responseStream.Close();
         }
 
-        public static int version = 20201112;
+        public static int version = 20201214;
         public static string versionURL = "http://www.shack2.org/soft/getNewVersion?ENNAME=SSuperSQLInjection&NO=" + URLEncode.UrlEncode(Tools.getSystemSid()) + "&VERSION=" + version;
         //检查更新
         public void checkUpdate()
@@ -6798,6 +6798,10 @@ namespace SuperSQLInjection
         public Thread injectThread = null;
         private void btn_autoInject_Click(object sender, EventArgs e)
         {
+
+            String a = "a$\\t$a";
+            String[] data = Regex.Split(a, Comm.COLUMNS_REG_SPLIT_STR);
+
             if (autoinject == 0)
             {
                 if (config.request.IndexOf(setInjectStr) != -1)
